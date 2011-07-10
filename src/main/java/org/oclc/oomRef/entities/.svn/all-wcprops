@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/entities
+END
+RequesterImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/entities/RequesterImpl.java
+END
+ReferringEntityImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/entities/ReferringEntityImpl.java
+END
+ResolverImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/entities/ResolverImpl.java
+END
+ServiceTypeImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/entities/ServiceTypeImpl.java
+END
+ReferentImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/entities/ReferentImpl.java
+END
+EntityImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/entities/EntityImpl.java
+END
+ReferrerImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/entities/ReferrerImpl.java
+END

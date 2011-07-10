@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/descriptors
+END
+ByValueMetadataKevImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/descriptors/ByValueMetadataKevImpl.java
+END
+ByValueMetadataImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/descriptors/ByValueMetadataImpl.java
+END
+ByValueMetadataXmlImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/descriptors/ByValueMetadataXmlImpl.java
+END
+ByReferenceMetadataImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/4/trunk/src/org/oclc/oomRef/descriptors/ByReferenceMetadataImpl.java
+END
