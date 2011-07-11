@@ -150,16 +150,16 @@
 							<value>src/main/resources/logback.xml</value>
 						</systemProperty>
 						<systemProperty>
-							<name>kakadu.home</name>
-							<value>${project.basedir}/bin/Linux-x86-64</value>
+							<name>DJATOKA_HOME</name>
+							<value>${project.basedir}</value>
 						</systemProperty>
 						<systemProperty>
 							<name>LD_LIBRARY_PATH</name>
-							<value>${project.basedir}/lib/Linux-x86-64</value>
+							<value>${java.library.path}</value>
 						</systemProperty>
 						<systemProperty>
-							<name>DJATOKA_HOME</name>
-							<value>${project.basedir}</value>
+							<name>kakadu.home</name>
+							<value>${java.library.path}</value>
 						</systemProperty>
 					</systemProperties>
 				</configuration>
@@ -206,6 +206,7 @@
 	</build>
 	<profiles>
 		<profile>
+			<!-- Unverified -->
 			<id>linux-32</id>
 			<activation>
 				<os>
@@ -213,8 +214,12 @@
 					<arch>i386</arch>
 				</os>
 			</activation>
+			<properties>
+				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Linux-x86-32</env.MAVEN_OPTS>
+			</properties>
 		</profile>
 		<profile>
+			<!-- Verified -->
 			<id>linux-64</id>
 			<activation>
 				<os>
@@ -222,46 +227,74 @@
 					<arch>amd64</arch>
 				</os>
 			</activation>
+			<properties>
+				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Linux-x86-64</env.MAVEN_OPTS>
+			</properties>
 		</profile>
 		<profile>
+			<!-- Unverified -->
 			<id>mac-x86</id>
 			<activation>
 				<os>
-					<name>Windows XP</name>
-					<family>Windows</family>
+					<name>Mac OS X</name>
+					<arch>i386</arch>
+				</os>
+			</activation>
+			<properties>
+				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Mac-x86</env.MAVEN_OPTS>
+			</properties>
+		</profile>
+		<profile>
+			<!-- Unverified -->
+			<id>windows</id>
+			<activation>
+				<os>
+					<family>windows</family>
 					<arch>x86</arch>
 				</os>
 			</activation>
+			<properties>
+				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Win32</env.MAVEN_OPTS>
+			</properties>
 		</profile>
 		<profile>
+			<!-- Unverified -->
+			<id>solaris-x86</id>
+			<activation>
+				<os>
+					<name>SunOS</name>
+					<arch>x86</arch>
+				</os>
+			</activation>
+			<properties>
+				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Solaris-x86</env.MAVEN_OPTS>
+			</properties>
+		</profile>
+		<profile>
+			<!-- Unverified -->
 			<id>solaris-sparc</id>
 			<activation>
 				<os>
-					<name>Windows XP</name>
-					<family>Windows</family>
-					<arch>x86</arch>
+					<name>SunOS</name>
+					<arch>sparc</arch>
 				</os>
 			</activation>
+			<properties>
+				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Solaris-Sparc</env.MAVEN_OPTS>
+			</properties>
 		</profile>
 		<profile>
+			<!-- Unverified -->
 			<id>solaris-sparcv9</id>
 			<activation>
 				<os>
-					<name>Windows XP</name>
-					<family>Windows</family>
-					<arch>x86</arch>
+					<name>Solaris</name>
+					<arch>sparc</arch>
 				</os>
 			</activation>
-		</profile>
-		<profile>
-			<id>sparc-x86</id>
-			<activation>
-				<os>
-					<name>Windows XP</name>
-					<family>Windows</family>
-					<arch>x86</arch>
-				</os>
-			</activation>
+			<properties>
+				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Solaris-Sparcv9</env.MAVEN_OPTS>
+			</properties>
 		</profile>
 	</profiles>
 </project>
