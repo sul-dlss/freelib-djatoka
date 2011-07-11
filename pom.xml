@@ -215,6 +215,13 @@
 			</plugin>
 		</plugins>
 	</build>
+	<!-- Default settings here can be overridden in profiles below -->
+	<!-- Below can be overridden in /usr/share/maven2/conf/settings.xml -->
+	<properties>
+		<djatoka.ingest.data>/usr/local/data/images/tiffs</djatoka.ingest.data>
+		<referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver>
+		<cache.enabled>true</cache.enabled>
+	</properties>
 	<profiles>
 		<profile>
 			<!-- Unverified -->
@@ -240,6 +247,8 @@
 			</activation>
 			<properties>
 				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Linux-x86-64</env.MAVEN_OPTS>
+				<!-- example of overridding a default property -->
+				<!-- <djatoka.data>/usr/local/data/images</djatoka.data> -->
 			</properties>
 		</profile>
 		<profile>
