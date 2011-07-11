@@ -1,4 +1,7 @@
+
+================================================================================
 INTRODUCTION
+================================================================================
 
 This package, freelib-djatoka, is a fork of the adore-djatoka JP2 image server.
 It was created in an attempt to provide an easy way to run djatoka from a
@@ -16,7 +19,9 @@ include testing, pre-caching, and batch ingest plugins.  This package is in
 development and shouldn't be confused with the real adore-djatoka image server.
 
 
+================================================================================
 LICENSE
+================================================================================
 
 This package, freelib-djatoka, like adore-djatoka, is available under the LGPL
 license (version 2.1 or later).
@@ -25,7 +30,9 @@ It contains Kakadu binaries which are provided under a NON-COMMERCIAL USE ONLY
 license.  See the adore-djatoka page for more details (see URL below).
 
 
+================================================================================
 QUESTIONS AND COMMENTS
+================================================================================
 
 Questions should be directed to Kevin S. Clarke at ksclarke@gmail.com
 
