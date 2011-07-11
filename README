@@ -7,9 +7,9 @@ INTRODUCTION
 
 This package, freelib-djatoka, is a fork of the adore-djatoka JP2 image server.
 It was created in an attempt to provide an easy way to run djatoka from a
-Maven/Jetty setup.  Once you've checked the package out using git, installing
-and running the program should be as simple as typing: mvn jetty:run-exploded
-(...assuming you also have Maven 2 already installed: http://maven.apache.org)
+Maven/Jetty setup.  Once you've checked the package out using git (and have
+Maven2 installed - http://maven.apache/org), installing and running the program
+should be as simple as typing: mvn jetty:run-exploded
 
 To confirm it's working, go to http://localhost:8888 and click the Update Image
 button (an image should then appear at the top of the page).  Right now, only
