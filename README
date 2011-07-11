@@ -1,0 +1,32 @@
+INTRODUCTION
+
+This package, freelib-djatoka, is a fork of the adore-djatoka JP2 image server.
+It was created in an attempt to provide an easy way to run djatoka from a
+Maven/Jetty setup.  Once you've checked the package out using git, installing
+and running the program should be as simple as typing: mvn jetty:run-exploded
+
+To confirm it's working, go to http://localhost:8888 and click the Update Image
+button (an image should then appear at the top of the page).  Right now, only
+the Linux amd64 configuration has been verified as working.  If you would like
+to confirm that the program works on another platform this would be appreciated
+(contact the email address below if you do, thanks!)
+
+There may also be other differences from the original project.  Planned changes
+include testing, pre-caching, and batch ingest plugins.  This package is in
+development and shouldn't be confused with the real adore-djatoka image server.
+
+
+LICENSE
+
+This package, freelib-djatoka, like adore-djatoka, is available under the LGPL
+license (version 2.1 or later).
+
+It contains Kakadu binaries which are provided under a NON-COMMERCIAL USE ONLY
+license.  See the adore-djatoka page for more details (see URL below).
+
+
+QUESTIONS AND COMMENTS
+
+Questions should be directed to Kevin S. Clarke at ksclarke@gmail.com
+
+The original djatoka project is available at http://djatoka.sourceforge.net/
