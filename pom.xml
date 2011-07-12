@@ -215,10 +215,12 @@
 			</plugin>
 		</plugins>
 	</build>
-	<!-- Default settings here can be overridden in profiles below -->
-	<!-- Below can be overridden in /usr/share/maven2/conf/settings.xml -->
+	<!-- Default settings, here, can be overridden in profiles below -->
+	<!-- Below's can be overridden in ${MAVEN_HOME}/conf/settings.xml -->
 	<properties>
+		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
 		<djatoka.ingest.data>/usr/local/data/images/tiffs</djatoka.ingest.data>
+		<djatoka.jp2.data>/usr/local/data/images/jp2s</djatoka.jp2.data>
 		<referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver>
 		<cache.enabled>true</cache.enabled>
 	</properties>
