@@ -217,6 +217,7 @@ public class IOUtils {
     }
     
     public static byte[] getByteArray(InputStream ins) throws java.io.IOException, Exception {
+    	// TODO: remove CR/LFs
         return ((ByteArrayOutputStream) getOutputStream(ins)).toByteArray();
     }
     

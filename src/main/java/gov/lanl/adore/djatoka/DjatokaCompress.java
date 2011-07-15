@@ -33,7 +33,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import gov.lanl.adore.djatoka.kdu.KduCompressExe;
 import gov.lanl.adore.djatoka.util.IOUtils;
@@ -45,7 +46,8 @@ import gov.lanl.adore.djatoka.util.SourceImageFileFilter;
  *
  */
 public class DjatokaCompress {
-	static Logger logger = Logger.getLogger(DjatokaCompress.class);
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(DjatokaCompress.class);
 	/**
 	 * Uses apache commons cli to parse input args. Passes parsed
 	 * parameters to ICompress implementation.
@@ -142,13 +144,13 @@ public class DjatokaCompress {
 			    report(input, x);
 			}
 		} catch( ParseException e ) {
-		    logger.error( "Parse exception:" + e.getMessage(), e );
+		    LOGGER.error( "Parse exception:" + e.getMessage(), e );
 		} catch (DjatokaException e) {
-			logger.error( "djatoka Compression exception:" + e.getMessage(), e );
+			LOGGER.error( "djatoka Compression exception:" + e.getMessage(), e );
 		} catch (InstantiationException e) {
-			logger.error( "Unable to initialize alternate implemenation:" + e.getMessage(), e );
+			LOGGER.error( "Unable to initialize alternate implemenation:" + e.getMessage(), e );
 		} catch (Exception e) {
-			logger.error( "An exception occured:" + e.getMessage(), e );
+			LOGGER.error( "An exception occured:" + e.getMessage(), e );
 		}
 	}
 	
@@ -158,7 +160,7 @@ public class DjatokaCompress {
 	 * @param x System time in milliseconds when resource processing started
 	 */
 	public static void report(String id, long x) {
-		logger.info("Compression Time: " + ((double) (System.currentTimeMillis() - x) / 1000) + " seconds for " + id);
+		LOGGER.info("Compression Time: " + ((double) (System.currentTimeMillis() - x) / 1000) + " seconds for " + id);
 	}
 	
 	/**
@@ -172,7 +174,8 @@ public class DjatokaCompress {
 		try {
 			jp2.compressImage(input, output, p);
 		} catch (DjatokaException e) {
-			logger.error("djatoka Compression exception:" + e.getMessage(), e);
+			LOGGER.error("djatoka Compression exception: " + e.getMessage(), e);
+			System.exit(1);
 		} 
 	}
 }
