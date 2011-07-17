@@ -25,7 +25,9 @@ package gov.lanl.adore.djatoka.io.writer;
 
 import gov.lanl.adore.djatoka.io.FormatIOException;
 import gov.lanl.adore.djatoka.io.IWriter;
+
 import ij.ImagePlus;
+import ij.io.FileInfo;
 import ij.io.TiffEncoder;
 
 import java.awt.image.BufferedImage;
@@ -35,126 +37,47 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-
-import org.apache.log4j.Logger;
-
-import uk.co.mmscomputing.imageio.tiff.TIFFImageWriterSpi;
-
-import com.sun.media.jai.codec.ImageCodec;
-import com.sun.media.jai.codec.ImageEncoder;
-import com.sun.media.jai.codec.TIFFEncodeParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * TIF File Writer. Uses JAI to write BufferedImage as TIF
+ * TIF File Writer.
+ * 
  * @author Ryan Chute
- *
+ * @author Kevin S. Clarke <a
+ *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
+ * 
  */
 public class TIFWriter implements IWriter {
-	static Logger logger = Logger.getLogger(TIFWriter.class);
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(TIFWriter.class);
+
 	/**
-	 * Write a BufferedImage instance using implementation to the 
-	 * provided OutputStream.
-	 * @param bi a BufferedImage instance to be serialized
-	 * @param os OutputStream to output the image to
+	 * Write a BufferedImage instance to the provided OutputStream.
+	 * 
+	 * @param aImage A BufferedImage instance to be serialized
+	 * @param aOutputStream OutputStream to output the image to
 	 * @throws FormatIOException
 	 */
-	public void write(BufferedImage bi, OutputStream os) throws FormatIOException {
-		writeUsingImageIO(bi, os);
-		//writeUsingJAI(bi, os);
-		//writeUsingImageJ(bi, os);
-		//writeUsingMMCComputingImageIO(bi, os);
-	}
-	
-	private void writeUsingImageJ(BufferedImage bi, OutputStream os) throws FormatIOException {
-		ImagePlus imp = new ImagePlus("tempTif", bi);
-		TiffEncoder encoder = new TiffEncoder(imp.getFileInfo());
-		DataOutputStream out = new DataOutputStream(new BufferedOutputStream(os));
+	public void write(BufferedImage aImage, OutputStream aOutStream)
+			throws FormatIOException {
+		ImagePlus imagePlus = new ImagePlus("tempTif", aImage);
+		TiffEncoder encoder = new TiffEncoder(imagePlus.getFileInfo());
+		BufferedOutputStream bufStream = new BufferedOutputStream(aOutStream);
+		DataOutputStream out = new DataOutputStream(bufStream);
+
 		try {
 			encoder.write(out);
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
+		}
+		catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
 			throw new FormatIOException(e.getMessage(), e);
 		}
 	}
-	
-	private void writeUsingImageIO(BufferedImage bi, OutputStream os) throws FormatIOException {
-		if (bi != null) {
-			BufferedOutputStream bos = null;
-			try {
-				bos = new BufferedOutputStream(os);
-				ImageIO.write(bi, "tif", bos);
-			} catch (IOException e) {
-				logger.error(e,e);
-			} finally {
-				if (bos != null) {
-					try {
-						bos.flush();
-						bos.close();
-					} catch (IOException e) {
-						logger.error(e,e);
-						throw new FormatIOException(e.getMessage(), e);
-					}
-				}
-			}
-		}
-	}
-	
-	/* issue with using this serialization for kakadu input */
-	private void writeUsingJAI(BufferedImage bi, OutputStream os) throws FormatIOException {
-		if (bi != null) {
-			BufferedOutputStream bos = null;
-			try {
-				bos = new BufferedOutputStream(os);
-				TIFFEncodeParam param = new TIFFEncodeParam();
-				ImageEncoder enc = ImageCodec.createImageEncoder("TIFF", bos, param);
-				enc.encode(bi);
-			} catch (IOException e) {
-				logger.error(e,e);
-			} finally {
-				if (bos != null) {
-					try {
-						bos.flush();
-						bos.close();
-					} catch (IOException e) {
-						logger.error(e,e);
-						throw new FormatIOException(e.getMessage(), e);
-					}
-				}
-			}
-		} 
-	}
-	
-    private void writeUsingMMCComputingImageIO(BufferedImage bi, OutputStream os) throws FormatIOException {
-        TIFFImageWriterSpi tiffspi = new TIFFImageWriterSpi();
-        ImageOutputStream ios = null;
-        ImageWriter writer;
-        try {
-            writer = tiffspi.createWriterInstance();
-            ios = ImageIO.createImageOutputStream(os);
-            writer.setOutput(ios);
-            writer.write(bi);
-        } catch (IOException e) {
-            logger.error(e,e);
-        } finally {
-            if (ios != null) {
-                try {
-                    ios.flush();
-                    ios.close();
-                } catch (IOException e) {
-                    logger.error(e,e);
-                    throw new FormatIOException(e.getMessage(), e);
-                }
-            }
-        }
 
-    } 
-	
 	/**
-	 * NOT SUPPORTED. 
-	 * TODO: Add support for key TIFF properties
+	 * NOT SUPPORTED. TODO: Add support for key TIFF properties
 	 */
 	public void setWriterProperties(Properties props) {
 	}

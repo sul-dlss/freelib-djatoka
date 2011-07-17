@@ -29,7 +29,8 @@ import gov.lanl.adore.djatoka.io.IReader;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Djatoka Reader Wrapper - Uses known IReader impl. to  
@@ -38,7 +39,9 @@ import org.apache.log4j.Logger;
  *
  */
 public class DjatokaReader implements IReader {
-	static Logger logger = Logger.getLogger(DjatokaReader.class);
+
+	private static Logger LOGGER = LoggerFactory.getLogger(DjatokaReader.class);
+	
 	private ImageJReader imagejReader = new ImageJReader();
 	private ImageIOReader imageioReader = new ImageIOReader();
 	
@@ -50,14 +53,19 @@ public class DjatokaReader implements IReader {
 	 */
 	public BufferedImage open(String input) throws FormatIOException {
 		BufferedImage bi = null;
-		// Try ImageIO
-		logger.debug("Reading the file using ImageJReader");
+
+		// Try ImageIO first
 		bi = imagejReader.open(input);
+		
 		// If null, try ImageJ
 		if (bi == null) {
-			logger.debug("Unable to open using ImageJReader, trying ImageIOReader");
+			LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
 			bi = imageioReader.open(input);
 		}
+		else {
+			LOGGER.debug("Reading the file using ImageJReader");
+		}
+		
 		return bi;
 	}
 
@@ -69,14 +77,19 @@ public class DjatokaReader implements IReader {
 	 */
 	public BufferedImage open(InputStream input) throws FormatIOException {
 		BufferedImage bi = null;
+		
 		// Try ImageIO
-		logger.debug("Reading the file using ImageJReader");
 		bi = imagejReader.open(input);
+		
 		// If null, try ImageJ
 		if (bi == null) {
-			logger.debug("Unable to open using ImageJReader, trying ImageIOReader");
+			LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
 			bi = imageioReader.open(input);
 		}
+		else {
+			LOGGER.debug("Reading the file using ImageJReader");
+		}
+		
 		return bi;
 	}
 }

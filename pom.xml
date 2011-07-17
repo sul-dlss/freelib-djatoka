@@ -91,13 +91,13 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/kdu_jni.jar</systemPath>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>uk.co.mmscomputing</groupId>
 			<artifactId>imageio-tiff</artifactId>
 			<version>0.0.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/uk.co.mmscomputing.imageio.tiff.jar</systemPath>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>imagej</groupId>
 			<artifactId>ij-ImageIO</artifactId>

@@ -175,6 +175,7 @@ public class DjatokaCompress {
 			jp2.compressImage(input, output, p);
 		} catch (DjatokaException e) {
 			LOGGER.error("djatoka Compression exception: " + e.getMessage(), e);
+			// FIXME remove exist
 			System.exit(1);
 		} 
 	}

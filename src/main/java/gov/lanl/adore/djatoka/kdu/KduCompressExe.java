@@ -426,9 +426,10 @@ public class KduCompressExe implements ICompress {
 			}
 		}
 
-		if (!outFile.getAbsolutePath().equals(STDOUT) && !outFile.exists())
+		if (!outFile.getAbsolutePath().equals(STDOUT) && !outFile.exists()) {
 			throw new DjatokaException(
 					"Unknown error occurred during processing.");
+		}
 	}
 
 	/**
@@ -465,7 +466,7 @@ public class KduCompressExe implements ICompress {
 
 		return path;
 	}
-	
+
 	private static String toKduCompressArgs(DjatokaEncodeParam params) {
 		StringBuffer sb = new StringBuffer();
 		if (params.getRate() != null)

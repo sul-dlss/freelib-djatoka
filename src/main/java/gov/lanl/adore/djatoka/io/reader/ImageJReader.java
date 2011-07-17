@@ -38,18 +38,25 @@ import java.io.InputStream;
 
 import net.sf.ij.jaiio.JAIReader;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Use ImageJ API to read image InputStream or image file path.
+ * 
  * @author Ryan Chute
- *
+ * 
  */
 public class ImageJReader implements IReader {
-	static Logger logger = Logger.getLogger(ImageJReader.class);
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(ImageJReader.class);
+
 	/**
 	 * Returns a BufferedImage instance for provided InputStream
-	 * @param input an InputStream consisting of an image bitstream
+	 * 
+	 * @param input
+	 *            an InputStream consisting of an image bitstream
 	 * @return a BufferedImage instance for source image InputStream
 	 * @throws FormatIOException
 	 */
@@ -58,48 +65,69 @@ public class ImageJReader implements IReader {
 		BufferedImage bi = null;
 		// Most of the time we're dealing with TIF so try direct
 		ImagePlus imp = o.openTiff(input, "tif");
+
 		// Otherwise, we'll just stay in ImageJ but just provide a file path
 		if (imp == null) {
-			logger.info("Creating temp image");
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("Creating temp image");
+			}
+
 			File path = IOUtils.createTempImage(input);
 			bi = open(path.getAbsolutePath());
+
 			// Clean-up the temp file if we made one.
-			if (path != null)
+			if (path != null) {
 				path.delete();
-		} else
-		    bi = open(imp);
-		
+			}
+		}
+		else {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Opening TIFF file");
+			}
+			
+			bi = open(imp);
+		}
+
 		return bi;
 	}
-	
+
 	/**
 	 * Returns a BufferedImage instance for provided image file path
-	 * @param input absolute file path for image file
+	 * 
+	 * @param input
+	 *            absolute file path for image file
 	 * @return a BufferedImage instance for source image file
 	 * @throws FormatIOException
 	 */
 	public BufferedImage open(String input) throws FormatIOException {
 		ImagePlus ip;
+
 		try {
 			ip = JAIReader.read(new File(input))[0];
-		} catch (Exception e) {
-			logger.error(e,e);
+		}
+		catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 			throw new FormatIOException(e.getMessage(), e);
 		}
+
 		return open(ip);
 	}
-	
+
 	/**
-	 * Internal ImagePlus processing to populate BufferedIMage using Graphics objects
-	 * @param imp an ImageJ ImagePlus object
+	 * Internal ImagePlus processing to populate BufferedIMage using Graphics
+	 * objects
+	 * 
+	 * @param imp
+	 *            an ImageJ ImagePlus object
 	 * @return a BufferedImage of type BufferedImage.TYPE_3BYTE_BGR
 	 * @throws FormatIOException
 	 */
 	private BufferedImage open(ImagePlus imp) throws FormatIOException {
 		if (imp == null) {
-			logger.error("Null ImagePlus Object.");
+			LOGGER.error("Null ImagePlus Object.");
 			throw new FormatIOException("Null ImagePlus Object.");
 		}
+
 		ImageProcessor ip = imp.getProcessor();
 		int width = ip.getWidth();
 		int height = ip.getHeight();
@@ -107,8 +135,9 @@ public class ImageJReader implements IReader {
 		imp.flush();
 		imp = null;
 		ip = null;
-		
-		BufferedImage bImg = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+
+		BufferedImage bImg = new BufferedImage(width, height,
+				BufferedImage.TYPE_3BYTE_BGR);
 		Graphics g = bImg.getGraphics();
 		g.drawImage(img, 0, 0, null);
 		img.flush();
