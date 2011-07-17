@@ -31,8 +31,6 @@ import gov.lanl.adore.djatoka.util.ImageProcessingUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
 import gov.lanl.adore.djatoka.util.ImageRecordUtils;
 
-import info.freelibrary.util.StringUtils;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,10 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.PosixParser;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
