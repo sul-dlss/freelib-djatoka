@@ -13,16 +13,23 @@
         <servlet-name>resolver</servlet-name>
         <servlet-class>gov.lanl.adore.djatoka.openurl.OpenURLServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ingest</servlet-name>
+        <servlet-class>info.freelibrary.djatoka.ingest.IngestServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>resolver</servlet-name> 
         <url-pattern>/resolver</url-pattern> 
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ingest</servlet-name> 
+        <url-pattern>/ingest</url-pattern> 
     </servlet-mapping>
     <session-config>
       <session-timeout>30</session-timeout>    <!-- 30 minutes -->
     </session-config>
 	<welcome-file-list id="WelcomeFileList">
 		<welcome-file>index.html</welcome-file>
-		<welcome-file>index.jsp</welcome-file>
-		<welcome-file>index.jws</welcome-file>
+		<welcome-file>index.xml</welcome-file>
 	</welcome-file-list>  
 </web-app> 
