@@ -53,8 +53,9 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.oclc.oomRef.descriptors.ByValueMetadataImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The OpenURLJP2KService OpenURL Service
@@ -62,7 +63,7 @@ import org.oclc.oomRef.descriptors.ByValueMetadataImpl;
  * @author Ryan Chute
  */
 public class OpenURLJP2KService implements Service, FormatConstants {
-    static Logger logger = Logger.getLogger(OpenURLJP2KService.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(OpenURLJP2KService.class);
     private static final String DEFAULT_IMPL_CLASS = SimpleListResolver.class.getCanonicalName();
     private static final String PROPS_REQUESTER = "requester";
     private static final String PROPS_REFERRING_ENTITY = "referringEntity";
@@ -122,10 +123,10 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                 init = true;
         	}
         } catch (IOException e) {
-        	logger.error(e,e);
+        	LOGGER.error(e.getMessage(), e);
             throw new ResolverException("Error attempting to open props file from classpath, disabling " + SVC_ID + " : " + e.getMessage());
         } catch (Exception e) {
-        	logger.error(e,e);
+        	LOGGER.error(e.getMessage(), e);
         	throw new ResolverException("Unable to inititalize implementation: " + props.getProperty(implClass) + " - " + e.getMessage());
 		}
 	}
@@ -256,31 +257,40 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 							if (tileCache.get(hash + ext) == null) {
 								tileCache.put(hash + ext, file);
 								bytes = IOUtils.getBytesFromFile(f);
-								logger.debug("makingTile: " + file + " " + bytes.length + " params: " + params);
+								
+								if (LOGGER.isDebugEnabled()) {
+									LOGGER.debug("makingTile: " + file + " " + bytes.length + " params: " + params);
+								}
 							} else {
 								// Handles simultaneous request on separate thread, ignores cache.
 								bytes = IOUtils.getBytesFromFile(f);
 								f.delete();
-								logger.debug("tempTile: " + file + " " + bytes.length + " params: " + params);
+								
+								if (LOGGER.isDebugEnabled()) {
+									LOGGER.debug("tempTile: " + file + " " + bytes.length + " params: " + params);
+								}
 							}
 						} else {
 							bytes = IOUtils.getBytesFromFile(new File(file));
-							logger.debug("tileCache: " + file + " " + bytes.length);
+							
+							if (LOGGER.isDebugEnabled()) {
+								LOGGER.debug("tileCache: " + file + " " + bytes.length);
+							}
 						}
 					}
 				}
 			} catch (ResolverException e) {
-				logger.error(e,e);
+				LOGGER.error(e.getMessage(), e);
 			    bytes = e.getMessage().getBytes();
 				responseFormat = "text/plain";
 				status = HttpServletResponse.SC_NOT_FOUND;
 			} catch (DjatokaException e) {
-				logger.error(e,e);
+				LOGGER.error(e.getMessage(), e);
 			    bytes = e.getMessage().getBytes();
 				responseFormat = "text/plain";
 				status = HttpServletResponse.SC_NOT_FOUND;
 			} catch (Exception e) {
-				logger.error(e,e);
+				LOGGER.error(e.getMessage(), e);
 			    bytes = e.getMessage().getBytes();
 				responseFormat = "text/plain";
 				status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;

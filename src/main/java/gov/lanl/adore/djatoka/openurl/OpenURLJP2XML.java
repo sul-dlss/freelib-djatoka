@@ -47,7 +47,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The OpenURLJP2KMetadata OpenURL Service
@@ -55,7 +56,7 @@ import org.apache.log4j.Logger;
  * @author Ryan Chute
  */
 public class OpenURLJP2XML implements Service, FormatConstants {
-	static Logger logger = Logger.getLogger(OpenURLJP2XML.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(OpenURLJP2XML.class);
     private static final String DEFAULT_IMPL_CLASS = SimpleListResolver.class.getCanonicalName();
     private static final String PROPS_KEY_IMPL_CLASS = "OpenURLJP2KService.referentResolverImpl";
 	private static final String SVC_ID = "info:lanl-repo/svc/getJP2XML";
@@ -124,7 +125,7 @@ public class OpenURLJP2XML implements Service, FormatConstants {
 			sb.append("</jp2:JP2XML>");
 			baos.write(sb.toString().getBytes());
 		} catch (Exception e) {
-			logger.error(e,e);
+			LOGGER.error(e.getMessage(), e);
 			responseFormat = "text/plain";
 			status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 		} 

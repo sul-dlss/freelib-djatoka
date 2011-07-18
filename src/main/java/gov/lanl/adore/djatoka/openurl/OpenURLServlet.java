@@ -33,7 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * OpenURL Servlet - Added referrer and requester to Context Object
@@ -42,7 +43,7 @@ import org.apache.log4j.Logger;
  * @author Ryan Chute
  */
 public class OpenURLServlet extends HttpServlet {
-	static Logger logger = Logger.getLogger(OpenURLServlet.class);
+	private static Logger logger = LoggerFactory.getLogger(OpenURLServlet.class);
     /**
      * Initial version
      */

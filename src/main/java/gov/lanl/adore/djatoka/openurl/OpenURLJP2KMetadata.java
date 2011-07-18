@@ -49,7 +49,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The OpenURLJP2KMetadata OpenURL Service
@@ -57,7 +58,7 @@ import org.apache.log4j.Logger;
  * @author Ryan Chute
  */
 public class OpenURLJP2KMetadata implements Service, FormatConstants {
-	static Logger logger = Logger.getLogger(OpenURLJP2KMetadata.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(OpenURLJP2KMetadata.class);
     private static final String DEFAULT_IMPL_CLASS = SimpleListResolver.class.getCanonicalName();
     private static final String PROPS_KEY_IMPL_CLASS = "OpenURLJP2KService.referentResolverImpl";
 	private static final String SVC_ID = "info:lanl-repo/svc/getMetadata";
@@ -134,7 +135,7 @@ public class OpenURLJP2KMetadata implements Service, FormatConstants {
 				if (e.getMessage() != null)
 				    baos.write(e.getMessage().getBytes("UTF-8"));
 				else {
-					logger.error(e,e);
+					LOGGER.error(e.getMessage(), e);
 					baos.write("Internal Server Error: ".getBytes());
 				}
 			} catch (UnsupportedEncodingException e1) {

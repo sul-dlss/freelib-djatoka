@@ -26,7 +26,8 @@ package gov.lanl.adore.djatoka.openurl;
 import java.io.File;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements an Least Recently Used (LRU) cache Manager.
@@ -35,7 +36,8 @@ import org.apache.log4j.Logger;
  *            the maximum cache size that will be kept in the cache.
  */
 public class TileCacheManager<K, V> {
-	static Logger logger = Logger.getLogger(TileCacheManager.class);
+
+	private static Logger LOGGER = LoggerFactory.getLogger(TileCacheManager.class);
 
 	private LinkedHashMap<K, V> cacheMap; // For fast search/remove
 
@@ -52,15 +54,25 @@ public class TileCacheManager<K, V> {
 			private static final long serialVersionUID = 1;
 
 			protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-				logger.debug("cacheSize: " + size());
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("cacheSize: " + size());
+				}
+				
 				boolean d = size() > TileCacheManager.this.max_cache;
 				if (d) {
 					File f = new File((String) eldest.getValue());
-					logger.debug("deletingTile: " + eldest.getValue());
-					if (f.exists())
+					
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("deletingTile: " + eldest.getValue());
+					}
+
+					if (f.exists()) {
 						f.delete();
+					}
+
 					remove(eldest.getKey());
 				}
+
 				return false;
 			};
 		};

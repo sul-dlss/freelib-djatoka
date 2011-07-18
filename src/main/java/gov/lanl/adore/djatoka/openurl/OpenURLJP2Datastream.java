@@ -46,7 +46,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The OpenURLJP2Datastream OpenURL Service
@@ -54,7 +55,8 @@ import org.apache.log4j.Logger;
  * @author Ryan Chute
  */
 public class OpenURLJP2Datastream implements Service, FormatConstants {
-	static Logger logger = Logger.getLogger(OpenURLJP2Datastream.class);
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(OpenURLJP2Datastream.class);
     private static final String DEFAULT_IMPL_CLASS = SimpleListResolver.class.getCanonicalName();
     private static final String PROPS_KEY_IMPL_CLASS = "OpenURLJP2KService.referentResolverImpl";
 	private static final String SVC_ID = "info:lanl-repo/svc/getDatastream";
@@ -116,7 +118,7 @@ public class OpenURLJP2Datastream implements Service, FormatConstants {
 			if (b == null)
 				throw new Exception("Unable to resolve resource");
 		} catch (Exception e) {
-			logger.error(e,e);
+			LOGGER.error(e.getMessage(), e);
 			responseFormat = "text/plain";
 			status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 		} 

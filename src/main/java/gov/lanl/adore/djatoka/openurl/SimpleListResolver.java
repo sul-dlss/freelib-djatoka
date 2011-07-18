@@ -36,7 +36,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import gov.lanl.adore.djatoka.util.ImageRecord;
 import info.openurl.oom.entities.Referent;
@@ -53,7 +54,7 @@ import info.openurl.oom.entities.Referent;
  *
  */
 public class SimpleListResolver implements IReferentResolver {
-	static Logger logger = Logger.getLogger(SimpleListResolver.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(SimpleListResolver.class);
 	private static final String PROP_IMGS_INDEX = "SimpleListResolver.imgIndexFile";
 	private static final String PROP_REMOTE_CACHE = "SimpleListResolver.maxRemoteCacheSize";
 	private static final int DEFAULT_REMOTE_CACHE_SIZE = 100;
@@ -107,7 +108,7 @@ public class SimpleListResolver implements IReferentResolver {
 				else
 					throw new ResolverException("An error occurred processing file:" + uri.toURL().toString());
 			} catch (Exception e) {
-				logger.error(e,e);
+				LOGGER.error(e.getMessage(), e);
 				throw new ResolverException(e.getMessage(), e);
 			}
 		} else if (isResolvableURI(rftId) && !new File(ir.getImageFile()).exists()) {
@@ -170,21 +171,31 @@ public class SimpleListResolver implements IReferentResolver {
 				private static final long serialVersionUID = 1;
 
 				protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-					logger.debug("remoteCacheSize: " + size());
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("remoteCacheSize: " + size());
+					}
+					
 					boolean d = size() > maxRemoteCacheSize;
 					if (d) {
 						File f = new File((String) eldest.getValue());
-						logger.debug("deleting: " + eldest.getValue());
-						if (f.exists())
+						
+						if (LOGGER.isDebugEnabled()) {
+							LOGGER.debug("deleting: " + eldest.getValue());
+						}
+					
+						if (f.exists()) {
 							f.delete();
+						}
+						
 						remove(eldest.getKey());
 						imgs.remove(eldest.getKey());
 					}
+					
 					return false;
 				};
 			};
 		} catch (Exception e) {
-			logger.error(e,e);
+			LOGGER.error(e.getMessage(), e);
 			throw new ResolverException(e.getMessage(), e);
 		}
 	}
