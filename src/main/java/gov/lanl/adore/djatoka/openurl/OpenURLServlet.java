@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author Ryan Chute
  */
 public class OpenURLServlet extends HttpServlet {
-	private static Logger logger = LoggerFactory.getLogger(OpenURLServlet.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(OpenURLServlet.class);
     /**
      * Initial version
      */
@@ -108,7 +108,7 @@ public class OpenURLServlet extends HttpServlet {
             			}
             		}
             	} catch (Exception e) {
-            		logger.error(e.getMessage(), e);
+            		LOGGER.error(e.getMessage(), e);
             	}
              
             }
@@ -184,9 +184,9 @@ public class OpenURLServlet extends HttpServlet {
                 break;
             }
         } catch (SocketException e) {
-        	logger.error(e.getMessage(), e);
+        	LOGGER.error(e.getMessage(), e);
         } catch (Throwable e) {
-        	logger.debug(e.getMessage(), e);
+        	LOGGER.debug(e.getMessage(), e);
         	//throw new ServletException(e.getMessage(), e);
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

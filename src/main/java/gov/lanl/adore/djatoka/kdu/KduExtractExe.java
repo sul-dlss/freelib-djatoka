@@ -354,22 +354,32 @@ public class KduExtractExe implements IExtract {
 	public final String getKduExtractCommand(String input, String output,
 			ArrayList<Double> dims, DjatokaDecodeParam params) {
 		StringBuffer command = new StringBuffer(exe);
-		if (input.equals(STDIN))
+
+		if (input.equals(STDIN)) {
 			command.append(" -no_seek");
-		command.append(" -quiet -i ").append(
-				escape(new File(input).getAbsolutePath()));
-		command.append(" -o ").append(
-				escape(new File(output).getAbsolutePath()));
+		}
+
+		command.append(" -quiet -i ");
+		command.append(escape(new File(input).getAbsolutePath()));
+		command.append(" -o ");
+		command.append(escape(new File(output).getAbsolutePath()));
 		command.append(" ").append(toKduExtractArgs(params));
+
 		if (dims != null && dims.size() == 4) {
 			StringBuffer region = new StringBuffer();
-			region.append("{").append(dims.get(0)).append(",").append(
-					dims.get(1)).append("}").append(",");
-			region.append("{").append(dims.get(2)).append(",").append(
-					dims.get(3)).append("}");
+
+			region.append("{").append(dims.get(0)).append(",");
+			region.append(dims.get(1)).append("}").append(",");
+			region.append("{").append(dims.get(2)).append(",");
+			region.append(dims.get(3)).append("}");
+
 			command.append("-region ").append(region.toString()).append(" ");
 		}
-		LOGGER.debug(command.toString());
+
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(command.toString());
+		}
+
 		return command.toString();
 	}
 
@@ -381,18 +391,26 @@ public class KduExtractExe implements IExtract {
 	 * @throws DjatokaException
 	 */
 	public final ImageRecord getMetadata(ImageRecord r) throws DjatokaException {
-		if (r == null)
+		if (r == null) {
 			throw new DjatokaException("ImageRecord is null");
+		}
+
 		if (r.getImageFile() == null && r.getObject() != null) {
 			ImageRecord ir = getMetadata(getStreamFromObject(r.getObject()));
 			ir.setObject(r.getObject());
 			return ir;
 		}
+
 		File f = new File(r.getImageFile());
-		if (!f.exists())
+
+		if (!f.exists()) {
 			throw new DjatokaException("Image Does Not Exist");
-		if (!ImageProcessingUtils.checkIfJp2(r.getImageFile()))
+		}
+
+		if (!ImageProcessingUtils.checkIfJp2(r.getImageFile())) {
 			throw new DjatokaException("Not a JP2 image.");
+		}
+
 		if (f.length() <= 4096) {
 			// If < 4K bytes, image may be corrupt, use safer pure Java Metadata
 			// gatherer.
@@ -408,6 +426,7 @@ public class KduExtractExe implements IExtract {
 		Jp2_family_src jp2_family_in = new Jp2_family_src();
 
 		int ref_component = 0;
+
 		try {
 			jp2_family_in.Open(r.getImageFile(), true);
 			inputSource.Open(jp2_family_in, true);
@@ -429,8 +448,7 @@ public class KduExtractExe implements IExtract {
 			r.setDWTLevels(minLevels);
 			int djatokaLevels = ImageProcessingUtils.getLevelCount(
 					r.getWidth(), r.getHeight());
-			r
-					.setLevels((djatokaLevels > minLevels) ? minLevels
+			r.setLevels((djatokaLevels > minLevels) ? minLevels
 							: djatokaLevels);
 			r.setBitDepth(depth);
 			r.setNumChannels(colors);
@@ -613,15 +631,22 @@ public class KduExtractExe implements IExtract {
 
 	private static String toKduExtractArgs(DjatokaDecodeParam params) {
 		StringBuffer sb = new StringBuffer();
-		if (params.getLevelReductionFactor() > 0)
+
+		if (params.getLevelReductionFactor() > 0) {
 			sb.append("-reduce ").append(params.getLevelReductionFactor())
 					.append(" ");
-		if (params.getRotationDegree() > 0)
+		}
+		
+		if (params.getRotationDegree() > 0) {
 			sb.append("-rotate ").append(params.getRotationDegree())
 					.append(" ");
-		if (params.getCompositingLayer() > 0)
+		}
+		
+		if (params.getCompositingLayer() > 0) {
 			sb.append("-jpx_layer ").append(params.getCompositingLayer())
 					.append(" ");
+		}
+
 		return sb.toString();
 	}
 
