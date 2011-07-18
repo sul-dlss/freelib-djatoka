@@ -38,6 +38,27 @@
 			<systemPath>${project.basedir}/lib/mlibwrapper_jai.jar</systemPath>
 		</dependency>
 		<!-- above to be removed? -->
+<!--		<dependency>
+			<groupId>org.oclc.openurl</groupId>
+			<artifactId>oom</artifactId>
+			<version>0.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/oom.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.oclc.openurl</groupId>
+			<artifactId>oomRef</artifactId>
+			<version>0.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/oomRef.jar</systemPath>
+		</dependency>-->
+		<!-- below for openurl -->
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.5.D1</version>
+		</dependency>
+		<!-- above for openurl -->
 		<dependency>
 			<groupId>info.freelibrary</groupId>
 			<artifactId>freelib-utils</artifactId>
@@ -74,11 +95,11 @@
 			<version>4.5</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+<!--		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
 			<version>2.7.0</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -143,7 +164,7 @@
 					</connectors>
 					<stopKey>cough</stopKey>
 					<stopPort>8999</stopPort>
-					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<scanIntervalSeconds>5</scanIntervalSeconds>
 					<requestLog implementation="org.mortbay.jetty.NCSARequestLog">
 						<filename>target/yyyy_mm_dd.request.log</filename>
 						<retainDays>30</retainDays>
@@ -201,7 +222,28 @@
 						<scope>system</scope>
 						<systemPath>${project.basedir}/lib/ij.jar</systemPath>
 					</dependency>
-					<!-- to be removed? -->
+					<!-- below related to openurl -->
+<!--					<dependency>
+						<groupId>org.oclc.openurl</groupId>
+						<artifactId>oom</artifactId>
+						<version>0.0.0</version>
+						<scope>system</scope>
+						<systemPath>${project.basedir}/lib/oom.jar</systemPath>
+					</dependency>
+					<dependency>
+						<groupId>org.oclc.openurl</groupId>
+						<artifactId>oomRef</artifactId>
+						<version>0.0.0</version>
+						<scope>system</scope>
+						<systemPath>${project.basedir}/lib/oomRef.jar</systemPath>
+					</dependency>
+					<dependency>
+						<groupId>xalan</groupId>
+						<artifactId>xalan</artifactId>
+						<version>2.5.D1</version>
+					</dependency>-->
+					<!-- above related to openurl -->
+					<!-- below to be removed? -->
 					<dependency>
 						<groupId>javax.media</groupId>
 						<artifactId>jai_core</artifactId>
@@ -339,3 +381,11 @@
 		</profile>
 	</profiles>
 </project>
+
+<!--
+	From: mvn dependency:analyze
+	[WARNING] Used undeclared dependencies found:
+	[WARNING]    org.slf4j:slf4j-api:jar:1.6.0:compile
+	[WARNING] Unused declared dependencies found:
+	[WARNING]    jai:mlibwrapper_jai:jar:0.0.0:system
+-->
