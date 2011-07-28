@@ -35,7 +35,9 @@ import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DBCP / JDBC Utilities Wrapper
@@ -43,7 +45,8 @@ import org.apache.log4j.Logger;
  *
  */
 public class DBCPUtils {
-	static Logger log = Logger.getLogger(DBCPUtils.class.getName());
+
+	private static Logger LOGGER = LoggerFactory.getLogger(DBCPUtils.class.getName());
 	
 	/**
 	 * Set-up a DBCP DataSource from a properties object. Uses a properties 
@@ -70,7 +73,7 @@ public class DBCPUtils {
 		int maxIdle = 10;
 		if (props.containsKey(dbid + ".maxIdle"))
 		    maxIdle = Integer.parseInt(props.getProperty(dbid + ".maxIdle"));
-		log.debug(url + ";" + driver + ";" + login + ";" + pwd + ";" + maxActive + ";" + maxIdle);
+		LOGGER.debug(url + ";" + driver + ";" + login + ";" + pwd + ";" + maxActive + ";" + maxIdle);
 		return setupDataSource(url, driver, login, pwd, maxActive, maxIdle);
 	}
 
@@ -88,7 +91,7 @@ public class DBCPUtils {
 		try {
 			java.lang.Class.forName(jdbcDriverName).newInstance();
 		} catch (Exception e) {
-			log.error("Error when attempting to obtain DB Driver: "
+			LOGGER.error("Error when attempting to obtain DB Driver: "
 					+ jdbcDriverName + " on " + new Date().toString(), e);
 			throw new ResolverException(e.getMessage(), e);
 		}
