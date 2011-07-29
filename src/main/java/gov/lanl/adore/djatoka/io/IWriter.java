@@ -24,6 +24,7 @@
 package gov.lanl.adore.djatoka.io;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.OutputStream;
 import java.util.Properties;
 

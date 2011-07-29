@@ -34,34 +34,43 @@ import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * PNG File Writer. Uses JAI Image I/O to write BufferedImage as PNG
+ * PNG File Writer. Uses Image I/O to write BufferedImage as PNG
+ * 
  * @author Ryan Chute
- *
+ * @author Kevin S. Clarke &lt;<a
+ *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>&gt;
+ * 
  */
 public class PNGWriter implements IWriter {
-	static Logger logger = Logger.getLogger(PNGWriter.class);
+
+	private static Logger LOGGER = LoggerFactory.getLogger(PNGWriter.class);
+
 	/**
-	 * Write a BufferedImage instance using implementation to the 
-	 * provided OutputStream.
+	 * Write a BufferedImage instance using implementation to the provided
+	 * OutputStream.
+	 * 
 	 * @param bi a BufferedImage instance to be serialized
 	 * @param os OutputStream to output the image to
 	 * @throws FormatIOException
 	 */
-	public void write(BufferedImage bi, OutputStream os) throws FormatIOException {
+	public void write(BufferedImage bi, OutputStream os)
+			throws FormatIOException {
 		if (bi != null) {
 			BufferedOutputStream bos = null;
 			try {
 				bos = new BufferedOutputStream(os);
 				ImageIO.write(bi, "png", bos);
-			} catch (IOException e) {
-				logger.error(e,e);
+			}
+			catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 	}
-	
+
 	/**
 	 * NOT SUPPORTED.
 	 */
