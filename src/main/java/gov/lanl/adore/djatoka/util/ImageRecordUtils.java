@@ -27,19 +27,13 @@ import ij.ImagePlus;
 import ij.io.Opener;
 import ij.process.ImageProcessor;
 
-import javax.media.jai.JAI;
-import javax.media.jai.PlanarImage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Image Information Utility used to obtain width and height information.
  * This util is useful when processing images using external compression
- * applications, such as Kakadu JPEG 2000 kdu_compress.  The image to be
- * compressed is opened by either ImageJ or JAI and determines dimensions.
- * JAI is better with TIFF files and and file extensions are used to
- * determine which API will be used to resolve dimensions.
+ * applications, such as Kakadu JPEG 2000 kdu_compress.
  * 
  * @author Ryan Chute
  * @author Kevin S. Clarke <a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
@@ -54,22 +48,11 @@ public class ImageRecordUtils {
 	 * @param file absolute file path to image
 	 * @return ImageRecord containing the images pixel dimensions
 	 */
-	public static ImageRecord getImageDimensions(String file) {
-		ImageRecord dim = null;
-		
+	public static ImageRecord getImageDimensions(String file) {		
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Getting image dimensions from: {}", file);
 		}
 		
-		// try JAI
-		dim = setUsingJAI(file);
-		// if that fails, try ImageJ
-		if (dim == null)
-			dim = setUsingImageJ(file);
-		return dim;
-	}
-	
-	private static ImageRecord setUsingImageJ(String file) {
 		ImageRecord dim = new ImageRecord(file);
 		Opener o = new Opener();
 		ImagePlus imp = o.openImage(file);
@@ -86,23 +69,6 @@ public class ImageRecordUtils {
 		dim.setWidth(width);
 		dim.setHeight(height);
 		ip = null;
-		return dim;
-	}
-	
-	private static ImageRecord setUsingJAI(String file) {
-		ImageRecord dim = new ImageRecord(file);
-		PlanarImage pi = JAI.create("fileload", file);
-		int width = pi.getWidth();
-		int height = pi.getHeight();
-		
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(file + " (width: {} | height: {})", width, height);
-		}
-		
-		dim.setWidth(width);
-		dim.setHeight(height);
-		pi.dispose();
-		pi = null;
 		return dim;
 	}
 }

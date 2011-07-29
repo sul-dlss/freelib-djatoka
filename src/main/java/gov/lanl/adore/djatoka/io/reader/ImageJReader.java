@@ -26,6 +26,7 @@ package gov.lanl.adore.djatoka.io.reader;
 import gov.lanl.adore.djatoka.io.FormatIOException;
 import gov.lanl.adore.djatoka.io.IReader;
 import gov.lanl.adore.djatoka.util.IOUtils;
+
 import ij.ImagePlus;
 import ij.io.Opener;
 import ij.process.ImageProcessor;
@@ -33,6 +34,7 @@ import ij.process.ImageProcessor;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.InputStream;
 

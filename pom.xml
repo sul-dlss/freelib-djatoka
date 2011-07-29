@@ -8,6 +8,7 @@
 	<name>FreeLibrary Djatoka</name>
 	<packaging>war</packaging>
 	<description>A repackaging of aDORe-Djatoka to work with Maven/Jetty</description>
+	<inceptionYear>20110701</inceptionYear>
 	<dependencies>
 		<!-- to be removed? -->
 		<dependency>
@@ -38,20 +39,6 @@
 			<systemPath>${project.basedir}/lib/mlibwrapper_jai.jar</systemPath>
 		</dependency>
 		<!-- above to be removed? -->
-<!--		<dependency>
-			<groupId>org.oclc.openurl</groupId>
-			<artifactId>oom</artifactId>
-			<version>0.0.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/oom.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>org.oclc.openurl</groupId>
-			<artifactId>oomRef</artifactId>
-			<version>0.0.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/oomRef.jar</systemPath>
-		</dependency>-->
 		<!-- below for openurl -->
 		<dependency>
 			<groupId>xalan</groupId>
@@ -95,11 +82,6 @@
 			<version>4.5</version>
 			<scope>test</scope>
 		</dependency>
-<!--		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<version>2.7.0</version>
-		</dependency>-->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -112,13 +94,6 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/kdu_jni.jar</systemPath>
 		</dependency>
-		<!--<dependency>
-			<groupId>uk.co.mmscomputing</groupId>
-			<artifactId>imageio-tiff</artifactId>
-			<version>0.0.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/uk.co.mmscomputing.imageio.tiff.jar</systemPath>
-		</dependency>-->
 		<dependency>
 			<groupId>imagej</groupId>
 			<artifactId>ij-ImageIO</artifactId>
@@ -177,11 +152,6 @@
 							<name>org.mortbay.jetty.Request.maxFormContentSize</name>
 							<value>2000000</value>
 						</systemProperty>
-						<!--
-							<systemProperty> <name>org.mortbay.log.class</name>
-							<value>info.freelibrary.util.JettyLogger</value>
-							</systemProperty>
-						-->
 						<systemProperty>
 							<name>logback.configurationFile</name>
 							<value>src/main/resources/logback.xml</value>
@@ -222,27 +192,6 @@
 						<scope>system</scope>
 						<systemPath>${project.basedir}/lib/ij.jar</systemPath>
 					</dependency>
-					<!-- below related to openurl -->
-<!--					<dependency>
-						<groupId>org.oclc.openurl</groupId>
-						<artifactId>oom</artifactId>
-						<version>0.0.0</version>
-						<scope>system</scope>
-						<systemPath>${project.basedir}/lib/oom.jar</systemPath>
-					</dependency>
-					<dependency>
-						<groupId>org.oclc.openurl</groupId>
-						<artifactId>oomRef</artifactId>
-						<version>0.0.0</version>
-						<scope>system</scope>
-						<systemPath>${project.basedir}/lib/oomRef.jar</systemPath>
-					</dependency>
-					<dependency>
-						<groupId>xalan</groupId>
-						<artifactId>xalan</artifactId>
-						<version>2.5.D1</version>
-					</dependency>-->
-					<!-- above related to openurl -->
 					<!-- below to be removed? -->
 					<dependency>
 						<groupId>javax.media</groupId>
@@ -282,7 +231,8 @@
 		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
 		<djatoka.ingest.data>/usr/local/data/images/tiffs</djatoka.ingest.data>
 		<djatoka.jp2.data>/usr/local/data/images/jp2s</djatoka.jp2.data>
-		<referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver>
+		<!-- <referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver> -->
+		<referent.resolver>info.freelibrary.djatoka.view.IdentifierResolver</referent.resolver>
 		<cache.enabled>true</cache.enabled>
 	</properties>
 	<profiles>
