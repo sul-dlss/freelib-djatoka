@@ -76,10 +76,8 @@ public class JPGWriter implements IWriter {
 
 			iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 			iwp.setCompressionQuality((float) (q / 100.0));
-
-			LOGGER.debug(aOutStream.getClass().getName());
 			
-			jpgWriter.setOutput(aOutStream);
+			jpgWriter.setOutput(ImageIO.createImageOutputStream(aOutStream));
 			jpgWriter.write(null, new IIOImage(aImage, null, null), iwp);
 			jpgWriter.dispose();
 		}
