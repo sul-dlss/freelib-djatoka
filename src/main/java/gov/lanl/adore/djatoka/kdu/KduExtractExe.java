@@ -50,6 +50,8 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.martiansoftware.jsap.CommandLineTokenizer;
+
 import kdu_jni.Jp2_family_src;
 import kdu_jni.Jpx_source;
 import kdu_jni.KduException;
@@ -183,10 +185,10 @@ public class KduExtractExe implements IExtract {
 		String output = STDOUT;
 		BufferedImage bi = null;
 		try {
-			final String command = getKduExtractCommand(input, output, dims,
-					params);
-			final Process process = Runtime.getRuntime().exec(command,
-					envParams, new File(env));
+			String command = getKduExtractCommand(input, output, dims, params);
+			String[] cmdParts = CommandLineTokenizer.tokenize(command);
+			Process process = Runtime.getRuntime().exec(cmdParts, envParams,
+					new File(env));
 			ByteArrayOutputStream stdout = new ByteArrayOutputStream();
 			ByteArrayOutputStream stderr = new ByteArrayOutputStream();
 			ExecuteStreamHandler streamHandler = new PumpStreamHandler(stdout,
@@ -262,7 +264,8 @@ public class KduExtractExe implements IExtract {
 		try {
 			ArrayList<Double> dims = getRegionMetadata(input, params);
 			String command = getKduExtractCommand(input, output, dims, params);
-			final Process process = rt.exec(command, envParams, new File(env));
+			String[] cmdParts = CommandLineTokenizer.tokenize(command);
+			final Process process = rt.exec(cmdParts, envParams, new File(env));
 
 			if (output != null) {
 				try {
@@ -286,12 +289,15 @@ public class KduExtractExe implements IExtract {
 							winOut.delete();
 					}
 				}
-				catch (RuntimeException e) {
-					LOGGER.debug("Request out of bounds");
+				catch (RuntimeException details) {
+					LOGGER.debug("Request out of bounds: {}", details
+							.getMessage());
+
 					bi = OOB;
 				}
 				catch (Exception e) {
 					String error = null;
+
 					try {
 						error = new String(IOUtils.getByteArray(process
 								.getErrorStream()));
@@ -299,11 +305,15 @@ public class KduExtractExe implements IExtract {
 					catch (Exception e1) {
 						e1.printStackTrace();
 					}
+
 					LOGGER.error(error, e);
-					if (error != null)
+
+					if (error != null) {
 						throw new DjatokaException(error);
-					else
+					}
+					else {
 						throw new DjatokaException(e.getMessage(), e);
+					}
 				}
 				finally {
 					if (process != null) {
@@ -448,7 +458,8 @@ public class KduExtractExe implements IExtract {
 			r.setDWTLevels(minLevels);
 			int djatokaLevels = ImageProcessingUtils.getLevelCount(
 					r.getWidth(), r.getHeight());
-			r.setLevels((djatokaLevels > minLevels) ? minLevels
+			r
+					.setLevels((djatokaLevels > minLevels) ? minLevels
 							: djatokaLevels);
 			r.setBitDepth(depth);
 			r.setNumChannels(colors);
@@ -636,12 +647,12 @@ public class KduExtractExe implements IExtract {
 			sb.append("-reduce ").append(params.getLevelReductionFactor())
 					.append(" ");
 		}
-		
+
 		if (params.getRotationDegree() > 0) {
 			sb.append("-rotate ").append(params.getRotationDegree())
 					.append(" ");
 		}
-		
+
 		if (params.getCompositingLayer() > 0) {
 			sb.append("-jpx_layer ").append(params.getCompositingLayer())
 					.append(" ");

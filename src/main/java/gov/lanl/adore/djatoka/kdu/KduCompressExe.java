@@ -281,10 +281,10 @@ public class KduCompressExe implements ICompress {
 
 		String command = getKduCompressCommand(inputFile.getAbsolutePath(),
 				out, params);
-		LOGGER.debug("compressCommand: " + command);
+		String[] cmdParts = CommandLineTokenizer.tokenize(command);
 		Runtime rt = Runtime.getRuntime();
 		try {
-			final Process process = rt.exec(command, envParams, new File(env));
+			final Process process = rt.exec(cmdParts, envParams, new File(env));
 			if (out.equals(STDOUT)) {
 				IOUtils.copyStream(process.getInputStream(), output);
 			}
