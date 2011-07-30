@@ -89,6 +89,20 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<groupId>info.freelibrary</groupId>
+				<artifactId>llp2jlp-maven-plugin</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>native-copy</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.1</version>
 				<configuration>
@@ -99,11 +113,11 @@
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>7.0.0pre2</version>
+				<version>7.4.4.v20110707</version>
 				<configuration>
-					<contextPath>/</contextPath>
+					<!--<contextPath>/</contextPath>-->
 					<connectors>
-						<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
 							<port>8888</port>
 							<maxIdleTime>60000</maxIdleTime>
 						</connector>
@@ -111,7 +125,7 @@
 					<stopKey>cough</stopKey>
 					<stopPort>8999</stopPort>
 					<scanIntervalSeconds>5</scanIntervalSeconds>
-					<requestLog implementation="org.mortbay.jetty.NCSARequestLog">
+					<requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
 						<filename>target/yyyy_mm_dd.request.log</filename>
 						<retainDays>30</retainDays>
 						<append>true</append>
@@ -133,11 +147,11 @@
 						</systemProperty>
 						<systemProperty>
 							<name>LD_LIBRARY_PATH</name>
-							<value>${java.library.path}</value>
+							<value>${LD_LIBRARY_PATH}</value>
 						</systemProperty>
 						<systemProperty>
 							<name>kakadu.home</name>
-							<value>${java.library.path}</value>
+							<value>${LD_LIBRARY_PATH}</value>
 						</systemProperty>
 					</systemProperties>
 				</configuration>
@@ -188,7 +202,7 @@
 				</os>
 			</activation>
 			<properties>
-				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Linux-x86-32</env.MAVEN_OPTS>
+				<LD_LIBRARY_PATH>${project.basedir}/lib/Linux-x86-32</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
 		<profile>
@@ -201,7 +215,7 @@
 				</os>
 			</activation>
 			<properties>
-				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Linux-x86-64</env.MAVEN_OPTS>
+				<LD_LIBRARY_PATH>${project.basedir}/lib/Linux-x86-64</LD_LIBRARY_PATH>
 				<!-- example of overridding a default property -->
 				<!-- <djatoka.data>/usr/local/data/images</djatoka.data> -->
 			</properties>
@@ -216,7 +230,7 @@
 				</os>
 			</activation>
 			<properties>
-				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Mac-x86</env.MAVEN_OPTS>
+				<DYLD_LIBRARY_PATH>${project.basedir}/lib/Mac-x86</DYLD_LIBRARY_PATH>
 			</properties>
 		</profile>
 		<profile>
@@ -229,7 +243,7 @@
 				</os>
 			</activation>
 			<properties>
-				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Win32</env.MAVEN_OPTS>
+				<LD_LIBRARY_PATH>${project.basedir}/lib/Win32</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
 		<profile>
@@ -242,7 +256,7 @@
 				</os>
 			</activation>
 			<properties>
-				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Solaris-x86</env.MAVEN_OPTS>
+				<LD_LIBRARY_PATH>${project.basedir}/lib/Solaris-x86</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
 		<profile>
@@ -255,7 +269,7 @@
 				</os>
 			</activation>
 			<properties>
-				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Solaris-Sparc</env.MAVEN_OPTS>
+				<LD_LIBRARY_PATH>${project.basedir}/lib/Solaris-Sparc</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
 		<profile>
@@ -268,11 +282,15 @@
 				</os>
 			</activation>
 			<properties>
-				<env.MAVEN_OPTS>-Djava.library.path=${project.basedir}/lib/Solaris-Sparcv9</env.MAVEN_OPTS>
+				<LD_LIBRARY_PATH>${project.basedir}/lib/Solaris-Sparcv9</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
 	</profiles>
 </project>
+
+<!--
+	MAVEN_OPTS="-Djava.library.path=target/lib" mvn jetty:run-exploded
+-->
 
 <!--
 	From: mvn dependency:analyze
