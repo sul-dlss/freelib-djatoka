@@ -432,6 +432,11 @@ public class KduExtractExe implements IExtract {
 			}
 		}
 
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Checking: java.library.path = {}", System
+					.getProperty("java.library.path"));
+		}
+
 		Jpx_source inputSource = new Jpx_source();
 		Jp2_family_src jp2_family_in = new Jp2_family_src();
 
