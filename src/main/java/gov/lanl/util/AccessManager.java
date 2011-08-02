@@ -18,45 +18,50 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handler to filter remote content by Apache .htaccess format
  * 
  * @author Ryan Chute
  * 
- * Parts of code from HTAccessHandler in Jetty 6:
- * http://www.mortbay.org/jetty/jetty-6/xref/org/mortbay/jetty/security/
- * HTAccessHandler.html
+ *         Parts of code from HTAccessHandler in Jetty 6:
+ *         http://www.mortbay.org/jetty/jetty-6/xref/org/mortbay/jetty/security/
+ *         HTAccessHandler.html
  */
 public class AccessManager {
-	static Logger logger = Logger.getLogger(AccessManager.class);
+
+	private static Logger LOGGER = LoggerFactory.getLogger(AccessManager.class);
+
 	private ArrayList<String> _allowList = new ArrayList<String>();
 	private ArrayList<String> _denyList = new ArrayList<String>();
 	int _order;
-	
+
 	public AccessManager(String resource) {
 		this(new File(resource));
 	}
-	
+
 	public AccessManager(File resource) {
 		BufferedReader htin = null;
+
 		try {
 			htin = new BufferedReader(new InputStreamReader(
 					new FileInputStream(resource)));
 			parse(htin);
-		} catch (IOException e) {
-			logger.warn(e, e);
+		}
+		catch (IOException e) {
+			LOGGER.warn(e.getMessage(), e);
 		}
 	}
-	
+
 	public boolean checkAccess(String host) {
 		// Figure out if it's a host or ip
 		boolean isIP = false;
 		char a = host.charAt(0);
 		if (a >= '0' && a <= '9')
 			isIP = true;
-		
+
 		String elm;
 		boolean alp = false;
 		boolean dep = false;
@@ -71,7 +76,8 @@ public class AccessManager {
 			if (elm.equals("all")) {
 				alp = true;
 				break;
-			} else {
+			}
+			else {
 				char c = elm.charAt(0);
 				if (c >= '0' && c <= '9') {
 					// ip
@@ -79,7 +85,8 @@ public class AccessManager {
 						alp = true;
 						break;
 					}
-				} else {
+				}
+				else {
 					// hostname
 					if (!isIP && host.endsWith(elm)) {
 						alp = true;
@@ -95,14 +102,16 @@ public class AccessManager {
 			if (elm.equals("all")) {
 				dep = true;
 				break;
-			} else {
+			}
+			else {
 				char c = elm.charAt(0);
 				if (c >= '0' && c <= '9') { // ip
 					if (isIP && host.startsWith(elm)) {
 						dep = true;
 						break;
 					}
-				} else { // hostname
+				}
+				else { // hostname
 					if (!isIP && host.endsWith(elm)) {
 						dep = true;
 						break;
@@ -132,33 +141,36 @@ public class AccessManager {
 			if (line.startsWith("#"))
 				continue;
 			if (line.startsWith("order")) {
-				if (logger.isDebugEnabled())
-					logger.debug("orderline=" + line + "order=" + _order);
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug("orderline=" + line + "order=" + _order);
 				if (line.indexOf("allow,deny") > 0) {
-					logger.debug("==>allow+deny");
+					LOGGER.debug("==>allow+deny");
 					_order = 1;
-				} else if (line.indexOf("deny,allow") > 0) {
-					logger.debug("==>deny,allow");
+				}
+				else if (line.indexOf("deny,allow") > 0) {
+					LOGGER.debug("==>deny,allow");
 					_order = -1;
 				}
-			} else if (line.startsWith("allow from")) {
+			}
+			else if (line.startsWith("allow from")) {
 				int pos1 = 10;
 				limit = line.length();
 				while ((pos1 < limit) && (line.charAt(pos1) <= ' '))
 					pos1++;
-				if (logger.isDebugEnabled())
-					logger.debug("allow from:" + line.substring(pos1));
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug("allow from:" + line.substring(pos1));
 				StringTokenizer tkns = new StringTokenizer(line.substring(pos1));
 				while (tkns.hasMoreTokens()) {
 					_allowList.add(tkns.nextToken());
 				}
-			} else if (line.startsWith("deny from")) {
+			}
+			else if (line.startsWith("deny from")) {
 				int pos1 = 9;
 				limit = line.length();
 				while ((pos1 < limit) && (line.charAt(pos1) <= ' '))
 					pos1++;
-				if (logger.isDebugEnabled())
-					logger.debug("deny from:" + line.substring(pos1));
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug("deny from:" + line.substring(pos1));
 
 				StringTokenizer tkns = new StringTokenizer(line.substring(pos1));
 				while (tkns.hasMoreTokens()) {
@@ -167,15 +179,18 @@ public class AccessManager {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		AccessManager am = new AccessManager(new File(args[0]));
-		System.out.println("157.193.199.44:" + am.checkAccess("157.193.199.44"));
-		System.out.println("157.193.199.43:" + am.checkAccess("157.193.199.43"));
+		System.out
+				.println("157.193.199.44:" + am.checkAccess("157.193.199.44"));
+		System.out
+				.println("157.193.199.43:" + am.checkAccess("157.193.199.43"));
 		System.out.println("128.84.103.:" + am.checkAccess("128.84.103."));
 		System.out.println("68.224.187.40:" + am.checkAccess("68.224.187.40"));
 		System.out.println("68.224.187.:" + am.checkAccess("68.224.187."));
-		java.net.URL url = new java.net.URL("http://java.sun.com/j2se/1.4.2/docs/api/java/net/InetAddress.html");
+		java.net.URL url = new java.net.URL(
+				"http://java.sun.com/j2se/1.4.2/docs/api/java/net/InetAddress.html");
 		System.out.println("sun.com:" + am.checkAccess(url.getHost()));
 	}
 }
