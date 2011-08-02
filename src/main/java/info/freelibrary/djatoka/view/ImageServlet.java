@@ -3,7 +3,6 @@ package info.freelibrary.djatoka.view;
 import info.freelibrary.util.StringUtils;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,34 +13,34 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThumbnailServlet extends HttpServlet {
+public class ImageServlet extends HttpServlet {
 
 	/**
-	 * The <code>serialVersionUID</code>.
+	 * The <code>ImageServlet</code>'s <code>serialVersionUID</code>.
 	 */
-	private static final long serialVersionUID = -560722637176381102L;
+	private static final long serialVersionUID = -4142816720756238591L;
 
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(ThumbnailServlet.class);
+			.getLogger(ImageServlet.class);
 
 	private static final String DEFAULT_IMG_FORMAT = "image/jpeg";
 
-	private static final String THUMBNAIL_URL = "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.level=1";
+	private static final String IMAGE_URL = "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.level=3";
 
 	@Override
 	protected void doGet(HttpServletRequest aRequest,
 			HttpServletResponse aResponse) throws ServletException, IOException {
 		String id = parseID(aRequest.getPathInfo());
-		
-		// check local cache first before trying to resolve
-		
+
+		// TODO: check local cache first before trying to resolve
+
 		String[] values = new String[] { id, DEFAULT_IMG_FORMAT };
-		String url = StringUtils.formatMessage(THUMBNAIL_URL, values);
+		String url = StringUtils.formatMessage(IMAGE_URL, values);
 		RequestDispatcher dispatcher = aRequest.getRequestDispatcher(url);
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Thumbnail requested: {} - {}",
-					new String[] { id, url });
+			String[] messageDetails = new String[] { id, url };
+			LOGGER.debug("Image requested: {} - {}", messageDetails);
 		}
 
 		dispatcher.forward(aRequest, aResponse);

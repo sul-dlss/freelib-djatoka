@@ -38,30 +38,38 @@
 					<xsl:for-each select="dir">
 						<div class="folder">
 							<a href="{concat(./@name, '/')}" title="{./@name}">
-							<img src="/images/folder.png" width="75%" alt="{./@name}"/>
-							<xsl:choose>
-								<xsl:when test="string-length(./@name) &gt; 11">
-									<xsl:value-of select="concat(substring(./@name, 0, 11), '...')"/>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of select="./@name"/>
-								</xsl:otherwise>
-							</xsl:choose>
+								<img src="/images/folder.png" width="75%" alt="{./@name}" />
+								<xsl:choose>
+									<xsl:when test="string-length(./@name) &gt; 11">
+										<xsl:value-of select="concat(substring(./@name, 0, 11), '...')" />
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="./@name" />
+									</xsl:otherwise>
+								</xsl:choose>
 							</a>
 						</div>
 					</xsl:for-each>
 				</div>
 				<div id="image">
-					<div class="image">asdf</div>
-					<div class="image">asdf</div>
-					<div class="image">asdf</div>
-					<div class="image">asdf</div>
-					<div class="image">asdf</div>
-					<div class="image">asdf</div>
-					<div class="image">asdf</div>
-					<div class="image">asdf</div>
-					<div class="image">asdf</div>
-					<div class="image">asdf</div>
+					<xsl:for-each select="file">
+						<xsl:variable name="fileName">
+							<xsl:choose>
+								<xsl:when test="substring(@name, string-length(@name) - 3) = '.jp2'">
+									<xsl:value-of select="substring(@name, 0, string-length(@name) - 3)"/>
+								</xsl:when>
+								<xsl:when test="substring(@name, string-length(@name) - 3) = '.j2k'">
+									<xsl:value-of select="substring(@name, 0, string-length(@name) - 3)"/>
+								</xsl:when>
+							</xsl:choose>
+						</xsl:variable>
+
+						<div class="image">
+							<a href="/view/image/{$fileName}">
+								<img src="/view/thumbnail/{$fileName}" />
+							</a>
+						</div>
+					</xsl:for-each>
 				</div>
 			</body>
 		</html>

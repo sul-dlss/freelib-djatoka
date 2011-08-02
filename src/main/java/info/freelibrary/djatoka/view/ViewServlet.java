@@ -3,7 +3,6 @@ package info.freelibrary.djatoka.view;
 import gov.lanl.adore.djatoka.util.IOUtils;
 
 import info.freelibrary.djatoka.Constants;
-import info.freelibrary.util.DirFileFilter;
 import info.freelibrary.util.FileUtils;
 import info.freelibrary.util.RegexDirFilter;
 import info.freelibrary.util.RegexFileFilter;
@@ -51,7 +50,6 @@ public class ViewServlet extends HttpServlet implements Constants {
 		PrintWriter writer;
 		String jp2Count;
 		String tifCount;
-		File[] dirs;
 		File dir;
 
 		// We need the ending slash for the browser to construct links
@@ -64,8 +62,15 @@ public class ViewServlet extends HttpServlet implements Constants {
 			dirParam = "/" + dirParam;
 		}
 
+		// Catch folks who want something significant from altering URL
+		if (dirParam.equalsIgnoreCase("/thumbnails/")) {
+			aResponse.sendRedirect(servletPath + "/");
+			return;
+		}
+		
 		dir = new File(jp2Dir, dirParam);
 
+		// TODO: cache all this work in servlet session or something
 		try {
 			File[] jp2Files = FileUtils.listFiles(jp2Dir, new RegexFileFilter(
 					JP2_FILE_PATTERN), true);

@@ -8,7 +8,8 @@
     </appender>
 
     <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="INFO"/>
-
+    <logger name="info.freelibrary.djatoka.view.ViewServlet" level="INFO"/>
+    
     <root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>

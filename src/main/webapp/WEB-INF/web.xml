@@ -19,6 +19,14 @@
         <servlet-name>viewer</servlet-name>
         <servlet-class>info.freelibrary.djatoka.view.ViewServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>thumbnailViewer</servlet-name>
+        <servlet-class>info.freelibrary.djatoka.view.ThumbnailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>imageViewer</servlet-name>
+        <servlet-class>info.freelibrary.djatoka.view.ImageServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>resolver</servlet-name> 
         <url-pattern>/resolve</url-pattern> 
@@ -26,6 +34,14 @@
     <servlet-mapping>
         <servlet-name>ingester</servlet-name> 
         <url-pattern>/ingest</url-pattern> 
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>thumbnailViewer</servlet-name>
+        <url-pattern>/view/thumbnail/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>imageViewer</servlet-name>
+        <url-pattern>/view/image/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>viewer</servlet-name>
