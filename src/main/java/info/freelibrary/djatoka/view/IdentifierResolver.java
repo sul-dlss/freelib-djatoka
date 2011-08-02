@@ -159,6 +159,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 		}
 	}
 
+	// Not sure we should do this, but...
 	private String stripExt(String aFileName) {
 		int index = aFileName.lastIndexOf('.');
 		return index != -1 ? aFileName.substring(0, index) : aFileName;
