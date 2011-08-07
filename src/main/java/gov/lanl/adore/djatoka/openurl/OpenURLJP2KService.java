@@ -49,6 +49,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
@@ -148,7 +149,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	public OpenURLResponse resolve(ServiceType serviceType,
 			ContextObject contextObject, OpenURLRequest openURLRequest,
 			OpenURLRequestProcessor processor) {
-
+		String djatokaCacheFile = null;
 		String responseFormat = null;
 		String format = "image/jpeg";
 		int status = HttpServletResponse.SC_OK;
@@ -253,7 +254,9 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 										+ hash.hashCode() + "-", "." + ext);
 							f.deleteOnExit();
 							file = f.getAbsolutePath();
+							djatokaCacheFile = file;
 							extractor.extractImage(r.getImageFile(), file, params, format);
+							
 							if (tileCache.get(hash + ext) == null) {
 								tileCache.put(hash + ext, file);
 								bytes = IOUtils.getBytesFromFile(f);
@@ -276,6 +279,8 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 							if (LOGGER.isDebugEnabled()) {
 								LOGGER.debug("tileCache: " + file + " " + bytes.length);
 							}
+							
+							djatokaCacheFile = file;
 						}
 					}
 				}
@@ -305,7 +310,15 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 		HashMap<String, String> header_map = new HashMap<String, String>();
 		header_map.put("Content-Length", bytes.length + "");
 		header_map.put("Date", HttpDate.getHttpDate());
-		return new OpenURLResponse(status, responseFormat, bytes, header_map);
+		OpenURLResponse response = new OpenURLResponse(status, responseFormat, bytes, header_map);
+		
+		// Record where our cache file was (if we had/created one)
+		if (djatokaCacheFile != null) {
+			Map sessionMap = response.getSessionMap();
+			sessionMap.put("djatoka.cache.file", djatokaCacheFile);
+		}
+
+		return response;
 	}
 	
 	private boolean isCacheable(DjatokaDecodeParam params) {

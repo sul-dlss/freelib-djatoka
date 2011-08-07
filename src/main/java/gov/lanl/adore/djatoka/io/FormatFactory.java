@@ -25,7 +25,8 @@ package gov.lanl.adore.djatoka.io;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Format Factory. Uses format writer/reader implementations.
@@ -33,7 +34,8 @@ import org.apache.log4j.Logger;
  *
  */
 public class FormatFactory implements FormatConstants {
-	static Logger logger = Logger.getLogger(FormatFactory.class);
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(FormatFactory.class);
 	private HashMap<String, Class> fmtImpl = new HashMap<String, Class>();
 	
 	/**
@@ -135,9 +137,9 @@ public class FormatFactory implements FormatConstants {
 				w.setWriterProperties(props);
 			}
 		} catch (InstantiationException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return w;
 	}
@@ -148,9 +150,9 @@ public class FormatFactory implements FormatConstants {
 		try {
 			r = (IReader) fmtImpl.get(format + FORMAT_READER_SUFFIX).newInstance();
 		} catch (InstantiationException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return r;
 	}

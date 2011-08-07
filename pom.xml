@@ -186,6 +186,7 @@
 		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
 		<djatoka.ingest.data>/usr/local/data/images/tiffs</djatoka.ingest.data>
 		<djatoka.jp2.data>/usr/local/data/images/jp2s</djatoka.jp2.data>
+		<djatoka.view.cache>${java.io.tmpdir}</djatoka.view.cache>
 		<!-- <referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver> -->
 		<referent.resolver>info.freelibrary.djatoka.view.IdentifierResolver</referent.resolver>
 		<cache.enabled>true</cache.enabled>
