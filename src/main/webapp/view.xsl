@@ -6,7 +6,13 @@
 
 		<html>
 			<head>
-				<link rel="stylesheet" type="text/css" href="/view.css" />
+				<link rel="stylesheet" type="text/css" href="/css/view.css" />
+				<link rel="stylesheet" type="text/css" href="/css/lightbox.css" media="screen" />
+				
+				<script type="text/javascript" src="/javascript/prototype.js">&#xa0;</script>
+				<script type="text/javascript" src="/javascript/scriptaculous.js?load=effects,builder">&#xa0;</script>
+				<script type="text/javascript" src="/javascript/lightbox.js">&#xa0;</script>
+				
 				<title>Image Navigator</title>
 			</head>
 			<body>
@@ -65,7 +71,7 @@
 						</xsl:variable>
 
 						<div class="image">
-							<a href="/view/image/{$fileName}">
+							<a href="/view/image/{$fileName}" rel="lightbox[thumbs]">
 								<img src="/view/thumbnail/{$fileName}" />
 							</a>
 						</div>
