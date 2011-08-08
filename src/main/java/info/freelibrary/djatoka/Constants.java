@@ -8,6 +8,8 @@ public interface Constants {
 	
 	public static final String DEFAULT_VIEW_EXT = "jpg";
 	
+	public static final String DEFAULT_VIEW_LEVEL = "3";
+	
 	public static final String VIEW_FORMAT_EXT = "djatoka.view.format.ext";
 	
 	public static final String JP2_EXT = ".jp2";

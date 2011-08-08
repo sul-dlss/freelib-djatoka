@@ -1,7 +1,5 @@
 package info.freelibrary.djatoka.view;
 
-import gov.lanl.adore.djatoka.io.FormatFactory;
-
 import info.freelibrary.djatoka.Constants;
 import info.freelibrary.util.IOUtils;
 import info.freelibrary.util.PairtreeObject;
@@ -13,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -35,7 +32,9 @@ public class ImageServlet extends HttpServlet implements Constants {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ImageServlet.class);
 
-	private static final String IMAGE_URL = "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.level=3";
+	private static final String IMAGE_URL = "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.level={}";
+
+	private static final String REGION_URL = "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.level={}";
 
 	private static String myFormatExt;
 
@@ -44,21 +43,29 @@ public class ImageServlet extends HttpServlet implements Constants {
 	@Override
 	protected void doGet(HttpServletRequest aRequest,
 			HttpServletResponse aResponse) throws ServletException, IOException {
+		String level = getServletConfig().getInitParameter("level");
 		String id = parseID(aRequest.getPathInfo());
 		PairtreeObject cacheObject = null;
+		String region = null;
+
+		if (level == null) {
+			level = DEFAULT_VIEW_LEVEL;
+		}
 
 		if (myCache != null) {
 			PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
+			String cacheFileName;
 			File imageFile;
 
 			cacheObject = cacheDir.getObject(id);
-			imageFile = new File(cacheObject, "image." + myFormatExt);
+			cacheFileName = "image_" + level + "." + myFormatExt;
+			imageFile = new File(cacheObject, cacheFileName);
 
 			if (imageFile.exists()) {
 				ServletOutputStream outStream = aResponse.getOutputStream();
 				IOUtils.copyStream(imageFile, outStream);
 				IOUtils.closeQuietly(outStream);
-				
+
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("{} served from Pairtree cache", imageFile);
 				}
@@ -68,8 +75,13 @@ public class ImageServlet extends HttpServlet implements Constants {
 					LOGGER.debug("{} not found in cache", imageFile);
 				}
 
-				serveNewImage(id, aRequest, aResponse);
-				cacheNewImage(aRequest, aResponse, imageFile);
+				serveNewImage(id, level, region, aRequest, aResponse);
+
+				// For now, not caching ROIs in our permanent cache
+				// It's fine; we fall back to adore-djatoka's LRU cache
+				if (region == null) {
+					cacheNewImage(aRequest, aResponse, imageFile);
+				}
 			}
 		}
 		else {
@@ -77,7 +89,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 				LOGGER.warn("Cache isn't configured correctly (null)");
 			}
 
-			serveNewImage(id, aRequest, aResponse);
+			serveNewImage(id, level, region, aRequest, aResponse);
 			// We can't cache, because we don't have a cache configured
 		}
 	}
@@ -129,11 +141,23 @@ public class ImageServlet extends HttpServlet implements Constants {
 		return super.getLastModified(aRequest);
 	}
 
-	private void serveNewImage(String aID, HttpServletRequest aRequest,
-			HttpServletResponse aResponse) throws IOException, ServletException {
-		String[] values = new String[] { aID, DEFAULT_VIEW_FORMAT };
-		String url = StringUtils.formatMessage(IMAGE_URL, values);
-		RequestDispatcher dispatcher = aRequest.getRequestDispatcher(url);
+	private void serveNewImage(String aID, String aLevel, String aRegion,
+			HttpServletRequest aRequest, HttpServletResponse aResponse)
+			throws IOException, ServletException {
+		RequestDispatcher dispatcher;
+		String[] values;
+		String url;
+
+		if (aRegion == null) {
+			values = new String[] { aID, DEFAULT_VIEW_FORMAT, aLevel };
+			url = StringUtils.formatMessage(IMAGE_URL, values);
+		}
+		else {
+			values = new String[] { aID, DEFAULT_VIEW_FORMAT, aLevel };
+			url = StringUtils.formatMessage(REGION_URL, values);
+		}
+
+		dispatcher = aRequest.getRequestDispatcher(url);
 
 		if (LOGGER.isDebugEnabled()) {
 			String[] messageDetails = new String[] { aID, url };

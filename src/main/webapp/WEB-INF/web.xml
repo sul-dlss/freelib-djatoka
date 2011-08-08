@@ -21,11 +21,19 @@
     </servlet>
     <servlet>
         <servlet-name>thumbnailViewer</servlet-name>
-        <servlet-class>info.freelibrary.djatoka.view.ThumbnailServlet</servlet-class>
+        <servlet-class>info.freelibrary.djatoka.view.ImageServlet</servlet-class>
+        <init-param>
+            <param-name>level</param-name>
+            <param-value>1</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>imageViewer</servlet-name>
         <servlet-class>info.freelibrary.djatoka.view.ImageServlet</servlet-class>
+        <init-param>
+            <param-name>level</param-name>
+            <param-value>3</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>resolver</servlet-name> 

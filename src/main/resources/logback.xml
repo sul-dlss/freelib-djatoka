@@ -2,8 +2,8 @@
 <configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>[ %-5level ] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n</pattern>
+        <encoder><!-- -5 -->
+            <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n</pattern>
         </encoder>
     </appender>
 
