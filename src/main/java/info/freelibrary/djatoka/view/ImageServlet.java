@@ -185,6 +185,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 
 				// FIXME: Don't assume files are of the same type(?)
 				cachedFile.renameTo(aDestFile);
+				// TODO: remove from in-memory map of cache files?
 			}
 			else if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn("Session had a cache file, but it didn't exist");
