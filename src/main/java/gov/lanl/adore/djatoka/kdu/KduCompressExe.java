@@ -480,7 +480,6 @@ public class KduCompressExe implements ICompress {
 		&& !params.getJP2ColorSpace().isEmpty()) {
 	    sb.append("-jp2_space ").append(params.getJP2ColorSpace());
 	    sb.append(' ');
-	    System.out.println("[" + params.getJP2ColorSpace() + "]");
 	}
 
 	return sb.toString();
