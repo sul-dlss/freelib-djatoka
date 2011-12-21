@@ -14,7 +14,7 @@
     <logger name="info.freelibrary.util.PairtreeRoot" level="INFO"/>
 
     <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="INFO"/>
-    <logger name="gov.lanl.adore.djatoka.kdu" level="INFO"/>
+    <!--<logger name="gov.lanl.adore.djatoka.kdu" level="INFO"/>-->
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

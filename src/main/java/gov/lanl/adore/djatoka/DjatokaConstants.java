@@ -136,4 +136,9 @@ public interface DjatokaConstants {
 	 * Default Value: "djatoka.properties"
 	 */
 	public static final String DEFAULT_JPEG2K_PROP_FILENAME = "djatoka.properties";
+	
+	/**
+	 * Defined default color space.  The default is not to use one.
+	 */
+	public static final String DEFAULT_JP2_COLOR_SPACE = "";
 }

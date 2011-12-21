@@ -225,6 +225,8 @@
 		<!-- <referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver> -->
 		<referent.resolver>info.freelibrary.djatoka.view.IdentifierResolver</referent.resolver>
 		<cache.enabled>true</cache.enabled>
+		<!-- Supported: "", "sLUM", "sRGB", "sYCC", "iccLUM" or "iccRGB" -->
+		<djatoka.ingest.color.space>sRGB</djatoka.ingest.color.space>
 	</properties>
 	<profiles>
 		<profile>

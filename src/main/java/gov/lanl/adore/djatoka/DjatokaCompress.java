@@ -73,6 +73,7 @@ public class DjatokaCompress {
 		options.addOption( "t", "ORGtparts", true, "Division of each tile's packets into tile-parts" );
 		options.addOption( "b", "Cblk", true, "Codeblock Size" );
 		options.addOption( "a", "AltImpl", true, "Alternate ICompress Implemenation" );
+		options.addOption( "j", "jp2_profile", true, "Supported JP2 Color Space Profile" );
 		
 		try {
 			if (args.length == 0) {
@@ -121,6 +122,10 @@ public class DjatokaCompress {
 		    if (Cblk != null)
 		    	p.setCodeBlockSize(Cblk);
 		    String alt = line.getOptionValue("a");
+		    String jp2ColorSpace = line.getOptionValue("j");
+		    if (jp2ColorSpace != null) {
+			p.setJP2ColorSpace(jp2ColorSpace);
+		    }
 		    
 			ICompress jp2 = new KduCompressExe();
 			if (alt != null)
