@@ -25,6 +25,47 @@ development and shouldn't be confused with the real adore-djatoka image server.
 
 
 ================================================================================
+Optional Apache Configuration
+================================================================================
+
+The freelib-djatoka image server is designed to run from Jetty at a domain like
+http://images.domain.edu/ (or http://images.domain.edu:8888/). If you want to
+run freelib-djatoka behind Apache at a URL like http://www.domain.edu/djatoka,
+you will need a little extra Apache configuration.  The below is a snippet that
+can be put into your virtual host configuration to enable this.
+
+    ProxyRequests Off
+
+    <Proxy *>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+
+    # Below assumes you aren't serving another /css, /javascript, etc.
+
+    ProxyPass /djatoka http://localhost:8888
+    ProxyPassReverse /djatoka http://localhost:8888
+    ProxyPass /css http://localhost:8888/css
+    ProxyPassReverse /css http://localhost:8888/css
+    ProxyPass /javascript http://localhost:8888/javascript
+    ProxyPassReverse /javascript http://localhost:8888/javascript
+    ProxyPass /images http://localhost:8888/images
+    ProxyPassReverse /images http://localhost:8888/images
+    ProxyPass /view.xsl http://localhost:8888/view.xsl
+    ProxyPassReverse /view.xsl http://localhost:8888/view.xsl
+    ProxyPass /view http://localhost:8888/view
+    ProxyPassReverse /view http://localhost:8888/view
+
+    # OR you could just use (which assumes you aren't serving other things)
+    
+    ProxyPass /djatoka http://localhost:8888
+    ProxyPassReverse /djatoka http://localhost:8888
+    ProxyPass / http://localhost:8888/
+    ProxyPassReverse / http://localhost:8888/
+
+    # You only need one ProxyPass/ProxyPassReverse section (above), not both
+
+================================================================================
 LICENSE
 ================================================================================
 
