@@ -85,15 +85,24 @@ public class IngestServlet extends HttpServlet {
 		}
 		else {
 		    PrintWriter toBrowser = getWriter(aResp, acceptsHTML);
-		    int total = processImageFiles(source, dest);
-		    String message = total + " file(s) converted to JP2";
-		    String title = "Results of the JP2 Conversion Batch Script";
+		    int total;
 
 		    if (acceptsHTML) {
-			toBrowser.write(wrapInHTML(title, message));
+			toBrowser.write("<html><head><title>");
+			toBrowser.write("Results of the JP2 Batch Conversion");
+			toBrowser.write("</title></head><body>");
 		    }
-		    else {
-			toBrowser.write(message);
+
+		    total = convert(source, dest, toBrowser, acceptsHTML);
+
+		    if (acceptsHTML) {
+			toBrowser.write("<div>");
+		    }
+
+		    toBrowser.write(total + " file(s) converted to JP2");
+
+		    if (acceptsHTML) {
+			toBrowser.write("</div></body></html>");
 		    }
 
 		    toBrowser.close();
@@ -111,8 +120,8 @@ public class IngestServlet extends HttpServlet {
 	}
     }
 
-    private int processImageFiles(File aSource, File aDest) throws IOException,
-	    Exception {
+    private int convert(File aSource, File aDest, PrintWriter aWriter,
+	    boolean aHTMLOut) throws IOException, Exception {
 	File[] files = aSource.listFiles(new FileExtFileFilter(myExts));
 	File[] dirs = aSource.listFiles(new DirFileFilter());
 	int total = 0;
@@ -125,28 +134,26 @@ public class IngestServlet extends HttpServlet {
 	    String fileName = nextSource.getName();
 
 	    if (!fileName.startsWith(".")) {
-		File nextDest = new File(aDest, nextSource.getName());
+		File dest = new File(aDest, nextSource.getName());
 
-		if (nextDest.exists()
-			&& (!nextDest.canWrite() || !nextDest.isDirectory())) {
+		if (dest.exists() && (!dest.canWrite() || !dest.isDirectory())) {
 		    throw new IOException(
 			    "Problem with destination directory: "
-				    + nextDest.getAbsolutePath());
+				    + dest.getAbsolutePath());
 		}
 		else {
 		    if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Descending into new directory: {}",
-				nextDest);
+			LOGGER.debug("Descending into new directory: {}", dest);
 		    }
 
-		    if ((!nextDest.exists() && nextDest.mkdirs())
-			    || (nextDest.exists() && nextDest.isDirectory())) {
-			total += processImageFiles(nextSource, nextDest);
+		    if ((!dest.exists() && dest.mkdirs())
+			    || (dest.exists() && dest.isDirectory())) {
+			total += convert(nextSource, dest, aWriter, aHTMLOut);
 		    }
 		    else {
 			throw new IOException(
 				"Failed to create a new directory: "
-					+ nextDest.getAbsolutePath());
+					+ dest.getAbsolutePath());
 		    }
 		}
 	    }
@@ -161,18 +168,30 @@ public class IngestServlet extends HttpServlet {
 	    File nextDest = new File(aDest, fileName);
 
 	    if (!fileName.startsWith(".") && !nextDest.exists()) {
+		String sourceFileName = nextSource.getAbsolutePath();
+		String destFileName = nextDest.getAbsolutePath();
+
 		if (LOGGER.isInfoEnabled()) {
-		    LOGGER.info(
-			    "Compressing {} to {} ({})",
-			    new String[] { nextSource.getAbsolutePath(),
-				    nextDest.getAbsolutePath(),
+		    LOGGER.info("Compressing {} to {} ({})",
+			    new String[] { sourceFileName, destFileName,
 				    Integer.toString(total + 1) });
 		}
 
-		DjatokaCompress.compress(myCompression,
-			nextSource.getAbsolutePath(),
-			nextDest.getAbsolutePath(), myParams);
 		total += 1;
+		DjatokaCompress.compress(myCompression, sourceFileName,
+			destFileName, myParams);
+
+		if (aHTMLOut) {
+		    aWriter.write("<div>");
+		    aWriter.write(destFileName);
+		    aWriter.write("</div>");
+		}
+		else {
+		    aWriter.write(destFileName);
+		    aWriter.write(System.getProperty("line.separator"));
+		}
+
+		aWriter.flush();
 	    }
 	}
 
@@ -199,16 +218,5 @@ public class IngestServlet extends HttpServlet {
 	}
 
 	return aFileName;
-    }
-
-    /*
-     * quick and dirty
-     */
-    private String wrapInHTML(String aTitle, String aMessage) {
-	return StringUtils.formatMessage("<html>\n" + "  <head>\n"
-		+ "    <title>{}</title>\n" + "  </head>\n" + "  <body>\n"
-		+ "    <div>{}</div>\n" + "  </body>\n" + "</html>\n",
-		new String[] { aTitle, aMessage });
-
     }
 }
