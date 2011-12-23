@@ -125,6 +125,8 @@ public class ViewServlet extends HttpServlet implements Constants {
 		writer.write("<path>" + tokenize(dirParam) + "</path>");
 
 		if (dir.exists()) {
+		    String name;
+		    
 		    if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Viewing contents of {}", dir);
 		    }
@@ -133,11 +135,13 @@ public class ViewServlet extends HttpServlet implements Constants {
 		    jp2Filter = new RegexFileFilter(JP2_FILE_PATTERN);
 
 		    for (File file : dir.listFiles(dirFilter)) {
-			writer.write("<dir name='" + file.getName() + "'/>");
+			name = encodeEntities(file.getName());
+			writer.write("<dir name='" + name + "'/>");
 		    }
 
 		    for (File file : dir.listFiles(jp2Filter)) {
-			writer.write("<file name='" + file.getName() + "'/>");
+			name = encodeEntities(file.getName());
+			writer.write("<file name='" + name + "'/>");
 		    }
 		}
 
@@ -179,6 +183,11 @@ public class ViewServlet extends HttpServlet implements Constants {
 	super.log(aMessage);
     }
 
+    private String encodeEntities(String aName) {
+	String name = aName.replace("\"", "&quot;");
+	return name.replace("'", "&apos;");
+    }
+    
     private PrintWriter getWriter(HttpServletResponse aResponse)
 	    throws IOException {
 	aResponse.setContentType("application/xml");
