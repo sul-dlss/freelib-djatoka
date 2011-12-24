@@ -184,7 +184,9 @@ public class ViewServlet extends HttpServlet implements Constants {
     }
 
     private String encodeEntities(String aName) {
-	String name = aName.replace("\"", "&quot;");
+	String name = aName.replace("&", "&amp;"); // no prior entity encoding
+	name = name.replace("\"", "&quot;").replace("%", "&#37;");
+	name = name.replace("<", "&lt;").replace(">", "&gt;");
 	return name.replace("'", "&apos;");
     }
     
