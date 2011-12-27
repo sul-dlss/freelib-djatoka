@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,11 @@ public class ViewServlet extends HttpServlet implements Constants {
 
     private static final String XSL_STYLESHEET = "<?xml-stylesheet href='/view.xsl' type='text/xsl'?>";
 
+    private static final String JP2_SIZE_ATTR = "jp2Size";
+    private static final String TIF_SIZE_ATTR = "tifSize";
+    private static final String JP2_COUNT_ATTR = "jp2Count";
+    private static final String TIF_COUNT_ATTR = "tifCount";
+
     private static final Logger LOGGER = LoggerFactory
 	    .getLogger(ViewServlet.class);
 
@@ -42,15 +48,49 @@ public class ViewServlet extends HttpServlet implements Constants {
 	File tifDir = new File(myProps.getProperty(TIFF_DATA_DIR));
 	File jp2Dir = new File(myProps.getProperty(JP2_DATA_DIR));
 	String servletPath = aRequest.getServletPath();
+	HttpSession session = aRequest.getSession();
 	String dirParam = aRequest.getPathInfo();
-	long jp2CountLong = 0;
-	long tifCountLong = 0;
+	File dir = new File(jp2Dir, dirParam);
+
+	if (session.isNew()) {
+	    RegexFileFilter jp2Pattern = new RegexFileFilter(JP2_FILE_PATTERN);
+	    RegexFileFilter tifPattern = new RegexFileFilter(TIFF_FILE_PATTERN);
+	    long jp2CountLong = 0;
+	    long tifCountLong = 0;
+
+	    File[] jp2Files = FileUtils.listFiles(jp2Dir, jp2Pattern, true);
+	    File[] tifFiles = FileUtils.listFiles(tifDir, tifPattern, true);
+
+	    // These two just count the size of the files, not directories too
+	    for (File file : jp2Files) {
+		jp2CountLong += file.length();
+	    }
+
+	    for (File file : tifFiles) {
+		tifCountLong += file.length();
+	    }
+
+	    String jp2Size = FileUtils.sizeFromBytes(jp2CountLong, true);
+	    String tifSize = FileUtils.sizeFromBytes(tifCountLong, true);
+	    int jp2Count = jp2Files.length;
+	    int tifCount = tifFiles.length;
+
+	    if (LOGGER.isDebugEnabled()) {
+		LOGGER.debug("TIF file count (size): {} ({})", tifCount,
+			tifSize);
+		LOGGER.debug("JP2 file count (size): {} ({})", jp2Count,
+			jp2Size);
+	    }
+
+	    session.setAttribute(JP2_SIZE_ATTR, jp2Size);
+	    session.setAttribute(TIF_SIZE_ATTR, tifSize);
+	    session.setAttribute(JP2_COUNT_ATTR, Integer.toString(jp2Count));
+	    session.setAttribute(TIF_COUNT_ATTR, Integer.toString(tifCount));
+	}
+
 	FilenameFilter dirFilter;
 	FilenameFilter jp2Filter;
 	PrintWriter writer;
-	String jp2Count;
-	String tifCount;
-	File dir;
 
 	// We need the ending slash for the browser to construct links
 	if (dirParam == null || !dirParam.endsWith("/")) {
@@ -68,34 +108,7 @@ public class ViewServlet extends HttpServlet implements Constants {
 	    return;
 	}
 
-	dir = new File(jp2Dir, dirParam);
-
-	// TODO: cache all this work in servlet session or something
 	try {
-	    File[] jp2Files = FileUtils.listFiles(jp2Dir, new RegexFileFilter(
-		    JP2_FILE_PATTERN), true);
-	    File[] tifFiles = FileUtils.listFiles(tifDir, new RegexFileFilter(
-		    TIFF_FILE_PATTERN), true);
-
-	    // These two just count the size of the files, not directories too
-	    for (File file : jp2Files) {
-		jp2CountLong += file.length();
-	    }
-
-	    for (File file : tifFiles) {
-		tifCountLong += file.length();
-	    }
-
-	    jp2Count = FileUtils.sizeFromBytes(jp2CountLong, true);
-	    tifCount = FileUtils.sizeFromBytes(tifCountLong, true);
-
-	    if (LOGGER.isDebugEnabled()) {
-		LOGGER.debug("TIFF file count (size): {} ({})",
-			tifFiles.length, tifCount);
-		LOGGER.debug("JP2 file count (size): {} ({})", jp2Files.length,
-			jp2Count);
-	    }
-
 	    if (!jp2Dir.exists()) {
 		aResponse.sendError(HttpServletResponse.SC_NOT_FOUND,
 			StringUtils.formatMessage(
@@ -117,16 +130,18 @@ public class ViewServlet extends HttpServlet implements Constants {
 		writer.write(StringUtils.formatMessage(
 			"<tifStats fileCount='{}' totalSize='{}'/>"
 				+ "<jp2Stats fileCount='{}' totalSize='{}'/>",
-			new String[] { Integer.toString(tifFiles.length),
-				tifCount, Integer.toString(jp2Files.length),
-				jp2Count }));
+			new String[] {
+				(String) session.getAttribute(TIF_COUNT_ATTR),
+				(String) session.getAttribute(TIF_SIZE_ATTR),
+				(String) session.getAttribute(JP2_COUNT_ATTR),
+				(String) session.getAttribute(JP2_SIZE_ATTR) }));
 
 		writer.write("<defaultPath>" + servletPath + "</defaultPath>");
 		writer.write("<path>" + tokenize(dirParam) + "</path>");
 
 		if (dir.exists()) {
 		    String name;
-		    
+
 		    if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Viewing contents of {}", dir);
 		    }
@@ -189,7 +204,7 @@ public class ViewServlet extends HttpServlet implements Constants {
 	name = name.replace("<", "&lt;").replace(">", "&gt;");
 	return name.replace("'", "&apos;");
     }
-    
+
     private PrintWriter getWriter(HttpServletResponse aResponse)
 	    throws IOException {
 	aResponse.setContentType("application/xml");
