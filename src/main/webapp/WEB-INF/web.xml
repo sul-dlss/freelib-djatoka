@@ -20,6 +20,10 @@
         <servlet-class>info.freelibrary.djatoka.view.ViewServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>reporter</servlet-name>
+        <servlet-class>info.freelibrary.djatoka.view.ReportServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>thumbnailViewer</servlet-name>
         <servlet-class>info.freelibrary.djatoka.view.ImageServlet</servlet-class>
         <init-param>
@@ -38,6 +42,10 @@
     <servlet-mapping>
         <servlet-name>resolver</servlet-name> 
         <url-pattern>/resolve</url-pattern> 
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>reporter</servlet-name>
+        <url-pattern>/reports/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ingester</servlet-name> 

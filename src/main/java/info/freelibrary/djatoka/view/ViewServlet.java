@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Properties;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +51,13 @@ public class ViewServlet extends HttpServlet implements Constants {
 	String servletPath = aRequest.getServletPath();
 	HttpSession session = aRequest.getSession();
 	String dirParam = aRequest.getPathInfo();
+
+	if (dirParam == null) { // easier to config redirect here than in Jetty
+	    String path = "/" + aRequest.getContextPath();
+	    aResponse.sendRedirect(!path.equals("/") ? path : "" + "/view/");
+	    return;
+	}
+
 	File dir = new File(jp2Dir, dirParam);
 
 	if (session.isNew()) {

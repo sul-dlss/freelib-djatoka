@@ -10,6 +10,13 @@
 	<description>A repackaging of aDORe-Djatoka to work with Maven/Jetty</description>
 	<inceptionYear>20110701</inceptionYear>
 	<dependencies>
+		<!-- below only for internal image reports -->
+		<dependency>
+			<groupId>org.im4java</groupId>
+			<artifactId>im4java</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<!-- above only for internal image reports -->
 		<!-- below for openurl -->
 		<dependency>
 			<groupId>xalan</groupId>
@@ -78,6 +85,11 @@
 			<version>0.0.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/ij.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>xom</groupId>
+			<artifactId>xom</artifactId>
+			<version>1.2.5</version>
 		</dependency>
 	</dependencies>
 	<build>
