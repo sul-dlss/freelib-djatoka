@@ -233,6 +233,8 @@
 		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
 		<djatoka.ingest.data>/usr/local/data/images/tiffs</djatoka.ingest.data>
 		<djatoka.jp2.data>/usr/local/data/images/jp2s</djatoka.jp2.data>
+		<openurl.cache.dir>/usr/local/data/images/cache</openurl.cache.dir>
+		<!-- TODO: is the below even used anywhere? Different from above? -->
 		<djatoka.view.cache>${java.io.tmpdir}</djatoka.view.cache>
 		<!-- <referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver> -->
 		<referent.resolver>info.freelibrary.djatoka.view.IdentifierResolver</referent.resolver>
