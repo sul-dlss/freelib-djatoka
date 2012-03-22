@@ -23,9 +23,11 @@
     <logger name="info.freelibrary.util.PairtreeObject" level="INFO"/>
     <logger name="info.freelibrary.util.PairtreeRoot" level="INFO"/>
     
-    <logger name="info.freelibrary.djatoka.ingest" level="DEBUG">
+    <logger name="info.freelibrary.djatoka.ingest" level="INFO">
         <appender-ref ref="FILEOUT"/>
     </logger>
+
+    <logger name="ch.qos.logback" level="ERROR"/>
 
     <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="INFO"/>
     <!--<logger name="gov.lanl.adore.djatoka.kdu" level="INFO"/>-->
