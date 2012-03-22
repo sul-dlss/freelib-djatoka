@@ -1,13 +1,7 @@
 package info.freelibrary.djatoka.ingest;
 
-import gov.lanl.adore.djatoka.DjatokaCompress;
-import gov.lanl.adore.djatoka.DjatokaEncodeParam;
-import gov.lanl.adore.djatoka.ICompress;
-import gov.lanl.adore.djatoka.kdu.KduCompressExe;
 import gov.lanl.adore.djatoka.util.IOUtils;
 
-import info.freelibrary.util.DirFileFilter;
-import info.freelibrary.util.FileExtFileFilter;
 import info.freelibrary.util.StringUtils;
 
 import java.io.File;
@@ -16,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -40,9 +35,26 @@ public class IngestServlet extends HttpServlet {
     protected void doGet(HttpServletRequest aReq, HttpServletResponse aResp)
 	    throws ServletException, IOException {
 	String dir = getServletContext().getRealPath("/WEB-INF/classes") + "/";
-	boolean acceptsHTML = aReq.getHeader("Accept").contains("html");
 	String propertiesFile = dir + PROPERTIES_FILE;
+	ServletContext context = getServletContext();
+	IngestThread thread = (IngestThread) context.getAttribute("ingest");
 
+	if (thread != null) {
+	    PrintWriter toBrowser = aResp.getWriter();
+
+	    if (thread.isFinished()) {
+		toBrowser.write("Finished: " + thread.getCount() + " ingested");
+		thread.finish();
+		context.setAttribute("ingest", null);
+	    }
+	    else {
+		toBrowser.write("Ingesting... at number " + thread.getCount());
+	    }
+	    
+	    toBrowser.close();
+	    return;
+	}
+	
 	if (LOGGER.isDebugEnabled()) {
 	    LOGGER.debug("Loading properties file: {}", propertiesFile);
 	}
@@ -72,9 +84,9 @@ public class IngestServlet extends HttpServlet {
 		    aResp.sendError(HttpServletResponse.SC_BAD_REQUEST, msg);
 		}
 		else {
-		    IngestThread thread = new IngestThread(source, dest, exts, props);
+		    thread = new IngestThread(source, dest, exts, props);
 		    thread.start();
-		    getServletContext().setAttribute("ingest", thread);
+		    context.setAttribute("ingest", thread);
 		}
 	    }
 	    else if (LOGGER.isWarnEnabled()) {

@@ -79,10 +79,13 @@ public class IngestThread extends Thread {
 	isWaiting = false;
     }
     
-    private int convert(File aSource, File aDest) throws IOException, Exception {
+    public boolean isFinished() {
+	return isFinished;
+    }
+    
+    private void convert(File aSource, File aDest) throws IOException, Exception {
 	File[] files = aSource.listFiles(new FileExtFileFilter(myExts));
 	File[] dirs = aSource.listFiles(new DirFileFilter());
-	int total = 0;
 
 	if (LOGGER.isDebugEnabled()) {
 	    LOGGER.debug("Found {} directories in {}", dirs.length, aSource);
@@ -106,7 +109,7 @@ public class IngestThread extends Thread {
 
 		    if ((!dest.exists() && dest.mkdirs())
 			    || (dest.exists() && dest.isDirectory())) {
-			total += convert(nextSource, dest);
+			convert(nextSource, dest);
 		    }
 		    else {
 			throw new IOException(
@@ -132,10 +135,9 @@ public class IngestThread extends Thread {
 		if (LOGGER.isInfoEnabled()) {
 		    LOGGER.info("Compressing {} to {} ({})",
 			    new String[] { sourceFileName, destFileName,
-				    Integer.toString(total + 1) });
+				    Integer.toString(myCount + 1) });
 		}
 
-		total += 1;
 		DjatokaCompress.compress(myCompression, sourceFileName,
 			destFileName, myParams);
 		myCount += 1;
@@ -148,8 +150,6 @@ public class IngestThread extends Thread {
 		}
 	    }
 	}
-
-	return total;
     }
 
     private String stripExt(String aFileName) {
