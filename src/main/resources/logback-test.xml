@@ -8,9 +8,9 @@
     </appender>
     
     <appender name="FILEOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>target/logs/ingest.log</file>
+        <file>target/logs/test-ingest.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>target/logs/ingest.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>target/logs/test-ingest.%d{yyyy-MM-dd}.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n</pattern>
