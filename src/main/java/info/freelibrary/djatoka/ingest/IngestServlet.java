@@ -39,22 +39,6 @@ public class IngestServlet extends HttpServlet {
 	ServletContext context = getServletContext();
 	IngestThread thread = (IngestThread) context.getAttribute("ingest");
 
-	if (thread != null) {
-	    PrintWriter toBrowser = aResp.getWriter();
-
-	    if (thread.isFinished()) {
-		toBrowser.write("Finished: " + thread.getCount() + " ingested");
-		thread.finish();
-		context.setAttribute("ingest", null);
-	    }
-	    else {
-		toBrowser.write("Ingesting... at number " + thread.getCount());
-	    }
-	    
-	    toBrowser.close();
-	    return;
-	}
-	
 	if (LOGGER.isDebugEnabled()) {
 	    LOGGER.debug("Loading properties file: {}", propertiesFile);
 	}
@@ -67,6 +51,27 @@ public class IngestServlet extends HttpServlet {
 	    File source = new File(dataDir);
 	    File dest = new File(jp2Dir);
 	    String[] exts = extString.split(","); // TODO: support ; etc?
+
+	    if (thread != null) {
+		PrintWriter toBrowser = aResp.getWriter();
+		int count = thread.getCount();
+		StringBuilder data = new StringBuilder(" (");
+
+		data.append(dest.getUsableSpace() / 1024 / 1024);
+		data.append(" MB available on the disk)");
+		
+		if (thread.isFinished()) {
+		    toBrowser.write("Finished: " + count + " ingested" + data);
+		    thread.finish();
+		    context.setAttribute("ingest", null);
+		}
+		else {
+		    toBrowser.write("Ingesting... at number " + count + data);
+		}
+
+		toBrowser.close();
+		return;
+	    }
 
 	    if (LOGGER.isDebugEnabled()) {
 		LOGGER.debug("Loading/processing images from {}", dataDir);
