@@ -163,6 +163,10 @@ public class IngestThread extends Thread {
 				destFileName);
 		    }
 		}
+		catch (NullPointerException details) {
+		    LOGGER.error("File ({}) seems to be an empty source image",
+			    sourceFileName);
+		}
 	    }
 	}
     }
