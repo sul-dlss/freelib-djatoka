@@ -2,6 +2,7 @@ package info.freelibrary.djatoka.ingest;
 
 import gov.lanl.adore.djatoka.DjatokaCompress;
 import gov.lanl.adore.djatoka.DjatokaEncodeParam;
+import gov.lanl.adore.djatoka.DjatokaException;
 import gov.lanl.adore.djatoka.ICompress;
 import gov.lanl.adore.djatoka.kdu.KduCompressExe;
 
@@ -21,7 +22,7 @@ public class IngestThread extends Thread {
 	    .getLogger(IngestThread.class);
 
     private static final String JP2_EXT = ".jp2";
-    
+
     private static boolean isFinished;
     private static boolean isWaiting;
     private static int myCount;
@@ -49,16 +50,16 @@ public class IngestThread extends Thread {
 	super.run();
 
 	isWaiting = true;
-	
+
 	try {
 	    convert(mySource, myDest);
 	}
 	catch (Exception details) {
 	    LOGGER.error(details.getMessage(), details);
 	}
-	
+
 	isFinished = true;
-	
+
 	while (isWaiting) {
 	    try {
 		Thread.sleep(1000);
@@ -74,16 +75,17 @@ public class IngestThread extends Thread {
     public int getCount() {
 	return myCount;
     }
-    
+
     public void finish() {
 	isWaiting = false;
     }
-    
+
     public boolean isFinished() {
 	return isFinished;
     }
-    
-    private void convert(File aSource, File aDest) throws IOException, Exception {
+
+    private void convert(File aSource, File aDest) throws IOException,
+	    Exception {
 	File[] files = aSource.listFiles(new FileExtFileFilter(myExts));
 	File[] dirs = aSource.listFiles(new DirFileFilter());
 
@@ -138,8 +140,21 @@ public class IngestThread extends Thread {
 				    Integer.toString(myCount + 1) });
 		}
 
-		DjatokaCompress.compress(myCompression, sourceFileName,
-			destFileName, myParams);
+		try {
+		    DjatokaCompress.compress(myCompression, sourceFileName,
+			    destFileName, myParams);
+		}
+		catch (DjatokaException details) {
+		    LOGGER.error("Compression of {} (from {}) failed: {}",
+			    new String[] { destFileName, sourceFileName,
+				    details.getMessage() });
+
+		    if (!new File(destFileName).delete()) {
+			LOGGER.error("Could not delete broken file: {}",
+				destFileName);
+		    }
+		}
+
 		myCount += 1;
 
 		if (LOGGER.isDebugEnabled()) {

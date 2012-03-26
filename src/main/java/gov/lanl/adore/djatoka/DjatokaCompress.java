@@ -175,13 +175,8 @@ public class DjatokaCompress {
 	 * @param output
 	 * @param p
 	 */
-	public static void compress(ICompress jp2, String input, String output, DjatokaEncodeParam p) {
-		try {
-			jp2.compressImage(input, output, p);
-		} catch (DjatokaException e) {
-			LOGGER.error("djatoka Compression exception: " + e.getMessage(), e);
-			// FIXME remove exist
-			System.exit(1);
-		} 
+	public static void compress(ICompress jp2, String input, String output, DjatokaEncodeParam p) 
+	throws DjatokaException {
+		jp2.compressImage(input, output, p);
 	}
 }
