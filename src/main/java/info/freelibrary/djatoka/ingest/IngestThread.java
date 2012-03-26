@@ -143,6 +143,15 @@ public class IngestThread extends Thread {
 		try {
 		    DjatokaCompress.compress(myCompression, sourceFileName,
 			    destFileName, myParams);
+
+		    myCount += 1;
+
+		    if (LOGGER.isDebugEnabled()) {
+			String fileSize = Long.toString(new File(destFileName)
+				.length());
+			LOGGER.debug("{} written to disk: {}", new String[] {
+				destFileName, fileSize });
+		    }
 		}
 		catch (DjatokaException details) {
 		    LOGGER.error("Compression of {} (from {}) failed: {}",
@@ -153,15 +162,6 @@ public class IngestThread extends Thread {
 			LOGGER.error("Could not delete broken file: {}",
 				destFileName);
 		    }
-		}
-
-		myCount += 1;
-
-		if (LOGGER.isDebugEnabled()) {
-		    String fileSize = Long.toString(new File(destFileName)
-			    .length());
-		    LOGGER.debug("{} written to disk: {}", new String[] {
-			    destFileName, fileSize });
 		}
 	    }
 	}
