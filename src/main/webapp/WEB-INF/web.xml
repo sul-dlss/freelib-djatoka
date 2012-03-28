@@ -5,8 +5,8 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-    <display-name>djatoka tester</display-name>
-    <description>Test for the djatoka image server</description>
+    <display-name>freelib-djatoka</display-name>
+    <description>A fork of the adore-djatoka image server</description>
     <servlet>
         <servlet-name>resolver</servlet-name>
         <servlet-class>gov.lanl.adore.djatoka.openurl.OpenURLServlet</servlet-class>
