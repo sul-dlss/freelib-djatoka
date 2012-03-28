@@ -125,7 +125,7 @@
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>7.4.4.v20110707</version>
+				<version>8.1.2.v20120308</version>
 				<configuration>
 					<connectors>
 						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
@@ -135,7 +135,19 @@
 					</connectors>
 					<stopKey>cough</stopKey>
 					<stopPort>8999</stopPort>
-					<scanIntervalSeconds>5</scanIntervalSeconds>
+					<scanIntervalSeconds>1</scanIntervalSeconds>
+					<!--<webAppConfig>
+						<defaultsDescriptor>src/main/resources/webdefault.xml</defaultsDescriptor>
+						</webAppConfig>-->
+					<!-- scan targets don't work with run-exploded :-( -->
+					<!--<scanTargetPatterns>
+						<scanTargetPattern>
+							<directory>src/main/webapp</directory>
+							<includes>
+								<include>*/.html</include>
+							</includes>
+						</scanTargetPattern>
+					</scanTargetPatterns>-->
 					<requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
 						<filename>target/yyyy_mm_dd.request.log</filename>
 						<retainDays>30</retainDays>
