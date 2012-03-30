@@ -1,30 +1,27 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <script type="text/javascript" src="javascript/openseadragon.js">
-      </script>
-      <script type="text/javascript" src="javascript/djtilesource.js">
-      </script>
+      <script type="text/javascript" src="javascript/openseadragon.js"></script>
+      <script type="text/javascript" src="javascript/djtilesource.js"></script>
       <script type="text/javascript">
-         var viewer = null;
-	     var ts = null;
-
+      
 	     function init() {
-	        var width = 4285;
-            var height = 4855;
-            var tileSize = 256;
-            
-	    	ts = new OpenSeadragon.DjTileSource(width, height, tileSize);
-        	viewer = new OpenSeadragon.Viewer("container");
-			viewer.openTileSource(ts);
+            var djatoka = "http://localhost:8888/view/";
+            var image = "ms0332_gra_21845";
+
+	    	var ts = new OpenSeadragon.DjTileSource(djatoka, image);
+	    	var viewer = new OpenSeadragon.Viewer("container");
+
+	    	viewer.openTileSource(ts);
          }
 
 		 OpenSeadragon.addEvent(window, "load", init);
+		 
       </script>
 
       <style type="text/css">
          #container {
-            width: 900px;
+            width: 800px;
             height: 500px;
             background-color: black;
             border: 1px solid black;

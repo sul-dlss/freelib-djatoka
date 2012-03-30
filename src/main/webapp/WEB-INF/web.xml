@@ -39,6 +39,18 @@
             <param-value>3</param-value>
         </init-param>
     </servlet>
+    <servlet>
+        <servlet-name>fullSizeViewer</servlet-name>
+        <servlet-class>info.freelibrary.djatoka.view.ImageServlet</servlet-class>
+        <init-param>
+            <param-name>level</param-name>
+            <param-value>100</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>zoomViewer</servlet-name>
+        <servlet-class>info.freelibrary.djatoka.view.ImageServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>resolver</servlet-name> 
         <url-pattern>/resolve</url-pattern> 
@@ -58,6 +70,14 @@
     <servlet-mapping>
         <servlet-name>imageViewer</servlet-name>
         <url-pattern>/view/image/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>fullSizeViewer</servlet-name>
+        <url-pattern>/view/fullSize/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>zoomViewer</servlet-name>
+        <url-pattern>/view/zoom/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>viewer</servlet-name>

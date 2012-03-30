@@ -6,18 +6,31 @@ import info.freelibrary.util.PairtreeObject;
 import info.freelibrary.util.PairtreeRoot;
 import info.freelibrary.util.StringUtils;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
+import javax.imageio.ImageIO;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import nu.xom.Attribute;
+import nu.xom.Builder;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.ParsingException;
+import nu.xom.Serializer;
+import nu.xom.ValidityException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +47,11 @@ public class ImageServlet extends HttpServlet implements Constants {
 
     private static final String IMAGE_URL = "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.level={}";
 
-    private static final String REGION_URL = "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.level={}";
+    private static final String REGION_URL = "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.region={}&svc.scale={}";
+
+    private static final String DZI_NS = "http://schemas.microsoft.com/deepzoom/2008";
+
+    private static final String EOL = System.getProperty("line.separator");
 
     private static String myFormatExt;
 
@@ -44,22 +61,39 @@ public class ImageServlet extends HttpServlet implements Constants {
     protected void doGet(HttpServletRequest aRequest,
 	    HttpServletResponse aResponse) throws ServletException, IOException {
 	String level = getServletConfig().getInitParameter("level");
-	String id = parseID(aRequest.getPathInfo());
-	PairtreeObject cacheObject = null;
+	String pathInfo = aRequest.getPathInfo();
+	String[] regionCoords = getRegion(pathInfo);
+	String scale = getScale(pathInfo);
+	String id = getID(pathInfo);
 	String region = null;
 
-	if (level == null) {
+	if (level == null && scale == null) {
 	    level = DEFAULT_VIEW_LEVEL;
+	}
+
+	if (regionCoords.length == 4) {
+	    region = StringUtils.toString(regionCoords, ',');
+	}
+	else {
+	    region = "";
+	}
+
+	if (LOGGER.isDebugEnabled()) {
+	    StringBuilder request = new StringBuilder();
+
+	    request.append("id[").append(id).append("] ");
+	    request.append("level[").append(level).append("] ");
+	    request.append("scale[").append(scale).append("] ");
+	    request.append("region[").append(region).append("]");
+
+	    LOGGER.debug("Request: " + request.toString());
 	}
 
 	if (myCache != null) {
 	    PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
-	    String cacheFileName;
-	    File imageFile;
-
-	    cacheObject = cacheDir.getObject(id);
-	    cacheFileName = "image_" + level + "." + myFormatExt;
-	    imageFile = new File(cacheObject, cacheFileName);
+	    PairtreeObject cacheObject = cacheDir.getObject(id);
+	    String cacheFileName = "image_" + level + "." + myFormatExt;
+	    File imageFile = new File(cacheObject, cacheFileName);
 
 	    if (imageFile.exists()) {
 		ServletOutputStream outStream = aResponse.getOutputStream();
@@ -75,7 +109,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 		    LOGGER.debug("{} not found in cache", imageFile);
 		}
 
-		serveNewImage(id, level, region, aRequest, aResponse);
+		serveNewImage(id, level, region, scale, aRequest, aResponse);
 
 		// For now, not caching ROIs in our permanent cache
 		// It's fine; we fall back to adore-djatoka's LRU cache
@@ -89,7 +123,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 		LOGGER.warn("Cache isn't configured correctly (null)");
 	    }
 
-	    serveNewImage(id, level, region, aRequest, aResponse);
+	    serveNewImage(id, level, region, scale, aRequest, aResponse);
 	    // We can't cache, because we don't have a cache configured
 	}
     }
@@ -133,30 +167,125 @@ public class ImageServlet extends HttpServlet implements Constants {
     @Override
     protected void doHead(HttpServletRequest aRequest,
 	    HttpServletResponse aResponse) throws ServletException, IOException {
-	super.doHead(aRequest, aResponse);
+	String id = getID(aRequest.getPathInfo());
+	int width = 0, height = 0;
+
+	if (myCache != null) {
+	    try {
+		PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
+		PairtreeObject cacheObject = cacheDir.getObject(id);
+		ServletContext context = getServletContext();
+		File dziFile = new File(cacheObject, id + ".dzi");
+
+		if (dziFile.exists()) {
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Reading dzi file: "
+				+ dziFile.getAbsolutePath());
+		    }
+
+		    Document dzi = new Builder().build(dziFile);
+		    Element root = dzi.getRootElement();
+		    Element size = root.getFirstChildElement("Size", DZI_NS);
+		    String wString = size.getAttributeValue("Width");
+		    String hString = size.getAttributeValue("Height");
+
+		    width = wString.equals("") ? 0 : Integer.parseInt(wString);
+		    height = hString.equals("") ? 0 : Integer.parseInt(hString);
+
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Returning width/height: {}/{}", width, height);
+		    }
+		}
+		else {
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Creating new dzi file: "
+				+ dziFile.getAbsolutePath());
+		    }
+
+		    URL url = context.getResource("/WEB-INF/classes/dzi.xml");
+		    Document dzi = new Builder().build(url.openStream());
+		    FileOutputStream outStream = new FileOutputStream(dziFile);
+		    Serializer serializer = new Serializer(outStream);
+		    URL imageURL = new URL(getFullSizeImageURL(aRequest) + id);
+		    BufferedImage image = ImageIO.read(imageURL);
+		    Element root = dzi.getRootElement();
+		    Element size = root.getFirstChildElement("Size", DZI_NS);
+		    Attribute wAttribute = size.getAttribute("Width");
+		    Attribute hAttribute = size.getAttribute("Height");
+
+		    // Return the width and height in response headers
+		    height = image.getHeight();
+		    width = image.getWidth();
+
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Returning width/height: {}/{}", width,
+				height);
+		    }
+
+		    // Save it in our dzi file for easier access next time
+		    wAttribute.setValue(Integer.toString(width));
+		    hAttribute.setValue(Integer.toString(height));
+
+		    serializer.write(dzi);
+		}
+	    }
+	    catch (ValidityException details) {
+		aResponse.sendError(
+			HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+			details.getMessage());
+	    }
+	    catch (ParsingException details) {
+		aResponse.sendError(
+			HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+			details.getMessage());
+	    }
+	}
+	else {
+	    // TODO: work around rather than throwing an exception
+	    throw new ServletException("Cache not correctly configured");
+	}
+
+	// We just return these as header values
+	aResponse.addIntHeader("X-Image-Height", height);
+	aResponse.addIntHeader("X-Image-Width", width);
+
+	// TODO: add a content length header too
+	if (!aResponse.isCommitted()) {
+	    aResponse.setStatus(HttpServletResponse.SC_OK);
+	}
     }
 
     @Override
     protected long getLastModified(HttpServletRequest aRequest) {
+	// TODO: really implement this using our cached files?
 	return super.getLastModified(aRequest);
     }
 
+    private String getFullSizeImageURL(HttpServletRequest aRequest) {
+	StringBuilder url = new StringBuilder();
+	url.append(aRequest.getScheme()).append("://");
+	url.append(aRequest.getServerName()).append(":");
+	url.append(aRequest.getServerPort()).append("/");
+	return url.append("view/fullSize/").toString();
+    }
+
     private void serveNewImage(String aID, String aLevel, String aRegion,
-	    HttpServletRequest aRequest, HttpServletResponse aResponse)
-	    throws IOException, ServletException {
+	    String aScale, HttpServletRequest aRequest,
+	    HttpServletResponse aResponse) throws IOException, ServletException {
 	RequestDispatcher dispatcher;
 	String[] values;
 	String url;
 
-	if (aRegion == null) {
+	if (aScale == null) {
 	    values = new String[] { aID, DEFAULT_VIEW_FORMAT, aLevel };
 	    url = StringUtils.formatMessage(IMAGE_URL, values);
 	}
 	else {
-	    values = new String[] { aID, DEFAULT_VIEW_FORMAT, aLevel };
+	    values = new String[] { aID, DEFAULT_VIEW_FORMAT, aRegion, aScale };
 	    url = StringUtils.formatMessage(REGION_URL, values);
 	}
 
+	// Right now we just let the OpenURL interface do the work
 	dispatcher = aRequest.getRequestDispatcher(url);
 
 	if (LOGGER.isDebugEnabled()) {
@@ -196,11 +325,58 @@ public class ImageServlet extends HttpServlet implements Constants {
 	}
     }
 
-    private String parseID(String aPathInfo) {
+    /*
+     * Working towards:
+     * http://www.example.org/service/abcd1234/80,15,60,75/pct:100/0/color.jpg
+     * 
+     * /domain /service /ark /region /scale /rotation /filename /ext
+     */
+
+    private String getID(String aPathInfo) {
 	if (aPathInfo.startsWith("/")) {
-	    return aPathInfo.substring(1);
+	    return aPathInfo.split("/")[1];
 	}
 
 	return aPathInfo;
+    }
+
+    private String[] getRegion(String aPathInfo) {
+	String[] coordArray = new String[] {};
+
+	if (aPathInfo.contains("/")) {
+	    String[] pathParts = aPathInfo.split("/");
+
+	    if (pathParts.length > 2) {
+		String coords = aPathInfo.split("/")[2];
+
+		if (!coords.equals("all")) {
+		    String[] coordParts = coords.split(",");
+
+		    if (coordParts.length == 4) {
+			coordArray = coordParts;
+		    }
+		    else if (LOGGER.isWarnEnabled()) {
+			LOGGER.warn("Invalid coordinates requested: ", coords);
+			// TODO: throw exception?
+		    }
+		}
+	    }
+	}
+
+	return coordArray;
+    }
+
+    private String getScale(String aPathInfo) {
+	String scale = null;
+
+	if (aPathInfo.contains("/")) {
+	    String[] pathParts = aPathInfo.split("/");
+
+	    if (pathParts.length > 3) {
+		scale = aPathInfo.split("/")[3];
+	    }
+	}
+
+	return scale;
     }
 }
