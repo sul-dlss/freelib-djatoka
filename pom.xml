@@ -244,7 +244,7 @@
 	<properties>
 		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
 		<djatoka.ingest.data>${project.basedir}/src/test/resources/images</djatoka.ingest.data>
-		<djatoka.jp2.data>${project.basedir}/target/test/resources/images</djatoka.jp2.data>
+		<djatoka.jp2.data>${project.basedir}/target/images</djatoka.jp2.data>
 		<openurl.cache.dir>${project.basedir}/target/tmp</openurl.cache.dir>
 		<!-- TODO: is the below even used anywhere? Different from above? -->
 		<djatoka.view.cache>${java.io.tmpdir}</djatoka.view.cache>

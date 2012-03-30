@@ -130,6 +130,11 @@ public class IngestThread extends Thread {
 	    String fileName = stripExt(nextSource.getName()) + JP2_EXT;
 	    File nextDest = new File(aDest, fileName);
 
+	    if (!aDest.exists() && !aDest.mkdirs()) {
+		throw new IOException("Unable to create new directory: "
+			+ nextDest.getAbsolutePath());
+	    }
+
 	    if (!fileName.startsWith(".") && !nextDest.exists()) {
 		String sourceFileName = nextSource.getAbsolutePath();
 		String destFileName = nextDest.getAbsolutePath();
