@@ -106,17 +106,17 @@ DEVELOPMENT TIPS
 
 The Jetty server must be started with `mvn:run-exploded` to include the native
 libraries, but this introduces a wrinkle into the development process because
-the Jetty Maven plugin will not detect changes to static files (HTML, CSS, etc.)
-when run-exploded is used (you also can't configure it to use scanTargets).
+the Jetty Maven plugin will not detect changes to files (HTML, CSS, etc.) when
+`mvn:run-exploded` is used (you also can't configure it to use scanTargets).
 
-So, one way to work around this issue, when editing the static files, is to have
-a separate terminal window open in which you can run:
+So, one way to work around this issue, when editing files, is to have a separate
+terminal window open in which you can run:
 
 	mvn -q package -Dmaven.test.skip=true
 
-This will move the changed static files into the directory that run-exploded
-uses as its source.  You can ignore the error message about the missing
-MAVEN_OPT parameter; that's only needed when starting Jetty as the web server.
+This will move the changed files into the directory that `mvn:run-exploded` uses
+as its source.  You can ignore the error message about the missing MAVEN_OPT
+parameter that is output... that's only needed when running the Jetty plugin.
 
 
 ================================================================================
