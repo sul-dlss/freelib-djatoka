@@ -245,12 +245,11 @@ public class ImageServlet extends HttpServlet implements Constants {
 	    throw new ServletException("Cache not correctly configured");
 	}
 
-	// We just return these as header values
-	aResponse.addIntHeader("X-Image-Height", height);
-	aResponse.addIntHeader("X-Image-Width", width);
-
 	// TODO: add a content length header too
 	if (!aResponse.isCommitted()) {
+	    aResponse.addIntHeader("X-Image-Height", height);
+	    aResponse.addIntHeader("X-Image-Width", width);
+
 	    aResponse.setStatus(HttpServletResponse.SC_OK);
 	}
     }
