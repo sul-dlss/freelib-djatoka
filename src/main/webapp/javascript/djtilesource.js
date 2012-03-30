@@ -45,7 +45,6 @@ $.extend($.DjTileSource.prototype, $.TileSource.prototype, {
     	var tileSize = parseInt(newScale * 256);
     	var tileSizeX, tileSizeY, region;
     	var scale = Math.pow(2, level);
-    	var slash = "/";
 
     	if (level > 8) {
     		var myX = parseInt(x);
@@ -82,7 +81,7 @@ $.extend($.DjTileSource.prototype, $.TileSource.prototype, {
     		region = "";
     	}
 
-    	return this.baseURL + this.imageID + slash + region + slash + scale;
+    	return this.baseURL + this.imageID + "/" + region + "/" + scale;
     }
 });
 

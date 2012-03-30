@@ -13,11 +13,24 @@ should be as simple as typing:
 
   MAVEN_OPTS="-Djava.library.path=target/lib" mvn jetty:run-exploded
 
-To confirm it's working, go to http://localhost:8888 and click the Update Image
-button (an image should then appear at the top of the page).  Right now, only
-the Linux amd64 configuration has been verified as working.  If you would like
-to confirm that the program works on another platform this would be appreciated
-(contact the email address below if you do, thanks!)
+There is a test page where you can confirm that freelib-djatoka is running, but
+before you visit that you should run the ingester so you'll have a JP2 to view.
+
+  To start the ingest of TIFF files, go to --> http://localhost:8888/ingest
+
+This will start a background process that ingests the files in the djatoka
+ingest data directory (there are just two in the sample data directory).
+
+  To check on the ingest status, revisit --> http://localhost:8888/ingest
+
+After you've run the ingest (which will just take a second with two files), you
+can confirm the JP2 viewer is working.
+
+  To confirm it's working, test it out at --> http://localhost:8888
+
+Right now, only the Linux amd64 configuration has been verified as working.  If
+you would like to confirm that the program works on another platform this would
+be appreciated (contact the email address below if you do, thanks!)
 
 
 ================================================================================
@@ -28,22 +41,19 @@ freelib-djatoka will ingest TIFF files in a specified TIFF directory.  It will
 also store JP2s and derivative JPEG files to the file system.  To configure all
 this, the project's pom.xml needs to be updated to match your local system.  In
 the 'properties' element change the following three properties to suit your file
-system:
+system, for instance:
 
 	<djatoka.ingest.data>/usr/local/data/images/tiffs</djatoka.ingest.data>
 	<djatoka.jp2.data>/usr/local/data/images/jp2s</djatoka.jp2.data>
 	<openurl.cache.dir>/usr/local/data/images/cache</openurl.cache.dir>
 	
 These properties can be overwritten in the 'profiles' section if you are using
-something other than a Linux system.  If you are using Linux, you can also use
-the supplied locations and symlink them to another drive, etc.
+something other than a Linux system.  You can also override the default values
+(without touching the POM) by adding them to ${MAVEN_HOME}/conf/settings.xml
 
-To start the ingest of TIFF files, go to --> http://localhost:8888/ingest
-
-This will start a background process that ingests the files in the djatoka
-ingest data directory.
-
-To check on the status of the ingest, revisit --> http://localhost:8888/ingest
+Currently, the POM file is configured to use sample directories in the project's
+directory structure.  You'll probably want to change this when you run your own
+instance.
 
 
 ================================================================================
