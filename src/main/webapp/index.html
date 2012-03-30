@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html>
    <head>
+      <title>freelib-djatoka Test Page</title>
       <script type="text/javascript" src="javascript/openseadragon.js"></script>
       <script type="text/javascript" src="javascript/djtilesource.js"></script>
       <script type="text/javascript">
       
-	     function init() {
+         function init() {
             var djatoka = "http://localhost:8888/view/";
             var image = "ms0332_gra_21503";
 
-	    	var ts = new OpenSeadragon.DjTileSource(djatoka, image);
-	    	var viewer = new OpenSeadragon.Viewer("container");
+            var ts = new OpenSeadragon.DjTileSource(djatoka, image);
+            var viewer = new OpenSeadragon.Viewer("container");
 
-	    	viewer.openTileSource(ts);
+            viewer.openTileSource(ts);
          }
 
-		 OpenSeadragon.addEvent(window, "load", init);
+         OpenSeadragon.addEvent(window, "load", init);
 		 
       </script>
 
       <style type="text/css">
          #container {
-            width: 800px;
-            height: 500px;
-            background-color: black;
-            border: 1px solid black;
-            color: white;   /* for error messages, etc. */
-         }
-      </style>
+             width : 800px;
+             height : 500px;
+             background-color : black;
+             border : 1px solid black;
+             color : white; /* for error messages, etc. */
+         }</style>
 
    </head>
 
