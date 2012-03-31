@@ -23,6 +23,8 @@ public class IngestThread extends Thread {
 
     private static final String JP2_EXT = ".jp2";
 
+    private static final String MAX_SIZE = "djatoka.ingest.file.maxSize";
+
     private static boolean isFinished;
     private static boolean isWaiting;
     private static int myCount;
@@ -30,6 +32,7 @@ public class IngestThread extends Thread {
     private DjatokaEncodeParam myParams;
     private ICompress myCompression;
     private String[] myExts;
+    private long myMaxSize;
     private File mySource;
     private File myDest;
 
@@ -43,6 +46,9 @@ public class IngestThread extends Thread {
 
 	myParams = new DjatokaEncodeParam(aCfg);
 	myCompression = new KduCompressExe();
+
+	// Convert maximum file size to bytes
+	myMaxSize = Long.parseLong(aCfg.getProperty(MAX_SIZE, "200")) * 1048576;
     }
 
     @Override
@@ -128,7 +134,17 @@ public class IngestThread extends Thread {
 
 	for (File nextSource : files) {
 	    String fileName = stripExt(nextSource.getName()) + JP2_EXT;
+	    String sourceFileName = nextSource.getAbsolutePath();
 	    File nextDest = new File(aDest, fileName);
+
+	    if (nextSource.length() > myMaxSize) {
+		if (LOGGER.isErrorEnabled()) {
+		    LOGGER.error("Source file too large: {} ({})",
+			    sourceFileName, nextSource.length() / 1048576);
+		}
+
+		continue;
+	    }
 
 	    if (!aDest.exists() && !aDest.mkdirs()) {
 		throw new IOException("Unable to create new directory: "
@@ -136,7 +152,6 @@ public class IngestThread extends Thread {
 	    }
 
 	    if (!fileName.startsWith(".") && !nextDest.exists()) {
-		String sourceFileName = nextSource.getAbsolutePath();
 		String destFileName = nextDest.getAbsolutePath();
 
 		if (LOGGER.isInfoEnabled()) {

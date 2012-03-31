@@ -136,18 +136,6 @@
 					<stopKey>cough</stopKey>
 					<stopPort>8999</stopPort>
 					<scanIntervalSeconds>1</scanIntervalSeconds>
-					<!--<webAppConfig>
-						<defaultsDescriptor>src/main/resources/webdefault.xml</defaultsDescriptor>
-						</webAppConfig>-->
-					<!-- scan targets don't work with run-exploded :-( -->
-					<!--<scanTargetPatterns>
-						<scanTargetPattern>
-							<directory>src/main/webapp</directory>
-							<includes>
-								<include>*/.html</include>
-							</includes>
-						</scanTargetPattern>
-					</scanTargetPatterns>-->
 					<requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
 						<filename>target/yyyy_mm_dd.request.log</filename>
 						<retainDays>30</retainDays>
@@ -248,6 +236,8 @@
 		<openurl.cache.dir>${project.basedir}/target/tmp</openurl.cache.dir>
 		<!-- TODO: is the below even used anywhere? Different from above? -->
 		<djatoka.view.cache>${java.io.tmpdir}</djatoka.view.cache>
+		<!-- Max TIFF file size for ingest (always specified in MB) -->
+		<djatoka.ingest.maxSize>200</djatoka.ingest.maxSize>
 		<!-- <referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver> -->
 		<referent.resolver>info.freelibrary.djatoka.view.IdentifierResolver</referent.resolver>
 		<cache.enabled>true</cache.enabled>
