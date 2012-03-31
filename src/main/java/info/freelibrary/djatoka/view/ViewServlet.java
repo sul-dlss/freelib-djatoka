@@ -59,6 +59,14 @@ public class ViewServlet extends HttpServlet implements Constants {
 
 	File dir = new File(jp2Dir, dirParam);
 
+	if (!session.isNew()) {
+	    String size = (String) session.getAttribute(JP2_SIZE_ATTR);
+	    
+	    if (size.equals("null")) {
+		session.invalidate();
+	    }
+	}
+	
 	if (session.isNew()) {
 	    RegexFileFilter jp2Pattern = new RegexFileFilter(JP2_FILE_PATTERN);
 	    RegexFileFilter tifPattern = new RegexFileFilter(TIFF_FILE_PATTERN);
