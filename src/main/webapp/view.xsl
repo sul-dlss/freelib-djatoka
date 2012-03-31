@@ -18,19 +18,21 @@
 			<body>
 				<div id="header">Image Navigator</div>
 				<div id="totals">
-					<span class="bold">TIFFs: </span>
-					<xsl:value-of select="tifStats/@fileCount" />
-					files
-					<xsl:text>(</xsl:text>
-					<xsl:value-of select="tifStats/@totalSize" />
-					<xsl:text>)</xsl:text>
-					~
-					<span class="bold">JP2s: </span>
-					<xsl:value-of select="jp2Stats/@fileCount" />
-					files
-					<xsl:text>(</xsl:text>
-					<xsl:value-of select="jp2Stats/@totalSize" />
-					<xsl:text>)</xsl:text>
+					<xsl:if test="tifStats/@totalSize != 'null'">
+						<span class="bold">TIFFs: </span>
+						<xsl:value-of select="tifStats/@fileCount" />
+						files
+						<xsl:text>(</xsl:text>
+						<xsl:value-of select="tifStats/@totalSize" />
+						<xsl:text>)</xsl:text>
+						~
+						<span class="bold">JP2s: </span>
+						<xsl:value-of select="jp2Stats/@fileCount" />
+						files
+						<xsl:text>(</xsl:text>
+						<xsl:value-of select="jp2Stats/@totalSize" />
+						<xsl:text>)</xsl:text>
+					</xsl:if>
 				</div>
 				<div id="breadcrumbs">
 					Path: /
