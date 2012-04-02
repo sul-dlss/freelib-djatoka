@@ -458,8 +458,8 @@ OpenSeadragon = window.OpenSeadragon || function( options ){
             navigatorSizeRatio: 0.25,
             
             //These two were referenced but never defined
-            controlsFadeDelay:  2000,
-            controlsFadeLength: 1500,
+            controlsFadeDelay:  6000,
+            controlsFadeLength: 2000,
 
             maxImageCacheCount: 200,
             minPixelRatio:      0.5,

@@ -19,11 +19,11 @@ before you visit that you should run the ingester so you'll have a JP2 to view.
   To start the ingest of TIFF files, go to --> http://localhost:8888/ingest
 
 This will start a background process that ingests the files in the djatoka
-ingest data directory (there are just two in the sample data directory).
+ingest data directory (there are just six in the sample data directory).
 
   To check on the ingest status, revisit --> http://localhost:8888/ingest
 
-After you've run the ingest (which will just take a second with two files), you
+After you've run the ingest (which will just take a second with six files), you
 can confirm the JP2 viewer is working.
 
   To confirm it's working, test it out at --> http://localhost:8888

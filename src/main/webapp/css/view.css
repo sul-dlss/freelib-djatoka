@@ -32,6 +32,10 @@ div#folder {
     padding-top: 20px;
     text-align: center;
 }
+div#zoom {
+    width : 100%;
+    height : 95%;
+}
 .bold {
     font-weight: bold;
 }

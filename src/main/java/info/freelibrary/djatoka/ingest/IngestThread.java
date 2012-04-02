@@ -139,7 +139,7 @@ public class IngestThread extends Thread {
 
 	    if (nextSource.length() > myMaxSize) {
 		if (LOGGER.isErrorEnabled()) {
-		    LOGGER.error("Source file too large: {} ({})",
+		    LOGGER.error("Source file too large: {} ({} MB)",
 			    sourceFileName, nextSource.length() / 1048576);
 		}
 

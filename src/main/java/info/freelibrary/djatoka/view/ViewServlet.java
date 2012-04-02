@@ -62,8 +62,9 @@ public class ViewServlet extends HttpServlet implements Constants {
 	if (!session.isNew()) {
 	    String size = (String) session.getAttribute(JP2_SIZE_ATTR);
 	    
-	    if (size.equals("null")) {
+	    if (size == null || size.equals("null")) {
 		session.invalidate();
+		session = aRequest.getSession();
 	    }
 	}
 	

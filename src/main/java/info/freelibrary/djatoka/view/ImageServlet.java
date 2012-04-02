@@ -65,7 +65,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 	String[] regionCoords = getRegion(pathInfo);
 	String scale = getScale(pathInfo);
 	String id = getID(pathInfo);
-	String region = null;
+	String region;
 
 	if (level == null && scale == null) {
 	    level = DEFAULT_VIEW_LEVEL;

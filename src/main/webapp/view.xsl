@@ -9,9 +9,12 @@
 				<link rel="stylesheet" type="text/css" href="/css/view.css" />
 				<link rel="stylesheet" type="text/css" href="/css/lightbox.css" media="screen" />
 				
+				<script type="text/javascript" src="/javascript/openseadragon.js">&#xa0;</script>
+				<script type="text/javascript" src="/javascript/djtilesource.js">&#xa0;</script>
 				<script type="text/javascript" src="/javascript/prototype.js">&#xa0;</script>
 				<script type="text/javascript" src="/javascript/scriptaculous.js?load=effects,builder">&#xa0;</script>
 				<script type="text/javascript" src="/javascript/lightbox.js">&#xa0;</script>
+				<script type="text/javascript" src="/javascript/zoomview.js">&#xa0;</script>
 				
 				<title>Image Navigator</title>
 			</head>
@@ -71,9 +74,15 @@
 								</xsl:when>
 							</xsl:choose>
 						</xsl:variable>
+						<xsl:variable name="zoomLink">
+							<text>&lt;a href=&quot;#&quot; onclick=&quot;zoom(&apos;</text>
+							<xsl:value-of select="$fileName"/>
+							<text>&apos;);&quot;&gt;Zoom In!&lt;/a&gt;</text>
+						</xsl:variable>
 
 						<div class="image">
-							<a href="/view/image/{$fileName}" rel="lightbox[thumbs]">
+							<a href="/view/image/{$fileName}" rel="lightbox[thumbs]"
+								title="{$zoomLink}">
 								<img src="/view/thumbnail/{$fileName}" />
 							</a>
 						</div>
