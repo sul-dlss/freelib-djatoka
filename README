@@ -27,10 +27,13 @@ After you've run the ingest (which will just take a second with six files), you
 can confirm the JP2 viewer is working.
 
   To confirm it's working, test it out at --> http://localhost:8888
+  
+Once you've confirmed it's working, you can check out the simple built-in image
+viewer that will let you navigate around the directories of images that have
+been ingested.  This is more of a "staff view" mode rather than something that
+should be exposed to the public.  It requires JavaScript and a modern browser.
 
-Right now, only the Linux amd64 configuration has been verified as working.  If
-you would like to confirm that the program works on another platform this would
-be appreciated (contact the email address below if you do, thanks!)
+  To use the simple viewer, go to --> http://localhost:8888/view
 
 
 ================================================================================
@@ -134,6 +137,6 @@ license.  See the adore-djatoka page for more details (see URL below).
 QUESTIONS AND COMMENTS
 ================================================================================
 
-Questions should be directed to Kevin S. Clarke at ksclarke@gmail.com
+Questions should be directed to Kevin S. Clarke <ksclarke@gmail.com>
 
 The original djatoka project is available at http://djatoka.sourceforge.net/
