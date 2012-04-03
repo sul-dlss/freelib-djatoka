@@ -15,13 +15,19 @@ import info.openurl.oom.entities.Referent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -114,9 +120,11 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	}
 
 	if (query == null) {
-	    LOGGER.warn(
-		    "{}.query is not defined in properties file (using: {})",
-		    DEFAULT_DBID, myQuery);
+	    if (LOGGER.isDebugEnabled()) {
+		LOGGER.debug(
+			"{}.query is not defined in properties file (using: {})",
+			DEFAULT_DBID, myQuery);
+	    }
 	}
 	else {
 	    myQuery = query;
@@ -148,6 +156,14 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	    ImageRecord image = new ImageRecord();
 	    String id = stripExt(file.getName());
 
+	    try {
+		id = URLEncoder.encode(id, "UTF-8");
+	    }
+	    catch (UnsupportedEncodingException details) {
+		// Should be impossible to get here, UTF-8 is always supported
+		throw new RuntimeException(details);
+	    }
+
 	    if (LOGGER.isDebugEnabled()) {
 		LOGGER.debug("Loading {} ({})", id, file);
 	    }
@@ -176,6 +192,14 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	    }
 	    else if (LOGGER.isWarnEnabled() && image == null) {
 		LOGGER.warn("{} not found in the local cache", aReferentID);
+		
+		// Well, why not? Don't turn debugging on on prod, obviously
+		if (LOGGER.isDebugEnabled()) {
+		    Set<String> keys = myLocalImages.keySet();
+		    String[] keyArray = new String[keys.size()];
+		    keys.toArray(keyArray);
+		    LOGGER.debug(StringUtils.toString(keyArray, '|'));
+		}
 	    }
 	}
 	else {

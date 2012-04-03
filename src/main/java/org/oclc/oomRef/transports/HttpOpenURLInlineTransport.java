@@ -28,6 +28,7 @@ import info.openurl.oom.entities.ServiceType;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -131,7 +132,8 @@ public class HttpOpenURLInlineTransport implements Transport {
 	        		adminKeys.put(key, values);
 	        	} else if ("rft_id".equals(key)) {
 	            	for (int i=0; i<values.length; ++i) {
-		    	        referentDescriptors.add(new URI(values[i]));
+	            	    values[i] = URLEncoder.encode(values[i], "UTF-8");
+		    	    referentDescriptors.add(new URI(values[i]));
 	            	}
 	    		} else if ("rft_dat".equals(key)) {
 	            	for (int i=0; i<values.length; ++i) {

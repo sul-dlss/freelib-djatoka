@@ -20,6 +20,7 @@
     <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="INFO"/>
     <logger name="info.freelibrary.djatoka.view.ViewServlet" level="INFO"/>
     <logger name="info.freelibrary.djatoka.view.ImageServlet" level="DEBUG"/>
+    <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="INFO"/>
 
     <logger name="info.freelibrary.util.PairtreeObject" level="INFO"/>
     <logger name="info.freelibrary.util.PairtreeRoot" level="INFO"/>
@@ -29,6 +30,8 @@
     </logger>
 
     <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="INFO"/>
+    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="INFO"/>
+
     <!--<logger name="gov.lanl.adore.djatoka.kdu" level="INFO"/>-->
 
     <root level="ERROR">

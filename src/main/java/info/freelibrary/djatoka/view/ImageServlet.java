@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
@@ -51,7 +52,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 
     private static final String DZI_NS = "http://schemas.microsoft.com/deepzoom/2008";
 
-    private static final String EOL = System.getProperty("line.separator");
+    private static final String CHARSET = "UTF-8";
 
     private static String myFormatExt;
 
@@ -177,7 +178,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 		ServletContext context = getServletContext();
 		File dziFile = new File(cacheObject, id + ".dzi");
 
-		if (dziFile.exists()) {
+		if (dziFile.exists() && dziFile.length() > 0) {
 		    if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Reading dzi file: "
 				+ dziFile.getAbsolutePath());
@@ -193,10 +194,15 @@ public class ImageServlet extends HttpServlet implements Constants {
 		    height = hString.equals("") ? 0 : Integer.parseInt(hString);
 
 		    if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Returning width/height: {}/{}", width, height);
+			LOGGER.debug("Returning width/height: {}/{}", width,
+				height);
 		    }
 		}
 		else {
+		    if (dziFile.exists()) {
+			dziFile.delete();
+		    }
+
 		    if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Creating new dzi file: "
 				+ dziFile.getAbsolutePath());
@@ -206,7 +212,13 @@ public class ImageServlet extends HttpServlet implements Constants {
 		    Document dzi = new Builder().build(url.openStream());
 		    FileOutputStream outStream = new FileOutputStream(dziFile);
 		    Serializer serializer = new Serializer(outStream);
-		    URL imageURL = new URL(getFullSizeImageURL(aRequest) + id);
+		    URL imageURL = new URL(getFullSizeImageURL(aRequest) + URLEncoder.encode(id, "UTF-8"));
+
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Writing DZI file for: {}",
+				imageURL.toExternalForm());
+		    }
+
 		    BufferedImage image = ImageIO.read(imageURL);
 		    Element root = dzi.getRootElement();
 		    Element size = root.getFirstChildElement("Size", DZI_NS);
@@ -271,16 +283,17 @@ public class ImageServlet extends HttpServlet implements Constants {
     private void serveNewImage(String aID, String aLevel, String aRegion,
 	    String aScale, HttpServletRequest aRequest,
 	    HttpServletResponse aResponse) throws IOException, ServletException {
+	String id = URLEncoder.encode(aID, CHARSET);
 	RequestDispatcher dispatcher;
 	String[] values;
 	String url;
 
 	if (aScale == null) {
-	    values = new String[] { aID, DEFAULT_VIEW_FORMAT, aLevel };
+	    values = new String[] { id, DEFAULT_VIEW_FORMAT, aLevel };
 	    url = StringUtils.formatMessage(IMAGE_URL, values);
 	}
 	else {
-	    values = new String[] { aID, DEFAULT_VIEW_FORMAT, aRegion, aScale };
+	    values = new String[] { id, DEFAULT_VIEW_FORMAT, aRegion, aScale };
 	    url = StringUtils.formatMessage(REGION_URL, values);
 	}
 
@@ -333,7 +346,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 
     private String getID(String aPathInfo) {
 	if (aPathInfo.startsWith("/")) {
-	    return aPathInfo.split("/")[1];
+	    return aPathInfo.split("/")[1].replace('+', ' ');
 	}
 
 	return aPathInfo;
