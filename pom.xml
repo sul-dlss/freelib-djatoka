@@ -233,9 +233,10 @@
 		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
 		<djatoka.ingest.data>${project.basedir}/src/test/resources/images</djatoka.ingest.data>
 		<djatoka.jp2.data>${project.basedir}/target/images</djatoka.jp2.data>
-		<openurl.cache.dir>${project.basedir}/target/tmp</openurl.cache.dir>
-		<!-- TODO: is the below even used anywhere? Different from above? -->
-		<djatoka.view.cache>${java.io.tmpdir}</djatoka.view.cache>
+		<!-- The cache the OpenURL system uses when it creates an object -->
+		<openurl.cache.dir>${project.basedir}/target/tmpcache</openurl.cache.dir>
+		<!-- Separate cache used for the pairtree storage system -->
+		<djatoka.view.cache>${project.basedir}/target/cache</djatoka.view.cache>
 		<!-- Max TIFF file size for ingest (always specified in MB) -->
 		<djatoka.ingest.maxSize>200</djatoka.ingest.maxSize>
 		<!-- <referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver> -->

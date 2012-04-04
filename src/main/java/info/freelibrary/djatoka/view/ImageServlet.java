@@ -1,5 +1,6 @@
 package info.freelibrary.djatoka.view;
 
+import gov.lanl.adore.djatoka.openurl.OpenURLJP2KService;
 import info.freelibrary.djatoka.Constants;
 import info.freelibrary.util.IOUtils;
 import info.freelibrary.util.PairtreeObject;
@@ -93,7 +94,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 	if (myCache != null) {
 	    PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
 	    PairtreeObject cacheObject = cacheDir.getObject(id);
-	    String cacheFileName = "image_" + level + "." + myFormatExt;
+	    String cacheFileName = getCacheFileName(level, scale, region);
 	    File imageFile = new File(cacheObject, cacheFileName);
 
 	    if (imageFile.exists()) {
@@ -111,12 +112,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 		}
 
 		serveNewImage(id, level, region, scale, aRequest, aResponse);
-
-		// For now, not caching ROIs in our permanent cache
-		// It's fine; we fall back to adore-djatoka's LRU cache
-		if (region == null) {
-		    cacheNewImage(aRequest, aResponse, imageFile);
-		}
+		cacheNewImage(aRequest, aResponse, imageFile);
 	    }
 	}
 	else {
@@ -142,8 +138,8 @@ public class ImageServlet extends HttpServlet implements Constants {
 		    // TODO: use the default java cache dir as fallback?
 		    myCache = props.getProperty(VIEW_CACHE_DIR);
 
-		    if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("Cache directory set to {}", myCache);
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Cache directory set to {}", myCache);
 		    }
 		}
 
@@ -151,8 +147,8 @@ public class ImageServlet extends HttpServlet implements Constants {
 		    myFormatExt = props.getProperty(VIEW_FORMAT_EXT,
 			    DEFAULT_VIEW_EXT);
 
-		    if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("Format extension set to {}", myFormatExt);
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Format extension set to {}", myFormatExt);
 		    }
 		}
 	    }
@@ -212,7 +208,8 @@ public class ImageServlet extends HttpServlet implements Constants {
 		    Document dzi = new Builder().build(url.openStream());
 		    FileOutputStream outStream = new FileOutputStream(dziFile);
 		    Serializer serializer = new Serializer(outStream);
-		    URL imageURL = new URL(getFullSizeImageURL(aRequest) + URLEncoder.encode(id, "UTF-8"));
+		    URL imageURL = new URL(getFullSizeImageURL(aRequest)
+			    + URLEncoder.encode(id, "UTF-8"));
 
 		    if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Writing DZI file for: {}",
@@ -272,6 +269,32 @@ public class ImageServlet extends HttpServlet implements Constants {
 	return super.getLastModified(aRequest);
     }
 
+    /**
+     * A first pass at this... it will get more sophisticated in time.
+     * 
+     * @param aLevel
+     * @param aScale
+     * @param aRegion
+     * @return
+     */
+    private String getCacheFileName(String aLevel, String aScale, String aRegion) {
+	StringBuilder cfName = new StringBuilder("image_");
+	String region = isEmpty(aRegion) ? "all" : aRegion.replace(',', '-');
+
+	if (aLevel != null && !aLevel.equals("")) {
+	    cfName.append(aLevel).append('.');
+	}
+	else {
+	    cfName.append(aScale).append('_').append(region).append('.');
+	}
+
+	return cfName.append(myFormatExt).toString();
+    }
+
+    private boolean isEmpty(String aString) {
+	return aString == null || aString.equals("");
+    }
+
     private String getFullSizeImageURL(HttpServletRequest aRequest) {
 	StringBuilder url = new StringBuilder();
 	url.append(aRequest.getScheme()).append("://");
@@ -315,6 +338,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 
 	if (fileName != null) {
 	    File cachedFile = new File(fileName);
+	    String cachedFilePath = cachedFile.getAbsolutePath();
 
 	    // This moves the newly created file from the adore-djatoka cache
 	    // to the freelib-djatoka cache (which is pure-FS/Pairtree-based)
@@ -325,15 +349,32 @@ public class ImageServlet extends HttpServlet implements Constants {
 		}
 
 		// FIXME: Don't assume files are of the same type(?)
-		cachedFile.renameTo(aDestFile);
-		// TODO: remove from in-memory map of cache files?
+		if (!cachedFile.renameTo(aDestFile) && LOGGER.isDebugEnabled()) {
+		    LOGGER.debug("Unable to move cache file: {}", cachedFile);
+		}
+		else {
+		    // This is the temporary file cache used by the OpenURL layer
+		    if (!OpenURLJP2KService.removeFromTileCache(cachedFilePath)
+			    && LOGGER.isDebugEnabled()) {
+			LOGGER.debug(
+				"Unable to remove OpenURL cache file link: {}",
+				cachedFilePath);
+		    }
+		}
+	    }
+	    else if (LOGGER.isWarnEnabled() && !cachedFile.exists()) {
+		LOGGER.warn(
+			"Session had a cache file ({}), but it didn't exist",
+			cachedFile.getAbsoluteFile());
 	    }
 	    else if (LOGGER.isWarnEnabled()) {
-		LOGGER.warn("Session had a cache file, but it didn't exist");
+		LOGGER.warn("Location for destination cache file was null");
 	    }
 	}
 	else if (LOGGER.isWarnEnabled()) {
-	    LOGGER.warn("Couldn't cache; session lacked new image information");
+	    LOGGER.warn(
+		    "Couldn't cache ({}); session lacked new image information",
+		    aDestFile.getAbsolutePath());
 	}
     }
 
@@ -359,16 +400,18 @@ public class ImageServlet extends HttpServlet implements Constants {
 	    String[] pathParts = aPathInfo.split("/");
 
 	    if (pathParts.length > 2) {
-		String coords = aPathInfo.split("/")[2];
+		String coordsString = aPathInfo.split("/")[2];
 
-		if (!coords.equals("all")) {
-		    String[] coordParts = coords.split(",");
+		if (!coordsString.equals("all")) {
+		    String[] coords = coordsString.split(",");
 
-		    if (coordParts.length == 4) {
-			coordArray = coordParts;
+		    if (coords.length == 4) {
+			coordArray = coords;
 		    }
 		    else if (LOGGER.isWarnEnabled()) {
-			LOGGER.warn("Invalid coordinates requested: ", coords);
+			LOGGER.warn(
+				"Invalid coordinates ({}) requested in: {}",
+				StringUtils.toString(coords, ','), aPathInfo);
 			// TODO: throw exception?
 		    }
 		}

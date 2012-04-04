@@ -57,17 +57,22 @@ public class ViewServlet extends HttpServlet implements Constants {
 	    return;
 	}
 
+	if (!jp2Dir.exists()) {
+	    aResponse.sendError(HttpServletResponse.SC_NOT_FOUND,
+		    "The JP2 directory cannot be found: " + jp2Dir.getAbsolutePath());
+	}
+
 	File dir = new File(jp2Dir, dirParam);
 
 	if (!session.isNew()) {
 	    String size = (String) session.getAttribute(JP2_SIZE_ATTR);
-	    
+
 	    if (size == null || size.equals("null")) {
 		session.invalidate();
 		session = aRequest.getSession();
 	    }
 	}
-	
+
 	if (session.isNew()) {
 	    RegexFileFilter jp2Pattern = new RegexFileFilter(JP2_FILE_PATTERN);
 	    RegexFileFilter tifPattern = new RegexFileFilter(TIFF_FILE_PATTERN);

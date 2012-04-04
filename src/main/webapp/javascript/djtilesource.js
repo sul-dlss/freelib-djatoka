@@ -78,9 +78,10 @@ $.extend($.DjTileSource.prototype, $.TileSource.prototype, {
     		region = startY + "," + startX + "," + tileSizeY + "," + tileSizeX;
     	}
     	else {
-    		region = "";
+    		region = "all";
     	}
 
+    	//alert(this.baseURL + this.imageID + "/" + region + "/" + scale);
     	return this.baseURL + this.imageID + "/" + region + "/" + scale;
     }
 });

@@ -86,12 +86,12 @@ public class OpenURLServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException {
-		try {
+	    	try {
 			// Try each Transport until someone takes responsibility
 			OpenURLRequest openURLRequest = null;
 
 			for (int i = 0; openURLRequest == null && i < transports.length; ++i) {
-				openURLRequest = transports[i].toOpenURLRequest(processor, req);
+			    openURLRequest = transports[i].toOpenURLRequest(processor, req);
 			}
 
 			if (openURLRequest == null) {
@@ -130,7 +130,7 @@ public class OpenURLServlet extends HttpServlet {
 			// rchute: Add requester for possible extension processing
 			openURLRequest.getContextObjects()[0].getRequesters()[0]
 					.addDescriptor(req.getRemoteAddr());
-
+			
 			// Process the ContextObjects
 			OpenURLResponse result = processor.resolve(openURLRequest);
 
@@ -158,9 +158,10 @@ public class OpenURLServlet extends HttpServlet {
 
 					while (iter.hasNext()) {
 						Map.Entry entry = (Entry) iter.next();
+						String key = (String) entry.getKey();
+						String value = (String) entry.getValue();
 
-						session.setAttribute((String) entry.getKey(), entry
-								.getValue());
+						session.setAttribute(key, value);
 					}
 				}
 

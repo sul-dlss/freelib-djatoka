@@ -19,18 +19,19 @@
 
     <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="INFO"/>
     <logger name="info.freelibrary.djatoka.view.ViewServlet" level="INFO"/>
-    <logger name="info.freelibrary.djatoka.view.ImageServlet" level="DEBUG"/>
+    <logger name="info.freelibrary.djatoka.view.ImageServlet" level="INFO"/>
     <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="INFO"/>
 
     <logger name="info.freelibrary.util.PairtreeObject" level="INFO"/>
     <logger name="info.freelibrary.util.PairtreeRoot" level="INFO"/>
     
-    <logger name="info.freelibrary.djatoka.ingest" level="DEBUG">
+    <logger name="info.freelibrary.djatoka.ingest" level="INFO">
         <appender-ref ref="FILEOUT"/>
     </logger>
 
     <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="INFO"/>
     <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="INFO"/>
+    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="INFO"/>
 
     <!--<logger name="gov.lanl.adore.djatoka.kdu" level="INFO"/>-->
 
