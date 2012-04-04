@@ -29,5 +29,13 @@ public interface Constants {
 	
 	// TODO: make case insensitivity an option for the FilenameFilter
 	public static final String JP2_FILE_PATTERN = "^[^\\.].*\\.(JP2|jp2)$";
+	
+	public static final String JP2_SIZE_ATTR = "jp2Size";
+
+	public static final String TIF_SIZE_ATTR = "tifSize";
+
+	public static final String JP2_COUNT_ATTR = "jp2Count";
+
+	public static final String TIF_COUNT_ATTR = "tifCount";
 
 }

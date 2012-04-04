@@ -9,6 +9,7 @@ import info.freelibrary.util.RegexFileFilter;
 import info.freelibrary.util.StringUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,6 +20,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import nu.xom.Attribute;
+import nu.xom.Builder;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.ParsingException;
+import nu.xom.Serializer;
+import nu.xom.ValidityException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +40,6 @@ public class ViewServlet extends HttpServlet implements Constants {
     private static final long serialVersionUID = 5298506582675331814L;
 
     private static final String XSL_STYLESHEET = "<?xml-stylesheet href='/view.xsl' type='text/xsl'?>";
-
-    private static final String JP2_SIZE_ATTR = "jp2Size";
-    private static final String TIF_SIZE_ATTR = "tifSize";
-    private static final String JP2_COUNT_ATTR = "jp2Count";
-    private static final String TIF_COUNT_ATTR = "tifCount";
 
     private static final Logger LOGGER = LoggerFactory
 	    .getLogger(ViewServlet.class);
@@ -58,8 +62,10 @@ public class ViewServlet extends HttpServlet implements Constants {
 	}
 
 	if (!jp2Dir.exists()) {
-	    aResponse.sendError(HttpServletResponse.SC_NOT_FOUND,
-		    "The JP2 directory cannot be found: " + jp2Dir.getAbsolutePath());
+	    aResponse.sendError(
+		    HttpServletResponse.SC_NOT_FOUND,
+		    "The JP2 directory cannot be found: "
+			    + jp2Dir.getAbsolutePath());
 	}
 
 	File dir = new File(jp2Dir, dirParam);
@@ -74,39 +80,48 @@ public class ViewServlet extends HttpServlet implements Constants {
 	}
 
 	if (session.isNew()) {
-	    RegexFileFilter jp2Pattern = new RegexFileFilter(JP2_FILE_PATTERN);
-	    RegexFileFilter tifPattern = new RegexFileFilter(TIFF_FILE_PATTERN);
-	    long jp2CountLong = 0;
-	    long tifCountLong = 0;
+	    File mdFile = new File(jp2Dir, "djatoka.xml");
 
-	    File[] jp2Files = FileUtils.listFiles(jp2Dir, jp2Pattern, true);
-	    File[] tifFiles = FileUtils.listFiles(tifDir, tifPattern, true);
+	    if (mdFile.exists() && mdFile.length() > 0) {
+		String jp2Size, tifSize, jp2Count, tifCount;
 
-	    // These two just count the size of the files, not directories too
-	    for (File file : jp2Files) {
-		jp2CountLong += file.length();
+		if (LOGGER.isDebugEnabled()) {
+		    LOGGER.debug("Reading directory stats from: {}",
+			    mdFile.getAbsolutePath());
+		}
+
+		try {
+		    Document doc = new Builder().build(mdFile);
+		    Element jp2s = (Element) doc.query("//jp2s").get(0);
+		    Element tifs = (Element) doc.query("//tifs").get(0);
+
+		    tifSize = tifs.getAttribute(TIF_SIZE_ATTR).getValue();
+		    tifCount = tifs.getAttribute(TIF_COUNT_ATTR).getValue();
+		    jp2Size = jp2s.getAttribute(JP2_SIZE_ATTR).getValue();
+		    jp2Count = jp2s.getAttribute(JP2_COUNT_ATTR).getValue();
+		}
+		catch (Exception details) {
+		    jp2Size = null;
+		    tifSize = null;
+		    jp2Count = null;
+		    tifCount = null;
+		}
+
+		session.setAttribute(JP2_SIZE_ATTR, jp2Size);
+		session.setAttribute(TIF_SIZE_ATTR, tifSize);
+		session.setAttribute(JP2_COUNT_ATTR, jp2Count);
+		session.setAttribute(TIF_COUNT_ATTR, tifCount);
 	    }
+	    else {
+		StatsCompilation stats = new StatsCompilation(tifDir, jp2Dir);
 
-	    for (File file : tifFiles) {
-		tifCountLong += file.length();
+		session.setAttribute(JP2_SIZE_ATTR, stats.getJP2sSize());
+		session.setAttribute(TIF_SIZE_ATTR, stats.getTIFsSize());
+		session.setAttribute(JP2_COUNT_ATTR, stats.getJP2sCount());
+		session.setAttribute(TIF_COUNT_ATTR, stats.getTIFsCount());
+		
+		stats.save(mdFile);
 	    }
-
-	    String jp2Size = FileUtils.sizeFromBytes(jp2CountLong, true);
-	    String tifSize = FileUtils.sizeFromBytes(tifCountLong, true);
-	    int jp2Count = jp2Files.length;
-	    int tifCount = tifFiles.length;
-
-	    if (LOGGER.isDebugEnabled()) {
-		LOGGER.debug("TIF file count (size): {} ({})", tifCount,
-			tifSize);
-		LOGGER.debug("JP2 file count (size): {} ({})", jp2Count,
-			jp2Size);
-	    }
-
-	    session.setAttribute(JP2_SIZE_ATTR, jp2Size);
-	    session.setAttribute(TIF_SIZE_ATTR, tifSize);
-	    session.setAttribute(JP2_COUNT_ATTR, Integer.toString(jp2Count));
-	    session.setAttribute(TIF_COUNT_ATTR, Integer.toString(tifCount));
 	}
 
 	FilenameFilter dirFilter;

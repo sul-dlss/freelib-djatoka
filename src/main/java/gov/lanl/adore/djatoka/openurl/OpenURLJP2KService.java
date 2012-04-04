@@ -262,6 +262,10 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 			params.setTransform(transform);
 		    }
 		    if (!cacheTiles || !isCacheable(params)) {
+			if (LOGGER.isWarnEnabled()) {
+			    LOGGER.warn("Not using the OpenURL layer cache");
+			}
+			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			extractor.extractImage(r.getImageFile(), baos, params,
 				format);
