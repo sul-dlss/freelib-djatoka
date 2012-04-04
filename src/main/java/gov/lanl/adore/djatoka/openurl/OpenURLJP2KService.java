@@ -31,6 +31,7 @@ import gov.lanl.adore.djatoka.util.IOUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
 import gov.lanl.util.HttpDate;
 import info.freelibrary.djatoka.Constants;
+import info.freelibrary.util.StringUtils;
 import info.openurl.oom.ContextObject;
 import info.openurl.oom.OpenURLRequest;
 import info.openurl.oom.OpenURLRequestProcessor;
@@ -48,6 +49,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -160,10 +162,32 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	return new URI(SVC_ID);
     }
 
+    /*
+     * Painful way to remove the OpenURL cache entry right after it's been moved
+     * to the Pairtree cache. This shouldn't be too bad, though, because we will
+     * be keeping this cache (the OpenURL layer cache) very small (trimmed down)
+     */
     public static boolean removeFromTileCache(String aFilePath) {
-	return tileCache.remove(aFilePath) != null;
+	Map map = tileCache.getUnderlyingMap();
+	Iterator iterator = map.entrySet().iterator();
+	String removed = null;
+
+	while (iterator.hasNext()) {
+	    Map.Entry entry = ((Map.Entry) iterator.next());
+	    String cacheFilePath = (String) entry.getValue();
+
+	    if (aFilePath.equals(cacheFilePath)) {
+		removed = tileCache.remove(entry.getKey().toString());
+
+		if (LOGGER.isDebugEnabled()) {
+		    LOGGER.debug("Removed from OpenURL cache: {}", removed);
+		}
+	    }
+	}
+
+	return removed != null;
     }
-    
+
     /**
      * Returns the OpenURLResponse consisting of an image bitstream to be
      * rendered on the client. Having obtained a result, this method is then
@@ -265,7 +289,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 			if (LOGGER.isWarnEnabled()) {
 			    LOGGER.warn("Not using the OpenURL layer cache");
 			}
-			
+
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			extractor.extractImage(r.getImageFile(), baos, params,
 				format);

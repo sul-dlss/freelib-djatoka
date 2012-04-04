@@ -103,4 +103,8 @@ public class TileCacheManager<K, V> {
 	public synchronized void clear() {
 		cacheMap.clear();
 	}
+	
+	public Map<K, V> getUnderlyingMap() {
+	    return Collections.unmodifiableMap(cacheMap);
+	}
 }
