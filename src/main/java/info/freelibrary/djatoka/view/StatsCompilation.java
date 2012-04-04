@@ -31,6 +31,10 @@ public class StatsCompilation implements Constants {
 	long jp2CountLong = 0;
 	long tifCountLong = 0;
 
+	if (!aJP2Dir.exists() && !aJP2Dir.mkdirs() && LOGGER.isWarnEnabled()) {
+	    LOGGER.warn("Couldn't create requested JP2 directory: {}", aJP2Dir);
+	}
+
 	try {
 	    File[] jp2Files = FileUtils.listFiles(aJP2Dir, jp2Pattern, true);
 	    File[] tifFiles = FileUtils.listFiles(aTIFDir, tifPattern, true);
@@ -52,7 +56,7 @@ public class StatsCompilation implements Constants {
 	    if (LOGGER.isDebugEnabled()) {
 		String[] tifStats = new String[] { myTIFsCount, myTIFsSize };
 		String[] jp2Stats = new String[] { myJP2sCount, myJP2sSize };
-		
+
 		LOGGER.debug("TIF file count (size): {} ({})", tifStats);
 		LOGGER.debug("JP2 file count (size): {} ({})", jp2Stats);
 	    }
