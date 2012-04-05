@@ -50,25 +50,25 @@ $.extend($.DjTileSource.prototype, $.TileSource.prototype, {
     		var myX = parseInt(x);
     		var myY = parseInt(y);
 
-    		if (myX == 0){
+    		if (myX == 0) {
     			tileSizeX = tileSize - 1;
     		}
     		else {
     			tileSizeX = tileSize;
     		}
 
-    		if ((startX + tileSizeX) > this.dimensions.x){
+    		if ((startX + tileSizeX) > this.dimensions.x) {
     			tileSizeX = this.dimensions.x - startX;
     		}
 
-    		if (myY == 0){
+    		if (myY == 0) {
     			tileSizeY = tileSize - 1;
     		}
     		else {
     			tileSizeY = tileSize;
     		}
 
-    		if ((startY + tileSizeY) > this.dimensions.y){
+    		if ((startY + tileSizeY) > this.dimensions.y) {
     			tileSizeY = this.dimensions.y - startY;
     		}
      	
