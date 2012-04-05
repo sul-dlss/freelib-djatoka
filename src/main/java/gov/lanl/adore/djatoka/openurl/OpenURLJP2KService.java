@@ -388,7 +388,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	    String region = params.getRegion();
 	    String ext = getExtension(format);
 	    String hash;
-
+	    
 	    try {
 		hash = getTileHash(id, params);
 	    }
