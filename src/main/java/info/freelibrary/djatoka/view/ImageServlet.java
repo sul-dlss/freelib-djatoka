@@ -94,7 +94,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 	if (myCache != null) {
 	    PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
 	    PairtreeObject cacheObject = cacheDir.getObject(id);
-	    String cacheFileName = getCacheFileName(level, scale, region);
+	    String cacheFileName = CacheUtils.getFileName(level, scale, region);
 	    File imageFile = new File(cacheObject, cacheFileName);
 
 	    if (imageFile.exists()) {
@@ -112,7 +112,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 		}
 
 		serveNewImage(id, level, region, scale, aRequest, aResponse);
-		cacheNewImage(aRequest, aResponse, imageFile);
+		cacheNewImage(aRequest, id + "_" + cacheFileName, imageFile);
 	    }
 	}
 	else {
@@ -269,32 +269,6 @@ public class ImageServlet extends HttpServlet implements Constants {
 	return super.getLastModified(aRequest);
     }
 
-    /**
-     * A first pass at this... it will get more sophisticated in time.
-     * 
-     * @param aLevel
-     * @param aScale
-     * @param aRegion
-     * @return
-     */
-    private String getCacheFileName(String aLevel, String aScale, String aRegion) {
-	StringBuilder cfName = new StringBuilder("image_");
-	String region = isEmpty(aRegion) ? "all" : aRegion.replace(',', '-');
-
-	if (aLevel != null && !aLevel.equals("")) {
-	    cfName.append(aLevel).append('.');
-	}
-	else {
-	    cfName.append(aScale).append('_').append(region).append('.');
-	}
-
-	return cfName.append(myFormatExt).toString();
-    }
-
-    private boolean isEmpty(String aString) {
-	return aString == null || aString.equals("");
-    }
-
     private String getFullSizeImageURL(HttpServletRequest aRequest) {
 	StringBuilder url = new StringBuilder();
 	url.append(aRequest.getScheme()).append("://");
@@ -331,14 +305,14 @@ public class ImageServlet extends HttpServlet implements Constants {
 	dispatcher.forward(aRequest, aResponse);
     }
 
-    private void cacheNewImage(HttpServletRequest aRequest,
-	    HttpServletResponse aResponse, File aDestFile) {
+    private void cacheNewImage(HttpServletRequest aRequest, String aKey,
+	    File aDestFile) {
 	HttpSession session = aRequest.getSession();
-	String fileName = (String) session.getAttribute(VIEW_CACHE_FILE);
+	String fileName = (String) session.getAttribute(aKey);
 
 	if (fileName != null) {
+	    String cacheName = (String) session.getAttribute(fileName);
 	    File cachedFile = new File(fileName);
-	    String cachedFilePath = cachedFile.getAbsolutePath();
 
 	    // This moves the newly created file from the adore-djatoka cache
 	    // to the freelib-djatoka cache (which is pure-FS/Pairtree-based)
@@ -348,17 +322,20 @@ public class ImageServlet extends HttpServlet implements Constants {
 			    cachedFile, aDestFile);
 		}
 
-		// FIXME: Don't assume files are of the same type(?)
 		if (!cachedFile.renameTo(aDestFile) && LOGGER.isDebugEnabled()) {
 		    LOGGER.debug("Unable to move cache file: {}", cachedFile);
 		}
 		else {
-		    // This is the temporary file cache used by the OpenURL layer
-		    if (!OpenURLJP2KService.removeFromTileCache(cachedFilePath)
+		    // This is the temp file cache used by the OpenURL layer
+		    if (!OpenURLJP2KService.removeFromTileCache(cacheName)
 			    && LOGGER.isDebugEnabled()) {
 			LOGGER.debug(
 				"Unable to remove OpenURL cache file link: {}",
-				cachedFilePath);
+				fileName);
+		    }
+		    else {
+			session.removeAttribute(aKey);
+			session.removeAttribute(fileName);
 		    }
 		}
 	    }
@@ -373,8 +350,8 @@ public class ImageServlet extends HttpServlet implements Constants {
 	}
 	else if (LOGGER.isWarnEnabled()) {
 	    LOGGER.warn(
-		    "Couldn't cache ({}); session lacked new image information",
-		    aDestFile.getAbsolutePath());
+		    "Couldn't cache ({} = {}); session lacked new image information",
+		    aKey, aDestFile.getAbsolutePath());
 	}
     }
 

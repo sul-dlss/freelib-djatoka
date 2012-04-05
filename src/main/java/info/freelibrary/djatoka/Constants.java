@@ -13,8 +13,6 @@ public interface Constants {
 	public static final String VIEW_FORMAT_EXT = "djatoka.view.format.ext";
 	
 	public static final String JP2_EXT = ".jp2";
-	
-	public static final String VIEW_CACHE_FILE = "djatoka.cache.file";
 
 	public static final String TIFF_DATA_DIR = "djatoka.ingest.data.dir";
 

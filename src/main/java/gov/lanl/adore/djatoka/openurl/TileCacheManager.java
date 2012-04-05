@@ -87,28 +87,7 @@ public class TileCacheManager<K, V> {
 	if (get(key) instanceof String) (new File((String) get(key))).delete();
 	return cacheMap.remove(key);
     }
-
-    public synchronized boolean removeByValue(V value) {
-	Iterator iterator = cacheMap.entrySet().iterator();
-	String removed = null;
-
-	while (iterator.hasNext()) {
-	    Map.Entry entry = ((Map.Entry) iterator.next());
-	    String cachedFilePath = (String) entry.getValue();
-
-	    if (value.equals(cachedFilePath)) {
-		String key = entry.getKey().toString();
-		removed = (String) cacheMap.remove(key);
-
-		if (LOGGER.isDebugEnabled()) {
-		    LOGGER.debug("Removed from OpenURL cache: {}", removed);
-		}
-	    }
-	}
-
-	return removed != null;
-    }
-
+    
     public synchronized V get(K key) {
 	return cacheMap.get(key);
     }
@@ -125,7 +104,4 @@ public class TileCacheManager<K, V> {
 	cacheMap.clear();
     }
 
-    public Map<K, V> getUnderlyingMap() {
-	return Collections.unmodifiableMap(cacheMap);
-    }
 }

@@ -31,6 +31,7 @@ import gov.lanl.adore.djatoka.util.IOUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
 import gov.lanl.util.HttpDate;
 import info.freelibrary.djatoka.Constants;
+import info.freelibrary.djatoka.view.CacheUtils;
 import info.freelibrary.util.StringUtils;
 import info.openurl.oom.ContextObject;
 import info.openurl.oom.OpenURLRequest;
@@ -39,6 +40,7 @@ import info.openurl.oom.OpenURLResponse;
 import info.openurl.oom.Service;
 import info.openurl.oom.config.ClassConfig;
 import info.openurl.oom.config.OpenURLConfig;
+import info.openurl.oom.entities.Referent;
 import info.openurl.oom.entities.ServiceType;
 
 import java.io.ByteArrayOutputStream;
@@ -162,8 +164,8 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	return new URI(SVC_ID);
     }
 
-    public static boolean removeFromTileCache(String aFilePath) {
-	return tileCache.removeByValue(aFilePath);
+    public static boolean removeFromTileCache(String aCacheID) {
+	return tileCache.remove(aCacheID) != null;
     }
 
     /**
@@ -181,6 +183,8 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	int status = HttpServletResponse.SC_OK;
 	HashMap<String, String> kev = setServiceValues(contextObject);
 	DjatokaDecodeParam params = new DjatokaDecodeParam();
+	String id = null;
+
 	if (kev.containsKey("region")) params.setRegion(kev.get("region"));
 	if (kev.containsKey("format")) {
 	    format = kev.get("format");
@@ -216,17 +220,17 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	responseFormat = format;
 
 	byte[] bytes = null;
-	if (responseFormat == null) {
-	    try {
-		bytes = ("Output Format Not Supported").getBytes("UTF-8");
-	    }
-	    catch (UnsupportedEncodingException e) {
-		e.printStackTrace();
-	    }
-	    responseFormat = "text/plain";
-	    status = HttpServletResponse.SC_NOT_FOUND;
-	}
-	else if (params.getRegion() != null && params.getRegion().contains("-")) {
+
+	/*
+	 * DEAD CODE: responseFormat set right above -- TODO: remove if
+	 * (responseFormat == null) { try { bytes =
+	 * ("Output Format Not Supported").getBytes("UTF-8"); } catch
+	 * (UnsupportedEncodingException e) { e.printStackTrace(); }
+	 * responseFormat = "text/plain"; status =
+	 * HttpServletResponse.SC_NOT_FOUND; } else
+	 */
+
+	if (params.getRegion() != null && params.getRegion().contains("-")) {
 	    try {
 		bytes = ("Negative Region Arguments are not supported.")
 			.getBytes("UTF-8");
@@ -239,8 +243,8 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	}
 	else {
 	    try {
-		ImageRecord r = ReferentManager.getImageRecord(contextObject
-			.getReferent());
+		Referent referent = contextObject.getReferent();
+		ImageRecord r = ReferentManager.getImageRecord(referent);
 		if (r != null) {
 		    if (transformCheck && transform != null) {
 			HashMap<String, String> instProps = new HashMap<String, String>();
@@ -279,6 +283,9 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 			String hash = getTileHash(r, params);
 			String file = tileCache.get(hash + ext);
 			File f;
+
+			id = r.getIdentifier();
+
 			if (file == null
 				|| (file != null
 					&& !(f = new File(file)).exists() && f
@@ -375,8 +382,46 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
 	// Record where our cache file was (if we had/created one)
 	if (djatokaCacheFile != null) {
-	    Map sessionMap = response.getSessionMap();
-	    sessionMap.put(Constants.VIEW_CACHE_FILE, djatokaCacheFile);
+	    int[] dims = params.getScalingDimensions();
+	    String scale = dims != null ? Integer.toString(dims[1]) : "";
+	    String level = Integer.toString(params.getLevel());
+	    String region = params.getRegion();
+	    String ext = getExtension(format);
+	    String hash;
+
+	    try {
+		hash = getTileHash(id, params);
+	    }
+	    catch (Exception details) {
+		if (LOGGER.isErrorEnabled()) {
+		    LOGGER.error(details.getMessage(), details);
+		}
+
+		hash = null;
+	    }
+
+	    id = id + "_" + CacheUtils.getFileName(level, scale, region);
+
+	    if (LOGGER.isDebugEnabled()) {
+		LOGGER.debug("OpenURL service: [ {} | {} | {} ] = {}",
+			new String[] { level, scale, region, id });
+	    }
+
+	    if (hash != null) {
+		Map sessionMap = response.getSessionMap();
+		String cacheName = hash + ext;
+
+		if (LOGGER.isDebugEnabled()) {
+		    LOGGER.debug("Setting cache session data [ {} | {} | {} ]",
+			    new String[] { id, djatokaCacheFile, cacheName });
+		}
+
+		sessionMap.put(id, djatokaCacheFile);
+		sessionMap.put(djatokaCacheFile, cacheName);
+	    }
+	}
+	else if (LOGGER.isDebugEnabled()) {
+	    LOGGER.debug("djatokaCacheFile variable is null");
 	}
 
 	return response;
@@ -411,7 +456,11 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
     private static final String getTileHash(ImageRecord r,
 	    DjatokaDecodeParam params) throws Exception {
-	String id = r.getIdentifier();
+	return getTileHash(r.getIdentifier(), params);
+    }
+
+    private static final String getTileHash(String id, DjatokaDecodeParam params)
+	    throws Exception {
 	int level = params.getLevel();
 	String region = params.getRegion();
 	int rotateDegree = params.getRotationDegree();
