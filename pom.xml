@@ -280,7 +280,7 @@
 			<activation>
 				<os>
 					<name>Mac OS X</name>
-					<arch>i386</arch>
+					<!--<arch>i386</arch>-->
 				</os>
 			</activation>
 			<properties>

@@ -24,6 +24,7 @@
 
     <logger name="info.freelibrary.util.PairtreeObject" level="INFO"/>
     <logger name="info.freelibrary.util.PairtreeRoot" level="INFO"/>
+    <logger name="info.freelibrary.maven.LLP2JLPMojo" level="DEBUG"/>
     
     <logger name="info.freelibrary.djatoka.ingest" level="INFO">
         <appender-ref ref="FILEOUT"/>
