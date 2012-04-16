@@ -34,7 +34,7 @@
     <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="INFO"/>
     <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="INFO"/>
 
-    <!--<logger name="gov.lanl.adore.djatoka.kdu" level="INFO"/>-->
+    <logger name="gov.lanl.adore.djatoka.kdu" level="DEBUG"/>
 
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>
