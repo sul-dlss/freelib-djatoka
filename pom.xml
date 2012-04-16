@@ -285,6 +285,7 @@
 			</activation>
 			<properties>
 				<DYLD_LIBRARY_PATH>${project.basedir}/lib/Mac-x86</DYLD_LIBRARY_PATH>
+				<LD_LIBRARY_PATH>${project.basedir}/lib/Mac-x86</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
 		<profile>
