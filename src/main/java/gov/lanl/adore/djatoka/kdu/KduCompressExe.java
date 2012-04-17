@@ -70,6 +70,7 @@ public class KduCompressExe implements ICompress {
 		+ ((System.getProperty("os.name").startsWith("Win")) ? KDU_COMPRESS_EXE
 			+ ".exe"
 			: KDU_COMPRESS_EXE);
+	
 	if (System.getProperty("os.name").startsWith("Mac")) {
 	    envParams = new String[] { "DYLD_LIBRARY_PATH="
 		    + System.getProperty("DYLD_LIBRARY_PATH") };

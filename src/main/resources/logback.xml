@@ -25,6 +25,7 @@
     <logger name="info.freelibrary.util.PairtreeObject" level="INFO"/>
     <logger name="info.freelibrary.util.PairtreeRoot" level="INFO"/>
     <logger name="info.freelibrary.maven.LLP2JLPMojo" level="DEBUG"/>
+    <logger name="info.freelibrary.util.FileUtils" level="DEBUG"/>
     
     <logger name="info.freelibrary.djatoka.ingest" level="INFO">
         <appender-ref ref="FILEOUT"/>
@@ -34,7 +35,7 @@
     <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="INFO"/>
     <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="INFO"/>
 
-    <logger name="gov.lanl.adore.djatoka.kdu" level="DEBUG"/>
+    <logger name="gov.lanl.adore.djatoka.kdu.KduCompressExe" level="DEBUG"/>
 
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>
