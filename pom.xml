@@ -162,7 +162,7 @@
 						</systemProperty>
 						<systemProperty>
 							<name>kakadu.home</name>
-							<value>${LD_LIBRARY_PATH}</value>
+							<value>${project.basedir}/target/lib</value>
 						</systemProperty>
 					</systemProperties>
 				</configuration>
@@ -284,8 +284,7 @@
 				</os>
 			</activation>
 			<properties>
-				<DYLD_LIBRARY_PATH>${project.basedir}/lib/Mac-x86</DYLD_LIBRARY_PATH>
-				<LD_LIBRARY_PATH>${project.basedir}/lib/Mac-x86</LD_LIBRARY_PATH>
+				<DYLD_LIBRARY_PATH>lib/Mac-x86</DYLD_LIBRARY_PATH>
 			</properties>
 		</profile>
 		<profile>
