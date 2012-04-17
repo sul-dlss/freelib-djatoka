@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>info.freelibrary</groupId>
 			<artifactId>freelib-utils</artifactId>
-			<version>0.2.4</version>
+			<version>0.2.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
@@ -285,7 +285,6 @@
 			</activation>
 			<properties>
 				<DYLD_LIBRARY_PATH>${project.basedir}/lib/Mac-x86</DYLD_LIBRARY_PATH>
-				<LD_LIBRARY_PATH>${project.basedir}/lib/Mac-x86</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
 		<profile>
@@ -341,6 +340,13 @@
 			</properties>
 		</profile>
 	</profiles>
+	<repositories>
+		<repository>
+			<id>freelib-utils-snapshot</id>
+			<name>FreeLibrary Snapshot Repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+	</repositories>
 </project>
 
 <!--

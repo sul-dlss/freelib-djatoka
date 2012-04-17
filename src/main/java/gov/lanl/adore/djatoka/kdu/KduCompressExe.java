@@ -94,8 +94,6 @@ public class KduCompressExe implements ICompress {
      * Constructor which expects the following system properties to be defined
      * and exported.
      * <p/>
-     * kakadu.home=$DJATOKA_HOME/bin/$DJATOKA_OS
-     * <p/>
      * (Win/Linux/UNIX) LD_LIBRARY_PATH=$DJATOKA_HOME/lib/$DJATOKA_OS
      * <p/>
      * (Mac OS-X) DYLD_LIBRARY_PATH=$DJATOKA_HOME/lib/$DJATOKA_OS
