@@ -20,6 +20,10 @@
         <servlet-class>info.freelibrary.djatoka.view.ViewServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>randomImageViewer</servlet-name>
+        <servlet-class>info.freelibrary.djatoka.view.RandomImageServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>reporter</servlet-name>
         <servlet-class>info.freelibrary.djatoka.view.ReportServlet</servlet-class>
     </servlet>
@@ -62,6 +66,14 @@
     <servlet-mapping>
         <servlet-name>ingester</servlet-name> 
         <url-pattern>/ingest</url-pattern> 
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>randomImageViewer</servlet-name>
+        <url-pattern>/view/thumbnail/random</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>randomImageViewer</servlet-name>
+        <url-pattern>/view/image/random</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>thumbnailViewer</servlet-name>
