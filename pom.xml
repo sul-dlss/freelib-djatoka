@@ -162,7 +162,7 @@
 						</systemProperty>
 						<systemProperty>
 							<name>DYLD_LIBRARY_PATH</name>
-							<value>${DYLD_LIBRARY_PATH}</value>
+							<value>${project.basedir}/${DYLD_LIBRARY_PATH}</value>
 						</systemProperty>
 						<systemProperty>
 							<name>kakadu.home</name>
