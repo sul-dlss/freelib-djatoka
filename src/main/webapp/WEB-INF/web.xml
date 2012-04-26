@@ -36,6 +36,14 @@
         </init-param>
     </servlet>
     <servlet>
+        <servlet-name>carouselViewer</servlet-name>
+        <servlet-class>info.freelibrary.djatoka.view.ImageServlet</servlet-class>
+        <init-param>
+            <param-name>level</param-name>
+            <param-value>2</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
         <servlet-name>imageViewer</servlet-name>
         <servlet-class>info.freelibrary.djatoka.view.ImageServlet</servlet-class>
         <init-param>
@@ -78,6 +86,10 @@
     <servlet-mapping>
         <servlet-name>thumbnailViewer</servlet-name>
         <url-pattern>/view/thumbnail/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>thumbnailViewer</servlet-name>
+        <url-pattern>/view/carousel/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>imageViewer</servlet-name>
