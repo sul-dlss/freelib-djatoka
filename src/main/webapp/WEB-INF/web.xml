@@ -80,6 +80,10 @@
         <url-pattern>/view/thumbnail/random</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>randomCarouselViewer</servlet-name>
+        <url-pattern>/view/carousel/random</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>randomImageViewer</servlet-name>
         <url-pattern>/view/image/random</url-pattern>
     </servlet-mapping>
