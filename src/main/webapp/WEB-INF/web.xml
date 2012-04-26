@@ -80,7 +80,7 @@
         <url-pattern>/view/thumbnail/random</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>randomCarouselViewer</servlet-name>
+        <servlet-name>randomImageViewer</servlet-name>
         <url-pattern>/view/carousel/random</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -92,7 +92,7 @@
         <url-pattern>/view/thumbnail/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>thumbnailViewer</servlet-name>
+        <servlet-name>carouselViewer</servlet-name>
         <url-pattern>/view/carousel/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
