@@ -12,7 +12,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Properties;
 
@@ -63,10 +65,12 @@ public class ImageServlet extends HttpServlet implements Constants {
     protected void doGet(HttpServletRequest aRequest,
 	    HttpServletResponse aResponse) throws ServletException, IOException {
 	String level = getServletConfig().getInitParameter("level");
-	String pathInfo = aRequest.getPathInfo();
-	String[] regionCoords = getRegion(pathInfo);
-	String scale = getScale(pathInfo);
-	String id = getID(pathInfo);
+	String reqURI = aRequest.getRequestURI();
+	String servletPath = aRequest.getServletPath();
+	String path = reqURI.substring(servletPath.length());
+	String[] regionCoords = getRegion(path);
+	String scale = getScale(path);
+	String id = getID(path);
 	String region;
 
 	if (level == null && scale == null) {
@@ -362,12 +366,29 @@ public class ImageServlet extends HttpServlet implements Constants {
      * /domain /service /ark /region /scale /rotation /filename /ext
      */
 
-    private String getID(String aPathInfo) {
-	if (aPathInfo.startsWith("/")) {
-	    return aPathInfo.split("/")[1].replace('+', ' ');
+    private String getID(String aPath) {
+	String path;
+
+	if (aPath.startsWith("/")) {
+	    path = aPath.split("/")[1].replace('+', ' ');
+	}
+	else {
+	    path = aPath;
 	}
 
-	return aPathInfo;
+	if (path.contains("%")) { // Path is URLEncoded
+	    try {
+		path = URLDecoder.decode(path, "UTF-8");
+	    }
+	    catch (UnsupportedEncodingException details) {
+		// Never happens, all JVMs are required to support UTF-8
+		if (LOGGER.isWarnEnabled()) {
+		    LOGGER.warn("Couldn't decode path; no UTF-8 support");
+		}
+	    }
+	}
+
+	return path;
     }
 
     private String[] getRegion(String aPathInfo) {

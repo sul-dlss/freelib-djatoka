@@ -5,26 +5,31 @@ import gov.lanl.adore.djatoka.openurl.IReferentMigrator;
 import gov.lanl.adore.djatoka.openurl.IReferentResolver;
 import gov.lanl.adore.djatoka.openurl.ResolverException;
 import gov.lanl.adore.djatoka.util.ImageRecord;
+
 import gov.lanl.util.DBCPUtils;
+
 import info.freelibrary.djatoka.Constants;
 import info.freelibrary.util.FileUtils;
+import info.freelibrary.util.PairtreeObject;
+import info.freelibrary.util.PairtreeRoot;
+import info.freelibrary.util.PairtreeUtils;
 import info.freelibrary.util.RegexFileFilter;
 import info.freelibrary.util.StringUtils;
+
 import info.openurl.oom.entities.Referent;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -36,6 +41,10 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/*
+ * This class needs to be redone... remove the database stuff and make the file
+ * system vs. the Pairtree file system pulls cleaner...
+ */
 public class IdentifierResolver implements IReferentResolver, Constants {
 
     private static final Logger LOGGER = LoggerFactory
@@ -57,6 +66,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     private Map<String, ImageRecord> myLocalImages;
     private DataSource myDataSource;
     private boolean myDatabaseIsActive;
+    private String myJP2Dir;
 
     public ImageRecord getImageRecord(String aReferentID)
 	    throws ResolverException {
@@ -95,7 +105,8 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     public void setProperties(Properties aProps) throws ResolverException {
 	String checkDB = aProps.getProperty(CHECK_DATABASE_CONFIG);
 	String query = aProps.getProperty(DEFAULT_DBID + ".query");
-	String jp2Dir = aProps.getProperty(JP2_DATA_DIR);
+
+	myJP2Dir = aProps.getProperty(JP2_DATA_DIR);
 
 	// We can choose to use the database or the local file system cache
 	if (checkDB != null) {
@@ -111,11 +122,11 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	myRemoteImages = new ConcurrentHashMap<String, ImageRecord>();
 
 	try {
-	    loadFileSystemImages(jp2Dir);
+	    loadFileSystemImages(myJP2Dir);
 	}
 	catch (FileNotFoundException details) {
 	    if (LOGGER.isWarnEnabled()) {
-		LOGGER.warn("{} couldn't be found", jp2Dir);
+		LOGGER.warn("{} couldn't be found", myJP2Dir);
 	    }
 	}
 
@@ -151,8 +162,10 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	    throws FileNotFoundException {
 	File jp2Dir = new File(aJP2DataDir);
 	FilenameFilter filter = new RegexFileFilter(JP2_FILE_PATTERN);
+	String[] skipped = new String[] { "pairtree_root" };
 
-	for (File file : FileUtils.listFiles(jp2Dir, filter, true)) {
+	// Descend through file system but skipped our ID mapped PT directory
+	for (File file : FileUtils.listFiles(jp2Dir, filter, true, skipped)) {
 	    ImageRecord image = new ImageRecord();
 	    String id = stripExt(file.getName());
 
@@ -185,20 +198,33 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	ImageRecord image = null;
 
 	if (!myDatabaseIsActive) {
+	    // First try cache of files loaded from file system
+	    // This is used for the simple file system viewer
 	    image = myLocalImages.get(aReferentID);
 
 	    if (LOGGER.isDebugEnabled() && image != null) {
 		LOGGER.debug("{} found in the local cache", aReferentID);
 	    }
-	    else if (LOGGER.isWarnEnabled() && image == null) {
-		LOGGER.warn("{} not found in the local cache", aReferentID);
-		
-		// Well, why not? Don't turn debugging on on prod, obviously
-		if (LOGGER.isDebugEnabled()) {
-		    Set<String> keys = myLocalImages.keySet();
-		    String[] keyArray = new String[keys.size()];
-		    keys.toArray(keyArray);
-		    LOGGER.debug(StringUtils.toString(keyArray, '|'));
+	    else if (image == null) { // Try loading from our PairTree FS
+		try {
+		    PairtreeRoot pairtree = new PairtreeRoot(new File(myJP2Dir));
+		    String id = URLDecoder.decode(aReferentID, "UTF-8");
+		    PairtreeObject dir = pairtree.getObject(id);
+		    String filename = PairtreeUtils.cleanId(id);
+		    File file = new File(dir, filename);
+		    
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Checking in Pairtree cache: {}", file);
+		    }
+		    
+		    if (file.exists()) {
+			image = new ImageRecord();
+			image.setIdentifier(id);
+			image.setImageFile(file.getAbsolutePath());
+		    }
+		}
+		catch (IOException details) {
+		    LOGGER.error("Failed to load file from cache", details);
 		}
 	    }
 	}
@@ -214,11 +240,6 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 			aReferentID));
 
 		if (rset.next()) {
-		    if (image != null && LOGGER.isWarnEnabled()) {
-			LOGGER.warn("Looks like two IDs found for {}",
-				aReferentID);
-		    }
-
 		    image = new ImageRecord();
 		    image.setIdentifier(rset.getString(FIELD_IDENTIFIER));
 		    image.setImageFile(rset.getString(FIELD_IMAGEFILE));
