@@ -17,14 +17,12 @@
         </encoder>
     </appender>
 
-    <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="INFO"/>
+    <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="DEBUG"/>
+    <logger name="info.freelibrary.djatoka.view.ImageServlet" level="DEBUG"/>
     <logger name="info.freelibrary.djatoka.view.ViewServlet" level="INFO"/>
-    <logger name="info.freelibrary.djatoka.view.ImageServlet" level="INFO"/>
-    <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="INFO"/>
 
     <logger name="info.freelibrary.util.PairtreeObject" level="INFO"/>
     <logger name="info.freelibrary.util.PairtreeRoot" level="INFO"/>
-    <logger name="info.freelibrary.maven.LLP2JLPMojo" level="INFO"/>
     <logger name="info.freelibrary.util.FileUtils" level="INFO"/>
     
     <logger name="info.freelibrary.djatoka.ingest" level="INFO">
@@ -34,8 +32,7 @@
     <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="INFO"/>
     <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="INFO"/>
     <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="INFO"/>
-
-    <logger name="gov.lanl.adore.djatoka.kdu.KduCompressExe" level="DEBUG"/>
+    <logger name="gov.lanl.adore.djatoka.kdu.KduCompressExe" level="INFO"/>
 
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>
