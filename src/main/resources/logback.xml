@@ -29,10 +29,10 @@
         <appender-ref ref="FILEOUT"/>
     </logger>
 
-    <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="INFO"/>
-    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="INFO"/>
-    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="INFO"/>
-    <logger name="gov.lanl.adore.djatoka.kdu.KduCompressExe" level="INFO"/>
+    <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="DEBUG"/>
+    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="DEBUG"/>
+    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="DEBUG"/>
+    <logger name="gov.lanl.adore.djatoka.kdu.KduCompressExe" level="DEBUG"/>
 
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>

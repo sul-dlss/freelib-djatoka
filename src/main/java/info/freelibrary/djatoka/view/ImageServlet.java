@@ -5,6 +5,7 @@ import info.freelibrary.djatoka.Constants;
 import info.freelibrary.util.IOUtils;
 import info.freelibrary.util.PairtreeObject;
 import info.freelibrary.util.PairtreeRoot;
+import info.freelibrary.util.PairtreeUtils;
 import info.freelibrary.util.StringUtils;
 
 import java.awt.image.BufferedImage;
@@ -168,7 +169,10 @@ public class ImageServlet extends HttpServlet implements Constants {
     @Override
     protected void doHead(HttpServletRequest aRequest,
 	    HttpServletResponse aResponse) throws ServletException, IOException {
-	String id = getID(aRequest.getPathInfo());
+	String reqURI = aRequest.getRequestURI();
+	String servletPath = aRequest.getServletPath();
+	String path = reqURI.substring(servletPath.length());
+	String id = getID(path);
 	int width = 0, height = 0;
 
 	if (myCache != null) {
@@ -176,7 +180,8 @@ public class ImageServlet extends HttpServlet implements Constants {
 		PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
 		PairtreeObject cacheObject = cacheDir.getObject(id);
 		ServletContext context = getServletContext();
-		File dziFile = new File(cacheObject, id + ".dzi");
+		String filename = PairtreeUtils.cleanId(id);
+		File dziFile = new File(cacheObject, filename + ".dzi");
 
 		if (dziFile.exists() && dziFile.length() > 0) {
 		    if (LOGGER.isDebugEnabled()) {

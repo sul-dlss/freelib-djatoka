@@ -238,13 +238,24 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	    catch (UnsupportedEncodingException e) {
 		e.printStackTrace();
 	    }
+	    
 	    responseFormat = "text/plain";
 	    status = HttpServletResponse.SC_NOT_FOUND;
 	}
 	else {
+	    if (LOGGER.isDebugEnabled()) {
+		LOGGER.debug("Service has a valid region request");
+	    }
+	    
 	    try {
 		Referent referent = contextObject.getReferent();
 		ImageRecord r = ReferentManager.getImageRecord(referent);
+		
+		if (LOGGER.isDebugEnabled() && r != null) {
+		    LOGGER.debug("Retrieving ImageRecord for: {}",
+			    r.getIdentifier());
+		}
+
 		if (r != null) {
 		    if (transformCheck && transform != null) {
 			HashMap<String, String> instProps = new HashMap<String, String>();
@@ -307,9 +318,15 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 					"cache" + hash.hashCode() + "-", "."
 						+ ext);
 			    }
+
+			    if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Temp file created: {}", f);
+			    }
+
 			    f.deleteOnExit();
 			    file = f.getAbsolutePath();
 			    djatokaCacheFile = file;
+			    
 			    extractor.extractImage(r.getImageFile(), file,
 				    params, format);
 
@@ -348,6 +365,9 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 			}
 		    }
 		}
+		else if (LOGGER.isWarnEnabled()) {
+		    LOGGER.warn("Unable to retrieve ImageRecord");
+		}
 	    }
 	    catch (ResolverException e) {
 		LOGGER.error(e.getMessage(), e);
@@ -368,7 +388,12 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 		status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 	    }
 	}
+
 	if (bytes == null || bytes.length == 0) {
+	    if (LOGGER.isDebugEnabled()) {
+		LOGGER.debug("No bytes found!");
+	    }
+	    
 	    bytes = "".getBytes();
 	    responseFormat = "text/plain";
 	    status = HttpServletResponse.SC_NOT_FOUND;
@@ -377,6 +402,11 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	HashMap<String, String> header_map = new HashMap<String, String>();
 	header_map.put("Content-Length", bytes.length + "");
 	header_map.put("Date", HttpDate.getHttpDate());
+
+	if (LOGGER.isDebugEnabled()) {
+	    LOGGER.debug("Getting OpenURLResponse...");
+	}
+	
 	OpenURLResponse response = new OpenURLResponse(status, responseFormat,
 		bytes, header_map);
 
@@ -388,7 +418,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	    String region = params.getRegion();
 	    String ext = getExtension(format);
 	    String hash;
-	    
+
 	    try {
 		hash = getTileHash(id, params);
 	    }
