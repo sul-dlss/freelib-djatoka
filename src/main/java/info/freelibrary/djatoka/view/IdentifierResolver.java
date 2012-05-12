@@ -105,6 +105,8 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     public void setProperties(Properties aProps) throws ResolverException {
 	String checkDB = aProps.getProperty(CHECK_DATABASE_CONFIG);
 	String query = aProps.getProperty(DEFAULT_DBID + ".query");
+	String prodInstance = aProps.getProperty("djatoka.ignore.fscache");
+	boolean skipFS = Boolean.parseBoolean(prodInstance);
 
 	myJP2Dir = aProps.getProperty(JP2_DATA_DIR);
 
@@ -112,9 +114,8 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	if (checkDB != null) {
 	    myDatabaseIsActive = Boolean.parseBoolean(checkDB);
 
-	    if (LOGGER.isDebugEnabled()) {
-		LOGGER.debug("Database connection is configured: {}",
-			myDatabaseIsActive);
+	    if (LOGGER.isDebugEnabled() && myDatabaseIsActive) {
+		LOGGER.debug("Database connection is configured");
 	    }
 	}
 
@@ -122,7 +123,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	myRemoteImages = new ConcurrentHashMap<String, ImageRecord>();
 
 	try {
-	    loadFileSystemImages(myJP2Dir);
+	    if (!skipFS) loadFileSystemImages(myJP2Dir);
 	}
 	catch (FileNotFoundException details) {
 	    if (LOGGER.isWarnEnabled()) {
@@ -130,19 +131,19 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	    }
 	}
 
-	if (query == null) {
-	    if (LOGGER.isDebugEnabled()) {
-		LOGGER.debug(
-			"{}.query is not defined in properties file (using: {})",
-			DEFAULT_DBID, myQuery);
-	    }
-	}
-	else {
-	    myQuery = query;
-	}
-
 	try {
 	    if (myDatabaseIsActive) {
+		if (query == null) {
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(
+				"{}.query is not defined in properties file (using: {})",
+				DEFAULT_DBID, myQuery);
+		    }
+		}
+		else {
+		    myQuery = query;
+		}
+
 		myDataSource = DBCPUtils.setupDataSource(DEFAULT_DBID, aProps);
 	    }
 	}
@@ -212,11 +213,11 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 		    PairtreeObject dir = pairtree.getObject(id);
 		    String filename = PairtreeUtils.cleanId(id);
 		    File file = new File(dir, filename);
-		    
+
 		    if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Checking in Pairtree cache: {}", file);
 		    }
-		    
+
 		    if (file.exists()) {
 			image = new ImageRecord();
 			image.setIdentifier(id);

@@ -248,10 +248,11 @@
 		<cache.enabled>true</cache.enabled>
 		<!-- Supported: "", "sLUM", "sRGB", "sYCC", "iccLUM" or "iccRGB" -->
 		<djatoka.ingest.color.space>sRGB</djatoka.ingest.color.space>
+		<!-- If production, uses pairtree fs; else, builds hashmap of jp2 fs + pairtree fs -->
+		<djatoka.is.production>false</djatoka.is.production>
 	</properties>
 	<profiles>
 		<profile>
-			<!-- Unverified -->
 			<id>linux-32</id>
 			<activation>
 				<os>
@@ -264,7 +265,6 @@
 			</properties>
 		</profile>
 		<profile>
-			<!-- Verified -->
 			<id>linux-64</id>
 			<activation>
 				<os>
@@ -279,12 +279,10 @@
 			</properties>
 		</profile>
 		<profile>
-			<!-- Unverified -->
 			<id>mac-x86</id>
 			<activation>
 				<os>
 					<name>Mac OS X</name>
-					<!--<arch>i386</arch>-->
 				</os>
 			</activation>
 			<properties>
@@ -292,7 +290,6 @@
 			</properties>
 		</profile>
 		<profile>
-			<!-- Unverified -->
 			<id>windows</id>
 			<activation>
 				<os>
@@ -305,7 +302,6 @@
 			</properties>
 		</profile>
 		<profile>
-			<!-- Unverified -->
 			<id>solaris-x86</id>
 			<activation>
 				<os>
@@ -318,7 +314,6 @@
 			</properties>
 		</profile>
 		<profile>
-			<!-- Unverified -->
 			<id>solaris-sparc</id>
 			<activation>
 				<os>
@@ -331,7 +326,6 @@
 			</properties>
 		</profile>
 		<profile>
-			<!-- Unverified -->
 			<id>solaris-sparcv9</id>
 			<activation>
 				<os>

@@ -30,9 +30,7 @@ import gov.lanl.adore.djatoka.plugin.ITransformPlugIn;
 import gov.lanl.adore.djatoka.util.IOUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
 import gov.lanl.util.HttpDate;
-import info.freelibrary.djatoka.Constants;
 import info.freelibrary.djatoka.view.CacheUtils;
-import info.freelibrary.util.StringUtils;
 import info.openurl.oom.ContextObject;
 import info.openurl.oom.OpenURLRequest;
 import info.openurl.oom.OpenURLRequestProcessor;
@@ -51,7 +49,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -238,7 +235,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	    catch (UnsupportedEncodingException e) {
 		e.printStackTrace();
 	    }
-	    
+
 	    responseFormat = "text/plain";
 	    status = HttpServletResponse.SC_NOT_FOUND;
 	}
@@ -246,11 +243,11 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	    if (LOGGER.isDebugEnabled()) {
 		LOGGER.debug("Service has a valid region request");
 	    }
-	    
+
 	    try {
 		Referent referent = contextObject.getReferent();
 		ImageRecord r = ReferentManager.getImageRecord(referent);
-		
+
 		if (LOGGER.isDebugEnabled() && r != null) {
 		    LOGGER.debug("Retrieving ImageRecord for: {}",
 			    r.getIdentifier());
@@ -326,7 +323,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 			    f.deleteOnExit();
 			    file = f.getAbsolutePath();
 			    djatokaCacheFile = file;
-			    
+
 			    extractor.extractImage(r.getImageFile(), file,
 				    params, format);
 
@@ -393,7 +390,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	    if (LOGGER.isDebugEnabled()) {
 		LOGGER.debug("No bytes found!");
 	    }
-	    
+
 	    bytes = "".getBytes();
 	    responseFormat = "text/plain";
 	    status = HttpServletResponse.SC_NOT_FOUND;
@@ -406,7 +403,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 	if (LOGGER.isDebugEnabled()) {
 	    LOGGER.debug("Getting OpenURLResponse...");
 	}
-	
+
 	OpenURLResponse response = new OpenURLResponse(status, responseFormat,
 		bytes, header_map);
 
@@ -442,8 +439,8 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 		String cacheName = hash + ext;
 
 		if (LOGGER.isDebugEnabled()) {
-		    LOGGER.debug("Setting cache session data [ {} | {} | {} ]",
-			    new String[] { id, djatokaCacheFile, cacheName });
+		    LOGGER.debug("Setting cache session data [ {} | {} ]",
+			    new String[] { id, djatokaCacheFile });
 		}
 
 		sessionMap.put(id, djatokaCacheFile);
