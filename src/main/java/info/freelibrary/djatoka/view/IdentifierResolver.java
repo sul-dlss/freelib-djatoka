@@ -32,7 +32,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -123,7 +122,10 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	myRemoteImages = new ConcurrentHashMap<String, ImageRecord>();
 
 	try {
-	    if (!skipFS) loadFileSystemImages(myJP2Dir);
+	    if (!skipFS) { loadFileSystemImages(myJP2Dir); }
+	    else if (LOGGER.isDebugEnabled()) {
+		LOGGER.debug("File system mapping disabled");
+	    }
 	}
 	catch (FileNotFoundException details) {
 	    if (LOGGER.isWarnEnabled()) {
