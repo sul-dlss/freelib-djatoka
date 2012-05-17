@@ -14,7 +14,7 @@ public class CacheUtils {
 	    cfName.append(aScale).append('_').append(region);
 	}
 
-	return cfName.append(".jp2").toString();
+	return cfName.append(".jpg").toString();
     }
 
     private static boolean isEmpty(String aString) {
