@@ -10,6 +10,7 @@ import info.freelibrary.util.StringUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +20,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Properties;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -69,64 +71,81 @@ public class ImageServlet extends HttpServlet implements Constants {
 	String reqURI = aRequest.getRequestURI();
 	String servletPath = aRequest.getServletPath();
 	String path = reqURI.substring(servletPath.length());
-	String[] regionCoords = getRegion(path);
-	String scale = getScale(path);
 	String id = getID(path);
-	String region;
 
-	if (level == null && scale == null) {
-	    level = DEFAULT_VIEW_LEVEL;
-	}
-
-	if (regionCoords.length == 4) {
-	    region = StringUtils.toString(regionCoords, ',');
+	if (reqURI.endsWith("/info.xml") || reqURI.endsWith("/info.json")) {
+	    try {
+		int[] dims = getHeightWidth(aRequest, aResponse);
+		ImageInfo imageInfo = new ImageInfo(id, dims[0], dims[1]);
+		ServletOutputStream outStream = aResponse.getOutputStream();
+		
+		imageInfo.toStream(outStream);
+		outStream.close();
+	    }
+	    catch (FileNotFoundException details) {
+		aResponse.sendError(HttpServletResponse.SC_NOT_FOUND, id
+			+ " not found");
+	    }
 	}
 	else {
-	    region = "";
-	}
+	    String[] regionCoords = getRegion(path);
+	    String scale = getScale(path);
+	    String region;
 
-	if (LOGGER.isDebugEnabled()) {
-	    StringBuilder request = new StringBuilder();
+	    if (level == null && scale == null) {
+		level = DEFAULT_VIEW_LEVEL;
+	    }
 
-	    request.append("id[").append(id).append("] ");
-	    request.append("level[").append(level).append("] ");
-	    request.append("scale[").append(scale).append("] ");
-	    request.append("region[").append(region).append("]");
+	    if (regionCoords.length == 4) {
+		region = StringUtils.toString(regionCoords, ',');
+	    }
+	    else {
+		region = "";
+	    }
 
-	    LOGGER.debug("Request: " + request.toString());
-	}
+	    if (LOGGER.isDebugEnabled()) {
+		StringBuilder request = new StringBuilder();
 
-	if (myCache != null) {
-	    PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
-	    PairtreeObject cacheObject = cacheDir.getObject(id);
-	    String cacheFileName = CacheUtils.getFileName(level, scale, region);
-	    File imageFile = new File(cacheObject, cacheFileName);
+		request.append("id[").append(id).append("] ");
+		request.append("level[").append(level).append("] ");
+		request.append("scale[").append(scale).append("] ");
+		request.append("region[").append(region).append("]");
 
-	    if (imageFile.exists()) {
-		ServletOutputStream outStream = aResponse.getOutputStream();
-		IOUtils.copyStream(imageFile, outStream);
-		IOUtils.closeQuietly(outStream);
+		LOGGER.debug("Request: " + request.toString());
+	    }
 
-		if (LOGGER.isDebugEnabled()) {
-		    LOGGER.debug("{} served from Pairtree cache", imageFile);
+	    if (myCache != null) {
+		PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
+		PairtreeObject cacheObject = cacheDir.getObject(id);
+		String fileName = CacheUtils.getFileName(level, scale, region);
+		File imageFile = new File(cacheObject, fileName);
+
+		if (imageFile.exists()) {
+		    ServletOutputStream outStream = aResponse.getOutputStream();
+		    IOUtils.copyStream(imageFile, outStream);
+		    IOUtils.closeQuietly(outStream);
+
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("{} served from Pairtree cache", imageFile);
+		    }
+		}
+		else {
+		    if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("{} not found in cache", imageFile);
+		    }
+
+		    serveNewImage(id, level, region, scale, aRequest, aResponse);
+		    cacheNewImage(aRequest, id + "_" + fileName, imageFile);
 		}
 	    }
 	    else {
-		if (LOGGER.isDebugEnabled()) {
-		    LOGGER.debug("{} not found in cache", imageFile);
+		if (LOGGER.isWarnEnabled()) {
+		    LOGGER.warn("Cache isn't configured correctly (null)");
 		}
 
 		serveNewImage(id, level, region, scale, aRequest, aResponse);
-		cacheNewImage(aRequest, id + "_" + cacheFileName, imageFile);
+		// We can't cache, because we don't have a cache configured
 	    }
-	}
-	else {
-	    if (LOGGER.isWarnEnabled()) {
-		LOGGER.warn("Cache isn't configured correctly (null)");
-	    }
-
-	    serveNewImage(id, level, region, scale, aRequest, aResponse);
-	    // We can't cache, because we don't have a cache configured
 	}
     }
 
@@ -169,6 +188,30 @@ public class ImageServlet extends HttpServlet implements Constants {
     @Override
     protected void doHead(HttpServletRequest aRequest,
 	    HttpServletResponse aResponse) throws ServletException, IOException {
+	try {
+	    int[] dimensions = getHeightWidth(aRequest, aResponse);
+
+	    // TODO: add a content length header too
+	    if (!aResponse.isCommitted()) {
+		aResponse.addIntHeader("X-Image-Height", dimensions[0]);
+		aResponse.addIntHeader("X-Image-Width", dimensions[1]);
+
+		aResponse.setStatus(HttpServletResponse.SC_OK);
+	    }
+	}
+	catch (FileNotFoundException details) {
+	    aResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+	}
+    }
+
+    @Override
+    protected long getLastModified(HttpServletRequest aRequest) {
+	// TODO: really implement this using our cached files?
+	return super.getLastModified(aRequest);
+    }
+
+    private int[] getHeightWidth(HttpServletRequest aRequest,
+	    HttpServletResponse aResponse) throws IOException, ServletException {
 	String reqURI = aRequest.getRequestURI();
 	String servletPath = aRequest.getServletPath();
 	String path = reqURI.substring(servletPath.length());
@@ -225,26 +268,40 @@ public class ImageServlet extends HttpServlet implements Constants {
 				imageURL.toExternalForm());
 		    }
 
-		    BufferedImage image = ImageIO.read(imageURL);
-		    Element root = dzi.getRootElement();
-		    Element size = root.getFirstChildElement("Size", DZI_NS);
-		    Attribute wAttribute = size.getAttribute("Width");
-		    Attribute hAttribute = size.getAttribute("Height");
+		    try {
+			BufferedImage image = ImageIO.read(imageURL);
+			Element root = dzi.getRootElement();
+			Element size = root
+				.getFirstChildElement("Size", DZI_NS);
+			Attribute wAttribute = size.getAttribute("Width");
+			Attribute hAttribute = size.getAttribute("Height");
 
-		    // Return the width and height in response headers
-		    height = image.getHeight();
-		    width = image.getWidth();
+			// Return the width and height in response headers
+			height = image.getHeight();
+			width = image.getWidth();
 
-		    if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Returning width/height: {}/{}", width,
-				height);
+			if (LOGGER.isDebugEnabled()) {
+			    LOGGER.debug("Returning width/height: {}/{}",
+				    width, height);
+			}
+
+			// Save it in our dzi file for easier access next time
+			wAttribute.setValue(Integer.toString(width));
+			hAttribute.setValue(Integer.toString(height));
+
+			serializer.write(dzi);
 		    }
+		    catch (IIOException details) {
+			Class<?> thrown = details.getCause().getClass();
+			String name = thrown.getSimpleName();
 
-		    // Save it in our dzi file for easier access next time
-		    wAttribute.setValue(Integer.toString(width));
-		    hAttribute.setValue(Integer.toString(height));
-
-		    serializer.write(dzi);
+			if (name.equals("FileNotFoundException")) {
+			    throw new FileNotFoundException(id + " not found");
+			}
+			else {
+			    throw details;
+			}
+		    }
 		}
 	    }
 	    catch (ValidityException details) {
@@ -263,19 +320,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 	    throw new ServletException("Cache not correctly configured");
 	}
 
-	// TODO: add a content length header too
-	if (!aResponse.isCommitted()) {
-	    aResponse.addIntHeader("X-Image-Height", height);
-	    aResponse.addIntHeader("X-Image-Width", width);
-
-	    aResponse.setStatus(HttpServletResponse.SC_OK);
-	}
-    }
-
-    @Override
-    protected long getLastModified(HttpServletRequest aRequest) {
-	// TODO: really implement this using our cached files?
-	return super.getLastModified(aRequest);
+	return new int[] { height, width };
     }
 
     private String getFullSizeImageURL(HttpServletRequest aRequest) {

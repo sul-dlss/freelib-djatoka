@@ -14,6 +14,8 @@
  * @param {string} imageID
  */ 
 $.DjTileSource = function(djatoka, imageID) {
+	var iiifNS = 'http://library.stanford.edu/iiif/image-api/ns/';
+	var xml, wNode, hNode, width, height;
 	var http = new XMLHttpRequest();
 	var tileOverlap = 0;
 	var tileSize = 256;
@@ -22,11 +24,14 @@ $.DjTileSource = function(djatoka, imageID) {
     this.baseURL = djatoka + "zoom/";
     this.imageID = imageID;
 
-    http.open('HEAD', djatoka + "image/" + imageID, false);
+    http.open('GET', djatoka + "image/" + imageID + "/info.xml", false);
     http.send();
 
-    width = parseInt(http.getResponseHeader("X-Image-Width"));
-    height = parseInt(http.getResponseHeader("X-Image-Height"));
+    xml = http.responseXML;	
+    wNode = xml.getElementsByTagNameNS(iiifNS, 'width').item(0).childNodes[0];
+    hNode = xml.getElementsByTagNameNS(iiifNS, 'height').item(0).childNodes[0];
+    width = parseInt(wNode.nodeValue);
+    height = parseInt(hNode.nodeValue);
     
     $.TileSource.call(this, width, height, tileSize, tileOverlap, minLevel, maxLevel);
 };
@@ -81,7 +86,6 @@ $.extend($.DjTileSource.prototype, $.TileSource.prototype, {
     		region = "all";
     	}
 
-    	//alert(this.baseURL + this.imageID + "/" + region + "/" + scale);
     	return this.baseURL + this.imageID + "/" + region + "/" + scale;
     }
 });
