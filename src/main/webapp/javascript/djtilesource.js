@@ -32,7 +32,7 @@ $.DjTileSource = function(djatoka, imageID) {
     hNode = xml.getElementsByTagNameNS(iiifNS, 'height').item(0).childNodes[0];
     width = parseInt(wNode.nodeValue);
     height = parseInt(hNode.nodeValue);
-    
+
     $.TileSource.call(this, width, height, tileSize, tileOverlap, minLevel, maxLevel);
 };
 
@@ -62,24 +62,16 @@ $.extend($.DjTileSource.prototype, $.TileSource.prototype, {
     			tileSizeX = tileSize;
     		}
 
-    		if ((startX + tileSizeX) > this.dimensions.x) {
-    			tileSizeX = this.dimensions.x - startX;
-    		}
-
     		if (myY == 0) {
     			tileSizeY = tileSize - 1;
     		}
     		else {
     			tileSizeY = tileSize;
     		}
-
-    		if ((startY + tileSizeY) > this.dimensions.y) {
-    			tileSizeY = this.dimensions.y - startY;
-    		}
      	
     		var startX = parseInt(myX * tileSize);
     		var startY = parseInt(myY * tileSize);    	
-    	
+
     		region = startY + "," + startX + "," + tileSizeY + "," + tileSizeX;
     	}
     	else {
