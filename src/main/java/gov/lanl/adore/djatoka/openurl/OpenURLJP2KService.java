@@ -30,7 +30,7 @@ import gov.lanl.adore.djatoka.plugin.ITransformPlugIn;
 import gov.lanl.adore.djatoka.util.IOUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
 import gov.lanl.util.HttpDate;
-import info.freelibrary.djatoka.view.CacheUtils;
+import info.freelibrary.djatoka.util.CacheUtils;
 import info.openurl.oom.ContextObject;
 import info.openurl.oom.OpenURLRequest;
 import info.openurl.oom.OpenURLRequestProcessor;

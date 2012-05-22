@@ -2,6 +2,7 @@ package info.freelibrary.djatoka.view;
 
 import gov.lanl.adore.djatoka.openurl.OpenURLJP2KService;
 import info.freelibrary.djatoka.Constants;
+import info.freelibrary.djatoka.util.CacheUtils;
 import info.freelibrary.util.IOUtils;
 import info.freelibrary.util.PairtreeObject;
 import info.freelibrary.util.PairtreeRoot;
