@@ -20,6 +20,8 @@
     <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="DEBUG"/>
     <logger name="info.freelibrary.djatoka.view.ImageServlet" level="DEBUG"/>
     <logger name="info.freelibrary.djatoka.view.ViewServlet" level="INFO"/>
+    <logger name="info.freelibrary.djatoka.TileCache" level="DEBUG"/>
+    <logger name="info.freelibrary.djatoka.util.HealthServlet" level="DEBUG"/>
 
     <logger name="info.freelibrary.util.PairtreeObject" level="INFO"/>
     <logger name="info.freelibrary.util.PairtreeRoot" level="INFO"/>

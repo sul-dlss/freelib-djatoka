@@ -16,6 +16,10 @@
         <servlet-class>info.freelibrary.djatoka.ingest.IngestServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>healthCheck</servlet-name>
+        <servlet-class>info.freelibrary.djatoka.util.HealthServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>viewer</servlet-name>
         <servlet-class>info.freelibrary.djatoka.view.ViewServlet</servlet-class>
     </servlet>
@@ -66,6 +70,10 @@
     <servlet-mapping>
         <servlet-name>resolver</servlet-name> 
         <url-pattern>/resolve</url-pattern> 
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>healthCheck</servlet-name> 
+        <url-pattern>/health</url-pattern> 
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>reporter</servlet-name>
