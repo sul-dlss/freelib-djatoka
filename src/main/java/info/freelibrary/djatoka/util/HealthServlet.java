@@ -45,12 +45,12 @@ public class HealthServlet extends HttpServlet {
 	serializer.setIndent(2);
 	root.appendChild(health);
 
-	if (LOGGER.isDebugEnabled()) {
-	    LOGGER.debug("Memory usage: {}", memUsage);
-	}
-
 	memory = (int) (Double.parseDouble(memUsage) * 100);
 
+	if (LOGGER.isDebugEnabled()) {
+	    LOGGER.debug("Memory usage at {}%", memory);
+	}
+	
 	// These numbers are just a guess... need some real world tests
 	if (memory < 80) {
 	    health.appendChild("ok");
@@ -83,6 +83,7 @@ public class HealthServlet extends HttpServlet {
 	ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
 	int threadCount = mxBean.getThreadCount();
 	long[] deadlocked = mxBean.findDeadlockedThreads();
+	long startedCount = mxBean.getTotalStartedThreadCount();
 	int deadCount = deadlocked != null ? deadlocked.length : 0;
 	int peakCount = mxBean.getPeakThreadCount();
 	long totalCount = mxBean.getTotalStartedThreadCount();
@@ -90,15 +91,18 @@ public class HealthServlet extends HttpServlet {
 	Element deadlockedCountElem = new Element("deadlockedCount");
 	Element peakCountElem = new Element("peakCount");
 	Element totalCountElem = new Element("totalCount");
+	Element startedCountElem = new Element("totalStartedCount");
 	threadCountElem.appendChild(String.valueOf(threadCount));
 	deadlockedCountElem.appendChild(String.valueOf(deadCount));
 	peakCountElem.appendChild(String.valueOf(peakCount));
 	totalCountElem.appendChild(String.valueOf(totalCount));
+	startedCountElem.appendChild(String.valueOf(startedCount));
 
 	threads.appendChild(threadCountElem);
 	threads.appendChild(deadlockedCountElem);
 	threads.appendChild(peakCountElem);
 	threads.appendChild(totalCountElem);
+	threads.appendChild(startedCountElem);
 
 	return threads;
     }
