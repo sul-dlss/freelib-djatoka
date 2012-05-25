@@ -267,7 +267,7 @@
 		<!-- Separate cache used for the pairtree storage system -->
 		<djatoka.view.cache>${project.basedir}/target/cache</djatoka.view.cache>
 		<!-- Max TIFF file size for ingest (always specified in MB) -->
-		<djatoka.ingest.maxSize>200</djatoka.ingest.maxSize>
+		<djatoka.ingest.maxSize>900</djatoka.ingest.maxSize>
 		<!-- <referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver> -->
 		<referent.resolver>info.freelibrary.djatoka.view.IdentifierResolver</referent.resolver>
 		<cache.enabled>true</cache.enabled>
