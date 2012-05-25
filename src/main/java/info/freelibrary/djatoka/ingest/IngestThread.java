@@ -82,7 +82,7 @@ public class IngestThread extends Thread {
 	return myCount;
     }
 
-    public void finish() {
+    public void cleanUp() {
 	isWaiting = false;
     }
 

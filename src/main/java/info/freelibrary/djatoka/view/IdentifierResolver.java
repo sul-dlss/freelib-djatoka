@@ -157,11 +157,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	}
     }
 
-    private boolean isResolvableURI(String aReferentID) {
-	return aReferentID.startsWith("http"); // keeping it simple
-    }
-
-    private void loadFileSystemImages(String aJP2DataDir)
+    public void loadFileSystemImages(String aJP2DataDir)
 	    throws FileNotFoundException {
 	File jp2Dir = new File(aJP2DataDir);
 	FilenameFilter filter = new RegexFileFilter(JP2_FILE_PATTERN);
@@ -189,6 +185,10 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
 	    myLocalImages.put(id, image);
 	}
+    }
+    
+    private boolean isResolvableURI(String aReferentID) {
+	return aReferentID.startsWith("http"); // keeping it simple
     }
 
     // Not sure we should do this, but...

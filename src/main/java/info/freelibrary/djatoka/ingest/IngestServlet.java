@@ -2,6 +2,7 @@ package info.freelibrary.djatoka.ingest;
 
 import gov.lanl.adore.djatoka.util.IOUtils;
 
+import info.freelibrary.djatoka.view.IdentifierResolver;
 import info.freelibrary.util.StringUtils;
 
 import java.io.File;
@@ -62,8 +63,9 @@ public class IngestServlet extends HttpServlet {
 		
 		if (thread.isFinished()) {
 		    toBrowser.write("Finished: " + count + " ingested" + data);
-		    thread.finish();
-		    context.setAttribute("ingest", null);
+		    new IdentifierResolver().loadFileSystemImages(jp2Dir);
+		    context.removeAttribute("ingest");
+		    thread.cleanUp();
 		}
 		else {
 		    toBrowser.write("Ingesting... at number " + count + data);
