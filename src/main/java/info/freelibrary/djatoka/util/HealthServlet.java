@@ -52,6 +52,7 @@ public class HealthServlet extends HttpServlet {
 	}
 	
 	// These numbers are just a guess... need some real world tests
+	// also, add other things like deadlocked threads, etc?
 	if (memory < 80) {
 	    health.appendChild("ok");
 	}
