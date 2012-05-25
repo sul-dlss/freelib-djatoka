@@ -210,6 +210,14 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<systemProperties>
+						<systemProperty>
+							<key>logback.configurationFile</key>
+							<value>src/main/resources/logback.xml</value>
+						</systemProperty>
+					</systemProperties>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
