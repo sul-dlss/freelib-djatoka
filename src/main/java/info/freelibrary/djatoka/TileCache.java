@@ -1,5 +1,7 @@
 package info.freelibrary.djatoka;
 
+import info.freelibrary.djatoka.util.CacheUtils;
+
 import info.freelibrary.util.I18nObject;
 import info.freelibrary.util.XMLBundleControl;
 import info.freelibrary.util.XMLResourceBundle;
@@ -7,11 +9,14 @@ import info.freelibrary.util.XMLResourceBundle;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import nu.xom.Builder;
@@ -23,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class TileCache extends I18nObject {
+public class TileCache implements IIIFInterface {
 
     private static final Logger LOGGER = LoggerFactory
 	    .getLogger(TileCache.class);
@@ -44,8 +49,7 @@ public class TileCache extends I18nObject {
 	    int index;
 
 	    if (!csvFile.exists()) {
-		String fileName = csvFile.getAbsolutePath();
-		System.err.println("File not found: " + fileName);
+		LOGGER.error(BUNDLE.get("TC_FILE_NOT_FOUND") + csvFile);
 		printUsageAndExit();
 	    }
 
@@ -72,7 +76,11 @@ public class TileCache extends I18nObject {
 		index = Integer.parseInt(args[1]) - 1; // columns 1-based
 
 		while ((ids = csvReader.readNext()) != null) {
-		    cache(ids[index]);
+		    if (LOGGER.isInfoEnabled()) {
+			LOGGER.info(BUNDLE.get("TC_CACHE_ID"), ids[index]);
+		    }
+
+		    cacheImage(server, ids[index]);
 		}
 	    }
 	    catch (NumberFormatException details) {
@@ -88,21 +96,90 @@ public class TileCache extends I18nObject {
 
     }
 
-    private static void cache(String aID) {
+    private static void cacheImage(String aServer, String aID) {
+	try {
+	    String id = URLEncoder.encode(aID, "UTF-8");
+	    String baseURL = aServer + "view/image/" + id;
+	    URL url = new URL(baseURL + "/info.xml");
+	    HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+	    int status = uc.getResponseCode();
 
+	    if (status == 200) {
+		Document xml = new Builder().build(uc.getInputStream());
+		Element info = (Element) xml.getRootElement();
+		Element elem = info.getFirstChildElement("identifier", IIIF_NS);
+		Element hElem = info.getFirstChildElement("height", IIIF_NS);
+		Element wElem = info.getFirstChildElement("width", IIIF_NS);
+		String idValue = elem.getValue();
+
+		try {
+		    int height = Integer.parseInt(hElem.getValue());
+		    int width = Integer.parseInt(wElem.getValue());
+		    Iterator<String> tileIterator;
+		    List<String> tiles;
+
+		    if (idValue.equals(aID) && height > 0 && width > 0) {
+			if (idValue.startsWith("/") && LOGGER.isWarnEnabled()) {
+			    LOGGER.warn(BUNDLE.get("TC_SLASH_ID"), aID);
+			}
+
+			tiles = CacheUtils.getCachingQueries(height, width);
+			tileIterator = tiles.iterator();
+
+			while (tileIterator.hasNext()) {
+			    cacheTile(baseURL + tileIterator.next());
+			}
+		    }
+		    else if (LOGGER.isErrorEnabled()) {
+			LOGGER.error(BUNDLE.get("TC_ID_404"), aID);
+		    }
+		}
+		catch (NumberFormatException nfe) {
+		    LOGGER.error(BUNDLE.get("TC_INVALID_DIMS"), aID);
+		}
+	    }
+	    else {
+		LOGGER.error(BUNDLE.get("TC_SERVER_STATUS_CODE"), status);
+	    }
+	}
+	catch (Exception details) {
+	    LOGGER.error(details.getMessage());
+	}
     }
 
-    private static boolean isLive(String aServer) throws IOException {
-	URL url = new URL(aServer + "health");
-	HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+    private static void cacheTile(String aURL) {
+	try {
+	    URL url = new URL(aURL);
+	    HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+	    int status = uc.getResponseCode();
 
-	if (LOGGER.isDebugEnabled()) {
-	    LOGGER.debug("Checking server status at {}", url.toString());
+	    if (status == 200) {
+		int contentLength = uc.getContentLength();
+
+		if (contentLength == -1) {
+		    //LOGGER.debug("Tile '{}' content length: -1", aURL);
+		}
+	    }
+	    else if (LOGGER.isErrorEnabled()) {
+		LOGGER.error("Problem caching '{}' tile (status: {})", aURL,
+			status);
+	    }
 	}
+	catch (Exception details) {
 
-	// TODO? Check sizes that come back, showing there is an image there?
-	if (uc.getResponseCode() == 200) {
-	    try {
+	}
+    }
+
+    private static boolean isLive(String aServer) {
+	try {
+	    URL url = new URL(aServer + "health");
+	    HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+
+	    if (LOGGER.isDebugEnabled()) {
+		LOGGER.debug(BUNDLE.get("TC_STATUS_CHECK"), url);
+	    }
+
+	    if (uc.getResponseCode() == 200) {
 		Document xml = new Builder().build(uc.getInputStream());
 		Element response = (Element) xml.getRootElement();
 		Element health = response.getFirstChildElement("health");
@@ -110,21 +187,24 @@ public class TileCache extends I18nObject {
 
 		if (status.equals("dying") || status.equals("sick")) {
 		    if (LOGGER.isWarnEnabled()) {
-			LOGGER.warn("Server status is '{}'", status);
+			LOGGER.warn(BUNDLE.get("TC_SERVER_STATUS"), status);
 		    }
-		    
+
 		    return true;
 		}
 		else if (status.equals("ok")) {
 		    return true;
 		}
 		else {
-		    LOGGER.error("Unexpected server status: {}", status);
+		    LOGGER.error(BUNDLE.get("TC_UNEXPECTED_STATUS"), status);
 		}
 	    }
-	    catch (Exception details) {
-		LOGGER.error(details.getMessage());
-	    }
+	}
+	catch (UnknownHostException details) {
+	    LOGGER.error(BUNDLE.get("TC_UNKNOWN_HOST"), details.getMessage());
+	}
+	catch (Exception details) {
+	    LOGGER.error(details.getMessage());
 	}
 
 	return false;
@@ -133,12 +213,12 @@ public class TileCache extends I18nObject {
     private static void printUsageAndExit() {
 	String eol = System.getProperty("line.separator");
 	StringBuilder sb = new StringBuilder(eol);
-	sb.append("Usage: mvn exec:java ");
-	sb.append("-Dexec.mainClass=\"info.freelibrary.djatoka.TileCache\" ");
-	sb.append("-Dexec.args=\"/path/to/ids.csv ID_column_number [server_URL]\"");
-	sb.append(eol).append("   or: mvn exec:java ");
-	sb.append("-Dexec.mainClass=\"info.freelibrary.djatoka.TileCache\" ");
-	sb.append("-Dexec.args=\"/path/to/tiff/files/dir/\" (not yet implemented)");
+
+	sb.append(BUNDLE.get("TC_USAGE_1")).append(BUNDLE.get("TC_USAGE_EXEC"));
+	sb.append(BUNDLE.get("TC_ARGS_OPT_1")).append(eol);
+	sb.append(BUNDLE.get("TC_USAGE_2")).append(BUNDLE.get("TC_USAGE_EXEC"));
+	sb.append(BUNDLE.get("TC_ARGS_OPT_2"));
+
 	System.out.println(sb.toString());
 	System.exit(1);
     }
