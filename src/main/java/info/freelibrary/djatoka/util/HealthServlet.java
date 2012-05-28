@@ -53,7 +53,7 @@ public class HealthServlet extends HttpServlet {
 	
 	// These numbers are just a guess... need some real world tests
 	// also, add other things like deadlocked threads, etc?
-	if (memory < 80) {
+	if (memory < 85) {
 	    health.appendChild("ok");
 	}
 	else {
@@ -61,7 +61,7 @@ public class HealthServlet extends HttpServlet {
 		LOGGER.warn("Memory usage at {}%", memory);
 	    }
 
-	    if (memory > 90) {
+	    if (memory > 95) {
 		health.appendChild("dying");
 	    }
 	    else {
