@@ -197,6 +197,11 @@
 						<scope>system</scope>
 						<systemPath>${project.basedir}/lib/ij.jar</systemPath>
 					</dependency>
+					<dependency>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-servlets</artifactId>
+						<version>8.1.2.v20120308</version>
+					</dependency>					
 				</dependencies>
 			</plugin>
 			<plugin>
