@@ -183,6 +183,11 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	    image.setIdentifier(id);
 	    image.setImageFile(file.getAbsolutePath());
 
+	    if (myLocalImages == null) {
+		myLocalImages = new ConcurrentHashMap<String, ImageRecord>();
+		myRemoteImages = new ConcurrentHashMap<String, ImageRecord>();
+	    }
+	    
 	    myLocalImages.put(id, image);
 	}
     }
