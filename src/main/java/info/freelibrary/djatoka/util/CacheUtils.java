@@ -46,20 +46,35 @@ public class CacheUtils {
 	
 	for (int level = 0; level <= maxLevel; level++) {
 	    String scale = Integer.toString(getScale(level));
+	    
+	    if (level <= 8) {
+		list.add("/all/" + scale);
+		continue; // We don't need to get regions for these
+	    }
+	    
 	    int tileSize = getTileSize(level, maxLevel);
 	    int x = 0;
 	    
 	    /* x is left point and y is top point */
 	    for (int xSize = 0, y = 0; xSize <= aWidth; xSize += tileSize) {
+		if (x * tileSize > (aWidth + tileSize)) {
+		    break;
+		}
+		
 		for (int ySize = 0; ySize <= aHeight; ySize += tileSize) {
 		    String region = getRegion(level, aWidth, aHeight, x, y++);
+		    
+		    if (y * tileSize > (aHeight + tileSize)) {
+			break;
+		    }
+
 		    list.add("/" + region + "/" + scale);
 		}
-
+		
 		x += 1;
 	    }
 	}
-	
+
 	return list;
     }
     
