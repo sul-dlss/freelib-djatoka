@@ -16,11 +16,20 @@
             <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n</pattern>
         </encoder>
     </appender>
+    
+    <appender name="CACHER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>target/logs/tilecache.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>target/logs/tilecache.%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n</pattern>
+        </encoder>
+    </appender>
 
     <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="DEBUG"/>
     <logger name="info.freelibrary.djatoka.view.ImageServlet" level="DEBUG"/>
     <logger name="info.freelibrary.djatoka.view.ViewServlet" level="INFO"/>
-    <logger name="info.freelibrary.djatoka.TileCache" level="DEBUG"/>
     <logger name="info.freelibrary.djatoka.util.HealthServlet" level="DEBUG"/>
 
     <logger name="info.freelibrary.util.PairtreeObject" level="INFO"/>
@@ -29,6 +38,10 @@
     
     <logger name="info.freelibrary.djatoka.ingest" level="INFO">
         <appender-ref ref="FILEOUT"/>
+    </logger>
+
+    <logger name="info.freelibrary.djatoka.TileCache" level="INFO">
+        <appender-ref ref="CACHER"/>
     </logger>
 
     <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="INFO"/>
