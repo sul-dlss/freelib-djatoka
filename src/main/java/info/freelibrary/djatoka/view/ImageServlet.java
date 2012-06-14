@@ -120,8 +120,12 @@ public class ImageServlet extends HttpServlet implements Constants {
 		PairtreeObject cacheObject = cacheDir.getObject(id);
 		String fileName = CacheUtils.getFileName(level, scale, region);
 		File imageFile = new File(cacheObject, fileName);
-
+		
 		if (imageFile.exists()) {
+		    aResponse.setHeader("Content-Length", "" + imageFile.length());
+		    aResponse.setHeader("Cache-Control", "public, max-age=4838400");
+		    aResponse.setContentType("image/jpg");
+		    
 		    ServletOutputStream outStream = aResponse.getOutputStream();
 		    IOUtils.copyStream(imageFile, outStream);
 		    IOUtils.closeQuietly(outStream);
