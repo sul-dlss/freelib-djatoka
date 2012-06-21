@@ -2,7 +2,6 @@ package info.freelibrary.djatoka;
 
 import info.freelibrary.djatoka.util.CacheUtils;
 
-import info.freelibrary.util.I18nObject;
 import info.freelibrary.util.XMLBundleControl;
 import info.freelibrary.util.XMLResourceBundle;
 

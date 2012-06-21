@@ -1,0 +1,34 @@
+#! /bin/bash
+
+#
+# A simple script that checks the status of a freelib-djatoka image server.
+#
+# Call with the URL at which your freelib-djatoka responds; for instance:
+#   djNagios my.images.org (without a trailing slash!)
+#
+if [ $# -ne 1 ]; then
+    echo "Usage: djNagios <FREELIB_DJATOKA_URL> (do not include trailing slash)"
+else
+    if [ ${1:0:7} != 'http://' ]
+    then
+      URL='http://'${1}
+    else
+      URL=${1}
+    fi
+
+    HEALTH=`curl -s $URL/health |grep '<health>'`
+
+    # would be 8:2 but we offset for the leading 0d 0a
+    if [ ${HEALTH:10:2} == 'ok' ]
+    then
+      echo '0'
+    elif [ ${HEALTH:10:4} == 'sick' ]
+    then
+      echo '1'
+    elif [ ${HEALTH:10:5} == 'dying' ]
+    then
+      echo '2'
+    else
+      echo '3'
+    fi
+fi
