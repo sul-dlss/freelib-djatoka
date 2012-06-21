@@ -21,14 +21,18 @@ else
     # would be 8:2 but we offset for the leading 0d 0a
     if [ ${HEALTH:10:2} == 'ok' ]
     then
-      echo '0'
+      echo "Server reports it is healthy"
+      exit 0
     elif [ ${HEALTH:10:4} == 'sick' ]
     then
-      echo '1'
+      echo "Server reports it is sick"
+      exit 1
     elif [ ${HEALTH:10:5} == 'dying' ]
     then
-      echo '2'
+      echo "Server reports it is dying"
+      exit 2
     else
-      echo '3'
+      echo "Unknown: No status returned"
+      exit 3
     fi
 fi
