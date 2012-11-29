@@ -2,3 +2,6 @@
 /.classpath
 /.project
 /.settings
+
+# Ignore this submodule from the develop branch
+/openjpeg
