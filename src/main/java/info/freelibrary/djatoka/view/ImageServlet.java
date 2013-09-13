@@ -228,7 +228,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 		PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
 		PairtreeObject cacheObject = cacheDir.getObject(id);
 		ServletContext context = getServletContext();
-		String filename = PairtreeUtils.cleanId(id);
+		String filename = PairtreeUtils.encodeID(id);
 		File dziFile = new File(cacheObject, filename + ".dzi");
 
 		if (dziFile.exists() && dziFile.length() > 0) {

@@ -218,7 +218,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 		    PairtreeRoot pairtree = new PairtreeRoot(new File(myJP2Dir));
 		    String id = URLDecoder.decode(aReferentID, "UTF-8");
 		    PairtreeObject dir = pairtree.getObject(id);
-		    String filename = PairtreeUtils.cleanId(id);
+		    String filename = PairtreeUtils.encodeID(id);
 		    File file = new File(dir, filename);
 
 		    if (LOGGER.isDebugEnabled()) {
