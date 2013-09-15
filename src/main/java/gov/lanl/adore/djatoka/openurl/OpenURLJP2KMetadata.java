@@ -23,6 +23,8 @@
 
 package gov.lanl.adore.djatoka.openurl;
 
+import info.freelibrary.djatoka.view.IdentifierResolver;
+
 import gov.lanl.adore.djatoka.DjatokaException;
 import gov.lanl.adore.djatoka.IExtract;
 import gov.lanl.adore.djatoka.io.FormatConstants;
@@ -59,7 +61,7 @@ import org.slf4j.LoggerFactory;
  */
 public class OpenURLJP2KMetadata implements Service, FormatConstants {
 	private static Logger LOGGER = LoggerFactory.getLogger(OpenURLJP2KMetadata.class);
-    private static final String DEFAULT_IMPL_CLASS = SimpleListResolver.class.getCanonicalName();
+    private static final String DEFAULT_IMPL_CLASS = IdentifierResolver.class.getCanonicalName();
     private static final String PROPS_KEY_IMPL_CLASS = "OpenURLJP2KService.referentResolverImpl";
 	private static final String SVC_ID = "info:lanl-repo/svc/getMetadata";
 	private static final String RESPONSE_TYPE = "application/json";

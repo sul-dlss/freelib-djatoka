@@ -23,6 +23,8 @@
 
 package gov.lanl.adore.djatoka.openurl;
 
+import info.freelibrary.djatoka.view.IdentifierResolver;
+
 import gov.lanl.adore.djatoka.io.FormatConstants;
 import gov.lanl.adore.djatoka.util.IOUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
@@ -57,7 +59,7 @@ import org.slf4j.LoggerFactory;
 public class OpenURLJP2Datastream implements Service, FormatConstants {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(OpenURLJP2Datastream.class);
-    private static final String DEFAULT_IMPL_CLASS = SimpleListResolver.class.getCanonicalName();
+    private static final String DEFAULT_IMPL_CLASS = IdentifierResolver.class.getCanonicalName();
     private static final String PROPS_KEY_IMPL_CLASS = "OpenURLJP2KService.referentResolverImpl";
 	private static final String SVC_ID = "info:lanl-repo/svc/getDatastream";
 	

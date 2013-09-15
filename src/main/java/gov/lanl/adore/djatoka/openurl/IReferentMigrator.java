@@ -1,3 +1,4 @@
+
 package gov.lanl.adore.djatoka.openurl;
 
 import gov.lanl.adore.djatoka.DjatokaException;
@@ -10,40 +11,72 @@ import java.util.Map;
 
 public interface IReferentMigrator {
 
-	/**
-	 * Returns a local File object for a provide URI
-	 * @param uri the URI of an image to be downloaded and compressed as JP2
-	 * @return File object of JP2 compressed image
-	 * @throws DjatokaException
-	 */
-	public abstract File convert(URI uri) throws DjatokaException;
+    /**
+     * Sets the Pairtree root for images that can be migrated into the Pairtree
+     * structure.
+     * 
+     * @param aPtRootPath The root directory to the Pairtree file system
+     */
+    public abstract void setPairtreeRoot(String aPtRootPath);
 
-	/**
-	 * Returns a local File object for a provide URI
-	 * @param img File object on local image to be compressed
-	 * @param uri the URI of an image to be compressed as JP2
-	 * @return File object of JP2 compressed image
-	 * @throws DjatokaException
-	 */
-	public abstract File processImage(File img, URI uri)
-			throws DjatokaException;
+    /**
+     * Returns true if the migrator has a Pairtree file system set.
+     * 
+     * @return True if the migrator has a Pairtree file system set; else, false
+     */
+    public abstract boolean hasPairtreeRoot();
 
-	/**
-	 * Return list of images currently being processed. Images are removed once complete.
-	 * @return list of images being processed
-	 */
-	public abstract List<?> getProcessingList();
+    /**
+     * Returns the absolute path to the migrator's Pairtree file system
+     * 
+     * @return The absolute path to the migrator's Pairtree file system
+     */
+    public abstract String getPairtreeRoot();
 
-	/**
-	 * Returns map of format extension (e.g. jpg) to mimetype mappings (e.g. image/jpeg)
-	 * @return format extension to mimetype mappings
-	 */
-	public abstract Map<?, ?> getFormatMap();
+    /**
+     * Returns a local File object for a provide URI
+     * 
+     * @param aReferent the identifier of the requested image file
+     * @param aURI the URI of an image to be downloaded and compressed as JP2
+     * @return File object of JP2 compressed image
+     * @throws DjatokaException
+     */
+    public abstract File convert(String aReferent, URI aURI)
+            throws DjatokaException;
 
-	/**
-	 * Sets map of format extension (e.g. jpg) to mimetype mappings (e.g. image/jpeg)
-	 * @param formatMap extension to mimetype mappings
-	 */
-	public abstract void setFormatMap(HashMap<String, String> formatMap);
+    /**
+     * Returns a local File object for a provide URI
+     * 
+     * @param aImgFile File object on local image to be compressed
+     * @param aURI the URI of an image to be compressed as JP2
+     * @return File object of JP2 compressed image
+     * @throws DjatokaException
+     */
+    public abstract File processImage(File aImgFile, URI aURI)
+            throws DjatokaException;
+
+    /**
+     * Return list of images currently being processed. Images are removed once
+     * complete.
+     * 
+     * @return list of images being processed
+     */
+    public abstract List<?> getProcessingList();
+
+    /**
+     * Returns map of format extension (e.g. jpg) to mime-type mappings (e.g.
+     * image/jpeg)
+     * 
+     * @return format extension to mime-type mappings
+     */
+    public abstract Map<?, ?> getFormatMap();
+
+    /**
+     * Sets map of format extension (e.g. jpg) to mime-type mappings (e.g.
+     * image/jpeg)
+     * 
+     * @param formatMap extension to mime-type mappings
+     */
+    public abstract void setFormatMap(HashMap<String, String> formatMap);
 
 }
