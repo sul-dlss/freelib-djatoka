@@ -39,6 +39,7 @@
 
     <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="DEBUG"/>
     <logger name="gov.lanl.adore.djatoka.openurl.DjatokaImageMigrator" level="DEBUG"/>
+    <logger name="gov.lanl.adore.djatoka.util.IOUtils" level="DEBUG"/>
     
     <logger name="info.freelibrary.djatoka.view.ImageServlet" level="ERROR"/>
     <logger name="info.freelibrary.djatoka.view.ViewServlet" level="ERROR"/>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>freelib-djatoka Test Page</title>
+      <script type="text/javascript" src="javascript/openseadragon.js"></script>
+      <script type="text/javascript" src="javascript/djtilesource.js"></script>
+
+      <style type="text/css">
+         #container {
+             width : 800px;
+             height : 500px;
+             background-color : black;
+             border : 1px solid black;
+             color : black; /* for error messages, etc. */
+         }</style>
+
+   </head>
+
+   <body>
+      <script type="text/javascript">
+      
+         function init() {
+            var ts = new OpenSeadragon.DjTileSource("/view/", "islandora:166");
+            var viewer = new OpenSeadragon.Viewer("container");
+
+            viewer.openTileSource(ts);
+         }
+
+         OpenSeadragon.addEvent(window, "load", init);
+		 
+      </script>
+      
+      <div id="container"></div>
+   </body>
+
+</html>

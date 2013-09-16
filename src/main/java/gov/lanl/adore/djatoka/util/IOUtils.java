@@ -23,6 +23,8 @@
 
 package gov.lanl.adore.djatoka.util;
 
+import java.security.Permission;
+
 import gov.lanl.adore.djatoka.io.reader.DjatokaReader;
 import gov.lanl.adore.djatoka.io.writer.TIFWriter;
 
@@ -50,322 +52,299 @@ import org.slf4j.LoggerFactory;
  * General Utilities for i/o operations in djatoka
  * 
  * @author Ryan Chute
- * 
+ * @author Kevin S. Clarke
  */
 public class IOUtils {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
 
-	/**
-	 * Create temporary tiff file from provided image file.
-	 * 
-	 * @param input Absolute path to image file to be converted to tiff.
-	 * @return File object for temporary image file
-	 * @throws Exception a I/O or Unsupported format exception
-	 */
-	public static File createTempTiff(String input) throws Exception {
-		BufferedImage bi = new DjatokaReader().open(input);
+    /**
+     * Create temporary tiff file from provided image file.
+     * 
+     * @param input Absolute path to image file to be converted to tiff.
+     * @return File object for temporary image file
+     * @throws Exception a I/O or Unsupported format exception
+     */
+    public static File createTempTiff(String input) throws Exception {
+        BufferedImage bi = new DjatokaReader().open(input);
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("BufferedImage created with h/w: {}/{}", bi
-					.getHeight(), bi.getWidth());
-		}
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("BufferedImage created with h/w: {}/{}", bi
+                    .getHeight(), bi.getWidth());
+        }
 
-		return createTempTiff(bi);
-	}
+        return createTempTiff(bi);
+    }
 
-	/**
-	 * Create temporary tiff file from provided InputStream. Returns null if
-	 * exception occurs.
-	 * 
-	 * @param input InputStream containing a image bitstream
-	 * @return File object for temporary image file
-	 */
-	public static File createTempImage(InputStream input) {
-		File output = null;
-		OutputStream out = null;
-		try {
-			output = File.createTempFile("tmp", ".img");
-			output.deleteOnExit();
-			out = new BufferedOutputStream(new FileOutputStream(output));
-			copyStream(input, out);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		finally {
-			if (out != null)
-				try {
-					out.close();
-				}
-				catch (Exception e) {
-				}
-		}
-		return output;
-	}
+    /**
+     * Create temporary tiff file from provided InputStream. Returns null if
+     * exception occurs.
+     * 
+     * @param input InputStream containing a image bitstream
+     * @return File object for temporary image file
+     */
+    public static File createTempImage(InputStream input) {
+        File output = null;
+        OutputStream out = null;
+        try {
+            output = File.createTempFile("tmp", ".img");
+            output.deleteOnExit();
+            out = new BufferedOutputStream(new FileOutputStream(output));
+            copyStream(input, out);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (out != null) try {
+                out.close();
+            } catch (Exception e) {
+            }
+        }
+        return output;
+    }
 
-	/**
-	 * Create temporary TIFF file from provided BufferedImage object
-	 * 
-	 * @param bImage BufferedImage containing raster data
-	 * @return File object for temporary image file
-	 */
-	public static File createTempTiff(BufferedImage bImage) throws Exception {
-		TIFWriter tifWriter = new TIFWriter();
-		File tifFile = File.createTempFile("tmp", ".tif");
+    /**
+     * Create temporary TIFF file from provided BufferedImage object
+     * 
+     * @param bImage BufferedImage containing raster data
+     * @return File object for temporary image file
+     */
+    public static File createTempTiff(BufferedImage bImage) throws Exception {
+        TIFWriter tifWriter = new TIFWriter();
+        File tifFile = File.createTempFile("tmp", ".tif");
 
-		FileOutputStream fileOut = new FileOutputStream(tifFile);
-		BufferedOutputStream outStream = new BufferedOutputStream(fileOut);
+        FileOutputStream fileOut = new FileOutputStream(tifFile);
+        BufferedOutputStream outStream = new BufferedOutputStream(fileOut);
 
-		tifWriter.write(bImage, outStream);
-		outStream.close();
+        tifWriter.write(bImage, outStream);
+        outStream.close();
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Temp tiff file created: {} (size: {})", tifFile,
-					tifFile.length());
-		}
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Temp tiff file created: {} (size: {})", tifFile,
+                    tifFile.length());
+        }
 
-		return tifFile;
-	}
+        return tifFile;
+    }
 
-	/**
-	 * Gets an InputStream object for provide URL location
-	 * 
-	 * @param location File, http, or ftp URL to open connection and obtain
-	 *        InputStream
-	 * @return InputStream containing the requested resource
-	 * @throws Exception
-	 */
-	public static InputStream getInputStream(URL location) throws Exception {
-		InputStream in = null;
-		if (location.getProtocol().equals("file")) {
-			in = new BufferedInputStream(
-					new FileInputStream(location.getFile()));
-		}
-		else {
-			try {
-				URLConnection huc = location.openConnection();
-				huc.connect();
-				in = huc.getInputStream();
-			}
-			catch (MalformedURLException e) {
-				throw new Exception("A MalformedURLException occurred for "
-						+ location.toString());
-			}
-			catch (IOException e) {
-				throw new Exception(
-						"An IOException occurred attempting to connect to "
-								+ location.toString());
-			}
-		}
-		return in;
-	}
+    /**
+     * Gets an InputStream object for provide URL location
+     * 
+     * @param location File, http, or ftp URL to open connection and obtain
+     *        InputStream
+     * @return InputStream containing the requested resource
+     * @throws Exception
+     */
+    public static InputStream getInputStream(URL location) throws Exception {
+        InputStream in = null;
+        if (location.getProtocol().equals("file")) {
+            in =
+                    new BufferedInputStream(new FileInputStream(location
+                            .getFile()));
+        } else {
+            try {
+                URLConnection huc = location.openConnection();
+                huc.connect();
+                in = huc.getInputStream();
+            } catch (MalformedURLException e) {
+                throw new Exception("A MalformedURLException occurred for " +
+                        location.toString());
+            } catch (IOException e) {
+                throw new Exception(
+                        "An IOException occurred attempting to connect to " +
+                                location.toString());
+            }
+        }
+        return in;
+    }
 
-	public static OutputStream getOutputStream(URL location) throws Exception {
-		return getOutputStream(getInputStream(location));
-	}
+    public static OutputStream getOutputStream(URL location) throws Exception {
+        return getOutputStream(getInputStream(location));
+    }
 
-	public static OutputStream getOutputStream(InputStream ins)
-			throws java.io.IOException, Exception {
-		return getOutputStream(ins, 1024 * 4);
-	}
+    public static OutputStream getOutputStream(InputStream ins)
+            throws java.io.IOException, Exception {
+        return getOutputStream(ins, 1024 * 4);
+    }
 
-	public static OutputStream getOutputStream(InputStream ins, int bufferSize)
-			throws java.io.IOException, Exception {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buffer = new byte[bufferSize];
-		int count = 0;
-		BufferedInputStream bis = new BufferedInputStream(ins);
-		while ((count = bis.read(buffer)) != -1) {
-			baos.write(buffer, 0, count);
-		}
-		baos.close();
-		return baos;
-	}
+    public static OutputStream getOutputStream(InputStream ins, int bufferSize)
+            throws java.io.IOException, Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[bufferSize];
+        int count = 0;
+        BufferedInputStream bis = new BufferedInputStream(ins);
+        while ((count = bis.read(buffer)) != -1) {
+            baos.write(buffer, 0, count);
+        }
+        baos.close();
+        return baos;
+    }
 
-	public static boolean copyFile(File src, File dest) {
-		InputStream in = null;
-		OutputStream out = null;
-		byte[] buf = null;
-		int bufLen = 20000 * 1024;
-		try {
-			in = new BufferedInputStream(new FileInputStream(src));
-			out = new BufferedOutputStream(new FileOutputStream(dest));
-			buf = new byte[bufLen];
-			byte[] tmp = null;
-			int len = 0;
-			while ((len = in.read(buf, 0, bufLen)) != -1) {
-				tmp = new byte[len];
-				System.arraycopy(buf, 0, tmp, 0, len);
-				out.write(tmp);
-			}
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		finally {
-			if (in != null)
-				try {
-					in.close();
-				}
-				catch (Exception e) {
-				}
-			if (out != null)
-				try {
-					out.close();
-				}
-				catch (Exception e) {
-				}
-		}
-		return true;
-	}
+    public static boolean copyFile(File src, File dest) {
+        InputStream in = null;
+        OutputStream out = null;
+        byte[] buf = null;
+        int bufLen = 20000 * 1024;
+        try {
+            in = new BufferedInputStream(new FileInputStream(src));
+            out = new BufferedOutputStream(new FileOutputStream(dest));
+            buf = new byte[bufLen];
+            byte[] tmp = null;
+            int len = 0;
+            while ((len = in.read(buf, 0, bufLen)) != -1) {
+                tmp = new byte[len];
+                System.arraycopy(buf, 0, tmp, 0, len);
+                out.write(tmp);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (in != null) try {
+                in.close();
+            } catch (Exception e) {
+            }
+            if (out != null) try {
+                out.close();
+            } catch (Exception e) {
+            }
+        }
+        return true;
+    }
 
-	public static boolean copyStream(InputStream src, OutputStream dest) {
-		InputStream in = null;
-		OutputStream out = null;
-		byte[] buf = null;
-		int bufLen = 20000 * 1024;
-		try {
-			in = new BufferedInputStream(src);
-			out = new BufferedOutputStream(dest);
-			buf = new byte[bufLen];
-			byte[] tmp = null;
-			int len = 0;
-			while ((len = in.read(buf, 0, bufLen)) != -1) {
-				tmp = new byte[len];
-				System.arraycopy(buf, 0, tmp, 0, len);
-				out.write(tmp);
-			}
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		finally {
-			if (in != null)
-				try {
-					in.close();
-				}
-				catch (Exception e) {
-				}
-			if (out != null)
-				try {
-					out.close();
-				}
-				catch (Exception e) {
-				}
-		}
-		return true;
-	}
+    public static boolean copyStream(InputStream src, OutputStream dest) {
+        InputStream in = null;
+        OutputStream out = null;
+        byte[] buf = null;
+        int bufLen = 20000 * 1024;
+        try {
+            in = new BufferedInputStream(src);
+            out = new BufferedOutputStream(dest);
+            buf = new byte[bufLen];
+            byte[] tmp = null;
+            int len = 0;
+            while ((len = in.read(buf, 0, bufLen)) != -1) {
+                tmp = new byte[len];
+                System.arraycopy(buf, 0, tmp, 0, len);
+                out.write(tmp);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (in != null) try {
+                in.close();
+            } catch (Exception e) {
+            }
+            if (out != null) try {
+                out.close();
+            } catch (Exception e) {
+            }
+        }
+        return true;
+    }
 
-	public static byte[] getByteArray(InputStream ins)
-			throws java.io.IOException, Exception {
-		// TODO: remove CR/LFs
-		return ((ByteArrayOutputStream) getOutputStream(ins)).toByteArray();
-	}
+    public static byte[] getByteArray(InputStream ins)
+            throws java.io.IOException, Exception {
+        // TODO: remove CR/LFs
+        return ((ByteArrayOutputStream) getOutputStream(ins)).toByteArray();
+    }
 
-	public static Properties loadConfigByPath(String path) throws Exception {
-		FileInputStream fi = new FileInputStream(path);
-		return loadProperty(fi);
-	}
+    public static Properties loadConfigByPath(String path) throws Exception {
+        FileInputStream fi = new FileInputStream(path);
+        return loadProperty(fi);
+    }
 
-	public static Properties loadProperty(InputStream in) throws IOException {
-		Properties prop;
-		try {
-			prop = new java.util.Properties();
-			prop.load(in);
-		}
-		finally {
-			if (in != null) {
-				try {
-					in.close();
-				}
-				catch (Exception ex) {
-				}
-			}
-		}
-		return prop;
-	}
+    public static Properties loadProperty(InputStream in) throws IOException {
+        Properties prop;
+        try {
+            prop = new java.util.Properties();
+            prop.load(in);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception ex) {
+                }
+            }
+        }
+        return prop;
+    }
 
-	public static byte[] getBytesFromFile(File file) throws IOException {
-		InputStream is = new FileInputStream(file);
+    public static byte[] getBytesFromFile(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
 
-		// Get the size of the file
-		long length = file.length();
+        // Get the size of the file
+        long length = file.length();
 
-		byte[] bytes = new byte[(int) length];
+        byte[] bytes = new byte[(int) length];
 
-		int offset = 0;
-		int numRead = 0;
-		while (offset < bytes.length
-				&& (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-			offset += numRead;
-		}
+        int offset = 0;
+        int numRead = 0;
+        while (offset < bytes.length &&
+                (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+            offset += numRead;
+        }
 
-		if (offset < bytes.length) {
-			throw new IOException("Could not completely read file "
-					+ file.getName());
-		}
+        if (offset < bytes.length) {
+            throw new IOException("Could not completely read file " +
+                    file.getName());
+        }
 
-		is.close();
-		return bytes;
-	}
+        is.close();
+        return bytes;
+    }
 
-	public static Properties loadConfigByCP(String name) throws Exception {
+    public static Properties loadConfigByCP(String name) throws Exception {
 
-		// Get our class loader
-		ClassLoader cl = IOUtils.class.getClassLoader();
+        // Get our class loader
+        ClassLoader cl = IOUtils.class.getClassLoader();
 
-		// Attempt to open an input stream to the configuration file.
-		// The configuration file is considered to be a system
-		// resource.
-		java.io.InputStream in;
+        // Attempt to open an input stream to the configuration file.
+        // The configuration file is considered to be a system
+        // resource.
+        java.io.InputStream in;
 
-		if (cl != null) {
-			in = cl.getResourceAsStream(name);
-		}
-		else {
-			in = ClassLoader.getSystemResourceAsStream(name);
-		}
+        if (cl != null) {
+            in = cl.getResourceAsStream(name);
+        } else {
+            in = ClassLoader.getSystemResourceAsStream(name);
+        }
 
-		// If the input stream is null, then the configuration file
-		// was not found
-		if (in == null) {
-			throw new Exception("configuration file '" + name + "' not found");
-		}
-		else {
-			return loadProperty(in);
-		}
-	}
+        // If the input stream is null, then the configuration file
+        // was not found
+        if (in == null) {
+            throw new Exception("configuration file '" + name + "' not found");
+        } else {
+            return loadProperty(in);
+        }
+    }
 
-	/**
-	 * Gets a ArrayList of File objects provided a dir or file path.
-	 * 
-	 * @param filePath Absolute path to file or directory
-	 * @param fileFilter Filter dir content by extention; allows "null"
-	 * @param recursive Recursively search for files
-	 * @return ArrayList of File objects matching specified criteria.
-	 */
-	public static ArrayList<File> getFileList(String filePath,
-			FileFilter fileFilter, boolean recursive) {
-		ArrayList<File> files = new ArrayList<File>();
-		File file = new File(filePath);
-		if (file.exists() && file.isDirectory()) {
-			File[] fa = file.listFiles(fileFilter);
-			for (int i = 0; i < fa.length; i++) {
-				if (fa[i].isFile())
-					files.add(fa[i]);
-				else if (recursive && fa[i].isDirectory())
-					files.addAll(getFileList(fa[i].getAbsolutePath(),
-							fileFilter, recursive));
-			}
-		}
-		else if (file.exists() && file.isFile()) {
-			files.add(file);
-		}
+    /**
+     * Gets a ArrayList of File objects provided a dir or file path.
+     * 
+     * @param filePath Absolute path to file or directory
+     * @param fileFilter Filter dir content by extention; allows "null"
+     * @param recursive Recursively search for files
+     * @return ArrayList of File objects matching specified criteria.
+     */
+    public static ArrayList<File> getFileList(String filePath,
+            FileFilter fileFilter, boolean recursive) {
+        ArrayList<File> files = new ArrayList<File>();
+        File file = new File(filePath);
+        if (file.exists() && file.isDirectory()) {
+            File[] fa = file.listFiles(fileFilter);
+            for (int i = 0; i < fa.length; i++) {
+                if (fa[i].isFile())
+                    files.add(fa[i]);
+                else if (recursive && fa[i].isDirectory())
+                    files.addAll(getFileList(fa[i].getAbsolutePath(),
+                            fileFilter, recursive));
+            }
+        } else if (file.exists() && file.isFile()) {
+            files.add(file);
+        }
 
-		return files;
-	}
+        return files;
+    }
 }

@@ -68,7 +68,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
             .synchronizedList(new LinkedList<String>());
 
     private HashMap<String, String> formatMap;
-    
+
     private File myPtRootDir;
 
     /**
@@ -97,15 +97,15 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
     public void setPairtreeRoot(String aPtRootPath) {
         myPtRootDir = new File(aPtRootPath);
     }
-    
+
     public String getPairtreeRoot() {
         return myPtRootDir.getAbsolutePath();
     }
-    
+
     public boolean hasPairtreeRoot() {
         return myPtRootDir != null;
     }
-    
+
     /**
      * Returns a delete on exit File object for a provide URI
      * 
@@ -124,7 +124,12 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
             boolean isJp2 = aReferent.equals(url.toString()) ? false : true;
 
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("processing remote URI: {}", url);
+                LOGGER.info("Processing remote {}: {}", isJp2 ? "JP2" : "URI",
+                        url);
+            }
+
+            if (LOGGER.isDebugEnabled() && !isJp2) {
+                LOGGER.debug("{} != {}", aReferent, aURI.toURL().toString());
             }
 
             // Obtain remote resource
@@ -134,21 +139,38 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
             // in as one of our parsable URLs.
             if (isJp2 && myPtRootDir != null) {
                 PairtreeRoot pairtree = new PairtreeRoot(myPtRootDir);
-                //String id = URLDecoder.decode(referent, "UTF-8");
                 PairtreeObject dir = pairtree.getObject(aReferent);
                 String filename = PairtreeUtils.encodeID(aReferent);
                 FileOutputStream destination;
+                boolean result;
 
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Storing retrieved JP2 into Pairtree FS");
-                }
-                
                 file = new File(dir, filename);
                 destination = new FileOutputStream(file);
-                IOUtils.copyStream(source, destination);
+
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Remote stream ({}) is{}accessible", url,
+                            source.available() > 0 ? " " : " not ");
+                }
+
+                // FIXME: Islandora special sauce to work around weirdness
+                if (source.available() == 0) {
+                    source = IOUtils.getInputStream(url);
+                }
                 
+                result = IOUtils.copyStream(source, destination);
+
+                if (LOGGER.isDebugEnabled() && source.available() > 0 && result) {
+                    LOGGER.debug("Stored retrieved JP2 into Pairtree FS: {}",
+                            file.getAbsolutePath());
+                }
+
                 source.close();
                 destination.close();
+
+                // Clean up the file stub of unsuccessful copies
+                if (file.length() == 0) {
+                    file.delete();
+                }
             } else {
                 int extIndex = url.toString().lastIndexOf(".") + 1;
                 String ext = url.toString().substring(extIndex).toLowerCase();

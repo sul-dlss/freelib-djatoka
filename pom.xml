@@ -247,7 +247,7 @@
 		<!-- If production, uses pairtree fs; else, builds hashmap of jp2 fs + pairtree fs -->
 		<djatoka.is.production>false</djatoka.is.production>
 		<!-- Ingestable JP2 sources with parseable URL patterns (whitespace separated) -->
-		<djatoka.ingest.sources>^http://lit222v\.library\.ucla\.edu/islandora/object/([a-zA-Z]*%3A[0-9a-zA-Z]*)/datastream/JP2/download$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
+		<djatoka.ingest.sources>^http://lit222v\.library\.ucla\.edu/islandora/object/([a-zA-Z]*:[0-9a-zA-Z]*)/datastream/JP2/download$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
 	</properties>
 	<profiles>
 		<profile>

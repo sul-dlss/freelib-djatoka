@@ -206,6 +206,10 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                     image = new ImageRecord();
                     image.setIdentifier(id);
                     image.setImageFile(file.getAbsolutePath());
+                    
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Source JP2 found in Pairtree cache!");
+                    }
                 }
             } catch (IOException details) {
                 LOGGER.error("Failed to load file from cache", details);
