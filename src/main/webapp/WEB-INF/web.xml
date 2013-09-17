@@ -75,6 +75,12 @@
         <servlet-name>zoomViewer</servlet-name>
         <servlet-class>info.freelibrary.djatoka.view.ImageServlet</servlet-class>
     </servlet>
+    <!-- For backwards compatibility with Islandora's djatoka expectations -->
+    <servlet-mapping>
+        <servlet-name>resolver</servlet-name> 
+        <url-pattern>/resolver</url-pattern> 
+    </servlet-mapping>
+    <!-- What I use for resolving via Pairtree cache files -->
     <servlet-mapping>
         <servlet-name>resolver</servlet-name> 
         <url-pattern>/resolve</url-pattern> 
