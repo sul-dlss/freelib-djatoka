@@ -11,10 +11,20 @@
              height : 500px;
              background-color : black;
              border : 1px solid black;
-             color : black; /* for error messages, etc. */
+             color : white; /* for error messages, etc. */
          }</style>
 
    </head>
+
+<!--
+http://lit222v.library.ucla.edu/islandora/object/islandora%3A166
+
+// settings, inside init() below
+OpenSeadragon.DEFAULT_SETTINGS.prefixUrl = 'http://images.gdao.org';
+OpenSeadragon.DEFAULT_SETTINGS.autoHideControls = false;
+
+new OpenSeadragon.DjTileSource("http://images.gdao.org/view/", encodeURIComponent('ark:/38305/g4b27tq3/is/1'));
+-->
 
    <body>
       <script type="text/javascript">

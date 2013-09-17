@@ -152,9 +152,13 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                             source.available() > 0 ? " " : " not ");
                 }
 
-                // FIXME: Islandora special sauce to work around weirdness
+                // FIXME: some Islandora special sauce to work around weirdness
                 if (source.available() == 0) {
                     source = IOUtils.getInputStream(url);
+                    
+                    if (LOGGER.isDebugEnabled() && source.available() > 0) {
+                        LOGGER.debug("Checked again and found it!");
+                    }
                 }
                 
                 result = IOUtils.copyStream(source, destination);

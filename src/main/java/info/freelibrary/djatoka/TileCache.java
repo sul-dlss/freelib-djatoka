@@ -166,7 +166,7 @@ public class TileCache implements IIIFInterface {
                         status);
             }
         } catch (Exception details) {
-
+            LOGGER.error(details.getMessage(), details);
         }
     }
 

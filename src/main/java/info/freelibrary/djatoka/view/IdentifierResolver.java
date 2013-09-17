@@ -124,6 +124,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
         myIngestSources.addAll(Arrays.asList(imgSources.split(" ")));
 
+        // FIXME: Look at this again and probably refactor it to elsewhere
         try {
             if (!skipFS) {
                 loadFileSystemImages(myJP2Dir);
@@ -132,7 +133,8 @@ public class IdentifierResolver implements IReferentResolver, Constants {
             }
         } catch (FileNotFoundException details) {
             if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("{} couldn't be found", myJP2Dir);
+                LOGGER.warn("{} couldn't be found; it will be created",
+                        myJP2Dir);
             }
         }
     }
@@ -206,7 +208,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                     image = new ImageRecord();
                     image.setIdentifier(id);
                     image.setImageFile(file.getAbsolutePath());
-                    
+
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Source JP2 found in Pairtree cache!");
                     }
