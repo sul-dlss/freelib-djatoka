@@ -124,8 +124,8 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
             boolean isJp2 = aReferent.equals(url.toString()) ? false : true;
 
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Processing remote {}: {}", isJp2 ? "JP2" : "URI",
-                        url);
+                LOGGER.info("Processing remote {}: {}", isJp2 ? "JP2 file"
+                        : "URI", url);
             }
 
             if (LOGGER.isDebugEnabled() && !isJp2) {
@@ -148,19 +148,22 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                 destination = new FileOutputStream(file);
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Remote stream ({}) is{}accessible", url,
-                            source.available() > 0 ? " " : " not ");
+                    LOGGER.debug("Remote stream is{}accessible: {}", source
+                            .available() > 0 ? " " : " not ", url);
                 }
 
                 // FIXME: some Islandora special sauce to work around weirdness
+                //
+                // For JP2s, it sometimes takes two requests; it doesn't with
+                //   any of the other data streams though (TN, JPG, MODS, etc.)
                 if (source.available() == 0) {
                     source = IOUtils.getInputStream(url);
-                    
+
                     if (LOGGER.isDebugEnabled() && source.available() > 0) {
-                        LOGGER.debug("Checked again and found it!");
+                        LOGGER.debug("Hey, I checked again and found it!");
                     }
                 }
-                
+
                 result = IOUtils.copyStream(source, destination);
 
                 if (LOGGER.isDebugEnabled() && source.available() > 0 && result) {

@@ -68,14 +68,18 @@ public class IdentifierResolver implements IReferentResolver, Constants {
             String decodedURL;
             String referent;
 
-            try {
-                decodedURL = URLDecoder.decode(aRequest, "UTF-8");
-            } catch (UnsupportedEncodingException details) {
-                // Should not be possible; the JVM is required to support UTF-8
-                throw new RuntimeException(details);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Found a remotely resolvable resource ID: {}",
+                        aRequest);
             }
 
-            referent = parseReferent(decodedURL);
+            try {
+                decodedURL = URLDecoder.decode(aRequest, "UTF-8");
+                referent = parseReferent(decodedURL);
+            } catch (UnsupportedEncodingException details) {
+                // Should not be possible; JVMs must support UTF-8
+                throw new RuntimeException(details);
+            }
 
             // Check and see if we've already put it in the Pairtree FS
             image = getCachedImage(referent);
@@ -133,7 +137,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
             }
         } catch (FileNotFoundException details) {
             if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("{} couldn't be found; it will be created",
+                LOGGER.warn("{} couldn't be found; it will be created...",
                         myJP2Dir);
             }
         }
@@ -212,12 +216,18 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Source JP2 found in Pairtree cache!");
                     }
+                } else if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Failed to find a JP2 in Pairtree cache");
                 }
             } catch (IOException details) {
                 LOGGER.error("Failed to load file from cache", details);
             }
         }
 
+        if (LOGGER.isDebugEnabled() && image != null) {
+            LOGGER.debug("** Returning JP2 image from getCachedImage() **");
+        }
+        
         return image;
     }
 
@@ -265,10 +275,15 @@ public class IdentifierResolver implements IReferentResolver, Constants {
             return null;
         }
 
+        if (LOGGER.isDebugEnabled() && image != null) {
+            LOGGER.debug("** Returning JP2 image from getRemoteImage() **");
+        }
+        
         return image;
     }
 
-    private String parseReferent(String aReferent) {
+    private String parseReferent(String aReferent)
+            throws UnsupportedEncodingException {
         String referent = aReferent;
 
         for (int index = 0; index < myIngestSources.size(); index++) {
@@ -276,12 +291,15 @@ public class IdentifierResolver implements IReferentResolver, Constants {
             Matcher matcher = pattern.matcher(referent);
 
             // If we have a parsable ID, let's use that instead of URI
-            if (matcher.matches() && matcher.groupCount() == 1) {
-                referent = matcher.group(1);
+            if (matcher.matches() && matcher.groupCount() > 0) {
+                referent = URLDecoder.decode(matcher.group(1), "UTF-8");
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Matched ID: {}", referent);
+                    LOGGER.debug("ID '{}' extracted from a known pattern",
+                            referent);
                 }
+
+                break; // We don't need to keep checking at this point
             } else if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("No Match in {} for {}", referent, pattern
                         .toString());
