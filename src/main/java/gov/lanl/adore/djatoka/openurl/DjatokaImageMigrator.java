@@ -56,8 +56,8 @@ import org.slf4j.LoggerFactory;
  * Utility class used to harvest URIs and compress files into JP2.
  * 
  * @author Ryan Chute
- * @author Kevin S. Clarke <a
- *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
+ * @author Kevin S. Clarke (<a href="mailto:ksclarke@gmail.com">
+ *         ksclarke@gmail.com </a>)
  */
 public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator {
 
@@ -94,12 +94,12 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
         formatMap.put(FORMAT_ID_JPM, FORMAT_MIMEYPE_JPM);
     }
 
-    public void setPairtreeRoot(String aPtRootPath) {
-        myPtRootDir = new File(aPtRootPath);
+    public void setPairtreeRoot(File aPtRootDir) {
+        myPtRootDir = aPtRootDir;
     }
 
-    public String getPairtreeRoot() {
-        return myPtRootDir.getAbsolutePath();
+    public File getPairtreeRoot() {
+        return myPtRootDir;
     }
 
     public boolean hasPairtreeRoot() {
@@ -154,8 +154,8 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
                 // FIXME: some Islandora special sauce to work around weirdness
                 //
-                // For JP2s, it sometimes takes two requests; it doesn't with
-                //   any of the other data streams though (TN, JPG, MODS, etc.)
+                // For JP2s, it takes two requests; fwiw, it doesn't with any
+                // of the other Islandora data streams (TN, JPG, MODS, etc.)
                 if (source.available() == 0) {
                     source = IOUtils.getInputStream(url);
 

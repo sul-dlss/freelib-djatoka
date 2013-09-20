@@ -1,36 +1,54 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <title>freelib-djatoka Test Page</title>
-      <script type="text/javascript" src="javascript/openseadragon.js"></script>
-      <script type="text/javascript" src="javascript/djtilesource.js"></script>
+<head>
+<title>freelib-djatoka test page</title>
+<script type="text/javascript" src="javascript/openseadragon.js"></script>
+<script type="text/javascript" src="javascript/djtilesource.js"></script>
 
-      <style type="text/css">
-         #container {
-             width : 800px;
-             height : 500px;
-             background-color : black;
-             border : 1px solid black;
-             color : white; /* for error messages, etc. */
-         }</style>
+<style type="text/css">
+body {
+	padding: 0px;
+	margin: 0px;
+}
 
-   </head>
+#container {
+	height: 500px;
+	background-color: black;
+	border: 1px solid black;
+	color: white; /* for error messages, etc. */
+}
 
-   <body>
-      <script type="text/javascript">
-      
-         function init() {
-            var ts = new OpenSeadragon.DjTileSource("/view/", "ms0332_gra_21503");
-            var viewer = new OpenSeadragon.Viewer("container");
+.padded {
+	margin-top: 10px;
+	font-size: smaller;
+}
 
-            viewer.openTileSource(ts);
-         }
+.centered {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+}
+</style>
 
-         OpenSeadragon.addEvent(window, "load", init);
-		 
-      </script>
-      
-      <div id="container"></div>
-   </body>
+</head>
+
+<body>
+	<script type="text/javascript">
+		function init() {
+			var id = "--%2Fms0332_gra_21503"; /* local image ID */
+			var ts = new OpenSeadragon.DjTileSource("/view/", id);
+			var viewer = new OpenSeadragon.Viewer("container");
+
+			viewer.openTileSource(ts);
+		}
+
+		OpenSeadragon.addEvent(window, "load", init);
+	</script>
+
+	<div class="centered">
+		<h2>FreeLib-Djatoka Test Page</h2>
+		<div id="container" class="padded"></div>
+	</div>
+</body>
 
 </html>

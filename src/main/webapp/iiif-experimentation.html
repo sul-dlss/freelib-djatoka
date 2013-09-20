@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>freelib-djatoka Test Page</title>
+<script type="text/javascript" src="javascript/openseadragon.js"></script>
+<script type="text/javascript" src="javascript/djtilesource.js"></script>
+<style>
+#container {
+	margin: 0 auto;
+	width: 800px;
+	padding: 1.0em;
+	background-color: #EEE;
+}
+
+.openseadragon {
+	width: 800px;
+	height: 600px;
+	border: 1px solid black;
+	color: #333; /* text color for messages */
+	background-color: black;
+}
+</style>
+</head>
+<body>
+	<div id="container" class="openseadragon">
+		<script type="text/javascript">
+			OpenSeadragon({
+				id : "container",
+				preserveViewport : false,
+				visibilityRatio : 1,
+				minZoomLevel : 1,
+				defaultZoomLevel : 1,
+				tileSources : [ {
+					"identifier" : "--%2Fms0332_gra_21518",
+					"width" : 1524,
+					"height" : 2212,
+					"scale_factors" : [ 1, 2, 3, 4, 5 ],
+					"tile_width" : 256,
+					"tile_height" : 256,
+					"formats" : [ "jpg" ],
+					"qualities" : [ "native", "bitonal", "grey", "color" ],
+					"profile" : "http://library.stanford.edu/iiif/image-api/compliance.html#level1",
+					"image_host" : "http://localhost:8888/view/zoom"
+				} ]
+			});
+		</script>
+	</div>
+</body>
+
+</html>

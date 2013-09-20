@@ -1,3 +1,4 @@
+
 package info.freelibrary.djatoka.view;
 
 import gov.lanl.adore.djatoka.util.IOUtils;
@@ -39,224 +40,219 @@ public class ViewServlet extends HttpServlet implements Constants {
      */
     private static final long serialVersionUID = 5298506582675331814L;
 
-    private static final String XSL_STYLESHEET = "<?xml-stylesheet href='/view.xsl' type='text/xsl'?>";
+    private static final String XSL_STYLESHEET =
+            "<?xml-stylesheet href='/view.xsl' type='text/xsl'?>";
 
     private static final Logger LOGGER = LoggerFactory
-	    .getLogger(ViewServlet.class);
+            .getLogger(ViewServlet.class);
 
     private Properties myProps;
 
     @Override
     protected void doGet(HttpServletRequest aRequest,
-	    HttpServletResponse aResponse) throws ServletException, IOException {
-	File tifDir = new File(myProps.getProperty(TIFF_DATA_DIR));
-	File jp2Dir = new File(myProps.getProperty(JP2_DATA_DIR));
-	String servletPath = aRequest.getServletPath();
-	HttpSession session = aRequest.getSession();
-	String dirParam = aRequest.getPathInfo();
+            HttpServletResponse aResponse) throws ServletException, IOException {
+        File tifDir = new File(myProps.getProperty(TIFF_DATA_DIR));
+        File jp2Dir = new File(myProps.getProperty(JP2_DATA_DIR));
+        String servletPath = aRequest.getServletPath();
+        HttpSession session = aRequest.getSession();
+        String dirParam = aRequest.getPathInfo();
 
-	if (dirParam == null) { // easier to config redirect here than in Jetty
-	    String path = "/" + aRequest.getContextPath();
-	    aResponse.sendRedirect(!path.equals("/") ? path : "" + "/view/");
-	    return;
-	}
+        if (dirParam == null) { // easier to config redirect here than in Jetty
+            String path = "/" + aRequest.getContextPath();
+            aResponse.sendRedirect(!path.equals("/") ? path : "" + "/view/");
+            return;
+        }
 
-	if (!jp2Dir.exists()) {
-	    aResponse.sendError(
-		    HttpServletResponse.SC_NOT_FOUND,
-		    "The JP2 directory cannot be found: "
-			    + jp2Dir.getAbsolutePath());
-	}
+        if (!jp2Dir.exists()) {
+            aResponse.sendError(HttpServletResponse.SC_NOT_FOUND,
+                    "The JP2 directory cannot be found: " +
+                            jp2Dir.getAbsolutePath());
+        }
 
-	File dir = new File(jp2Dir, dirParam);
+        File dir = new File(jp2Dir, dirParam);
 
-	if (!session.isNew()) {
-	    String size = (String) session.getAttribute(JP2_SIZE_ATTR);
+        if (!session.isNew()) {
+            String size = (String) session.getAttribute(JP2_SIZE_ATTR);
 
-	    if (size == null || size.equals("null")) {
-		session.invalidate();
-		session = aRequest.getSession();
-	    }
-	}
+            if (size == null || size.equals("null")) {
+                session.invalidate();
+                session = aRequest.getSession();
+            }
+        }
 
-	if (session.isNew()) {
-	    File mdFile = new File(jp2Dir, "djatoka.xml");
+        if (session.isNew()) {
+            File mdFile = new File(jp2Dir, "djatoka.xml");
 
-	    if (mdFile.exists() && mdFile.length() > 0) {
-		String jp2Size, tifSize, jp2Count, tifCount;
+            if (mdFile.exists() && mdFile.length() > 0) {
+                String jp2Size, tifSize, jp2Count, tifCount;
 
-		if (LOGGER.isDebugEnabled()) {
-		    LOGGER.debug("Reading directory stats from: {}",
-			    mdFile.getAbsolutePath());
-		}
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Reading directory stats from: {}", mdFile
+                            .getAbsolutePath());
+                }
 
-		try {
-		    Document doc = new Builder().build(mdFile);
-		    Element jp2s = (Element) doc.query("//jp2s").get(0);
-		    Element tifs = (Element) doc.query("//tifs").get(0);
+                try {
+                    Document doc = new Builder().build(mdFile);
+                    Element jp2s = (Element) doc.query("//jp2s").get(0);
+                    Element tifs = (Element) doc.query("//tifs").get(0);
 
-		    tifSize = tifs.getAttribute(TIF_SIZE_ATTR).getValue();
-		    tifCount = tifs.getAttribute(TIF_COUNT_ATTR).getValue();
-		    jp2Size = jp2s.getAttribute(JP2_SIZE_ATTR).getValue();
-		    jp2Count = jp2s.getAttribute(JP2_COUNT_ATTR).getValue();
-		}
-		catch (Exception details) {
-		    jp2Size = null;
-		    tifSize = null;
-		    jp2Count = null;
-		    tifCount = null;
-		}
+                    tifSize = tifs.getAttribute(TIF_SIZE_ATTR).getValue();
+                    tifCount = tifs.getAttribute(TIF_COUNT_ATTR).getValue();
+                    jp2Size = jp2s.getAttribute(JP2_SIZE_ATTR).getValue();
+                    jp2Count = jp2s.getAttribute(JP2_COUNT_ATTR).getValue();
+                } catch (Exception details) {
+                    jp2Size = null;
+                    tifSize = null;
+                    jp2Count = null;
+                    tifCount = null;
+                }
 
-		session.setAttribute(JP2_SIZE_ATTR, jp2Size);
-		session.setAttribute(TIF_SIZE_ATTR, tifSize);
-		session.setAttribute(JP2_COUNT_ATTR, jp2Count);
-		session.setAttribute(TIF_COUNT_ATTR, tifCount);
-	    }
-	    else {
-		StatsCompilation stats = new StatsCompilation(tifDir, jp2Dir);
+                session.setAttribute(JP2_SIZE_ATTR, jp2Size);
+                session.setAttribute(TIF_SIZE_ATTR, tifSize);
+                session.setAttribute(JP2_COUNT_ATTR, jp2Count);
+                session.setAttribute(TIF_COUNT_ATTR, tifCount);
+            } else {
+                StatsCompilation stats = new StatsCompilation(tifDir, jp2Dir);
 
-		session.setAttribute(JP2_SIZE_ATTR, stats.getJP2sSize());
-		session.setAttribute(TIF_SIZE_ATTR, stats.getTIFsSize());
-		session.setAttribute(JP2_COUNT_ATTR, stats.getJP2sCount());
-		session.setAttribute(TIF_COUNT_ATTR, stats.getTIFsCount());
-		
-		stats.save(mdFile);
-	    }
-	}
+                session.setAttribute(JP2_SIZE_ATTR, stats.getJP2sSize());
+                session.setAttribute(TIF_SIZE_ATTR, stats.getTIFsSize());
+                session.setAttribute(JP2_COUNT_ATTR, stats.getJP2sCount());
+                session.setAttribute(TIF_COUNT_ATTR, stats.getTIFsCount());
 
-	FilenameFilter dirFilter;
-	FilenameFilter jp2Filter;
-	PrintWriter writer;
+                stats.save(mdFile);
+            }
+        }
 
-	// We need the ending slash for the browser to construct links
-	if (dirParam == null || !dirParam.endsWith("/")) {
-	    aResponse.sendRedirect(servletPath + "/");
-	    return;
-	}
+        FilenameFilter dirFilter;
+        FilenameFilter jp2Filter;
+        PrintWriter writer;
 
-	if (!dirParam.startsWith("/")) {
-	    dirParam = "/" + dirParam;
-	}
+        // We need the ending slash for the browser to construct links
+        if (dirParam == null || !dirParam.endsWith("/")) {
+            aResponse.sendRedirect(servletPath + "/");
+            return;
+        }
 
-	// Catch folks who want something significant from altering URL
-	if (dirParam.equalsIgnoreCase("/thumbnails/")) {
-	    aResponse.sendRedirect(servletPath + "/");
-	    return;
-	}
+        if (!dirParam.startsWith("/")) {
+            dirParam = "/" + dirParam;
+        }
 
-	try {
-	    if (!jp2Dir.exists()) {
-		aResponse.sendError(HttpServletResponse.SC_NOT_FOUND,
-			StringUtils.formatMessage(
-				"Configured JP2 directory ({}) doesn't exist",
-				jp2Dir.getAbsolutePath()));
-	    }
-	    else {
-		if (!tifDir.exists() && LOGGER.isWarnEnabled()) {
-		    LOGGER.warn(
-			    "The configured TIFF directory ({}) doesn't exist",
-			    tifDir);
-		}
+        // Catch folks who want something significant from altering URL
+        if (dirParam.equalsIgnoreCase("/thumbnails/")) {
+            aResponse.sendRedirect(servletPath + "/");
+            return;
+        }
 
-		writer = getWriter(aResponse);
-		writer.write(XSL_STYLESHEET);
+        try {
+            if (!jp2Dir.exists()) {
+                aResponse.sendError(HttpServletResponse.SC_NOT_FOUND,
+                        StringUtils.format(
+                                "Configured JP2 directory ({}) doesn't exist",
+                                jp2Dir.getAbsolutePath()));
+            } else {
+                if (!tifDir.exists() && LOGGER.isWarnEnabled()) {
+                    LOGGER.warn(
+                            "The configured TIFF directory ({}) doesn't exist",
+                            tifDir);
+                }
 
-		// Being sketchy and not using a real XML library like I should
-		writer.write("<djatokaViewer>");
-		writer.write(StringUtils.formatMessage(
-			"<tifStats fileCount='{}' totalSize='{}'/>"
-				+ "<jp2Stats fileCount='{}' totalSize='{}'/>",
-			new String[] {
-				(String) session.getAttribute(TIF_COUNT_ATTR),
-				(String) session.getAttribute(TIF_SIZE_ATTR),
-				(String) session.getAttribute(JP2_COUNT_ATTR),
-				(String) session.getAttribute(JP2_SIZE_ATTR) }));
+                writer = getWriter(aResponse);
+                writer.write(XSL_STYLESHEET);
 
-		writer.write("<defaultPath>" + servletPath + "</defaultPath>");
-		writer.write("<path>" + tokenize(dirParam) + "</path>");
+                // Being sketchy and not using a real XML library like I should
+                writer.write("<djatokaViewer>");
+                writer.write(StringUtils.format(
+                        "<tifStats fileCount='{}' totalSize='{}'/>"
+                                + "<jp2Stats fileCount='{}' totalSize='{}'/>",
+                        new String[] {
+                                (String) session.getAttribute(TIF_COUNT_ATTR),
+                                (String) session.getAttribute(TIF_SIZE_ATTR),
+                                (String) session.getAttribute(JP2_COUNT_ATTR),
+                                (String) session.getAttribute(JP2_SIZE_ATTR)}));
 
-		if (dir.exists()) {
-		    String name;
+                writer.write("<defaultPath>" + servletPath + "</defaultPath>");
+                writer.write("<path>" + tokenize(dirParam) + "</path>");
 
-		    if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Viewing contents of {}", dir);
-		    }
+                if (dir.exists()) {
+                    String name;
 
-		    dirFilter = new RegexDirFilter(".*");
-		    jp2Filter = new RegexFileFilter(JP2_FILE_PATTERN);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Viewing contents of {}", dir);
+                    }
 
-		    for (File file : dir.listFiles(dirFilter)) {
-			name = encodeEntities(file.getName());
-			writer.write("<dir name='" + name + "'/>");
-		    }
+                    dirFilter = new RegexDirFilter(".*");
+                    jp2Filter = new RegexFileFilter(JP2_FILE_PATTERN);
 
-		    for (File file : dir.listFiles(jp2Filter)) {
-			name = encodeEntities(file.getName());
-			writer.write("<file name='" + name + "'/>");
-		    }
-		}
+                    for (File file : dir.listFiles(dirFilter)) {
+                        name = encodeEntities(file.getName());
+                        writer.write("<dir name='" + name + "'/>");
+                    }
 
-		writer.write("</djatokaViewer>");
+                    for (File file : dir.listFiles(jp2Filter)) {
+                        name = encodeEntities(file.getName());
+                        writer.write("<file name='" + name + "'/>");
+                    }
+                }
 
-	    }
-	}
-	catch (Exception details) {
-	    LOGGER.error(details.getMessage(), details);
-	    aResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-		    details.getMessage());
-	}
+                writer.write("</djatokaViewer>");
+
+            }
+        } catch (Exception details) {
+            LOGGER.error(details.getMessage(), details);
+            aResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    details.getMessage());
+        }
     }
 
     @Override
     public void init() throws ServletException {
-	String dir = getServletContext().getRealPath("/WEB-INF/classes") + "/";
-	String propertiesFile = dir + PROPERTIES_FILE;
+        String dir = getServletContext().getRealPath("/WEB-INF/classes") + "/";
+        String propertiesFile = dir + PROPERTIES_FILE;
 
-	try {
-	    myProps = IOUtils.loadConfigByPath(propertiesFile);
+        try {
+            myProps = IOUtils.loadConfigByPath(propertiesFile);
 
-	    if (LOGGER.isDebugEnabled()) {
-		LOGGER.debug("Loaded properties file: {}", propertiesFile);
-	    }
-	}
-	catch (Exception details) {
-	    throw new ServletException(details);
-	}
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Loaded properties file: {}", propertiesFile);
+            }
+        } catch (Exception details) {
+            throw new ServletException(details);
+        }
     }
 
     @Override
     public void log(String aMessage, Throwable aThrowable) {
-	super.log(aMessage, aThrowable);
+        super.log(aMessage, aThrowable);
     }
 
     @Override
     public void log(String aMessage) {
-	super.log(aMessage);
+        super.log(aMessage);
     }
 
     private String encodeEntities(String aName) {
-	String name = aName.replace("&", "&amp;"); // no prior entity encoding
-	name = name.replace("\"", "&quot;").replace("%", "&#37;");
-	name = name.replace("<", "&lt;").replace(">", "&gt;");
-	return name.replace("'", "&apos;");
+        String name = aName.replace("&", "&amp;"); // no prior entity encoding
+        name = name.replace("\"", "&quot;").replace("%", "&#37;");
+        name = name.replace("<", "&lt;").replace(">", "&gt;");
+        return name.replace("'", "&apos;");
     }
 
     private PrintWriter getWriter(HttpServletResponse aResponse)
-	    throws IOException {
-	aResponse.setContentType("application/xml");
-	return aResponse.getWriter();
+            throws IOException {
+        aResponse.setContentType("application/xml");
+        return aResponse.getWriter();
     }
 
     private String tokenize(String aPath) {
-	StringBuilder builder = new StringBuilder();
-	String[] pathParts = aPath.split("/");
+        StringBuilder builder = new StringBuilder();
+        String[] pathParts = aPath.split("/");
 
-	for (String pathPart : pathParts) {
-	    if (!pathPart.equals("")) {
-		builder.append("<part>").append(pathPart).append("</part>");
-	    }
-	}
+        for (String pathPart : pathParts) {
+            if (!pathPart.equals("")) {
+                builder.append("<part>").append(pathPart).append("</part>");
+            }
+        }
 
-	return builder.toString();
+        return builder.toString();
     }
 }

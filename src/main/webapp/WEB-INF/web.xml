@@ -22,6 +22,7 @@
     <servlet>
         <servlet-name>ingester</servlet-name>
         <servlet-class>info.freelibrary.djatoka.ingest.IngestServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
         <servlet-name>healthCheck</servlet-name>

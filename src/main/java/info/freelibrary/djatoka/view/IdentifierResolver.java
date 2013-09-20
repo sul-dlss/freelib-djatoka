@@ -2,14 +2,12 @@
 package info.freelibrary.djatoka.view;
 
 import java.util.regex.Matcher;
-
 import java.util.regex.Pattern;
 
+import java.util.List;
 import java.util.Arrays;
 
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import java.util.List;
 
 import gov.lanl.adore.djatoka.openurl.DjatokaImageMigrator;
 import gov.lanl.adore.djatoka.openurl.IReferentMigrator;
@@ -19,23 +17,19 @@ import gov.lanl.adore.djatoka.openurl.ResolverException;
 import gov.lanl.adore.djatoka.util.ImageRecord;
 
 import info.freelibrary.djatoka.Constants;
-import info.freelibrary.util.FileUtils;
+
 import info.freelibrary.util.PairtreeObject;
 import info.freelibrary.util.PairtreeRoot;
 import info.freelibrary.util.PairtreeUtils;
-import info.freelibrary.util.RegexFileFilter;
 import info.freelibrary.util.StringUtils;
 
 import info.openurl.oom.entities.Referent;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,11 +48,9 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
     private Map<String, ImageRecord> myRemoteImages;
 
-    private Map<String, ImageRecord> myLocalImages;
-
     private List<String> myIngestSources = new CopyOnWriteArrayList<String>();
 
-    private String myJP2Dir;
+    private File myJP2Dir;
 
     public ImageRecord getImageRecord(String aRequest) throws ResolverException {
         ImageRecord image;
@@ -117,117 +109,54 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     }
 
     public void setProperties(Properties aProps) throws ResolverException {
-        String prodInstance = aProps.getProperty("djatoka.ignore.fscache");
         String imgSources = aProps.getProperty("djatoka.known.ingest.sources");
-        boolean skipFS = Boolean.parseBoolean(prodInstance);
 
-        myJP2Dir = aProps.getProperty(JP2_DATA_DIR);
+        myJP2Dir = new File(aProps.getProperty(JP2_DATA_DIR));
         myMigrator.setPairtreeRoot(myJP2Dir);
-        myLocalImages = new ConcurrentHashMap<String, ImageRecord>();
         myRemoteImages = new ConcurrentHashMap<String, ImageRecord>();
 
         myIngestSources.addAll(Arrays.asList(imgSources.split(" ")));
-
-        // FIXME: Look at this again and probably refactor it to elsewhere
-        try {
-            if (!skipFS) {
-                loadFileSystemImages(myJP2Dir);
-            } else if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("File system mapping disabled");
-            }
-        } catch (FileNotFoundException details) {
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("{} couldn't be found; it will be created...",
-                        myJP2Dir);
-            }
-        }
-    }
-
-    public void loadFileSystemImages(String aJP2DataDir)
-            throws FileNotFoundException {
-        File jp2Dir = new File(aJP2DataDir);
-        FilenameFilter filter = new RegexFileFilter(JP2_FILE_PATTERN);
-        String[] skipped = new String[] {"pairtree_root"};
-
-        // Descend through file system but skipped our ID mapped PT directory
-        for (File file : FileUtils.listFiles(jp2Dir, filter, true, skipped)) {
-            ImageRecord image = new ImageRecord();
-            String id = stripExt(file.getName());
-
-            try {
-                id = URLEncoder.encode(id, "UTF-8");
-            } catch (UnsupportedEncodingException details) {
-                // Should be impossible to get here, UTF-8 is always supported
-                throw new RuntimeException(details);
-            }
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Loading {} ({})", id, file);
-            }
-
-            image.setIdentifier(id);
-            image.setImageFile(file.getAbsolutePath());
-
-            if (myLocalImages == null) {
-                myLocalImages = new ConcurrentHashMap<String, ImageRecord>();
-                myRemoteImages = new ConcurrentHashMap<String, ImageRecord>();
-            }
-
-            myLocalImages.put(id, image);
-        }
     }
 
     private boolean isResolvableURI(String aReferentID) {
         return aReferentID.startsWith("http"); // keeping it simple
     }
 
-    // Not sure we should do this, but...
-    private String stripExt(String aFileName) {
-        int index = aFileName.lastIndexOf('.');
-        return index != -1 ? aFileName.substring(0, index) : aFileName;
-    }
-
     private ImageRecord getCachedImage(String aReferentID) {
         ImageRecord image = null;
 
-        // First try cache of files loaded from file system
-        // This is used for the simple file system viewer
-        image = myLocalImages.get(aReferentID);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Checking in Pairtree file system for: {}",
+                    aReferentID);
+        }
 
-        if (LOGGER.isDebugEnabled() && image != null) {
-            LOGGER.debug("{} found in the local cache", aReferentID);
-        } else if (image == null) { // Try loading from our Pairtree FS
-            try {
-                PairtreeRoot pairtree = new PairtreeRoot(new File(myJP2Dir));
-                String id = URLDecoder.decode(aReferentID, "UTF-8");
-                PairtreeObject dir = pairtree.getObject(id);
-                String filename = PairtreeUtils.encodeID(id);
-                File file = new File(dir, filename);
+        try {
+            PairtreeRoot pairtree = new PairtreeRoot(myJP2Dir);
+            String id = URLDecoder.decode(aReferentID, "UTF-8");
+            PairtreeObject dir = pairtree.getObject(id);
+            String filename = PairtreeUtils.encodeID(id);
+            File file = new File(dir, filename);
+
+            if (file.exists()) {
+                image = new ImageRecord();
+                image.setIdentifier(id);
+                image.setImageFile(file.getAbsolutePath());
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Checking in Pairtree cache: {}", file);
+                    LOGGER.debug("JP2 found in Pairtree cache: {}", file
+                            .getAbsolutePath());
                 }
-
-                if (file.exists()) {
-                    image = new ImageRecord();
-                    image.setIdentifier(id);
-                    image.setImageFile(file.getAbsolutePath());
-
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Source JP2 found in Pairtree cache!");
-                    }
-                } else if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to find a JP2 in Pairtree cache");
-                }
-            } catch (IOException details) {
-                LOGGER.error("Failed to load file from cache", details);
+            } else if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Failed to find a JP2 in Pairtree cache");
             }
+        } catch (IOException details) {
+            LOGGER.error("Failed to load file from cache", details);
         }
 
         if (LOGGER.isDebugEnabled() && image != null) {
             LOGGER.debug("** Returning JP2 image from getCachedImage() **");
         }
-        
+
         return image;
     }
 
@@ -269,8 +198,8 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                         "An error occurred processing file: " + uri.toURL());
             }
         } catch (Exception details) {
-            LOGGER.error(StringUtils.formatMessage("Unable to access {} ({})",
-                    new String[] {aReferent, details.getMessage()}), details);
+            LOGGER.error(StringUtils.format("Unable to access {} ({})",
+                    aReferent, details.getMessage()), details);
 
             return null;
         }
@@ -278,7 +207,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
         if (LOGGER.isDebugEnabled() && image != null) {
             LOGGER.debug("** Returning JP2 image from getRemoteImage() **");
         }
-        
+
         return image;
     }
 

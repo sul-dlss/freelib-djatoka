@@ -1,4 +1,9 @@
+
 package info.freelibrary.djatoka.view;
+
+import java.net.URLEncoder;
+
+import info.freelibrary.util.PairtreeUtils;
 
 import gov.lanl.adore.djatoka.util.IOUtils;
 
@@ -7,8 +12,8 @@ import info.freelibrary.util.FileUtils;
 import info.freelibrary.util.RegexFileFilter;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,63 +34,67 @@ public class RandomImageServlet extends HttpServlet implements Constants {
     private static final long serialVersionUID = -7221546341356013641L;
 
     private static final Logger LOGGER = LoggerFactory
-	    .getLogger(RandomImageServlet.class);
+            .getLogger(RandomImageServlet.class);
 
     private Properties myProps;
 
     @SuppressWarnings("unchecked")
     @Override
     protected void doGet(HttpServletRequest aRequest,
-	    HttpServletResponse aResponse) throws ServletException, IOException {
-	FilenameFilter jp2Filter = new RegexFileFilter(JP2_FILE_PATTERN);
-	File jp2Dir = new File(myProps.getProperty(JP2_DATA_DIR));
-	ServletContext context = getServletContext();
-	Object object = context.getAttribute("djin");
-	Random random = new Random();
-	List<String> files;
-	String image;
-	
-	// As a first pass, do this from the file system
-	if (object == null) {
-	    File[] jp2Files = FileUtils.listFiles(jp2Dir, jp2Filter, true);
+            HttpServletResponse aResponse) throws ServletException, IOException {
+        String pt = myProps.getProperty(JP2_DATA_DIR) + "/pairtree_root/--";
+        RegexFileFilter filter = new RegexFileFilter(".*");
+        ServletContext context = getServletContext();
+        Object object = context.getAttribute("djin");
+        Random random = new Random();
+        List<String> files;
+        String image;
 
-	    files = new ArrayList<String>();
+        if (object == null) {
+            File[] jp2Files = FileUtils.listFiles(new File(pt), filter, true);
 
-	    for (int index = 0; index < jp2Files.length; index++) {
-		files.add(stripExt(jp2Files[index].getName()));
-	    }
-	    
-	    files = Collections.synchronizedList(files);
-	    context.setAttribute("djin", files);
-	}
-	else {
-	    files = (List<String>) object;
-	}
+            files = new ArrayList<String>();
 
-	image = files.get(random.nextInt((files.size() - 2) + 1));
-	image = aRequest.getRequestURI().replace("random", image);
-	aRequest.getRequestDispatcher(image).forward(aRequest, aResponse);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Building list of files for {} from {}",
+                        getClass().getSimpleName(), pt);
+            }
+
+            for (int index = 0; index < jp2Files.length; index++) {
+                files.add(FileUtils.stripExt(jp2Files[index].getName()));
+            }
+
+            files = Collections.synchronizedList(files);
+            context.setAttribute("djin", files);
+        } else {
+            files = (List<String>) object;
+        }
+
+        image = files.get(random.nextInt((files.size() - 2) + 1));
+        image = URLEncoder.encode(PairtreeUtils.decodeID(image), "UTF-8");
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Image randomly selected is: {}", image);
+        }
+        
+        image = aRequest.getRequestURI().replace("random", image);
+        aRequest.getRequestDispatcher(image).forward(aRequest, aResponse);
     }
 
     @Override
     public void init() throws ServletException {
-	String dir = getServletContext().getRealPath("/WEB-INF/classes") + "/";
-	String propertiesFile = dir + PROPERTIES_FILE;
+        String dir = getServletContext().getRealPath("/WEB-INF/classes") + "/";
+        String propertiesFile = dir + PROPERTIES_FILE;
 
-	try {
-	    myProps = IOUtils.loadConfigByPath(propertiesFile);
+        try {
+            myProps = IOUtils.loadConfigByPath(propertiesFile);
 
-	    if (LOGGER.isDebugEnabled()) {
-		LOGGER.debug("Loaded properties file: {}", propertiesFile);
-	    }
-	}
-	catch (Exception details) {
-	    throw new ServletException(details);
-	}
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Loaded properties file: {}", propertiesFile);
+            }
+        } catch (Exception details) {
+            throw new ServletException(details);
+        }
     }
 
-    private String stripExt(String aFileName) {
-	int index = aFileName.lastIndexOf('.');
-	return index != -1 ? aFileName.substring(0, index) : aFileName;
-    }
 }

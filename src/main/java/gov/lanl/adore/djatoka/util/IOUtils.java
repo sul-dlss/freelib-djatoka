@@ -146,13 +146,13 @@ public class IOUtils {
                 URLConnection huc = location.openConnection();
                 huc.connect();
                 in = huc.getInputStream();
-            } catch (MalformedURLException e) {
+            } catch (MalformedURLException details) {
                 throw new Exception("A MalformedURLException occurred for " +
-                        location.toString());
-            } catch (IOException e) {
+                        location.toString(), details);
+            } catch (IOException details) {
                 throw new Exception(
                         "An IOException occurred attempting to connect to " +
-                                location.toString());
+                                location.toString(), details);
             }
         }
         return in;
@@ -287,6 +287,7 @@ public class IOUtils {
         }
 
         if (offset < bytes.length) {
+            is.close();
             throw new IOException("Could not completely read file " +
                     file.getName());
         }

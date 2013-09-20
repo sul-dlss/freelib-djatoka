@@ -15,9 +15,9 @@ public interface IReferentMigrator {
      * Sets the Pairtree root for images that can be migrated into the Pairtree
      * structure.
      * 
-     * @param aPtRootPath The root directory to the Pairtree file system
+     * @param aPtRootDIr The root directory to the Pairtree file system
      */
-    public abstract void setPairtreeRoot(String aPtRootPath);
+    public abstract void setPairtreeRoot(File aPtRootDir);
 
     /**
      * Returns true if the migrator has a Pairtree file system set.
@@ -27,11 +27,11 @@ public interface IReferentMigrator {
     public abstract boolean hasPairtreeRoot();
 
     /**
-     * Returns the absolute path to the migrator's Pairtree file system
+     * Returns the migrator's Pairtree root directory.
      * 
-     * @return The absolute path to the migrator's Pairtree file system
+     * @return The migrator's Pairtree root directory
      */
-    public abstract String getPairtreeRoot();
+    public abstract File getPairtreeRoot();
 
     /**
      * Returns a local File object for a provide URI

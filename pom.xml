@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>info.freelibrary</groupId>
 			<artifactId>freelib-utils</artifactId>
-			<version>0.3.0</version>
+			<version>0.4.0-SNAPSHOT</version>
 		</dependency>
 		<!-- mvn dependency:analyze reports as unnecessary, but Jetty uses it -->
 		<dependency>
@@ -250,15 +250,13 @@
 		<djatoka.view.cache>${project.basedir}/target/cache</djatoka.view.cache>
 		<!-- Max TIFF file size for ingest (always specified in MB) -->
 		<djatoka.ingest.maxSize>900</djatoka.ingest.maxSize>
-		<!-- <referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver> -->
-		<referent.resolver>info.freelibrary.djatoka.view.IdentifierResolver</referent.resolver>
 		<cache.enabled>true</cache.enabled>
 		<!-- Supported: "", "sLUM", "sRGB", "sYCC", "iccLUM" or "iccRGB" -->
 		<djatoka.ingest.color.space>sRGB</djatoka.ingest.color.space>
-		<!-- If production, uses pairtree fs; else, builds hashmap of jp2 fs + pairtree fs -->
-		<djatoka.is.production>false</djatoka.is.production>
 		<!-- Ingestable JP2 sources with parseable URL patterns (whitespace separated) -->
 		<djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
+		<!-- We can also guess at sources given an ID that can't found resolved in any other way -->
+		<djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
 	</properties>
 	<profiles>
 		<profile>
