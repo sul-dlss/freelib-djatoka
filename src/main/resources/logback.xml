@@ -51,7 +51,6 @@
 
     <logger name="info.freelibrary.util.PairtreeObject" level="ERROR"/>
     <logger name="info.freelibrary.util.PairtreeRoot" level="ERROR"/>
-    <logger name="info.freelibrary.util.FileUtils" level="ERROR"/>
 
     <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="ERROR"/>
     <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="ERROR"/>

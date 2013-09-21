@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>info.freelibrary</groupId>
 	<artifactId>freelib-djatoka</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>1.1.2-SNAPSHOT</version>
 	<name>FreeLibrary Djatoka</name>
 	<packaging>war</packaging>
 	<description>A fork of aDORe-Djatoka designed to work with Maven/Jetty and to address some other issues (caching, JDK support, etc.)</description>
@@ -122,72 +122,20 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<groupId>info.freelibrary</groupId>
-				<artifactId>llp2jlp-maven-plugin</artifactId>
-				<version>0.0.3</version>
-				<executions>
-					<execution>
-						<id>native-copy</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.1</version>
 			</plugin>
+			<!-- the jetty plugin is how we run djatoka from within maven -->
 			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
+				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>8.1.2.v20120308</version>
-				<configuration>
-					<connectors>
-						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-							<port>8888</port>
-							<maxIdleTime>60000</maxIdleTime>
-						</connector>
-					</connectors>
-					<stopKey>cough</stopKey>
-					<stopPort>8999</stopPort>
-					<scanIntervalSeconds>0</scanIntervalSeconds>
-					<requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
-						<filename>target/yyyy_mm_dd.request.log</filename>
-						<retainDays>30</retainDays>
-						<append>true</append>
-						<extended>false</extended>
-						<logTimeZone>GMT</logTimeZone>
-					</requestLog>
-					<systemProperties>
-						<systemProperty>
-							<name>org.mortbay.jetty.Request.maxFormContentSize</name>
-							<value>2000000</value>
-						</systemProperty>
-						<systemProperty>
-							<name>logback.configurationFile</name>
-							<value>src/main/resources/logback.xml</value>
-						</systemProperty>
-						<systemProperty>
-							<name>DJATOKA_HOME</name>
-							<value>${project.basedir}</value>
-						</systemProperty>
-						<systemProperty>
-							<name>LD_LIBRARY_PATH</name>
-							<value>${LD_LIBRARY_PATH}</value>
-						</systemProperty>
-						<systemProperty>
-							<name>DYLD_LIBRARY_PATH</name>
-							<value>${project.basedir}/${DYLD_LIBRARY_PATH}</value>
-						</systemProperty>
-						<systemProperty>
-							<name>kakadu.home</name>
-							<value>${project.basedir}/target/lib</value>
-						</systemProperty>
-					</systemProperties>
-				</configuration>
+				<version>9.0.5.v20130815</version>
 				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-servlets</artifactId>
+						<version>9.0.5.v20130815</version>
+					</dependency>
 					<dependency>
 						<groupId>kdu</groupId>
 						<artifactId>kdu_jni</artifactId>
@@ -209,12 +157,26 @@
 						<scope>system</scope>
 						<systemPath>${project.basedir}/lib/ij.jar</systemPath>
 					</dependency>
-					<dependency>
-						<groupId>org.eclipse.jetty</groupId>
-						<artifactId>jetty-servlets</artifactId>
-						<version>8.1.2.v20120308</version>
-					</dependency>					
 				</dependencies>
+				<configuration>
+					<webApp>
+						<contextPath>/</contextPath>
+					</webApp>
+					<!-- Putting below in CDATA just prevents it from wrapping -->
+					<jvmArgs><![CDATA[-Djetty.port=${jetty.port} -Dkakadu.home=${LD_LIBRARY_PATH} -Djava.library.path=${LD_LIBRARY_PATH} -DDJATOKA_HOME=${basedir} -DLD_LIBRARY_PATH=${LD_LIBRARY_PATH} -DDYLD_LIBRARY_PATH=${basedir}/${DYLD_LIBRARY_PATH}]]></jvmArgs>
+					<waitForChild>${waitForChild}</waitForChild>
+					<stopKey>${jetty.stop.key}</stopKey>
+					<stopPort>8993</stopPort>
+					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<requestLog
+						implementation="org.eclipse.jetty.server.NCSARequestLog">
+						<filename>target/yyyy_mm_dd.request.log</filename>
+						<retainDays>30</retainDays>
+						<append>true</append>
+						<extended>false</extended>
+						<logTimeZone>GMT</logTimeZone>
+					</requestLog>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -238,25 +200,33 @@
 			</plugin>
 		</plugins>
 	</build>
-	<!-- Default settings, here, can be overridden in profiles below -->
-	<!-- Below's can be overridden in ${MAVEN_HOME}/conf/settings.xml -->
+	<!-- Default properties can be overridden in the profiles section below -->
+	<!-- Or, they can be overridden in ${MAVEN_HOME}/conf/settings.xml -->
 	<properties>
+		<!-- The port Jetty should run at -->
+		<jetty.port>8888</jetty.port>
+		<!-- The types of files you want to ingest -->
 		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
+		<!-- The source image file system from which to ingest/convert images -->
 		<djatoka.ingest.data>${project.basedir}/src/test/resources/images</djatoka.ingest.data>
+		<!-- Where the JP2s should be stored -->
 		<djatoka.jp2.data>${project.basedir}/target/images</djatoka.jp2.data>
 		<!-- The cache the OpenURL system uses when it creates an object -->
 		<openurl.cache.dir>${project.basedir}/target/tmpcache</openurl.cache.dir>
+		<!-- Whether the OpenURL cache should be enabled -->
+		<cache.enabled>true</cache.enabled>
 		<!-- Separate cache used for the pairtree storage system -->
 		<djatoka.view.cache>${project.basedir}/target/cache</djatoka.view.cache>
-		<!-- Max TIFF file size for ingest (always specified in MB) -->
+		<!-- Max TIFF file size allowed for ingest (specified in MB) -->
 		<djatoka.ingest.maxSize>900</djatoka.ingest.maxSize>
-		<cache.enabled>true</cache.enabled>
 		<!-- Supported: "", "sLUM", "sRGB", "sYCC", "iccLUM" or "iccRGB" -->
 		<djatoka.ingest.color.space>sRGB</djatoka.ingest.color.space>
 		<!-- Ingestable JP2 sources with parseable URL patterns (whitespace separated) -->
 		<djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
 		<!-- We can also guess at sources given an ID that can't found resolved in any other way -->
 		<djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
+		<!-- Whether the Maven JVM should wait for Jetty's forked JVM -->
+		<waitForChild>false</waitForChild>
 	</properties>
 	<profiles>
 		<profile>
@@ -281,8 +251,6 @@
 			</activation>
 			<properties>
 				<LD_LIBRARY_PATH>${project.basedir}/lib/Linux-x86-64</LD_LIBRARY_PATH>
-				<!-- example of overridding a default property -->
-				<!-- <djatoka.data>/usr/local/data/images</djatoka.data> -->
 			</properties>
 		</profile>
 		<profile>
@@ -293,7 +261,9 @@
 				</os>
 			</activation>
 			<properties>
+				<!-- Include both b/c java.library.path is set to LD_LIBRARY_PATH -->
 				<DYLD_LIBRARY_PATH>lib/Mac-x86</DYLD_LIBRARY_PATH>
+				<LD_LIBRARY_PATH>lib/Mac-x86</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
 		<profile>
@@ -346,7 +316,3 @@
 		</profile>
 	</profiles>
 </project>
-
-<!--
-	MAVEN_OPTS="-Djava.library.path=target/lib" mvn jetty:run-exploded
--->
