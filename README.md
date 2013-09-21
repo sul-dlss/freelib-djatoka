@@ -48,4 +48,4 @@ It contains the Kakadu binaries which are provided under a NON-COMMERCIAL USE ON
 
 ### Contact
 
-If you have questions about the freelib-djatoka project, feel free to email me, Kevin S. Clarke (<a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>), or to [file an issue](https://github.com/ksclarke/freelib-djatoka/issues "GitHub Issues Queue") in the GitHub issues queue.
+If you have questions about the freelib-djatoka project, feel free to <a href="mailto:ksclarke@gmail.com">email me</a>, Kevin S. Clarke, or to [file an issue](https://github.com/ksclarke/freelib-djatoka/issues "GitHub Issues Queue") in the GitHub issues queue.
