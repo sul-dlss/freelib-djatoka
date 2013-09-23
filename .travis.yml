@@ -8,7 +8,7 @@ branches:
   only:
     - fedora
 
-before_script: "mvn jetty:run-forked"
+before_script: "cp src/main/resources/sample-settings.xml .m2/settings.xml && mvn jetty:run-forked"
 
 script: "mvn -Ptravis install"
 
