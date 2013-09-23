@@ -23,13 +23,16 @@
 
 package gov.lanl.adore.djatoka;
 
+import org.slf4j.Logger;
+
+import org.slf4j.LoggerFactory;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.log4j.Logger;
 
 import gov.lanl.adore.djatoka.kdu.KduExtractExe;
 
@@ -39,7 +42,8 @@ import gov.lanl.adore.djatoka.kdu.KduExtractExe;
  *
  */
 public class DjatokaExtract {
-	static Logger logger = Logger.getLogger(DjatokaExtract.class);
+
+	static Logger LOGGER = LoggerFactory.getLogger(DjatokaExtract.class);
 	/**
 	 * Uses apache commons cli to parse input args. Passes parsed
 	 * parameters to IExtract implementation.
@@ -121,16 +125,18 @@ public class DjatokaExtract {
 				ex = (IExtract) Class.forName(alt).newInstance();
 			DjatokaExtractProcessor e = new DjatokaExtractProcessor(ex);
 			e.extractImage(input, output, p, format);
-			logger.info("Extraction Time: " + ((double) (System.currentTimeMillis() - x) / 1000) + " seconds");
-		    
-		} catch( ParseException e ) {
-			logger.error( "Parse exception:" + e.getMessage(), e);
-		} catch (DjatokaException e) {
-			logger.error( "djatoka Extraction exception:" + e.getMessage(), e);
-		} catch (InstantiationException e) {
-			logger.error( "Unable to initialize alternate implemenation:" + e.getMessage(), e);
-		} catch (Exception e) {
-			logger.error( "Unexpected exception:" + e.getMessage(), e);
+			
+			if (LOGGER.isInfoEnabled()) {
+			    LOGGER.info("Extraction Time: " + ((double) (System.currentTimeMillis() - x) / 1000) + " seconds");
+			}
+		} catch(ParseException details) {
+			LOGGER.error("Parse exception: {}",  details.getMessage(), details);
+		} catch (DjatokaException details) {
+			LOGGER.error("djatoka Extraction exception: {}", details.getMessage(), details);
+		} catch (InstantiationException details) {
+			LOGGER.error("Unable to initialize alternate implemenation: {}", details.getMessage(), details);
+		} catch (Exception details) {
+			LOGGER.error("Unexpected exception: {}", details.getMessage(), details);
 		}
 	}
 }

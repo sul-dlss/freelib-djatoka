@@ -23,6 +23,9 @@
 
 package gov.lanl.adore.djatoka.io.writer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gov.lanl.adore.djatoka.DjatokaEncodeParam;
 import gov.lanl.adore.djatoka.DjatokaException;
 import gov.lanl.adore.djatoka.io.FormatIOException;
@@ -36,15 +39,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-
 /**
  * JP2 File Writer. Uses KduCompressExe to write BufferedImage as JP2
  * @author Ryan Chute
  *
  */
 public class JP2Writer implements IWriter {
-	static Logger logger = Logger.getLogger(JP2Writer.class);
+
+	static Logger LOGGER = LoggerFactory.getLogger(JP2Writer.class);
+
 	private DjatokaEncodeParam params = new DjatokaEncodeParam();
 	
 	/**
@@ -63,15 +66,15 @@ public class JP2Writer implements IWriter {
 				bos = new BufferedOutputStream(os);
 				encoder.compressImage(bi, bos, params);
 				bos.close();
-			} catch (IOException e) {
-				logger.error(e,e);
-				throw new FormatIOException(e.getMessage(), e);
-			} catch (DjatokaException e) {
-				logger.error(e,e);
-				throw new FormatIOException(e.getMessage(), e);
-			} catch (Exception e) {
-				logger.error(e,e);
-				throw new FormatIOException(e.getMessage(), e);
+			} catch (IOException details) {
+				LOGGER.error(details.getMessage(), details);
+				throw new FormatIOException(details.getMessage(), details);
+			} catch (DjatokaException details) {
+				LOGGER.error(details.getMessage(), details);
+				throw new FormatIOException(details.getMessage(), details);
+			} catch (Exception details) {
+				LOGGER.error(details.getMessage(), details);
+				throw new FormatIOException(details.getMessage(), details);
 			}
 		}
 	}

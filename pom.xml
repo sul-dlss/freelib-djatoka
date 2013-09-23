@@ -17,19 +17,11 @@
 			<version>1.2.0</version>
 		</dependency>
 		<!-- above only for internal image reports -->
-		<!-- below for openurl -->
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<version>2.5.D1</version>
-		</dependency>
-		<!-- above for openurl -->
 		<dependency>
 			<groupId>info.freelibrary</groupId>
 			<artifactId>freelib-utils</artifactId>
 			<version>0.4.0-SNAPSHOT</version>
 		</dependency>
-		<!-- mvn dependency:analyze reports as unnecessary, but Jetty uses it -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -37,7 +29,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.7.5</version>
 		</dependency>
 		<dependency>
@@ -64,11 +56,6 @@
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>
 			<version>1.4</version>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.8</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -170,7 +157,7 @@
 					<stopPort>8993</stopPort>
 					<scanIntervalSeconds>0</scanIntervalSeconds>
 					<!-- Tells Maven process not to wait on the forked Jetty server -->
-					<waitForChild>false</waitForChild>
+					<waitForChild>${waitForChild}</waitForChild>
 					<requestLog
 						implementation="org.eclipse.jetty.server.NCSARequestLog">
 						<filename>target/yyyy_mm_dd.request.log</filename>
@@ -229,6 +216,8 @@
 		<djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
 		<!-- We can also guess at sources given an ID that can't found resolved in any other way -->
 		<djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
+		<!-- To see logging on console, start with: mvn -DwaitForChild=true -->
+		<waitForChild>false</waitForChild>
 	</properties>
 	<profiles>
 		<profile>
