@@ -324,6 +324,9 @@
 						<artifactId>maven-failsafe-plugin</artifactId>
 						<version>2.16</version>
 						<configuration>
+							<systemPropertyVariables>
+								<jetty.port>${jetty.port}</jetty.port>
+							</systemPropertyVariables>
 							<includes>
 								<include>**/*IntegrationTest.java</include>
 							</includes>
