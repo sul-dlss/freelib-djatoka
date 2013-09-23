@@ -1,0 +1,25 @@
+language: java
+
+jdk:
+  - openjdk7
+  - oraclejdk7
+
+branches:
+  only:
+    - fedora
+
+before_script: "mvn jetty:run-forked"
+
+script: "mvn -Ptravis install"
+
+notifications:
+  email:
+    recipients:
+      - ksclarke@gmail.com
+    on_failure: never
+    on_success: change
+  irc:
+    channels:
+      - irc.freenode.org#freelibrary
+    on_failure: always
+    on_success: always

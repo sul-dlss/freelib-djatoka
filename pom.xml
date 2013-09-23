@@ -9,6 +9,37 @@
 	<packaging>war</packaging>
 	<description>A fork of aDORe-Djatoka designed to work with Maven/Jetty and to address some other issues (caching, JDK support, etc.)</description>
 	<inceptionYear>20110701</inceptionYear>
+	<!-- Default properties can be overridden in the profiles section below -->
+	<!-- Or, they can be overridden in ${MAVEN_HOME}/conf/settings.xml -->
+	<properties>
+		<!-- The port Jetty should run at -->
+		<jetty.port>8888</jetty.port>
+		<!-- The types of files you want to ingest -->
+		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
+		<!-- The source image file system from which to ingest/convert images -->
+		<djatoka.ingest.data>${project.basedir}/src/test/resources/images</djatoka.ingest.data>
+		<!-- Where the JP2s should be stored -->
+		<djatoka.jp2.data>${project.basedir}/target/images</djatoka.jp2.data>
+		<!-- The cache the OpenURL system uses when it creates an object -->
+		<openurl.cache.dir>${project.basedir}/target/tmpcache</openurl.cache.dir>
+		<!-- Whether the OpenURL cache should be enabled -->
+		<cache.enabled>true</cache.enabled>
+		<!-- Separate cache used for the pairtree storage system -->
+		<djatoka.view.cache>${project.basedir}/target/cache</djatoka.view.cache>
+		<!-- Max TIFF file size allowed for ingest (specified in MB) -->
+		<djatoka.ingest.maxSize>900</djatoka.ingest.maxSize>
+		<!-- Supported: "", "sLUM", "sRGB", "sYCC", "iccLUM" or "iccRGB" -->
+		<djatoka.ingest.color.space>sRGB</djatoka.ingest.color.space>
+		<!-- Ingestable JP2 sources with parseable URL patterns (whitespace separated) -->
+		<djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
+		<!-- We can also guess at sources given an ID that can't found resolved in any other way -->
+		<djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
+		
+		<!-- You shouldn't need to set anything below here; these are generic -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<waitForChild>false</waitForChild>
+	</properties>
 	<dependencies>
 		<!-- below only for internal image reports -->
 		<dependency>
@@ -184,36 +215,19 @@
 					</systemProperties>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.16</version>
+				<configuration>
+					<!-- Our integration tests shouldn't be run as unit tests -->
+					<excludes>
+						<exclude>**/*IntegrationTest.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-	<!-- Default properties can be overridden in the profiles section below -->
-	<!-- Or, they can be overridden in ${MAVEN_HOME}/conf/settings.xml -->
-	<properties>
-		<!-- The port Jetty should run at -->
-		<jetty.port>8888</jetty.port>
-		<!-- The types of files you want to ingest -->
-		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
-		<!-- The source image file system from which to ingest/convert images -->
-		<djatoka.ingest.data>${project.basedir}/src/test/resources/images</djatoka.ingest.data>
-		<!-- Where the JP2s should be stored -->
-		<djatoka.jp2.data>${project.basedir}/target/images</djatoka.jp2.data>
-		<!-- The cache the OpenURL system uses when it creates an object -->
-		<openurl.cache.dir>${project.basedir}/target/tmpcache</openurl.cache.dir>
-		<!-- Whether the OpenURL cache should be enabled -->
-		<cache.enabled>true</cache.enabled>
-		<!-- Separate cache used for the pairtree storage system -->
-		<djatoka.view.cache>${project.basedir}/target/cache</djatoka.view.cache>
-		<!-- Max TIFF file size allowed for ingest (specified in MB) -->
-		<djatoka.ingest.maxSize>900</djatoka.ingest.maxSize>
-		<!-- Supported: "", "sLUM", "sRGB", "sYCC", "iccLUM" or "iccRGB" -->
-		<djatoka.ingest.color.space>sRGB</djatoka.ingest.color.space>
-		<!-- Ingestable JP2 sources with parseable URL patterns (whitespace separated) -->
-		<djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
-		<!-- We can also guess at sources given an ID that can't found resolved in any other way -->
-		<djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
-		<!-- To see logging on console, start with: mvn -DwaitForChild=true -->
-		<waitForChild>false</waitForChild>
-	</properties>
 	<profiles>
 		<profile>
 			<id>linux-32</id>
@@ -299,6 +313,32 @@
 			<properties>
 				<LD_LIBRARY_PATH>${project.basedir}/lib/Solaris-Sparcv9</LD_LIBRARY_PATH>
 			</properties>
+		</profile>
+		<!-- a build profile just used on Travis runs to run the integration tests -->
+		<profile>
+			<id>travis</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.16</version>
+						<configuration>
+							<includes>
+								<include>**/*IntegrationTest.java</include>
+							</includes>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 </project>
