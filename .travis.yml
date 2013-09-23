@@ -8,9 +8,9 @@ branches:
   only:
     - fedora
 
-install: "mvn -DskipTests=true install && ls -Ra && ls -a ~"
+install: "mvn -DskipTests=true install"
 
-before_script: "cp src/main/resources/sample-settings.xml ~/.m2/settings.xml && mvn jetty:run-forked"
+before_script: "cp src/main/resources/sample-settings.xml ${HOME}/.m2/settings.xml && mvn jetty:run-forked"
 
 script: "mvn -Ptravis install"
 
