@@ -1,6 +1,8 @@
-# freelib-djatoka
+# FreeLib-Djatoka
 
-This project is a fork of the aDORe-djatoka JP2 image server.  It was created in an attempt to simplify the image server's use.  In the process, the project's dependency on the Sun JDK was removed and additional caching and image management options were added.  The OpenSeadragon UI was also added as the project's preferred user interface.  The freelib-djatoka image server can be used on its own or it can be integrated into an external content management system.  It's currently tested with Islandora.
+This project is a fork of the aDORe-djatoka JP2 image server.  It was created in an attempt to simplify the image server's use.  In the process, additional caching and image management options were added.  The OpenSeadragon UI was also added as the project's preferred user interface.  FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system.  It's currently tested with Islandora.
+
+The aDORe-djatoka project requires the 1.6 Sun JDK (or earlier).  FreeLib-Djatoka requires OpenJDK 1.7 or later.
 
 ### Getting Started
 
@@ -39,6 +41,10 @@ Something that I added for the GDAO project but never documented was the tile pr
     mvn exec:java -Dexec.mainClass="info.freelibrary.djatoka.TileCache" -Dexec.args="src/test/resources/id_map.csv 2"
 
 The "exec.args" would of course be changed to your CSV file and the position of the ID in the (1-based) column order (i.e., start counting columns at 1 not 0).
+
+### Running freelib-djatoka at Port 80
+
+http://www.eclipse.org/jetty/documentation/current/setting-port80-access.html
 
 ### License
 

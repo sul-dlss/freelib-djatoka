@@ -73,14 +73,14 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.5</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-		</dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>9.0.5.v20130815</version>
+		</dependency>		
 		<dependency>
 			<groupId>kdu</groupId>
 			<artifactId>kdu_jni</artifactId>
@@ -122,8 +122,13 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.1</version>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
 			</plugin>
 			<!-- the jetty plugin is how we run djatoka from within maven -->
 			<plugin>
@@ -159,15 +164,13 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<webApp>
-						<contextPath>/</contextPath>
-					</webApp>
 					<!-- Putting below in CDATA just prevents it from wrapping -->
 					<jvmArgs><![CDATA[-Djetty.port=${jetty.port} -Dkakadu.home=${LD_LIBRARY_PATH} -Djava.library.path=${LD_LIBRARY_PATH} -DDJATOKA_HOME=${basedir} -DLD_LIBRARY_PATH=${LD_LIBRARY_PATH} -DDYLD_LIBRARY_PATH=${basedir}/${DYLD_LIBRARY_PATH}]]></jvmArgs>
-					<waitForChild>${waitForChild}</waitForChild>
 					<stopKey>${jetty.stop.key}</stopKey>
 					<stopPort>8993</stopPort>
 					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<!-- Tells Maven process not to wait on the forked Jetty server -->
+					<waitForChild>false</waitForChild>
 					<requestLog
 						implementation="org.eclipse.jetty.server.NCSARequestLog">
 						<filename>target/yyyy_mm_dd.request.log</filename>
@@ -178,6 +181,7 @@
 					</requestLog>
 				</configuration>
 			</plugin>
+			<!-- plugin that enables running the command line tilecache utility -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -225,8 +229,6 @@
 		<djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
 		<!-- We can also guess at sources given an ID that can't found resolved in any other way -->
 		<djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
-		<!-- Whether the Maven JVM should wait for Jetty's forked JVM -->
-		<waitForChild>false</waitForChild>
 	</properties>
 	<profiles>
 		<profile>
