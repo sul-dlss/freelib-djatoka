@@ -344,4 +344,9 @@
 			</build>
 		</profile>
 	</profiles>
+	<repositories>
+		<repository>
+		<id>freelibrary</id>
+		<url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+	</repository>
 </project>
