@@ -34,7 +34,7 @@
 		<djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
 		<!-- We can also guess at sources given an ID that can't found resolved in any other way -->
 		<djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
-		
+
 		<!-- You shouldn't need to set anything below here; these are generic -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -93,7 +93,7 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
 			<version>9.0.5.v20130815</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>kdu</groupId>
 			<artifactId>kdu_jni</artifactId>
@@ -346,7 +346,8 @@
 	</profiles>
 	<repositories>
 		<repository>
-		<id>freelibrary</id>
-		<url>http://oss.sonatype.org/content/repositories/snapshots/</url>
-	</repository>
+			<id>freelibrary</id>
+			<url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
 </project>
