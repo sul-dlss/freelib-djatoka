@@ -49,6 +49,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     private Map<String, ImageRecord> myRemoteImages;
 
     private List<String> myIngestSources = new CopyOnWriteArrayList<String>();
+    private List<String> myIngestGuesses = new CopyOnWriteArrayList<String>();
 
     private File myJP2Dir;
 
@@ -109,13 +110,15 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     }
 
     public void setProperties(Properties aProps) throws ResolverException {
-        String imgSources = aProps.getProperty("djatoka.known.ingest.sources");
+        String sources = aProps.getProperty("djatoka.known.ingest.sources");
+        String guesses = aProps.getProperty("djatoka.known.ingest.guesses");
 
         myJP2Dir = new File(aProps.getProperty(JP2_DATA_DIR));
         myMigrator.setPairtreeRoot(myJP2Dir);
         myRemoteImages = new ConcurrentHashMap<String, ImageRecord>();
 
-        myIngestSources.addAll(Arrays.asList(imgSources.split(" ")));
+        myIngestSources.addAll(Arrays.asList(sources.split("\\s+")));
+        myIngestGuesses.addAll(Arrays.asList(guesses.split("\\s+")));
     }
 
     private boolean isResolvableURI(String aReferentID) {

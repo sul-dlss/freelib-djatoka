@@ -23,8 +23,6 @@
 
 package gov.lanl.adore.djatoka.util;
 
-import java.security.Permission;
-
 import gov.lanl.adore.djatoka.io.reader.DjatokaReader;
 import gov.lanl.adore.djatoka.io.writer.TIFWriter;
 
@@ -137,10 +135,10 @@ public class IOUtils {
      */
     public static InputStream getInputStream(URL location) throws Exception {
         InputStream in = null;
+
         if (location.getProtocol().equals("file")) {
-            in =
-                    new BufferedInputStream(new FileInputStream(location
-                            .getFile()));
+            String fileName = location.getFile();
+            in = new BufferedInputStream(new FileInputStream(fileName));
         } else {
             try {
                 URLConnection huc = location.openConnection();
@@ -155,6 +153,7 @@ public class IOUtils {
                                 location.toString(), details);
             }
         }
+
         return in;
     }
 
@@ -259,7 +258,7 @@ public class IOUtils {
         Properties prop;
         try {
             prop = new java.util.Properties();
-            prop.load(in);
+            prop.loadFromXML(in);
         } finally {
             if (in != null) {
                 try {

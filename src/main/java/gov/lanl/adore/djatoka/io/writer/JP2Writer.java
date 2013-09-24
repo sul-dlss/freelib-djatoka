@@ -80,7 +80,7 @@ public class JP2Writer implements IWriter {
 	}
 	
 	/**
-	 * Set the Writer Implementations Serialization properties. See djatoka.properties for key/value examples.
+	 * Set the Writer Implementations Serialization properties.
 	 * @param props writer serialization properties
 	 */
 	public void setWriterProperties(Properties props) {

@@ -24,7 +24,7 @@
 package gov.lanl.adore.djatoka;
 
 /**
- * Default values from djatoka.properties. As detailed below, many of these
+ * Default values from djatoka-properties.xml. As detailed below, many of these
  * default values are derived from the Kakadu Library usage examples. The slope
  * method is used by default as it ensures a compression ratio appropriate for
  * the content (e.g illuminated manuscript) and balances quality with
@@ -133,9 +133,9 @@ public interface DjatokaConstants {
 
 	/**
 	 * Defined the file name of the default compression props file.
-	 * Default Value: "djatoka.properties"
+	 * Default Value: "djatoka-properties.xml"
 	 */
-	public static final String DEFAULT_JPEG2K_PROP_FILENAME = "djatoka.properties";
+	public static final String DEFAULT_JPEG2K_PROP_FILENAME = "djatoka-properties.xml";
 	
 	/**
 	 * Defined default color space.  The default is not to use one.

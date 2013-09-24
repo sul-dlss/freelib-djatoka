@@ -49,7 +49,7 @@ public class IngestServlet extends HttpServlet {
      */
     private static final long serialVersionUID = 8661545409056868772L;
 
-    private static final String PROPERTIES_FILE = "djatoka.properties";
+    private static final String PROPERTIES_FILE = "djatoka-properties.xml";
 
     @Override
     protected void doGet(HttpServletRequest aRequest,

@@ -39,22 +39,12 @@
 		<!-- Supported: "", "sLUM", "sRGB", "sYCC", "iccLUM" or "iccRGB" -->
 		<djatoka.ingest.color.space>sRGB</djatoka.ingest.color.space>
 
-		<!--
-			Identifier resolution properties:
-			
-			It's kind of a pain to have to use <![CDATA[ ... ]]> but it prevents the text
-			from wrapping when this file is formatted.  Each value is a whitespace
-			separated list of sources (used when a URL is passed in) or guesses
-			(used when an ID that can't be resolved in any other way is passed in).
-			
-			These can be overridden in the settings.xml file too, but be sure to use
-			CDATA section there too to ensure the value parts are kept on one line.
-			
-			See documentation (link needed) for more details about the formats of
-			these values...
-		-->
-		<djatoka.ingest.sources><![CDATA[^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$]]></djatoka.ingest.sources>
-		<djatoka.ingest.guesses><![CDATA[http://localhost/islandora/object/{}/datastream/JP2/view http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2]]></djatoka.ingest.guesses>
+		<!-- List of image sources (used when a URL is passed in) -->
+		<djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$
+			^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
+		<!-- List of image source guesses (used when ID can't be otherwise resolved) -->
+		<djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view
+			http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
 
 		<!-- You shouldn't need to set anything below here; these are generic -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -62,13 +52,13 @@
 		<waitForChild>false</waitForChild>
 	</properties>
 	<dependencies>
-		<!-- below only for internal image reports -->
+		<!-- Below only for internal image reports -->
 		<dependency>
 			<groupId>org.im4java</groupId>
 			<artifactId>im4java</artifactId>
 			<version>1.2.0</version>
 		</dependency>
-		<!-- above only for internal image reports -->
+		<!-- Above only for internal image reports -->
 		<dependency>
 			<groupId>info.freelibrary</groupId>
 			<artifactId>freelib-utils</artifactId>
@@ -165,7 +155,7 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			<!-- the jetty plugin is how we run djatoka from within maven -->
+			<!-- The jetty plugin is how we run djatoka from within Maven -->
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
@@ -199,13 +189,14 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<!-- Putting JVM args below in CDATA just prevents wrapping -->
+					<!-- Putting JVM args in CDATA just prevents wrapping; don't edit -->
 					<jvmArgs><![CDATA[-Djetty.port=${jetty.port} -Dkakadu.home=${LD_LIBRARY_PATH} -Djava.library.path=${LD_LIBRARY_PATH} -DDJATOKA_HOME=${basedir} -DLD_LIBRARY_PATH=${LD_LIBRARY_PATH} -DDYLD_LIBRARY_PATH=${basedir}/${DYLD_LIBRARY_PATH}]]></jvmArgs>
 					<stopKey>${jetty.stop.key}</stopKey>
 					<stopPort>8993</stopPort>
 					<scanIntervalSeconds>0</scanIntervalSeconds>
 					<!-- Tells Maven process not to wait on the forked Jetty server -->
 					<waitForChild>${waitForChild}</waitForChild>
+					<!-- Access log -->
 					<requestLog
 						implementation="org.eclipse.jetty.server.NCSARequestLog">
 						<filename>target/yyyy_mm_dd.request.log</filename>
@@ -216,7 +207,7 @@
 					</requestLog>
 				</configuration>
 			</plugin>
-			<!-- plugin that enables running the command line tilecache utility -->
+			<!-- Plugin that enables running the command line tilecache utility -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -336,7 +327,7 @@
 				<LD_LIBRARY_PATH>${project.basedir}/lib/Solaris-Sparcv9</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
-		<!-- a build profile just used on Travis runs to run the integration tests -->
+		<!-- Build profile just used on Travis-CI VM to run the integration tests -->
 		<profile>
 			<id>travis</id>
 			<build>
