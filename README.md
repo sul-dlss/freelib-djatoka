@@ -2,7 +2,7 @@
 
 This project is a fork of the aDORe-djatoka JP2 image server.  It was created in an attempt to simplify the image server's use.  In the process, additional caching and image management options were added.  The OpenSeadragon UI was also added as the project's preferred user interface.  FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system.  It's currently tested with Islandora.
 
-The aDORe-djatoka project requires the 1.6 Sun JDK (or earlier).  FreeLib-Djatoka requires OpenJDK 1.7 or later.
+The original aDORe-djatoka requires Sun's 1.6 JDK; the freelib-djatoka project uses any JDK (OpenJDK or OracleJDK) 1.7 or later.
 
 ### Getting Started
 
@@ -18,21 +18,22 @@ When you want to stop the server, type the following from within the project's d
 
     mvn jetty:stop
 
-### Configuration
+### File System Ingest Configuration
 
-freelib-djatoka will ingest TIFF files in a specified TIFF directory.  It will also store JP2s and derivative JPEG files to the file system.  To configure all
-this, the project's pom.xml can be updated to match your local system.  In the `properties` element in the pom.xml file, change the following four properties to suit your file system, for instance:
+FreeLib-Djatoka can load images in two different ways: the first way is by loading TIF images from the file system and converting them into JP2 in batch mode and the second way is by loading images on demand, as they are requested through the user interface. 
+
+To load images from the file system, there are four configuration options defined in the pom.xml file.  To override these, it's best to create a settings.xml file and assign new values to them in there.  TODO: more details
 
 	<djatoka.ingest.data>/usr/local/data/images/tiffs</djatoka.ingest.data>
 	<djatoka.jp2.data>/usr/local/data/images/jp2s</djatoka.jp2.data>
 	<openurl.cache.dir>/usr/local/data/images/tmpcache</openurl.cache.dir>
 	<djatoka.view.cache>/usr/local/data/images/cache</djatoka.view.cache>
-	
-These properties can also be overwritten in the pom.xml's `profiles` section.  Alternatively, you can override the default values (without touching the pom.xml file) by adding the above elements to your `${MAVEN_HOME}/conf/settings.xml` file.
 
-### Dynamic Image Loading
+TODO: more details	
 
-Explain this here.
+### Dynamic Image Ingest Configuration
+
+TODO: Explain how this is different from the adore-djatoka way here.
 
 ### Tile Cache Utilities
 
