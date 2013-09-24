@@ -26,22 +26,24 @@ public class HelloWorldIntegrationTest {
     @Test
     public void test() {
         String jettyPort = System.getProperty("jetty.port");
-        
+
         try {
             Integer.parseInt(jettyPort);
-        }
-        catch (NumberFormatException details) {
+        } catch (NumberFormatException details) {
             fail("jetty.port is not an integer: " + jettyPort);
         }
-        
+
         try {
             URL url = new URL(StringUtils.format(QUERY, jettyPort));
             HttpURLConnection huc = (HttpURLConnection) url.openConnection();
 
             huc.connect();
 
-            assertEquals(200, huc.getResponseCode());
-            assertEquals(9206, huc.getContentLength());
+            assertEquals("HTTP response code check failed", 200, huc
+                    .getResponseCode());
+
+            assertEquals("LC image content length check failed", 9206, huc
+                    .getContentLength());
         } catch (Exception details) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Error connecting to djatoka server", details);

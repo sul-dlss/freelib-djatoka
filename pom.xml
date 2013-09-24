@@ -9,11 +9,21 @@
 	<packaging>war</packaging>
 	<description>A fork of aDORe-Djatoka designed to work with Maven/Jetty and to address some other issues (caching, JDK support, etc.)</description>
 	<inceptionYear>20110701</inceptionYear>
-	<!-- Default properties can be overridden in the profiles section below -->
-	<!-- Or, they can be overridden in ${MAVEN_HOME}/conf/settings.xml -->
+	<!--
+		Project properties:
+		
+		These are the things you'll probably want to adjust.  It's best practice not
+		to change this file but to use a Maven settings.xml file (which can be at
+		${MAVEN_HOME}/conf/settings.xml or ${USER_HOME}/.m2/settings.xml).
+		
+		Change the property value in there and you'll override the values that are
+		configured below...  A sample skeleton settings.xml file is provided in
+		src/main/resources if you want to copy it into a place where it will be read.
+	-->
 	<properties>
 		<!-- The port Jetty should run at -->
 		<jetty.port>8888</jetty.port>
+
 		<!-- The types of files you want to ingest -->
 		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
 		<!-- The source image file system from which to ingest/convert images -->
@@ -22,18 +32,29 @@
 		<djatoka.jp2.data>${project.basedir}/target/images</djatoka.jp2.data>
 		<!-- The cache the OpenURL system uses when it creates an object -->
 		<openurl.cache.dir>${project.basedir}/target/tmpcache</openurl.cache.dir>
-		<!-- Whether the OpenURL cache should be enabled -->
-		<cache.enabled>true</cache.enabled>
-		<!-- Separate cache used for the pairtree storage system -->
+		<!-- Separate cache used for the permanent pairtree storage system -->
 		<djatoka.view.cache>${project.basedir}/target/cache</djatoka.view.cache>
 		<!-- Max TIFF file size allowed for ingest (specified in MB) -->
 		<djatoka.ingest.maxSize>900</djatoka.ingest.maxSize>
 		<!-- Supported: "", "sLUM", "sRGB", "sYCC", "iccLUM" or "iccRGB" -->
 		<djatoka.ingest.color.space>sRGB</djatoka.ingest.color.space>
-		<!-- Ingestable JP2 sources with parseable URL patterns (whitespace separated) -->
-		<djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
-		<!-- We can also guess at sources given an ID that can't found resolved in any other way -->
-		<djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
+
+		<!--
+			Identifier resolution properties:
+			
+			It's kind of a pain to have to use <![CDATA[ ... ]]> but it prevents the text
+			from wrapping when this file is formatted.  Each value is a whitespace
+			separated list of sources (used when a URL is passed in) or guesses
+			(used when an ID that can't be resolved in any other way is passed in).
+			
+			These can be overridden in the settings.xml file too, but be sure to use
+			CDATA section there too to ensure the value parts are kept on one line.
+			
+			See documentation (link needed) for more details about the formats of
+			these values...
+		-->
+		<djatoka.ingest.sources><![CDATA[^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$ ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$]]></djatoka.ingest.sources>
+		<djatoka.ingest.guesses><![CDATA[http://localhost/islandora/object/{}/datastream/JP2/view http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2]]></djatoka.ingest.guesses>
 
 		<!-- You shouldn't need to set anything below here; these are generic -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -51,7 +72,7 @@
 		<dependency>
 			<groupId>info.freelibrary</groupId>
 			<artifactId>freelib-utils</artifactId>
-			<version>0.4.0-SNAPSHOT</version>
+			<version>0.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -139,6 +160,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
+					<!-- We now require 1.7 or greater JDK -->
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
@@ -177,7 +199,7 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<!-- Putting below in CDATA just prevents it from wrapping -->
+					<!-- Putting JVM args below in CDATA just prevents wrapping -->
 					<jvmArgs><![CDATA[-Djetty.port=${jetty.port} -Dkakadu.home=${LD_LIBRARY_PATH} -Djava.library.path=${LD_LIBRARY_PATH} -DDJATOKA_HOME=${basedir} -DLD_LIBRARY_PATH=${LD_LIBRARY_PATH} -DDYLD_LIBRARY_PATH=${basedir}/${DYLD_LIBRARY_PATH}]]></jvmArgs>
 					<stopKey>${jetty.stop.key}</stopKey>
 					<stopPort>8993</stopPort>
@@ -344,10 +366,4 @@
 			</build>
 		</profile>
 	</profiles>
-	<repositories>
-		<repository>
-			<id>freelibrary</id>
-			<url>http://oss.sonatype.org/content/repositories/snapshots/</url>
-		</repository>
-	</repositories>
 </project>

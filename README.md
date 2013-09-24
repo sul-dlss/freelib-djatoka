@@ -46,6 +46,10 @@ The "exec.args" would of course be changed to your CSV file and the position of 
 
 http://www.eclipse.org/jetty/documentation/current/setting-port80-access.html
 
+### Project Status
+
+[![Build Status](https://travis-ci.org/ksclarke/freelib-djatoka.png?branch=fedora)](https://travis-ci.org/ksclarke/freelib-djatoka) (fedora branch)
+
 ### License
 
 This package, freelib-djatoka, like its upstream project, adore-djatoka, is available under the LGPL license (version 2.1 or later).
