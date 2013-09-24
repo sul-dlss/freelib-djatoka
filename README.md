@@ -48,7 +48,7 @@ http://www.eclipse.org/jetty/documentation/current/setting-port80-access.html
 
 ### Project Status
 
-[![Build Status](https://travis-ci.org/ksclarke/freelib-djatoka.png?branch=fedora)](https://travis-ci.org/ksclarke/freelib-djatoka) (fedora branch)
+[![Build Status](https://travis-ci.org/ksclarke/freelib-djatoka.png?branch=fedora)](https://travis-ci.org/ksclarke/freelib-djatoka)
 
 ### License
 
