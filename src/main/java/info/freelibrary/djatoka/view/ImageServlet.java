@@ -169,18 +169,19 @@ public class ImageServlet extends HttpServlet implements Constants {
         if (is != null) {
             try {
                 Properties props = new Properties();
-                props.load(is);
+                props.loadFromXML(is);
 
                 if (props.containsKey(VIEW_CACHE_DIR)) {
                     myCache = props.getProperty(VIEW_CACHE_DIR);
-                    
-                    if (myCache == null) {
-                        myCache = System.getProperty("java.io.tmpdir");
-                    }
+                }
+                
+                // If we couldn't get cache from config, fall back to tmpdir
+                if (myCache == null) {
+                    myCache = System.getProperty("java.io.tmpdir");
+                }
 
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Cache directory set to {}", myCache);
-                    }
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Cache directory set to {}", myCache);
                 }
 
                 if (props.containsKey(VIEW_FORMAT_EXT)) {

@@ -56,8 +56,7 @@ import org.slf4j.LoggerFactory;
  * Utility class used to harvest URIs and compress files into JP2.
  * 
  * @author Ryan Chute
- * @author Kevin S. Clarke (<a href="mailto:ksclarke@gmail.com">
- *         ksclarke@gmail.com </a>)
+ * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator {
 
@@ -120,6 +119,8 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
         processing.add(aReferent);
 
         try {
+            // If the referent is not the URL, we've been able to parse an ID
+            // out from the URL; if we did that, we assume it's already a JP2
             URL url = aURI.toURL();
             boolean isJp2 = aReferent.equals(url.toString()) ? false : true;
 
@@ -152,10 +153,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                             .available() > 0 ? " " : " not ", url);
                 }
 
-                // FIXME: some Islandora special sauce to work around weirdness
-                //
-                // For JP2s, it takes two requests; fwiw, it doesn't with any
-                // of the other Islandora data streams (TN, JPG, MODS, etc.)
+                // FIXME: For some reason, it's taking two requests sometimes
                 if (source.available() == 0) {
                     source = IOUtils.getInputStream(url);
 

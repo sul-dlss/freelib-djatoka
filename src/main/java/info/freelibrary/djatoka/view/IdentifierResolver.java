@@ -49,6 +49,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     private Map<String, ImageRecord> myRemoteImages;
 
     private List<String> myIngestSources = new CopyOnWriteArrayList<String>();
+
     private List<String> myIngestGuesses = new CopyOnWriteArrayList<String>();
 
     private File myJP2Dir;
@@ -83,6 +84,22 @@ public class IdentifierResolver implements IReferentResolver, Constants {
             }
         } else {
             image = getCachedImage(aRequest);
+
+            // If we can't find the "non-remote" image in our local cache,
+            // make one last ditch attempt to find it as a remote image...
+            if (image == null) {
+                for (int index = 0; index < myIngestGuesses.size(); index++) {
+                    String urlPattern = myIngestGuesses.get(index);
+                    String url = StringUtils.format(urlPattern, aRequest);
+
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Trying to resolve using URL pattern: {}",
+                                url);
+                    }
+
+                    image = getRemoteImage(aRequest, url);
+                }
+            }
         }
 
         return image;
