@@ -339,6 +339,7 @@
 						<configuration>
 							<systemPropertyVariables>
 								<jetty.port>${jetty.port}</jetty.port>
+								<pairtree.root>${djatoka.jp2.data}/pairtree_root</pairtree.root>
 							</systemPropertyVariables>
 							<includes>
 								<include>**/*IntegrationTest.java</include>
