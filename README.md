@@ -2,7 +2,9 @@
 
 This project is a fork of the aDORe-djatoka JP2 image server.  It was created in an attempt to simplify the image server's use.  In the process, additional caching and image management options were added.  The OpenSeadragon UI was also added as the project's preferred user interface.  FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system.  It's currently tested with Islandora.
 
-The original aDORe-djatoka requires Sun's 1.6 JDK; the freelib-djatoka project uses any JDK (OpenJDK or OracleJDK) 1.7 or later.
+The original aDORe-djatoka requires Sun's 1.6 JDK.
+
+The freelib-djatoka project can be used with any JDK (OpenJDK or OracleJDK), 1.7 or later.
 
 ### Getting Started
 
@@ -28,8 +30,6 @@ To load images from the file system, there are four configuration options define
 	<djatoka.jp2.data>/usr/local/data/images/jp2s</djatoka.jp2.data>
 	<openurl.cache.dir>/usr/local/data/images/tmpcache</openurl.cache.dir>
 	<djatoka.view.cache>/usr/local/data/images/cache</djatoka.view.cache>
-
-TODO: more details	
 
 ### Dynamic Image Ingest Configuration
 
