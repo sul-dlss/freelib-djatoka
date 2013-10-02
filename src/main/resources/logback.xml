@@ -10,8 +10,7 @@
             <FileNamePattern>target/logs/ingest.%d{yyyy-MM-dd}.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m
-                %n</pattern>
+            <pattern><![CDATA[[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n]]></pattern>
         </encoder>
     </appender>
 
@@ -23,8 +22,7 @@
             <FileNamePattern>target/logs/djatoka.%d{yyyy-MM-dd}.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m
-                %n</pattern>
+            <pattern><![CDATA[[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n]]></pattern>
         </encoder>
     </appender>
 
@@ -36,8 +34,7 @@
             <FileNamePattern>target/logs/tilecache.%d{yyyy-MM-dd}.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m
-                %n</pattern>
+            <pattern><![CDATA[[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n]]></pattern>
         </encoder>
     </appender>
 
@@ -51,8 +48,7 @@
             <FileNamePattern>target/tmp/logviewer.%d{yyyy-MM-dd}.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m
-                %n</pattern>
+            <pattern><![CDATA[%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n]]></pattern>
         </encoder>
     </appender>
 
@@ -73,17 +69,21 @@
 
     <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="ERROR"/>
     <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="ERROR"/>
-    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="ERROR"/>
+    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService"
+        level="ERROR"/>
     <logger name="gov.lanl.adore.djatoka.kdu.KduCompressExe" level="ERROR"/>
 
     <!-- Log files for log viewer; addivity is false so the log watcher ignores -->
 
-    <logger name="info.freelibrary.djatoka.util.LogServlet" level="DEBUG"
+    <logger name="info.freelibrary.djatoka.util.LogSocketServlet" level="DEBUG"
         additivity="false">
         <appender-ref ref="LOGVIEWER"/>
     </logger>
-
-    <logger name="info.freelibrary.djatoka.util.LogThread" level="DEBUG"
+    <logger name="info.freelibrary.djatoka.util.LogSocket" level="DEBUG"
+        additivity="false">
+        <appender-ref ref="LOGVIEWER"/>
+    </logger>
+    <logger name="info.freelibrary.djatoka.util.LogWatcherThread" level="DEBUG"
         additivity="false">
         <appender-ref ref="LOGVIEWER"/>
     </logger>
