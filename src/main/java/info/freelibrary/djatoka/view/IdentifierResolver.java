@@ -299,7 +299,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 	ImageRecord image = null;
 
 	try {
-	    URI uri = new URI(aReferent);
+	    URI uri = new URI(URLDecoder.decode(aReferent));
 
 	    // Check to see if it's already in the processing queue
 	    if (myMigrator.getProcessingList().contains(uri.toString())) {
