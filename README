@@ -2,6 +2,25 @@ freelib-djatoka (version 1.1.1)      https://github.com/ksclarke/freelib-djatoka
 
 
 ================================================================================
+PROJECT STATUS
+================================================================================
+
+There are a couple of branches at the moment.  The master branch is the "stable"
+branch that is currently being used in production by the GDAO project.
+
+There is also a "fedora" branch which is the staging (soon to be master) branch.
+It is being developed and tested with Islandora.  You can read its README at:
+
+  https://github.com/ksclarke/freelib-djatoka/tree/fedora
+
+Once I've finished documenting the changes, the "fedora" branch will be merged
+into "master".
+
+There is also a "develop" branch which is not in a usable state.  It's where I
+hope to integrate OpenJPEG into djatoka.  This won't be ready for awhile though.
+
+
+================================================================================
 INTRODUCTION
 ================================================================================
 
