@@ -18,6 +18,7 @@ into "master".
 
 There is also a "develop" branch which is not in a usable state.  It's where I
 hope to integrate OpenJPEG into djatoka.  This won't be ready for awhile though.
+The following ("Introduction", etc.) applies to the "master" branch.
 
 
 ================================================================================
