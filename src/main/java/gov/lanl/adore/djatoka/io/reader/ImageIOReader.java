@@ -23,6 +23,10 @@
 
 package gov.lanl.adore.djatoka.io.reader;
 
+import org.slf4j.LoggerFactory;
+
+import org.slf4j.Logger;
+
 import gov.lanl.adore.djatoka.io.FormatIOException;
 import gov.lanl.adore.djatoka.io.IReader;
 import gov.lanl.adore.djatoka.util.ImageProcessingUtils;
@@ -33,15 +37,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
-
 /**
  * Use ImageIO API to read image InputStream or image file path.
  * @author Ryan Chute
  *
  */
 public class ImageIOReader implements IReader {
-	static Logger logger = Logger.getLogger(ImageIOReader.class);
+
+	static Logger LOGGER = LoggerFactory.getLogger(ImageIOReader.class);
 	
 	/**
 	 * Returns a BufferedImage instance for provided InputStream
@@ -53,8 +56,8 @@ public class ImageIOReader implements IReader {
 		RenderedImage renderedImage = null;
 		try {
 			renderedImage = javax.imageio.ImageIO.read (new File(input));
-		} catch (IOException e) {
-			logger.error(e,e);
+		} catch (IOException details) {
+			LOGGER.error(details.getMessage(), details);
 			return null;
 		}
 		return ImageProcessingUtils.convertRenderedImage(renderedImage);
@@ -70,8 +73,8 @@ public class ImageIOReader implements IReader {
 		RenderedImage renderedImage = null;
 		try {
 			renderedImage = javax.imageio.ImageIO.read (input);
-		} catch (IOException e) {
-			logger.error(e,e);
+		} catch (IOException details) {
+			LOGGER.error(details.getMessage(), details);
 			return null;
 		}
 		return ImageProcessingUtils.convertRenderedImage(renderedImage);

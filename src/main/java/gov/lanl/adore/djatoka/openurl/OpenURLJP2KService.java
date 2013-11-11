@@ -21,6 +21,8 @@
 
 package gov.lanl.adore.djatoka.openurl;
 
+import info.freelibrary.djatoka.view.IdentifierResolver;
+
 import gov.lanl.adore.djatoka.DjatokaDecodeParam;
 import gov.lanl.adore.djatoka.DjatokaException;
 import gov.lanl.adore.djatoka.DjatokaExtractProcessor;
@@ -67,7 +69,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
     private static Logger LOGGER = LoggerFactory
 	    .getLogger(OpenURLJP2KService.class);
-    private static final String DEFAULT_IMPL_CLASS = SimpleListResolver.class
+    private static final String DEFAULT_IMPL_CLASS = IdentifierResolver.class
 	    .getCanonicalName();
     private static final String PROPS_REQUESTER = "requester";
     private static final String PROPS_REFERRING_ENTITY = "referringEntity";

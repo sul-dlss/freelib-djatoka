@@ -4,36 +4,76 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>info.freelibrary</groupId>
 	<artifactId>freelib-djatoka</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>1.1.2-SNAPSHOT</version>
 	<name>FreeLibrary Djatoka</name>
 	<packaging>war</packaging>
-	<description>A repackaging of aDORe-Djatoka to work with Maven/Jetty</description>
+	<description>A fork of aDORe-Djatoka designed to work with Maven/Jetty and to address some other issues (caching, JDK support, etc.)</description>
 	<inceptionYear>20110701</inceptionYear>
+	<!--
+		Project properties:
+		
+		These are the things you'll probably want to adjust.  It's best practice not
+		to change this file but to use a Maven settings.xml file (which can be at
+		${MAVEN_HOME}/conf/settings.xml or ${USER_HOME}/.m2/settings.xml).
+		
+		Change the property value in there and you'll override the values that are
+		configured below...  A sample skeleton settings.xml file is provided in
+		src/main/resources if you want to copy it into a place where it will be read.
+	-->
+	<properties>
+		<!-- The port Jetty should run at -->
+		<jetty.port>8888</jetty.port>
+
+		<!-- The types of files you want to ingest -->
+		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
+		<!-- The source image file system from which to ingest/convert images -->
+		<djatoka.ingest.data>${project.basedir}/src/test/resources/images</djatoka.ingest.data>
+		<!-- Where the JP2s should be stored -->
+		<djatoka.jp2.data>${project.basedir}/target/images</djatoka.jp2.data>
+		<!-- The cache the OpenURL system uses when it creates an object -->
+		<openurl.cache.dir>${project.basedir}/target/tmpcache</openurl.cache.dir>
+		<!-- Separate cache used for the permanent pairtree storage system -->
+		<djatoka.view.cache>${project.basedir}/target/cache</djatoka.view.cache>
+		<!-- Max TIFF file size allowed for ingest (specified in MB) -->
+		<djatoka.ingest.maxSize>900</djatoka.ingest.maxSize>
+		<!-- Supported: "", "sLUM", "sRGB", "sYCC", "iccLUM" or "iccRGB" -->
+		<djatoka.ingest.color.space>sRGB</djatoka.ingest.color.space>
+
+		<!-- List of image sources (used when a URL is passed in) -->
+		<djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$
+			^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
+		<!-- List of image source guesses (used when ID can't be otherwise resolved) -->
+		<djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view
+			http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
+
+		<!-- You shouldn't need to set anything below here; these are generic -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<console.log>false</console.log>
+	</properties>
 	<dependencies>
-		<!-- below only for internal image reports -->
+		<!-- Below only for internal image reports -->
 		<dependency>
 			<groupId>org.im4java</groupId>
 			<artifactId>im4java</artifactId>
 			<version>1.2.0</version>
 		</dependency>
-		<!-- above only for internal image reports -->
-		<!-- below for openurl -->
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<version>2.5.D1</version>
-		</dependency>
-		<!-- above for openurl -->
+		<!-- Above only for internal image reports -->
 		<dependency>
 			<groupId>info.freelibrary</groupId>
 			<artifactId>freelib-utils</artifactId>
-			<version>0.3.0</version>
-		</dependency>	
+			<version>0.4.0</version>
+		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.0.13</version>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.3.03</version>
+		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>
@@ -55,20 +95,20 @@
 			<version>1.4</version>
 		</dependency>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.8</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.5</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>websocket-servlet</artifactId>
+			<version>9.0.5.v20130815</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>9.0.5.v20130815</version>
 		</dependency>
 		<dependency>
 			<groupId>kdu</groupId>
@@ -111,72 +151,26 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<groupId>info.freelibrary</groupId>
-				<artifactId>llp2jlp-maven-plugin</artifactId>
-				<version>0.0.3</version>
-				<executions>
-					<execution>
-						<id>native-copy</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>8.1.2.v20120308</version>
+				<version>3.1</version>
 				<configuration>
-					<connectors>
-						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-							<port>8888</port>
-							<maxIdleTime>60000</maxIdleTime>
-						</connector>
-					</connectors>
-					<stopKey>cough</stopKey>
-					<stopPort>8999</stopPort>
-					<scanIntervalSeconds>0</scanIntervalSeconds>
-					<requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
-						<filename>target/yyyy_mm_dd.request.log</filename>
-						<retainDays>30</retainDays>
-						<append>true</append>
-						<extended>false</extended>
-						<logTimeZone>GMT</logTimeZone>
-					</requestLog>
-					<systemProperties>
-						<systemProperty>
-							<name>org.mortbay.jetty.Request.maxFormContentSize</name>
-							<value>2000000</value>
-						</systemProperty>
-						<systemProperty>
-							<name>logback.configurationFile</name>
-							<value>src/main/resources/logback.xml</value>
-						</systemProperty>
-						<systemProperty>
-							<name>DJATOKA_HOME</name>
-							<value>${project.basedir}</value>
-						</systemProperty>
-						<systemProperty>
-							<name>LD_LIBRARY_PATH</name>
-							<value>${LD_LIBRARY_PATH}</value>
-						</systemProperty>
-						<systemProperty>
-							<name>DYLD_LIBRARY_PATH</name>
-							<value>${project.basedir}/${DYLD_LIBRARY_PATH}</value>
-						</systemProperty>
-						<systemProperty>
-							<name>kakadu.home</name>
-							<value>${project.basedir}/target/lib</value>
-						</systemProperty>
-					</systemProperties>
+					<!-- We now require 1.7 or greater JDK -->
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
+			</plugin>
+			<!-- The jetty plugin is how we run djatoka from within Maven -->
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.0.5.v20130815</version>
 				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-servlets</artifactId>
+						<version>9.0.5.v20130815</version>
+					</dependency>
 					<dependency>
 						<groupId>kdu</groupId>
 						<artifactId>kdu_jni</artifactId>
@@ -198,13 +192,27 @@
 						<scope>system</scope>
 						<systemPath>${project.basedir}/lib/ij.jar</systemPath>
 					</dependency>
-					<dependency>
-						<groupId>org.eclipse.jetty</groupId>
-						<artifactId>jetty-servlets</artifactId>
-						<version>8.1.2.v20120308</version>
-					</dependency>					
 				</dependencies>
+				<configuration>
+					<!-- Putting JVM args in CDATA to prevent wrapping -->
+					<jvmArgs><![CDATA[-Djetty.port=${jetty.port} -Dkakadu.home=${LD_LIBRARY_PATH} -Djava.library.path=${LD_LIBRARY_PATH} -DDJATOKA_HOME=${basedir} -DLD_LIBRARY_PATH=${LD_LIBRARY_PATH} -DDYLD_LIBRARY_PATH=${basedir}/${DYLD_LIBRARY_PATH}]]></jvmArgs>
+					<stopKey>${jetty.stop.key}</stopKey>
+					<stopPort>8993</stopPort>
+					<scanIntervalSeconds>5</scanIntervalSeconds>
+					<!-- Tells Maven process not to wait on the forked Jetty server -->
+					<waitForChild>${console.log}</waitForChild>
+					<!-- Access log -->
+					<requestLog
+						implementation="org.eclipse.jetty.server.NCSARequestLog">
+						<filename>target/yyyy_mm_dd.request.log</filename>
+						<retainDays>30</retainDays>
+						<append>true</append>
+						<extended>false</extended>
+						<logTimeZone>GMT</logTimeZone>
+					</requestLog>
+				</configuration>
 			</plugin>
+			<!-- Plugin that enables running the command line tilecache utility -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -225,28 +233,19 @@
 					</systemProperties>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.16</version>
+				<configuration>
+					<!-- Our integration tests shouldn't be run as unit tests -->
+					<excludes>
+						<exclude>**/*IntegrationTest.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-	<!-- Default settings, here, can be overridden in profiles below -->
-	<!-- Below's can be overridden in ${MAVEN_HOME}/conf/settings.xml -->
-	<properties>
-		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
-		<djatoka.ingest.data>${project.basedir}/src/test/resources/images</djatoka.ingest.data>
-		<djatoka.jp2.data>${project.basedir}/target/images</djatoka.jp2.data>
-		<!-- The cache the OpenURL system uses when it creates an object -->
-		<openurl.cache.dir>${project.basedir}/target/tmpcache</openurl.cache.dir>
-		<!-- Separate cache used for the pairtree storage system -->
-		<djatoka.view.cache>${project.basedir}/target/cache</djatoka.view.cache>
-		<!-- Max TIFF file size for ingest (always specified in MB) -->
-		<djatoka.ingest.maxSize>900</djatoka.ingest.maxSize>
-		<!-- <referent.resolver>gov.lanl.adore.djatoka.openurl.SimpleListResolver</referent.resolver> -->
-		<referent.resolver>info.freelibrary.djatoka.view.IdentifierResolver</referent.resolver>
-		<cache.enabled>true</cache.enabled>
-		<!-- Supported: "", "sLUM", "sRGB", "sYCC", "iccLUM" or "iccRGB" -->
-		<djatoka.ingest.color.space>sRGB</djatoka.ingest.color.space>
-		<!-- If production, uses pairtree fs; else, builds hashmap of jp2 fs + pairtree fs -->
-		<djatoka.is.production>false</djatoka.is.production>
-	</properties>
 	<profiles>
 		<profile>
 			<id>linux-32</id>
@@ -270,8 +269,6 @@
 			</activation>
 			<properties>
 				<LD_LIBRARY_PATH>${project.basedir}/lib/Linux-x86-64</LD_LIBRARY_PATH>
-				<!-- example of overridding a default property -->
-				<!-- <djatoka.data>/usr/local/data/images</djatoka.data> -->
 			</properties>
 		</profile>
 		<profile>
@@ -282,7 +279,9 @@
 				</os>
 			</activation>
 			<properties>
+				<!-- Include both b/c java.library.path is set to LD_LIBRARY_PATH -->
 				<DYLD_LIBRARY_PATH>lib/Mac-x86</DYLD_LIBRARY_PATH>
+				<LD_LIBRARY_PATH>lib/Mac-x86</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
 		<profile>
@@ -333,17 +332,35 @@
 				<LD_LIBRARY_PATH>${project.basedir}/lib/Solaris-Sparcv9</LD_LIBRARY_PATH>
 			</properties>
 		</profile>
+		<!-- Build profile just used on Travis-CI VM to run the integration tests -->
+		<profile>
+			<id>travis</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.16</version>
+						<configuration>
+							<systemPropertyVariables>
+								<jetty.port>${jetty.port}</jetty.port>
+								<pairtree.root>${djatoka.jp2.data}/pairtree_root</pairtree.root>
+							</systemPropertyVariables>
+							<includes>
+								<include>**/*IntegrationTest.java</include>
+							</includes>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>
-
-<!--
-	MAVEN_OPTS="-Djava.library.path=target/lib" mvn jetty:run-exploded
--->
-
-<!--
-	From: mvn dependency:analyze
-	[WARNING] Used undeclared dependencies found:
-	[WARNING]    org.slf4j:slf4j-api:jar:1.6.0:compile
-	[WARNING] Unused declared dependencies found:
-	[WARNING]    jai:mlibwrapper_jai:jar:0.0.0:system
--->

@@ -23,6 +23,9 @@
 
 package gov.lanl.adore.djatoka.kdu.jni;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 import gov.lanl.adore.djatoka.DjatokaDecodeParam;
 import gov.lanl.adore.djatoka.DjatokaException;
 import gov.lanl.adore.djatoka.IExtract;
@@ -45,8 +48,6 @@ import kdu_jni.Kdu_compressed_source;
 import kdu_jni.Kdu_coords;
 import kdu_jni.Kdu_dims;
 
-import org.apache.log4j.Logger;
-
 /**
  * Uses Kakadu Java Native Interface to extract JP2 regions.  
  * This is modified port of the kdu_expand app.
@@ -55,7 +56,7 @@ import org.apache.log4j.Logger;
  */
 public class KduExtractJNI implements IExtract {
 
-	private static Logger logger = Logger.getLogger(KduExtractJNI.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(KduExtractJNI.class);
 	/**
 	 * Returns JPEG 2000 props in ImageRecord
 	 * @param r ImageRecord containing absolute file path of JPEG 2000 image file.
@@ -116,8 +117,8 @@ public class KduExtractJNI implements IExtract {
 			} else {
 				xml = new JP2ImageInfo(new File(r.getImageFile())).getXmlDocs();
 			}
-		} catch (IOException e) {
-			logger.error(e, e);
+		} catch (IOException details) {
+			LOGGER.error(details.getMessage(), details);
 		}
 		return xml;
 	}

@@ -2,7 +2,7 @@ package info.freelibrary.djatoka;
 
 public interface Constants {
 	
-	public static final String PROPERTIES_FILE = "djatoka.properties";
+	public static final String PROPERTIES_FILE = "djatoka-properties.xml";
 
 	public static final String DEFAULT_VIEW_FORMAT = "image/jpeg";
 	

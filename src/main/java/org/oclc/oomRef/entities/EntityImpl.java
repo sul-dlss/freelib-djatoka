@@ -41,7 +41,7 @@ public class EntityImpl implements Entity {
 	}
     
     public Object[] getDescriptors(Class c) {
-        ArrayList list = new ArrayList();
+        ArrayList<Object> list = new ArrayList<Object>();
         for (int i=0; i<descriptors.size(); ++i) {
             Object descriptor = descriptors.get(i);
             if (c.isInstance(descriptor)) {
