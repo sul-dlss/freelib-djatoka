@@ -176,7 +176,7 @@ public class IngestThread extends Thread implements Constants {
                             sourceFileName, next.length() / 1048576);
                 }
 
-                continue; // We're written an error log, move along...
+                continue; // We've written to the error log, move along...
             }
 
             if (!aDest.exists() && !aDest.mkdirs()) {
