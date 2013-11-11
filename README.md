@@ -35,7 +35,7 @@ For the TIFF file system ingest, a batch ingest script is run when the image ser
 
 When files are ingested from the file system, they are put into the PairTree file system (just like files which are ingested with an identifier).  For these files, their path is used as an identifier in the PairTree file system.  These identifiers are prefixed with a "--" to distinguish them from files that are ingested with an explicit identifier.
 
-All identifiers (implicit or explicit) must be URL encoded.  So, for instance, a file named "ms0332\_gra\_21503" in the root directory of the TIFF folder would be accessed as a standard sized image from the browser using the path: "http://localhost:8888/view/image/--%2Fms0332\_gra\_21503".  A file with the path "tickets/ms0332\_gra\_21350" would be accessed as a standard sized image from the browser using the path: "http://localhost:8888/view/image/--%2Ftickets%2Fms0332\_gra\_21350".
+All identifiers (implicit or explicit) must be URL encoded.  So, for instance, a file named "ms0332\_gra\_21503" in the root directory of the TIFF folder would be accessed as a standard sized image from the browser using the path: "http://localhost:8888/view/image/--%2Fms0332\_gra\_21503".  A file with the file system path of "tickets/ms0332\_gra\_21350" would be accessed as a standard sized image from the browser using the path: "http://localhost:8888/view/image/--%2Ftickets%2Fms0332\_gra\_21350".
 
 Files can also be ingested from the file system with an explicit identifier.  There is an ingest script that makes this easier.  This script will take a CSV file with information about the image files to be ingested, and their identifiers, and converts the TIFFs into JP2s, copying the resulting JP2s into the PairTree file system using the supplied identifiers.  The format of the CSV file (using ARKs as example identifiers) is:
 
@@ -65,19 +65,22 @@ Like the other configuration options above, it's recommended to override these i
 
 What these two configuration options do is provide a way to extract identifiers from external systems that expose them through URL patterns.  So, in the examples above, Islandora object IDs are embedded in the URL.  The first, `djatoka.ingest.sources`, takes a URL with an embedded regular expression representing the identifier.  When a resolvable URL that matches the pattern is supplied to FreeLib-Djatoka, the identifier is extracted as passed into download process so that the JP2 can be stored in the PairTree file system using that identifier.  Subsequent requests to FreeLib-Djatoka can then be made using the identifier.
 
-The second configuration option will check incoming identifiers against known URL patterns.  They are first checked against identifiers in the system, of course, but if they can't be found they are then checked against known URL patterns in the hope that a resolvable image will be found (and can be downloaded and stored).  Both `djatoka.ingest.sources` and `djatoka.ingest.guesses` can take multiple, whitespace-delimited patterns.  The first configuration option includes a regular expression pattern and the second includes a simple pair of curly braces (e.g., {}) where the identifier would be found.  These patterns are only really useful if the embedded identifiers are unique.  I don't think, for instance, that the LoC patterns above represent standalone identifiers, but it's included as djatoka's standard test item.
+The second configuration option will check incoming identifiers against known URL patterns.  They are first checked against identifiers in the system, of course, but if they can't be found they are then checked against known URL patterns in the hope that a resolvable image will be found (and can be downloaded and stored).
+
+Both `djatoka.ingest.sources` and `djatoka.ingest.guesses` can take multiple, whitespace-delimited patterns.  The first configuration option includes a regular expression pattern and the second includes a simple pair of curly braces (e.g., {}) where the identifier would be found.  These patterns are only really useful if the embedded identifiers are unique.  I don't think, for instance, that the LoC patterns above represent standalone identifiers, but it's included as djatoka's standard test item.
 
 ### Tile Cache Utilities
 
 Something that I added for the GDAO project but never documented was the tile pre-generation utility.  It can be run from the command line to pre-generate tiles for images listed in a CSV file.  You pass in the CSV file containing the IDs of the images (and titles, etc.), and the OpenSeadragon tiles will be auto-magically generated for you.  Run it by typing:
 
-    mvn exec:java -Dexec.mainClass="info.freelibrary.djatoka.TileCache" -Dexec.args="src/test/resources/id_map.csv 2"
+    mvn exec:java -Dexec.mainClass="info.freelibrary.djatoka.TileCache" \
+    -Dexec.args="src/test/resources/id_map.csv 2"
 
 The "exec.args" would of course be changed to your CSV file and the position of the ID in the (1-based) column order (i.e., start counting columns at 1 not 0) of the CSV file.
 
 ### Running freelib-djatoka at Port 80
 
-By default, FreeLib-Djatoka runs at port 8888.  Because it can handle cross origin requests, it doesn't need to be put behind an Apache proxy.  If it needs to be run at port 80 for firewall, or other reasons, this can be accomplished on a Linux system through ipchains or iptables:
+By default, FreeLib-Djatoka runs at port 8888.  Because it can handle cross origin requests, it doesn't need to be put behind an Apache proxy.  If it needs to be run at port 80 for institutional firewall or other reasons, this can be accomplished on a Linux system through ipchains or iptables:
 
     /sbin/ipchains -I input --proto TCP --dport 80 -j REDIRECT 8888
 

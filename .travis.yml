@@ -6,7 +6,7 @@ jdk:
 
 branches:
   only:
-    - fedora
+    - master
 
 install: "mvn -DskipTests=true install"
 
