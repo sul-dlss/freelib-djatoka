@@ -37,7 +37,7 @@ When files are ingested from the file system, they are put into the PairTree fil
 
 All identifiers (implicit or explicit) must be URL encoded.  So, for instance, a file named "ms0332\_gra\_21503" in the root directory of the TIFF folder would be accessed as a standard sized image from the browser using the path: "http://localhost:8888/view/image/--%2Fms0332\_gra\_21503".  A file with the file system path of "tickets/ms0332\_gra\_21350" would be accessed as a standard sized image from the browser using the path: "http://localhost:8888/view/image/--%2Ftickets%2Fms0332\_gra\_21350".
 
-Files can also be ingested from the file system with an explicit identifier.  There is an ingest script that makes this easier.  This script will take a CSV file with information about the image files to be ingested, and their identifiers, and converts the TIFFs into JP2s, copying the resulting JP2s into the PairTree file system using the supplied identifiers.  The format of the CSV file (using ARKs as example identifiers) is:
+Files can also be ingested from the file system with an explicit identifier.  There is an ingest script that makes this easier.  This script will take a CSV file with TIFF image paths and identifiers and convert the TIFFs into JP2s.  It then copies the JP2s into the PairTree structure using the identifiers.  The format of the CSV file (using ARKs as example identifiers) is:
 
     "/usr/local/data/images/tiffs/HERB GREENE/ms0334_pho_0031.tif","ark:/38305/g4bp04wm/is/1"
     "/usr/local/data/images/tiffs/HERB GREENE/ms0334_pho_0032.tif","ark:/38305/g46w9d66/is/1"
