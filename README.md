@@ -1,6 +1,6 @@
 # FreeLib-Djatoka
 
-This project is a fork of the aDORe-djatoka JP2 image server.  It was created in an attempt to simplify the image server's use.  In the process, additional caching and image management options were added.  The OpenSeadragon UI was also added as the project's preferred user interface.  The FreeLib-Djatoka image server can be used on its own or it can be integrated into an external digital asset management system.  It's currently tested with Islandora.
+This project is a fork of the aDORe-djatoka JP2 image server.  It was created to simplify the image server's use.  In the process, additional caching and image management options were added.  The OpenSeadragon UI was also added as the project's preferred user interface.  The FreeLib-Djatoka image server can be used on its own or it can be integrated into an external digital asset management system.  It's currently tested with Islandora.
 
 The freelib-djatoka project can be used with any JDK (OpenJDK or OracleJDK), 1.7 or later.
 
@@ -47,13 +47,14 @@ The script to run the ingest process is:
     mvn exec:java -Dexec.mainClass="org.gdao.metadata.FileCopy" \
     -Dexec.args="/usr/local/data/ARK_MAP_2.csv /usr/local/data/images/jp2s"
 
-It should be run from witihn the project's base directory.  If the CSV file contains references to TIFFs in the `djatoka.ingest.data` directory, and the batch ingest script is also run, JP2s will exist in the PairTree structure in two different locations: at their path based identifier and at their file supplied identifier.  There is no problem with this; it's just worth mentioning... It's also worth mentioning that neither the batch ingest nor the ingest script need to be used in order to use FreeLib-Djatoka.  The other option is to use the on-demand image ingest.
+It should be run from within the project's base directory.  If the CSV file contains references to TIFFs in the `djatoka.ingest.data` directory, and the batch ingest script is also run, JP2s will exist in the PairTree structure in two different locations: at their path based identifier and at their file supplied identifier.  There is no problem with this; it's just worth mentioning... It's also worth mentioning that neither the batch ingest nor the ingest script need to be used in order to use FreeLib-Djatoka.  The other option is to use the on-demand image ingest.
 
-The on-demand image ingest is an extension of the file loading mechanism that was built in to the original aDORe-djatoka.  By giving aDORe-djatoka an HTTP protocol URL, images (e.g., JPEG, PNG, JP2, etc.) could be loaded into the image server and then served up through subsequent requests.  This is still true with FreeLib-Djatoka but an extra parsing mechanism has been added to optionally store these JP2 images in the PairTree structure.  This is accomplished through two configuration options in the pom.xml file:
+The on-demand image ingest is an extension of the file loading mechanism that was built in to the original aDORe-djatoka.  By giving aDORe-djatoka an HTTP protocol URL, images (e.g., JPEG, PNG, JP2, etc.) could be loaded into the image server and then served up through subsequent requests.  This is still true with FreeLib-Djatoka, but an extra identifier parsing mechanism has been added to optionally store these JP2 images in the PairTree structure.  This is accomplished through two configuration options in the pom.xml file:
 
     <!-- List of image sources (used when a URL is passed in) -->
     <djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$
     ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
+
     <!-- List of image source guesses (used when ID can't be otherwise resolved) -->
     <djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view
     http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
@@ -62,7 +63,7 @@ Like the other configuration options above, it's recommended to override these i
 
 What these two configuration options do is provide a way to extract identifiers from external systems that expose them through URL patterns.  So, in the examples above, Islandora object IDs are embedded in the URL.  The first, `djatoka.ingest.sources`, takes a URL with an embedded regular expression representing the identifier.  When a resolvable URL that matches the pattern is supplied to FreeLib-Djatoka, the identifier is extracted as passed into download process so that the JP2 can be stored in the PairTree file system using that identifier.  Subsequent requests to FreeLib-Djatoka can then be made using the identifier.
 
-The second configuration option will check incoming identifiers against known URL patterns.  They are first checked against identifiers in the system, of course, but if they can't be found they are then checked against known URL patterns in the hope that a resolvable image will be found (and can be downloaded and stored).  Both `djatoka.ingest.sources` and `djatoka.ingest.guesses` can take multiple whitespace-delimited patterns.  The first configuration option includes a regular expression pattern and the second includes a simple pair of curly braces (e.g., {}) where the identifier would be found.  These patterns are only really useful if the embedded identifiers are unique.  I don't think, for instance, that the LoC patterns above represent standalone identifiers.
+The second configuration option will check incoming identifiers against known URL patterns.  They are first checked against identifiers in the system, of course, but if they can't be found they are then checked against known URL patterns in the hope that a resolvable image will be found (and can be downloaded and stored).  Both `djatoka.ingest.sources` and `djatoka.ingest.guesses` can take multiple, whitespace-delimited patterns.  The first configuration option includes a regular expression pattern and the second includes a simple pair of curly braces (e.g., {}) where the identifier would be found.  These patterns are only really useful if the embedded identifiers are unique.  I don't think, for instance, that the LoC patterns above represent standalone identifiers, but it's included as djatoka's standard test item.
 
 ### Tile Cache Utilities
 
