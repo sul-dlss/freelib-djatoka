@@ -28,7 +28,7 @@ When you want to stop the server, type the following from within the project's b
 
 ### Image Ingest
 
-FreeLib-Djatoka can load its images in two different ways.  The first is by loading TIFF images from the file system (and converting them into JP2s).  The second is by loading images on-demand, as they are requested through the Web interface.  Images loaded on-demand can either be images to convert into JP2s or JP2 images that are ready to be served in the OpenSeadragon interface.
+FreeLib-Djatoka can load its images in two different ways.  The first is by loading TIFF images from the file system (and converting them into JP2s).  The second is by loading images on-demand, as they are requested through the Web interface.  Images loaded on-demand can either be images to convert into JP2s or JP2 images that are ready to be served in the OpenSeadragon interface (like JP2s from Islandora).
 
 There are four configuration options related to image ingest in the project's pom.xml file.  To override these, it's best to create a new (or modify an existing) settings.xml file and assign new values to the properties in there.  Details about Maven's [settings.xml file](http://maven.apache.org/settings.html "Maven's settings.xml file") can be found on the Maven website.  The properties that should be added to the settings.xml file are:
 
