@@ -6,7 +6,15 @@ The freelib-djatoka project can be used with any JDK (OpenJDK or OracleJDK), 1.7
 
 ### Getting Started
 
-To run freelib-djatoka, just download (or clone) the project, change into the project's directory, and type:
+To run freelib-djatoka, just [download](https://github.com/ksclarke/freelib-djatoka/archive/master.zip) (and unzip) or clone the project:
+
+    git clone https://github.com/ksclarke/freelib-djatoka.git
+
+Change into the project's base directory:
+
+    cd freelib-djatoka
+
+And run Maven by typing:
 
     mvn jetty:run-forked
 
