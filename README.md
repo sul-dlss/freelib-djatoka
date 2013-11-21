@@ -22,7 +22,7 @@ That's it.  You should then be able to go to the freelib-djatoka test page to co
 
     http://localhost:8888
 
-When you want to stop the server, type the following from within the project's directory:
+When you want to stop the server, type the following from within the project's base directory:
 
     mvn jetty:stop
 
