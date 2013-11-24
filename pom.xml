@@ -23,7 +23,10 @@
 	<properties>
 		<!-- The port Jetty should run at -->
 		<jetty.port>8888</jetty.port>
+		<!-- Key used to stop jetty; this should be overridden in settings.xml -->
 		<jetty.stop.key>cough</jetty.stop.key>
+		<!-- Jetty version -->
+		<jetty.version>9.1.0.M0</jetty.version>
 
 		<!-- The types of files you want to ingest -->
 		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
@@ -104,12 +107,12 @@
 		<dependency>
 			<groupId>org.eclipse.jetty.websocket</groupId>
 			<artifactId>websocket-servlet</artifactId>
-			<version>9.0.5.v20130815</version>
+			<version>${jetty.version}</version>
 		</dependency>		
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
-			<version>9.0.5.v20130815</version>
+			<version>${jetty.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>kdu</groupId>
@@ -165,12 +168,12 @@
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.0.5.v20130815</version>
+				<version>${jetty.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.eclipse.jetty</groupId>
 						<artifactId>jetty-servlets</artifactId>
-						<version>9.0.5.v20130815</version>
+						<version>${jetty.version}</version>
 					</dependency>
 					<dependency>
 						<groupId>kdu</groupId>

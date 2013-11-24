@@ -19,7 +19,7 @@ import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.StatusCode;
 import org.eclipse.jetty.websocket.api.Session;
 
-@WebSocket(maxMessageSize = 64 * 1024)
+@WebSocket
 public class LogSocket {
 
     private static final Logger LOGGER = LoggerFactory
