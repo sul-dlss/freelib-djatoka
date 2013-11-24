@@ -26,7 +26,7 @@
 		<!-- Key used to stop jetty; this should be overridden in settings.xml -->
 		<jetty.stop.key>cough</jetty.stop.key>
 		<!-- Jetty version -->
-		<jetty.version>9.1.0.M0</jetty.version>
+		<jetty.version>9.0.4.v20130625</jetty.version>
 
 		<!-- The types of files you want to ingest -->
 		<djatoka.ingest.exts>tiff,tif</djatoka.ingest.exts>
