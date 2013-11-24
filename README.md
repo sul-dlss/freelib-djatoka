@@ -1,8 +1,8 @@
 # FreeLib-Djatoka
 
-This project is a fork of the aDORe-djatoka JP2 image server.  It was created to simplify the image server's use.  In the process, additional caching and image management options were added.  The OpenSeadragon UI was also added as the project's preferred user interface (see the default page for an example of its use).  FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system.  It's currently tested with Islandora.
+This project is a fork of the aDORe-djatoka JP2 image server.  It was created to simplify the image server's use.  In the process, additional caching and image management options were added.  The OpenSeadragon UI was also added as the project's preferred user interface (see the default page for an example of its use).  FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system.  It's currently tested against Islandora.
 
-The freelib-djatoka project requires OpenJDK (or OracleJDK), 1.7 or later, and Maven, 3.x or later.
+OpenJDK (or OracleJDK), 1.7 or later, and Maven, 3.x or later, are required to run the Freelib-Djatoka server.
 
 ### Getting Started
 
