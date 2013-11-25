@@ -19,14 +19,21 @@
 	$.DjTileSource = function(djatoka, imageID) {
 		var iiifNS = 'http://library.stanford.edu/iiif/image-api/ns/';
 		var xml, wNode, hNode, width, height;
-		var http = new XMLHttpRequest();
 		var tileOverlap = 0;
 		var tileSize = 256;
 		var minLevel, maxLevel; // handled in TileSource
+		var http;
 
 		this.baseURL = djatoka + "zoom/";
 		this.imageID = imageID;
 
+		if (typeof XDomainRequest != 'undefined') { /** Use IE **/
+			http = new XDomainRequest();
+		}
+		else { /** Use a real browser **/
+			http = new XMLHttpRequest();
+		}
+		
 		http.open('GET', djatoka + "image/" + imageID + "/info.xml", false);
 		http.send();
 

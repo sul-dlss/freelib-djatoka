@@ -1,4 +1,7 @@
+
 package info.freelibrary.djatoka.view;
+
+import java.io.UnsupportedEncodingException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,100 +20,116 @@ public class ImageInfo implements IIIFInterface {
     private Document myInfoDoc;
 
     public ImageInfo(String aID, int aHeight, int aWidth) {
-	Element id = new Element("identifier", IIIF_NS);
-	Element height = new Element("height", IIIF_NS);
-	Element width = new Element("width", IIIF_NS);
-	Element root = new Element("info", IIIF_NS);
+        Element id = new Element("identifier", IIIF_NS);
+        Element height = new Element("height", IIIF_NS);
+        Element width = new Element("width", IIIF_NS);
+        Element root = new Element("info", IIIF_NS);
 
-	width.appendChild(Integer.toString(aWidth));
-	height.appendChild(Integer.toString(aHeight));
-	id.appendChild(aID);
+        width.appendChild(Integer.toString(aWidth));
+        height.appendChild(Integer.toString(aHeight));
+        id.appendChild(aID);
 
-	myInfoDoc = new Document(root);
-	root.appendChild(id);
-	root.appendChild(width);
-	root.appendChild(height);
+        myInfoDoc = new Document(root);
+        root.appendChild(id);
+        root.appendChild(width);
+        root.appendChild(height);
     }
 
     public String getIdentifier() {
-	return getValue("identifier");
+        return getValue("identifier");
     }
 
     public int getHeight() {
-	return Integer.parseInt(getValue("height"));
+        return Integer.parseInt(getValue("height"));
     }
 
     public int getWidth() {
-	return Integer.parseInt(getValue("width"));
+        return Integer.parseInt(getValue("width"));
     }
 
     public void addFormat(String aFormat) {
-	Element root = myInfoDoc.getRootElement();
-	Elements elements = root.getChildElements("formats", IIIF_NS);
-	Element format = new Element("format", IIIF_NS);
-	Element formats;
+        Element root = myInfoDoc.getRootElement();
+        Elements elements = root.getChildElements("formats", IIIF_NS);
+        Element format = new Element("format", IIIF_NS);
+        Element formats;
 
-	if (elements.size() > 0) {
-	    formats = elements.get(0);
-	}
-	else {
-	    formats = new Element("formats", IIIF_NS);
-	    root.appendChild(formats);
-	}
+        if (elements.size() > 0) {
+            formats = elements.get(0);
+        } else {
+            formats = new Element("formats", IIIF_NS);
+            root.appendChild(formats);
+        }
 
-	format.appendChild(aFormat);
-	formats.appendChild(format);
+        format.appendChild(aFormat);
+        formats.appendChild(format);
     }
 
     public List<String> getFormats() {
-	return getValues("format");
+        return getValues("format");
     }
 
     public String toXML() {
-	return myInfoDoc.toXML();
+        return myInfoDoc.toXML();
     }
 
     public String toString() {
-	return myInfoDoc.toXML();
+        return myInfoDoc.toXML();
     }
 
     public String toJSON() {
-	throw new UnsupportedOperationException("toJSON() not yet implemented");
+        throw new UnsupportedOperationException("toJSON() not yet implemented");
     }
 
-    public void toStream(OutputStream aOutStream) throws IOException {
-	new Serializer(aOutStream).write(myInfoDoc);
+    public void toStream(OutputStream aOutputStream) throws IOException {
+        Serializer serializer = new IESerializer(aOutputStream);
+        serializer.write(myInfoDoc);
     }
 
     private List<String> getValues(String aName) {
-	ArrayList<String> list = new ArrayList<String>();
-	Element root = myInfoDoc.getRootElement();
-	Elements elements = root.getChildElements();
+        ArrayList<String> list = new ArrayList<String>();
+        Element root = myInfoDoc.getRootElement();
+        Elements elements = root.getChildElements();
 
-	for (int eIndex = 0; eIndex < elements.size(); eIndex++) {
-	    Element element = elements.get(eIndex);
-	    Elements children = element.getChildElements(aName, IIIF_NS);
+        for (int eIndex = 0; eIndex < elements.size(); eIndex++) {
+            Element element = elements.get(eIndex);
+            Elements children = element.getChildElements(aName, IIIF_NS);
 
-	    if (children.size() > 0) {
-		for (int cIndex = 0; cIndex < children.size(); cIndex++) {
-		    list.add(children.get(cIndex).getValue());
-		}
+            if (children.size() > 0) {
+                for (int cIndex = 0; cIndex < children.size(); cIndex++) {
+                    list.add(children.get(cIndex).getValue());
+                }
 
-		break;
-	    }
-	}
+                break;
+            }
+        }
 
-	return list;
+        return list;
     }
 
     private String getValue(String aName) {
-	Element root = myInfoDoc.getRootElement();
-	Elements elements = root.getChildElements(aName, IIIF_NS);
+        Element root = myInfoDoc.getRootElement();
+        Elements elements = root.getChildElements(aName, IIIF_NS);
 
-	if (elements.size() > 0) {
-	    return elements.get(0).getValue();
-	}
+        if (elements.size() > 0) {
+            return elements.get(0).getValue();
+        }
 
-	return null;
+        return null;
+    }
+
+    private class IESerializer extends Serializer {
+
+        public IESerializer(OutputStream aOutputStream) {
+            super(aOutputStream);
+        }
+
+        public IESerializer(OutputStream aOutputStream, String aEncoding)
+                throws UnsupportedEncodingException {
+            super(aOutputStream, aEncoding);
+        }
+        
+        public void writeXMLDeclaration() {
+            // Don't output because IE 8 and 9 don't like it (*dramatic sigh*)
+        }
     }
 }
