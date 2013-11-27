@@ -17,48 +17,50 @@
 	 *            imageID
 	 */
 	$.DjTileSource = function(djatoka, imageID) {
-		var iiifNS = 'http://library.stanford.edu/iiif/image-api/ns/';
-		var xml, wNode, hNode, width, height;
+		var xml, wItems, wNode, hItems, hNode, w, h;
 		var tileOverlap = 0;
 		var tileSize = 256;
-		var minLevel, maxLevel; // handled in TileSource
-		var http;
+		var minLev, maxLev; // handled in TileSource
+		var http, text;
 
 		this.baseURL = djatoka + "zoom/";
 		this.imageID = imageID;
 
-		if (typeof XDomainRequest != 'undefined') { /** Use IE **/
+		// If we're using a IE < 10, use XDomainRequest, else XMLHttpRequest
+		if (typeof XDomainRequest != 'undefined' && !window.atob) {
 			http = new XDomainRequest();
-		}
-		else { /** Use a real browser **/
+			http.open('GET', djatoka + "image/" + imageID + "/info.xml");
+			/* Spent too much time trying to get http.onload to work for IE */
+		} else {
 			http = new XMLHttpRequest();
+			http.open('GET', djatoka + "image/" + imageID + "/info.xml", false);
 		}
-		
-		http.open('GET', djatoka + "image/" + imageID + "/info.xml", false);
-		http.send();
 
 		try {
+			http.send();
 			text = http.responseText;
 
-		    if (window.DOMParser) {
-		      parser=new DOMParser();
-		      xml=parser.parseFromString(text,"text/xml");
-		    }
-		    else {
-		      xml=new ActiveXObject("Microsoft.XMLDOM");
-		      xml.async=false;
-		      xml.loadXML(text);
-		    }
+			/* Hacky workaround to get IE's async XDomainRequest to work */
+			/* It's deprecated anyway; I want to implement the IIIF interface */
+			if (text == '') {
+				alert('Older versions of Internet Explorer are only partially supported.\nPlease consider upgrading your browser.');
+				text = http.responseText;
+			}
 
-			wNode = xml.getElementsByTagNameNS(iiifNS, 'width').item(0).childNodes[0];
-			hNode = xml.getElementsByTagNameNS(iiifNS, 'height').item(0).childNodes[0];
-			width = parseInt(wNode.nodeValue);
-			height = parseInt(hNode.nodeValue);
+			parser = new DOMParser();
+			xml = parser.parseFromString(text, "text/xml");
+
+			wNodes = xml.getElementsByTagName('width');
+			wNode = wNodes[0].childNodes[0];
+			hNodes = xml.getElementsByTagName('height');
+			hNode = hNodes[0].childNodes[0];
+			w = parseInt(wNode.nodeValue);
+			h = parseInt(hNode.nodeValue);
 		} catch (details) {
 			throw "Exception: Can't set width and height when image doesn't exist";
 		}
-		$.TileSource.call(this, width, height, tileSize, tileOverlap, minLevel,
-				maxLevel);
+
+		$.TileSource.call(this, w, h, tileSize, tileOverlap, minLev, maxLev);
 	};
 
 	$.extend($.DjTileSource.prototype, $.TileSource.prototype, {
