@@ -15,8 +15,9 @@ before_script: "cp src/main/resources/sample-settings.xml ${HOME}/.m2/settings.x
 
 script:
   - sudo cp -r ../freelib-djatoka /opt
+  - sudo ls -l /opt
+  - sudo cat /var/log/djatoka-console.log
   - sudo etc/init.d/djatoka start
-  - sleep 30
   - test "200" == $(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8888/health")
   - mvn -Ptravis install
 
