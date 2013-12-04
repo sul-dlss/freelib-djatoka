@@ -1,0 +1,141 @@
+#!/bin/bash
+#-----------------------------------------------------
+# djatoka-initd v0.0.1
+#-----------------------------------------------------
+# Script for running djatoka as a service under initd.
+#
+# Usage: service djatoka {start|stop|restart|status}"
+#-----------------------------------------------------
+# Author: Kevin S. Clarke <ksclarke@gmail.com>
+# URL: https://github.com/ksclarke/freelib-djatoka
+#-----------------------------------------------------
+### BEGIN INIT INFO
+# Provides: djatoka
+# Required-Start:
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: init script for djatoka image server
+# Description: An init script to be copied to /etc/init.d
+### END INIT INFO
+
+
+# Things that need to be properly configured at the system level before running:
+#   1) That the Java JDK (not just JRE) is installed and that JAVA_HOME is set
+#   2) That Maven 3 is installed and that the executable (mvn) is in the PATH
+
+# Configs that might need to be changed to fit your local system's setup
+DJATOKA_HOME="/opt/freelib-djatoka"
+
+MAVEN_OPTIONS=""
+#MAVEN_OPTIONS="-Xmx1024m"
+
+# Find out what Linux distribution we're running under
+DISTRIB_ID=`lsb_release -i |awk ' { print $3 }'`
+
+# Give the Web user a shell to run `mvn` from (most don't have this by default)
+TMPSHELL="-s /bin/bash"
+
+# Try to correctly set the user who should be used to run the server
+if [[ $TRAVIS == 'true' ]]; then
+	DJATOKA_USER=$USER
+	MVN_PROFILE="-Ptravis"
+elif [ $DISTRIB_ID == 'RedHatEnterpriseServer' ] \
+	|| [ $DISTRIB_ID == 'RedHat' ] \
+	|| [ $DISTRIB_ID == 'Fedora' ] \
+	|| [ $DISTRIB_ID == 'CentOS' ]; then
+	DJATOKA_USER="apache"
+elif [ $DISTRIB_ID == 'Ubuntu' ] \
+	|| [ $DISTRIB_ID == 'Debian' ]; then
+	DJATOKA_USER="www-data"
+else
+	echo "Running Djatoka as the '$(id -u -n)' user"
+	DJATOKA_USER="$(id -u -n)"
+fi
+
+# Find the mvn executable from the system path
+MVNCMD=`which mvn`
+
+# Configs that shouldn't need to be changed
+DJATOKA_START_CMD="sudo -u ${DJATOKA_USER} MAVEN_OPTS=${MAVEN_OPTIONS} $TMPSHELL $MVNCMD $MVN_PROFILE jetty:run-forked"
+DJATOKA_STOP_CMD="sudo -u ${DJATOKA_USER} $MVNCMD -q jetty:stop"
+
+DJATOKA_PIDFILE=/var/run/djatoka.pid
+DJATOKA_LOGFILE=/var/log/djatoka-console.log
+
+if [[ -z $MVNCMD ]]; then
+	echo "Can't find Maven's mvn executable" >> $DJATOKA_LOGFILE && exit 1
+fi
+
+# Check if we're running from our own directory
+if [ ! -f ${DJATOKA_HOME}/pom.xml ]; then
+	if [ -f ./pom.xml ]; then
+		DJATOKA_HOME=`pwd`
+	else
+		echo "Can't find $DJATOKA_HOME" >> $DJATOKA_LOGFILE && exit 1
+	fi
+fi
+
+case $1 in
+start)
+	eval cd ~$DJATOKA_USER
+
+	if [ ! -f .m2 ]; then
+		mkdir -p .m2/repository
+		chown -R $DJATOKA_USER:$DJATOKA_USER .m2
+	fi
+
+	STARTED=false
+	cd $DJATOKA_HOME
+	nohup $DJATOKA_START_CMD > $DJATOKA_LOGFILE 2>&1 &
+	# Maven forks Jetty; wait for Maven's exit before looking for Jetty
+	wait $!
+	# Now we should be able to find the Jetty process (if it exists)
+	PID=`pgrep -f freelib-djatoka`
+
+	# We remove one line below with sed because it contains `ps` labels
+	# Then, the process is running as long as command below returns a 1
+	while [ `ps -p$PID -o pid | sed "1 d" | wc -l` != 0 ];
+	do
+		if grep -q "BUILD SUCCESS" $DJATOKA_LOGFILE; then
+			echo $PID > $DJATOKA_PIDFILE
+			STARTED=true
+			break
+		fi
+
+		sleep 1
+	done
+
+	if $STARTED ; then
+		echo "Djatoka successfully started"
+	else
+		wait $PID
+
+		if [[ $? != 0 ]]; then
+			echo "Failed to start Djatoka"
+			echo "  Consult the log for more details: $DJATOKA_LOGFILE"
+		fi
+	fi
+	;;
+stop)
+	cd $DJATOKA_HOME
+	$DJATOKA_STOP_CMD
+	rm -f $DJATOKA_PIDFILE
+	echo "Djatoka successfully stopped"
+	;;
+restart)
+	$0 stop
+	$0 start
+	;;
+status)
+	if [ -f $DJATOKA_PIDFILE ]; then
+		echo "Djatoka running"
+	else
+		echo "Djatoka stopped"
+	fi
+	;;
+*)
+	echo "Usage: $0 {start|stop|restart|status}"
+	exit 3
+	;;
+esac
