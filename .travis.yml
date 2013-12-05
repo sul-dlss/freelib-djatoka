@@ -7,7 +7,6 @@ jdk:
 branches:
   only:
     - master
-    - initd
 
 install: "mvn -DskipTests=true install"
 
