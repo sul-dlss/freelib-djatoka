@@ -1,4 +1,4 @@
-# FreeLib-Djatoka
+# FreeLib-Djatoka [![Build Status](https://travis-ci.org/ksclarke/freelib-djatoka.png?branch=master)](https://travis-ci.org/ksclarke/freelib-djatoka)
 
 This project is a fork of the aDORe-djatoka JP2 image server.  It was created to simplify the image server's use.  In the process, additional caching and image management options were added.  The OpenSeadragon UI was also added as the project's preferred user interface (see the default page for an example of its use).  FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system.  It's currently tested against Islandora.
 
@@ -103,10 +103,6 @@ If you are on a Windows system, you can configure the Jetty server that runs Fre
 ### Future Directions
 
 With all the talk of the PairTree file system above, I should note that FreeLib-Djatoka should also work as a straight aDORe-djatoka replacement.  The original intention of the project was just to make the djatoka server easier to use (and more resistant to crashes and other performance issues).  The project's direction then shifted to providing a different RESTful API from the OpenURL one that aDORe-djatoka provides.  The longer term goal is to have FreeLib-Djatoka support the [International Image Interoperability Framework (IIIF)](http://iiif.io/ "International Image Interoperability Framework"), use the [OpenJPEG JP2 library](http://www.openjpeg.org/ "OpenJPEG"), and also have an easy to use administrative Web interface for managing TIFF and JP2 images.
-
-### Project Status
-
-[![Build Status](https://travis-ci.org/ksclarke/freelib-djatoka.png?branch=fedora)](https://travis-ci.org/ksclarke/freelib-djatoka)
 
 ### License
 

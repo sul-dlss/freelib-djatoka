@@ -5,6 +5,11 @@
 # Script for running djatoka as a service under initd.
 #
 # Usage: service djatoka {start|stop|restart|status}"
+#
+# RHEL/CentOS dependencies:
+#   redhat-lsb (or some package supplying lsb_release)
+# General dependencies:
+#   maven (>=v.3), openjdk (>=1.7)
 #-----------------------------------------------------
 # Author: Kevin S. Clarke <ksclarke@gmail.com>
 # URL: https://github.com/ksclarke/freelib-djatoka
@@ -22,7 +27,7 @@
 
 # Things that need to be properly configured at the system level before running:
 #   1) That the Java JDK (not just JRE) is installed and that JAVA_HOME is set
-#   2) That Maven 3 is installed and that the executable (mvn) is in the PATH
+#   2) That Maven 3 is installed, and that the executable (`mvn`) is in the PATH
 
 # Configs that might need to be changed to fit your local system's setup
 DJATOKA_HOME="/opt/freelib-djatoka"
