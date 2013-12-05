@@ -59,7 +59,7 @@ MVNCMD=`which mvn`
 # Configs that shouldn't need to be changed
 DJATOKA_START_CMD="sudo -u ${DJATOKA_USER} MAVEN_OPTS=${MAVEN_OPTIONS} $TMPSHELL $MVNCMD $BUILD_OPTS jetty:run-forked"
 DJATOKA_STOP_CMD="sudo -u ${DJATOKA_USER} $MVNCMD -q jetty:stop"
-
+echo $DJATOKA_START_CMD
 DJATOKA_PIDFILE=/var/run/djatoka.pid
 DJATOKA_LOGFILE=/var/log/djatoka-console.log
 
