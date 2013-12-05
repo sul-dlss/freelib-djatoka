@@ -39,7 +39,7 @@ TMPSHELL="-s /bin/bash"
 # Try to correctly set the user who should be used to run the server
 if [[ $TRAVIS == 'true' ]]; then
 	DJATOKA_USER=$USER
-	MVN_PROFILE="-Ptravis"
+	BUILD_OPTS="-Dconsole.log=true"
 elif [ $DISTRIB_ID == 'RedHatEnterpriseServer' ] \
 	|| [ $DISTRIB_ID == 'RedHat' ] \
 	|| [ $DISTRIB_ID == 'Fedora' ] \
@@ -57,7 +57,7 @@ fi
 MVNCMD=`which mvn`
 
 # Configs that shouldn't need to be changed
-DJATOKA_START_CMD="sudo -u ${DJATOKA_USER} MAVEN_OPTS=${MAVEN_OPTIONS} $TMPSHELL $MVNCMD $MVN_PROFILE jetty:run-forked"
+DJATOKA_START_CMD="sudo -u ${DJATOKA_USER} MAVEN_OPTS=${MAVEN_OPTIONS} $TMPSHELL $MVNCMD $BUILD_OPTS jetty:run-forked"
 DJATOKA_STOP_CMD="sudo -u ${DJATOKA_USER} $MVNCMD -q jetty:stop"
 
 DJATOKA_PIDFILE=/var/run/djatoka.pid
