@@ -44,7 +44,6 @@ TMPSHELL="-s /bin/bash"
 if [[ $TRAVIS == 'true' ]]; then
 	DJATOKA_USER=$USER
 	DJATOKA_HOME=`pwd`
-	BUILD_OPTS="-Dconsole.log=true"
 	DJATOKA_PIDFILE=djatoka.pid
 	DJATOKA_LOGFILE=djatoka-console.log
 elif [ $DISTRIB_ID == 'RedHatEnterpriseServer' ] \
@@ -64,9 +63,8 @@ fi
 MVNCMD=`which mvn`
 
 # Configs that shouldn't need to be changed
-DJATOKA_START_CMD="sudo -u ${DJATOKA_USER} MAVEN_OPTS=${MAVEN_OPTIONS} $TMPSHELL $MVNCMD $BUILD_OPTS jetty:run-forked"
+DJATOKA_START_CMD="sudo -u ${DJATOKA_USER} MAVEN_OPTS=${MAVEN_OPTIONS} $TMPSHELL $MVNCMD jetty:run-forked"
 DJATOKA_STOP_CMD="sudo -u ${DJATOKA_USER} $MVNCMD -q jetty:stop"
-echo $DJATOKA_START_CMD
 
 if [[ -z $MVNCMD ]]; then
 	echo "Can't find Maven's mvn executable" >> $DJATOKA_LOGFILE && exit 1
@@ -92,6 +90,7 @@ start)
 
 	STARTED=false
 	cd $DJATOKA_HOME
+echo `pwd`
 	nohup $DJATOKA_START_CMD > $DJATOKA_LOGFILE 2>&1 &
 	# Maven forks Jetty; wait for Maven's exit before looking for Jetty
 	wait $!
