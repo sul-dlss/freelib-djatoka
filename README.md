@@ -28,7 +28,7 @@ When you want to stop the server, type the following from within the project's b
 
 ### Running as a System Service on Linux
 
-There is now an init.d script that will allow the Djatoka server to be started and stopped in a standard Linux way. It assumes you've checked out the FreeLib-Djatoka project to /opt/freelibrary-djatoka, that Maven's bin (`mvn`) is on the system $PATH, and that the system's Web user ('apache' on RHEL/CentOS/etc. and 'www-data' on Ubuntu/Debian) has write access to the project directory.  If your system has a different configuration, you will need to adjust the script.
+There is now an init.d script that will allow the Djatoka server to be started and stopped in a standard Linux way. It assumes you've checked out the FreeLib-Djatoka project to /opt/freelib-djatoka, that Maven's bin (`mvn`) is on the system $PATH, and that the system's Web user ('apache' on RHEL/CentOS/etc. and 'www-data' on Ubuntu/Debian) has write access to the project directory.  If your system has a different configuration, you will need to adjust the script.
 
 For what it's worth, you don't _need_ to use this script (especially if you're just kicking the project's tires).  It's really just for systems that have put FreeLib-Djatoka into production.
 
