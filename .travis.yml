@@ -1,5 +1,4 @@
 language: java
-
 jdk:
   - openjdk7
   - oraclejdk7
@@ -16,6 +15,8 @@ before_script: "cp src/main/resources/sample-settings.xml ${HOME}/.m2/settings.x
 script:
   - sudo cp -r ../freelib-djatoka /opt
   - sudo chown -R $USER /opt/freelib-djatoka
+  - ls -l /opt
+  - which mvn
   - sudo etc/init.d/djatoka start
   - test "200" == $(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8888/health")
   - mvn -Ptravis install
