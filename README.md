@@ -26,6 +26,30 @@ When you want to stop the server, type the following from within the project's b
 
     mvn jetty:stop
 
+### Running as a System Service on Linux
+
+There is now an init.d script that will allow the Djatoka server to be started and stopped in a standard Linux way. It assumes you've checked out the FreeLib-Djatoka project to /opt/freelibrary-djatoka, that Maven's bin (`mvn`) is on the system $PATH, and that the system's Web user ('apache' on RHEL/CentOS/etc. and 'www-data' on Ubuntu/Debian) has write access to the project directory.  If your system has a different configuration, you will need to adjust the script.
+
+For what it's worth, you don't _need_ to use this script (especially if you're just kicking the project's tires).  It's really just for systems that have put FreeLib-Djatoka into production.
+
+You can install the script by copying it to the /etc/init.d directory:
+
+    sudo cp etc/init.d/djatoka /etc/init.d/djatoka
+
+Then run `update-rc.d` to add the service to the desired system runlevels:
+
+    sudo update-rc.d -f djatoka start 80 2 3 4 5 . stop 30 0 1 6 .
+
+Once this is done, you should be able to start and stop the service:
+
+    sudo service djatoka start
+    sudo service djatoka status
+    sudo service djatoka stop
+
+You can remove the service from the system's runlevels by typing:
+
+    sudo update-rc.d -f djatoka remove
+
 ### Image Ingest
 
 FreeLib-Djatoka can load its images in two different ways.  The first is by loading TIFF images from the file system (and converting them into JP2s).  The second is by loading images on-demand, as they are requested through the Web interface.  Images loaded on-demand can either be images to convert into JP2s or JP2s that are ready to be served in the OpenSeadragon interface (like JP2s from Islandora).
