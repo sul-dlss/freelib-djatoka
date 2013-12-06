@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>IIIF Tile Source | OpenSeadragon</title>
+    <script src="/javascript/openseadragon.min.js"></script>
+    <link rel='stylesheet' type='text/css' media='screen' href='http://openseadragon.github.io/css/style.css'/>
+</head>
+
+<body>
+  <div id="container">
+  <h1>IIIF Demos</h1>
+
+  <div>Below works with all browsers</div>
+  <div id="example-inline-configuration-for-iiif" class="openseadragon"></div>
+  <script type="text/javascript">
+    OpenSeadragon({
+      id:                 "example-inline-configuration-for-iiif",
+      prefixUrl:          "/images/",
+      preserveViewport:   true,
+      visibilityRatio:    1,
+      minZoomLevel:       1,
+      defaultZoomLevel:   1,
+      tileSources:   [{
+        "@context": "http://library.stanford.edu/iiif/image-api/1.1/context.json",
+        "@id": "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000001.jp2",
+        "formats": [ "jpg", "png", "gif" ],
+        "height": 3600,
+        "profile": "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level2",
+        "qualities": [ "native", "bitonal", "grey", "color" ],
+        "scale_factors": [ 1, 2, 4, 8, 16 ],
+        "tile_height": 256,
+        "tile_width": 256,
+        "width": 2617
+      },{
+        "@context": "http://library.stanford.edu/iiif/image-api/1.1/context.json",
+        "@id": "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000002.jp2",
+        "formats": [ "jpg", "png", "gif" ],
+        "height": 3600,
+        "profile": "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level2",
+        "qualities": [ "native", "bitonal", "grey", "color" ],
+        "scale_factors": [ 1, 2, 4, 8, 16 ],
+        "tile_height": 256,
+        "tile_width": 256,
+        "width": 2547
+      },{
+        "@context": "http://library.stanford.edu/iiif/image-api/1.1/context.json",
+        "@id": "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000003.jp2",
+        "formats": [ "jpg", "png", "gif" ],
+        "height": 3600,
+        "profile": "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level2",
+        "qualities": [ "native", "bitonal", "grey", "color" ],
+        "scale_factors": [ 1, 2, 4, 8, 16 ],
+        "tile_height": 256,
+        "tile_width": 256,
+        "width": 2694
+      },{
+        "@context": "http://library.stanford.edu/iiif/image-api/1.1/context.json",
+        "@id": "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000004.jp2",
+        "formats": [ "jpg", "png", "gif" ],
+        "height": 3600,
+        "profile": "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level2",
+        "qualities": [ "native", "bitonal", "grey", "color" ],
+        "scale_factors": [ 1, 2, 4, 8, 16 ],
+        "tile_height": 256,
+        "tile_width": 256,
+        "width": 2717
+      }]
+    });
+  </script>
+
+  <br/><br/>
+
+  <div>Below won't work with any IE before 10</div>
+  <div id="example-xmlhttprequest-for-info-json" class="openseadragon"></div>
+  <script type="text/javascript">
+    OpenSeadragon({
+      id: "example-xmlhttprequest-for-info-json",
+      prefixUrl: "/images/",
+      preserveViewport:   true,
+      tileSources: [
+        "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000001.jp2/info.json",
+        "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000002.jp2/info.json",
+        "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000003.jp2/info.json",
+        "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000004.jp2/info.json",
+        "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000005.jp2/info.json",
+        "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000006.jp2/info.json",
+        "http://libimages.princeton.edu/loris/pudl0001%2F4609321%2Fs42%2F00000007.jp2/info.json"
+      ]
+    });
+  </script>
+  </div>
+</body>
+
+</html>
