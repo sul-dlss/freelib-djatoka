@@ -1,0 +1,91 @@
+.color-highlight {
+  color: #225E9B;
+}
+
+body[class*="page-themes-bootswatch"] {
+  background-image: none;
+}
+
+body[class*="page-themes-bootswatch"] .color-highlight {
+  color: inherit;
+}
+
+h2 {
+  margin-top: 30px;
+}
+
+h3, h4, h5, h6 {
+  margin-top: 30px;
+}
+
+.carousel-caption a {
+  color: white;
+}
+
+.jumbotron {
+  padding-top: 20px;
+}
+
+.toc-separator {
+  display: none;
+}
+
+.page-header {
+  margin: 0px;
+  padding: 0px;
+}
+
+/* A bit of workaround for links being not clickable due to :before element in headings */
+h2[id]:before {
+  height: 30px;
+  margin-top: -30px;
+}
+
+.sidebar {
+  margin-top: 10px;
+}
+
+.sidebar h3 {
+  margin-top: 10px;
+}
+
+pre {
+  background-color: #eee;
+  margin-left: 20px;
+}
+
+.nav-header {
+  color: #666;
+}
+
+.imageLink {
+  padding-right: 4px;
+}
+
+.main-body {
+  margin-top: -20px;
+}
+
+.externalLink:after {
+  content: " ↗";
+}
+
+.openseadragon {
+  width: 600px;
+  height: 600px;
+  border: 1px solid black;
+  color: #00ff00; /* text color for messages */
+  background-color: black;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.openseadragon-small {
+  width: 40px;
+  height: 30px;
+  border: 1px solid black;
+  color: #00ff00; /* text color for messages */
+  background-color: black;
+  margin-left: auto;
+  margin-right: auto;
+}

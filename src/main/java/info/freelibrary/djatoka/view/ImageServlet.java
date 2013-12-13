@@ -1,9 +1,17 @@
 
 package info.freelibrary.djatoka.view;
 
+import info.freelibrary.djatoka.iiif.Region;
+
+import info.freelibrary.djatoka.iiif.ImageRequest;
+
+import info.freelibrary.djatoka.iiif.IIIFRequest;
+
 import gov.lanl.adore.djatoka.openurl.OpenURLJP2KService;
+
 import info.freelibrary.djatoka.Constants;
 import info.freelibrary.djatoka.util.CacheUtils;
+
 import info.freelibrary.util.IOUtils;
 import info.freelibrary.util.PairtreeObject;
 import info.freelibrary.util.PairtreeRoot;
@@ -11,6 +19,7 @@ import info.freelibrary.util.PairtreeUtils;
 import info.freelibrary.util.StringUtils;
 
 import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -73,6 +82,7 @@ public class ImageServlet extends HttpServlet implements Constants {
     protected void doGet(HttpServletRequest aRequest,
             HttpServletResponse aResponse) throws ServletException, IOException {
         String level = getServletConfig().getInitParameter("level");
+        IIIFRequest iiif = (IIIFRequest) aRequest.getAttribute(IIIFRequest.KEY);
         String reqURI = aRequest.getRequestURI();
         String servletPath = aRequest.getServletPath();
         String path = reqURI.substring(servletPath.length());
@@ -84,13 +94,60 @@ public class ImageServlet extends HttpServlet implements Constants {
                 ImageInfo imageInfo = new ImageInfo(id, dims[0], dims[1]);
                 ServletOutputStream outStream = aResponse.getOutputStream();
 
-                imageInfo.toStream(outStream);
+                if (reqURI.endsWith("/info.xml")) {
+                    imageInfo.toStream(outStream);
+                } else {
+                    StringBuilder serviceSb = new StringBuilder();
+
+                    serviceSb.append(aRequest.getScheme()).append("://");
+                    serviceSb.append(aRequest.getServerName()).append(":");
+                    serviceSb.append(aRequest.getServerPort());
+
+                    String service = serviceSb.toString();
+                    String prefix = iiif.getServicePrefix();
+
+                    imageInfo.addFormat("jpg"); // FIXME
+
+                    outStream.print(imageInfo.toJSON(service, prefix));
+                }
+
                 outStream.close();
             } catch (FileNotFoundException details) {
                 aResponse.sendError(HttpServletResponse.SC_NOT_FOUND, id +
                         " not found");
             }
+        } else if (iiif != null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Request is handled via the IIIFRequest shim");
+            }
+
+            ImageRequest imageRequest = (ImageRequest) iiif;
+            String size = imageRequest.getSize().toString();
+            Region iiifRegion = imageRequest.getRegion();
+
+            // Djatoka expects a different order from what OpenSeadragon sends
+            // so we have to reconstruct rather than use Region's toString().
+            StringBuilder rsb = new StringBuilder();
+            rsb.append(iiifRegion.getY()).append(',');
+            rsb.append(iiifRegion.getX()).append(',');
+            rsb.append(iiifRegion.getHeight()).append(',');
+            rsb.append(iiifRegion.getWidth());
+
+            // Now, we have the string order that Djatoka wants
+            String region = rsb.toString();
+
+            if (myCache != null) {
+                checkImageCache(id, level, size, region, aRequest, aResponse);
+            }
+            else {
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Cache isn't configured correctly");
+                }
+
+                serveNewImage(id, level, region, size, aRequest, aResponse);
+            }
         } else {
+            // We are using the now deprecated FreeLib-Djatoka djtilesource.js
             String[] regionCoords = getRegion(path);
             String scale = getScale(path);
             String region;
@@ -109,7 +166,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                 StringBuilder request = new StringBuilder();
 
                 request.append("id[").append(id).append("] ");
-                
+
                 if (level != null) {
                     request.append("level[").append(level).append("] ");
                 }
@@ -124,40 +181,13 @@ public class ImageServlet extends HttpServlet implements Constants {
             }
 
             if (myCache != null) {
-                PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
-                PairtreeObject cacheObject = cacheDir.getObject(id);
-                String fileName = CacheUtils.getFileName(level, scale, region);
-                File imageFile = new File(cacheObject, fileName);
-
-                if (imageFile.exists()) {
-                    aResponse.setHeader("Content-Length", "" +
-                            imageFile.length());
-                    aResponse.setHeader("Cache-Control",
-                            "public, max-age=4838400");
-                    aResponse.setContentType("image/jpg");
-
-                    ServletOutputStream outStream = aResponse.getOutputStream();
-                    IOUtils.copyStream(imageFile, outStream);
-                    IOUtils.closeQuietly(outStream);
-
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("{} served from Pairtree cache", imageFile);
-                    }
-                } else {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("{} not found in cache", imageFile);
-                    }
-
-                    serveNewImage(id, level, region, scale, aRequest, aResponse);
-                    cacheNewImage(aRequest, id + "_" + fileName, imageFile);
-                }
+                checkImageCache(id, level, scale, region, aRequest, aResponse);
             } else {
                 if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("Cache isn't configured correctly (null)");
+                    LOGGER.warn("Cache isn't configured correctly");
                 }
 
                 serveNewImage(id, level, region, scale, aRequest, aResponse);
-                // We can't cache, because we don't have a cache configured
             }
         }
     }
@@ -174,7 +204,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                 if (props.containsKey(VIEW_CACHE_DIR)) {
                     myCache = props.getProperty(VIEW_CACHE_DIR);
                 }
-                
+
                 // If we couldn't get cache from config, fall back to tmpdir
                 if (myCache == null) {
                     myCache = System.getProperty("java.io.tmpdir");
@@ -239,6 +269,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                 PairtreeObject cacheObject = cacheDir.getObject(id);
                 ServletContext context = getServletContext();
                 String filename = PairtreeUtils.encodeID(id);
+                // FIXME: Make this something other than a DZI file; IIIF XML?
                 File dziFile = new File(cacheObject, filename + ".dzi");
 
                 if (dziFile.exists() && dziFile.length() > 0) {
@@ -339,6 +370,36 @@ public class ImageServlet extends HttpServlet implements Constants {
         url.append(aRequest.getServerName()).append(":");
         url.append(aRequest.getServerPort()).append("/");
         return url.append("view/fullSize/").toString();
+    }
+
+    private void checkImageCache(String aID, String aLevel, String aScale,
+            String aRegion, HttpServletRequest aRequest,
+            HttpServletResponse aResponse) throws IOException, ServletException {
+        PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
+        PairtreeObject cacheObject = cacheDir.getObject(aID);
+        String fileName = CacheUtils.getFileName(aLevel, aScale, aRegion);
+        File imageFile = new File(cacheObject, fileName);
+
+        if (imageFile.exists()) {
+            aResponse.setHeader("Content-Length", "" + imageFile.length());
+            aResponse.setHeader("Cache-Control", "public, max-age=4838400");
+            aResponse.setContentType("image/jpg");
+
+            ServletOutputStream outStream = aResponse.getOutputStream();
+            IOUtils.copyStream(imageFile, outStream);
+            IOUtils.closeQuietly(outStream);
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("{} served from Pairtree cache", imageFile);
+            }
+        } else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("{} not found in cache", imageFile);
+            }
+
+            serveNewImage(aID, aLevel, aRegion, aScale, aRequest, aResponse);
+            cacheNewImage(aRequest, aID + "_" + fileName, imageFile);
+        }
     }
 
     private void serveNewImage(String aID, String aLevel, String aRegion,
@@ -483,7 +544,7 @@ public class ImageServlet extends HttpServlet implements Constants {
             scale = scale.substring(4);
             scale = Double.toString(Double.parseDouble(scale) * .01);
         }
-        
+
         return scale;
     }
 }

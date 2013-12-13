@@ -2,6 +2,7 @@
 package info.freelibrary.djatoka;
 
 import info.freelibrary.djatoka.util.CacheUtils;
+import info.freelibrary.djatoka.iiif.Constants;
 
 import info.freelibrary.util.XMLBundleControl;
 import info.freelibrary.util.XMLResourceBundle;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class TileCache implements IIIFInterface {
+public class TileCache {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(TileCache.class);
@@ -110,11 +111,12 @@ public class TileCache implements IIIFInterface {
             urlString = url.toString();
 
             if (status == 200) {
+                String ns = Constants.IIIF_NS;
                 Document xml = new Builder().build(uc.getInputStream());
                 Element info = (Element) xml.getRootElement();
-                Element elem = info.getFirstChildElement("identifier", IIIF_NS);
-                Element hElem = info.getFirstChildElement("height", IIIF_NS);
-                Element wElem = info.getFirstChildElement("width", IIIF_NS);
+                Element elem = info.getFirstChildElement("identifier", ns);
+                Element hElem = info.getFirstChildElement("height", ns);
+                Element wElem = info.getFirstChildElement("width", ns);
                 String idValue = elem.getValue();
 
                 try {

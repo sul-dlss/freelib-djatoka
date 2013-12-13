@@ -3,6 +3,12 @@ package info.freelibrary.djatoka.view;
 
 import java.io.UnsupportedEncodingException;
 
+import java.net.URLEncoder;
+
+import info.freelibrary.djatoka.iiif.Constants;
+
+import java.util.Iterator;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -13,17 +19,15 @@ import nu.xom.Element;
 import nu.xom.Elements;
 import nu.xom.Serializer;
 
-import info.freelibrary.djatoka.IIIFInterface;
-
-public class ImageInfo implements IIIFInterface {
+public class ImageInfo {
 
     private Document myInfoDoc;
 
     public ImageInfo(String aID, int aHeight, int aWidth) {
-        Element id = new Element("identifier", IIIF_NS);
-        Element height = new Element("height", IIIF_NS);
-        Element width = new Element("width", IIIF_NS);
-        Element root = new Element("info", IIIF_NS);
+        Element id = new Element("identifier", Constants.IIIF_NS);
+        Element height = new Element("height", Constants.IIIF_NS);
+        Element width = new Element("width", Constants.IIIF_NS);
+        Element root = new Element("info", Constants.IIIF_NS);
 
         width.appendChild(Integer.toString(aWidth));
         height.appendChild(Integer.toString(aHeight));
@@ -49,14 +53,14 @@ public class ImageInfo implements IIIFInterface {
 
     public void addFormat(String aFormat) {
         Element root = myInfoDoc.getRootElement();
-        Elements elements = root.getChildElements("formats", IIIF_NS);
-        Element format = new Element("format", IIIF_NS);
+        Elements elements = root.getChildElements("formats", Constants.IIIF_NS);
+        Element format = new Element("format", Constants.IIIF_NS);
         Element formats;
 
         if (elements.size() > 0) {
             formats = elements.get(0);
         } else {
-            formats = new Element("formats", IIIF_NS);
+            formats = new Element("formats", Constants.IIIF_NS);
             root.appendChild(formats);
         }
 
@@ -76,13 +80,57 @@ public class ImageInfo implements IIIFInterface {
         return myInfoDoc.toXML();
     }
 
-    public String toJSON() {
-        throw new UnsupportedOperationException("toJSON() not yet implemented");
+    public String toJSON(String aService, String aPrefix) {
+        StringBuilder sb = new StringBuilder("{");
+        Iterator<String> iterator;
+
+        // FIXME: Constants.IIIF_URL
+        sb.append("\"@context\" : \"http://library.stanford.edu/");
+        sb.append("iiif/image-api/1.1/context.json\", \"@id\" : \"");
+
+        // FIXME: aService + aPrefix
+        try {
+            sb.append(aService).append('/').append(aPrefix).append('/');
+            sb.append(URLEncoder.encode(getIdentifier(), "UTF-8"));
+            sb.append("\", ");
+        }
+        catch (UnsupportedEncodingException details) {
+            throw new RuntimeException(details);
+        }
+
+        sb.append("\"width\" : ").append(getWidth()).append(", ");
+        sb.append("\"height\" : ").append(getHeight()).append(", ");
+
+        // FIXME: Does this ever vary for us?
+        sb.append("\"tile_width\" : ").append(256).append(", ");
+        sb.append("\"tile_height\" : ").append(256).append(", ");
+
+        iterator = getFormats().iterator();
+        sb.append("\"formats\" : [ ");
+
+        while (iterator.hasNext()) {
+            sb.append('"').append(iterator.next()).append('"');
+
+            if (iterator.hasNext()) {
+                sb.append(", ");
+            }
+            else {
+                sb.append(" ");
+            }
+        }
+
+        sb.append("], ");
+        
+        sb.append("\"scale_factors\" : [ 0, 1, 2, 3, 4 ], ");
+        
+        sb.append("\"qualities\" : [ \"native\" ], \"profile\" : \"");
+        sb.append(Constants.IIIF_URL).append("1.1/compliance.html#level0\"");
+
+        return sb.append("}").toString();
     }
 
     public void toStream(OutputStream aOutputStream) throws IOException {
-        Serializer serializer = new IESerializer(aOutputStream);
-        serializer.write(myInfoDoc);
+        new Serializer(aOutputStream).write(myInfoDoc);
     }
 
     private List<String> getValues(String aName) {
@@ -92,7 +140,8 @@ public class ImageInfo implements IIIFInterface {
 
         for (int eIndex = 0; eIndex < elements.size(); eIndex++) {
             Element element = elements.get(eIndex);
-            Elements children = element.getChildElements(aName, IIIF_NS);
+            Elements children =
+                    element.getChildElements(aName, Constants.IIIF_NS);
 
             if (children.size() > 0) {
                 for (int cIndex = 0; cIndex < children.size(); cIndex++) {
@@ -108,7 +157,7 @@ public class ImageInfo implements IIIFInterface {
 
     private String getValue(String aName) {
         Element root = myInfoDoc.getRootElement();
-        Elements elements = root.getChildElements(aName, IIIF_NS);
+        Elements elements = root.getChildElements(aName, Constants.IIIF_NS);
 
         if (elements.size() > 0) {
             return elements.get(0).getValue();
@@ -117,19 +166,4 @@ public class ImageInfo implements IIIFInterface {
         return null;
     }
 
-    private class IESerializer extends Serializer {
-
-        public IESerializer(OutputStream aOutputStream) {
-            super(aOutputStream);
-        }
-
-        public IESerializer(OutputStream aOutputStream, String aEncoding)
-                throws UnsupportedEncodingException {
-            super(aOutputStream, aEncoding);
-        }
-        
-        public void writeXMLDeclaration() {
-            // Don't output because IE 8 and 9 don't like it (*dramatic sigh*)
-        }
-    }
 }
