@@ -23,6 +23,13 @@ public class ImageInfo {
 
     private Document myInfoDoc;
 
+    /**
+     * Creates an image info object.
+     * 
+     * @param aID An image ID
+     * @param aHeight The height of the image represented by the supplied ID
+     * @param aWidth The width of the image represented by the supplied ID
+     */
     public ImageInfo(String aID, int aHeight, int aWidth) {
         Element id = new Element("identifier", Constants.IIIF_NS);
         Element height = new Element("height", Constants.IIIF_NS);
@@ -39,18 +46,38 @@ public class ImageInfo {
         root.appendChild(height);
     }
 
+    /**
+     * Gets the image's identifier.
+     * 
+     * @return The image's identifier
+     */
     public String getIdentifier() {
         return getValue("identifier");
     }
 
+    /**
+     * Gets the image's height.
+     * 
+     * @return The height of the image
+     */
     public int getHeight() {
         return Integer.parseInt(getValue("height"));
     }
 
+    /**
+     * Gets the image's width.
+     * 
+     * @return The width of the image
+     */
     public int getWidth() {
         return Integer.parseInt(getValue("width"));
     }
 
+    /**
+     * Adds the supplied format to the list of handled formats.
+     * 
+     * @param aFormat A format to add to the supported list
+     */
     public void addFormat(String aFormat) {
         Element root = myInfoDoc.getRootElement();
         Elements elements = root.getChildElements("formats", Constants.IIIF_NS);
@@ -68,18 +95,40 @@ public class ImageInfo {
         formats.appendChild(format);
     }
 
+    /**
+     * Gets the list of supported formats.
+     * 
+     * @return The list of supported formats
+     */
     public List<String> getFormats() {
         return getValues("format");
     }
 
+    /**
+     * Gets the XML representation of the image's metadata.
+     * 
+     * @return The XML representation of the image's metadata
+     */
     public String toXML() {
         return myInfoDoc.toXML();
     }
 
+    /**
+     * Gets the string representation of the image's metadata.
+     * 
+     * @return The string representation of the image's metadata
+     */
     public String toString() {
         return myInfoDoc.toXML();
     }
 
+    /**
+     * Gets the JSON representation of the image's metadata.
+     * 
+     * @param aService The IIIF service
+     * @param aPrefix The IIIF prefix
+     * @return The JSON representation of the image's metadata
+     */
     public String toJSON(String aService, String aPrefix) {
         StringBuilder sb = new StringBuilder("{");
         Iterator<String> iterator;
@@ -93,8 +142,7 @@ public class ImageInfo {
             sb.append(aService).append('/').append(aPrefix).append('/');
             sb.append(URLEncoder.encode(getIdentifier(), "UTF-8"));
             sb.append("\", ");
-        }
-        catch (UnsupportedEncodingException details) {
+        } catch (UnsupportedEncodingException details) {
             throw new RuntimeException(details);
         }
 
@@ -113,22 +161,29 @@ public class ImageInfo {
 
             if (iterator.hasNext()) {
                 sb.append(", ");
-            }
-            else {
+            } else {
                 sb.append(" ");
             }
         }
 
         sb.append("], ");
-        
+
         sb.append("\"scale_factors\" : [ 0, 1, 2, 3, 4 ], ");
-        
+
         sb.append("\"qualities\" : [ \"native\" ], \"profile\" : \"");
         sb.append(Constants.IIIF_URL).append("1.1/compliance.html#level0\"");
 
         return sb.append("}").toString();
     }
 
+    /**
+     * Serializes the image info the supplied output stream.
+     * 
+     * @param aOutputStream The output stream to which the image info should be
+     *        serialized
+     * @throws IOException If there is a problem reading or writing the image
+     *         info
+     */
     public void toStream(OutputStream aOutputStream) throws IOException {
         new Serializer(aOutputStream).write(myInfoDoc);
     }

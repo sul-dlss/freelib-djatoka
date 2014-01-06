@@ -8,24 +8,26 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.oclc.oomRef.entities;
 
 import info.openurl.oom.entities.ServiceType;
 
 /**
- * The resource that defines the type of service (pertaining
- * to the <em>Referent</em>) that is requested; an <em>Entity</em>
- * of the <em>ContextObject</em>.
+ * The resource that defines the type of service (pertaining to the
+ * <em>Referent</em>) that is requested; an <em>Entity</em> of the
+ * <em>ContextObject</em>.
  * 
  * @author Jeffrey A. Young
  */
 public class ServiceTypeImpl extends EntityImpl implements ServiceType {
-	/**
-	 * Construct a ServiceType.
-	 * 
-	 * @param descriptors Descriptor(s) for the ServiceType
-	 */
-	public ServiceTypeImpl(Object descriptors) {
-		super(descriptors);
-	}
+
+    /**
+     * Construct a ServiceType.
+     * 
+     * @param descriptors Descriptor(s) for the ServiceType
+     */
+    public ServiceTypeImpl(Object descriptors) {
+        super(descriptors);
+    }
 }

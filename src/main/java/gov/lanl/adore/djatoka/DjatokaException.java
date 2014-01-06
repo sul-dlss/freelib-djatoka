@@ -25,21 +25,38 @@ package gov.lanl.adore.djatoka;
 
 /**
  * Default Exception Handler for djatoka API
+ * 
  * @author Ryan Chute
- *
  */
 public class DjatokaException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates an exception with the supplied message.
+     * 
+     * @param message The exception message
+     */
     public DjatokaException(String message) {
         super(message);
     }
 
+    /**
+     * Creates an exception from the supplied Throwable with the supplied
+     * message.
+     * 
+     * @param message The exception message
+     * @param cause The underlying exception
+     */
     public DjatokaException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Creates an exception from the supplied Throwable.
+     * 
+     * @param cause The underlying exception
+     */
     public DjatokaException(Throwable cause) {
         super(cause);
     }

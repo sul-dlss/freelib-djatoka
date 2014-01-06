@@ -15,7 +15,7 @@ public interface IReferentMigrator {
      * Sets the Pairtree root for images that can be migrated into the Pairtree
      * structure.
      * 
-     * @param aPtRootDIr The root directory to the Pairtree file system
+     * @param aPtRootDir The root directory to the Pairtree file system
      */
     public abstract void setPairtreeRoot(File aPtRootDir);
 

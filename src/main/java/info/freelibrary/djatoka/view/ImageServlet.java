@@ -64,10 +64,16 @@ public class ImageServlet extends HttpServlet implements Constants {
             .getLogger(ImageServlet.class);
 
     private static final String IMAGE_URL =
-            "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.level={}";
+            "/resolve?url_ver=Z39.88-2004&rft_id={}"
+                    + "&svc_id=info:lanl-repo/svc/getRegion"
+                    + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
+                    + "&svc.format={}&svc.level={}";
 
     private static final String REGION_URL =
-            "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.region={}&svc.scale={}";
+            "/resolve?url_ver=Z39.88-2004&rft_id={}"
+                    + "&svc_id=info:lanl-repo/svc/getRegion"
+                    + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
+                    + "&svc.format={}&svc.region={}&svc.scale={}";
 
     private static final String DZI_NS =
             "http://schemas.microsoft.com/deepzoom/2008";
@@ -138,8 +144,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 
             if (myCache != null) {
                 checkImageCache(id, level, size, region, aRequest, aResponse);
-            }
-            else {
+            } else {
                 if (LOGGER.isWarnEnabled()) {
                     LOGGER.warn("Cache isn't configured correctly");
                 }

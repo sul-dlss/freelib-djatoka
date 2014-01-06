@@ -54,6 +54,12 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
     private File myJP2Dir;
 
+    /**
+     * Gets the image record for the requested image.
+     * 
+     * @param aRequest An image request
+     * @return An image record
+     */
     public ImageRecord getImageRecord(String aRequest) throws ResolverException {
         ImageRecord image;
 
@@ -105,16 +111,31 @@ public class IdentifierResolver implements IReferentResolver, Constants {
         return image;
     }
 
+    /**
+     * Gets an image record for the supplied referent.
+     * 
+     * @param aReferent A referent for the desired image
+     * @return An image record
+     */
     public ImageRecord getImageRecord(Referent aReferent)
             throws ResolverException {
         String id = ((URI) aReferent.getDescriptors()[0]).toASCIIString();
         return getImageRecord(id);
     }
 
+    /**
+     * Gets the referent migrator for this resolver.
+     */
     public IReferentMigrator getReferentMigrator() {
         return myMigrator;
     }
 
+    /**
+     * Gets the HTTP status of the referent ID request.
+     * 
+     * @param aReferentID The ID of a requested referent
+     * @return An HTTP status code
+     */
     public int getStatus(String aReferentID) {
         if (myRemoteImages.get(aReferentID) != null || // TODO: reversed?
                 getCachedImage(aReferentID) != null) {
@@ -126,6 +147,11 @@ public class IdentifierResolver implements IReferentResolver, Constants {
         }
     }
 
+    /**
+     * Sets the properties for this identifier resolver.
+     * 
+     * @param aProps A supplied properties configuration
+     */
     public void setProperties(Properties aProps) throws ResolverException {
         String sources = aProps.getProperty("djatoka.known.ingest.sources");
         String guesses = aProps.getProperty("djatoka.known.ingest.guesses");

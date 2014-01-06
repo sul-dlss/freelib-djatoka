@@ -8,25 +8,25 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.oclc.oomRef.entities;
 
 import info.openurl.oom.entities.Referent;
 
 /**
- * Referent is a resource that is referenced on a network, and
- * about which the ContextObject is created; an <em>Entity</em>
- * of the <em>ContextObject</em>.
+ * Referent is a resource that is referenced on a network, and about which the
+ * ContextObject is created; an <em>Entity</em> of the <em>ContextObject</em>.
  * 
  * @author Jeffrey A. Young
  */
 public class ReferentImpl extends EntityImpl implements Referent {
 
-	/**
-	 * Constructs a Referent.
-	 * 
-	 * @param descriptors Descriptor(s) for the Referent.
-	 */
-	public ReferentImpl(Object descriptors) {
-		super(descriptors);
-	}
+    /**
+     * Constructs a Referent.
+     * 
+     * @param descriptors Descriptor(s) for the Referent.
+     */
+    public ReferentImpl(Object descriptors) {
+        super(descriptors);
+    }
 }

@@ -2,7 +2,6 @@
 package info.freelibrary.djatoka.view;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import info.freelibrary.djatoka.iiif.Constants;
 
@@ -13,6 +12,9 @@ import org.junit.Test;
 
 public class ImageInfoTest {
 
+    /**
+     * Tests the image info constructor.
+     */
     @Test
     public void testImageInfo() {
         ImageInfo imageInfo = new ImageInfo("id", 24, 42);
@@ -22,6 +24,9 @@ public class ImageInfoTest {
         assertEquals(42, imageInfo.getWidth());
     }
 
+    /**
+     * Tests adding a format to the image info object.
+     */
     @Test
     public void testAddFormat() {
         ImageInfo imageInfo = new ImageInfo("id", 24, 42);
@@ -30,6 +35,9 @@ public class ImageInfoTest {
         assertEquals("jpg", imageInfo.getFormats().get(0));
     }
 
+    /**
+     * Tests the toXML() function of the image info object.
+     */
     @Test
     public void testToXML() {
         ImageInfo imageInfo = new ImageInfo("id", 24, 42);
@@ -50,6 +58,9 @@ public class ImageInfoTest {
         assertEquals(xml.toXML(), imageInfo.toXML());
     }
 
+    /**
+     * Tests the toString() function of the image info object.
+     */
     @Test
     public void testToString() {
         ImageInfo imageInfo = new ImageInfo("id", 24, 42);
@@ -70,10 +81,24 @@ public class ImageInfoTest {
         assertEquals(xml.toXML(), imageInfo.toString());
     }
 
+    /**
+     * Tests the toJSON() function of the image info object.
+     */
     @Test
     public void testToJSON() {
-        // TODO
-        fail("Not yet implemented");
+        ImageInfo imageInfo = new ImageInfo("id", 24, 42);
+        String imageAPI = "http://library.stanford.edu/iiif/image-api";
+        String json =
+                "{\"@context\" : \"" + imageAPI + "/1.1/context.json\", " +
+                        "\"@id\" : \"http://localhost/iiif/id\", " +
+                        "\"width\" : 42, \"height\" : 24, " +
+                        "\"tile_width\" : 256, \"tile_height\" : 256, " +
+                        "\"formats\" : [ ], " +
+                        "\"scale_factors\" : [ 0, 1, 2, 3, 4 ], " +
+                        "\"qualities\" : [ \"native\" ], " +
+                        "\"profile\" : \"" + imageAPI +
+                        "/1.1/compliance.html#level0\"}";
+        assertEquals(json, imageInfo.toJSON("http://localhost", "iiif"));
     }
 
 }

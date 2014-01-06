@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import kdu_jni.Jp2_family_src;
-import kdu_jni.Jp2_input_box;
 import kdu_jni.Jp2_locator;
 import kdu_jni.Jp2_source;
 import kdu_jni.KduException;
@@ -49,124 +48,146 @@ import kdu_jni.Kdu_coords;
 import kdu_jni.Kdu_dims;
 
 /**
- * Uses Kakadu Java Native Interface to extract JP2 regions.  
- * This is modified port of the kdu_expand app.
+ * Uses Kakadu Java Native Interface to extract JP2 regions. This is modified
+ * port of the kdu_expand app.
+ * 
  * @author Ryan Chute
- *
  */
 public class KduExtractJNI implements IExtract {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(KduExtractJNI.class);
-	/**
-	 * Returns JPEG 2000 props in ImageRecord
-	 * @param r ImageRecord containing absolute file path of JPEG 2000 image file.
-	 * @return a populated ImageRecord object
-	 * @throws DjatokaException
-	 */
-	public final ImageRecord getMetadata(ImageRecord r) throws DjatokaException {
-		if (!new File(r.getImageFile()).exists())
-			throw new DjatokaException("Image Does Not Exist");
-		
-		Jp2_source inputSource = new Jp2_source();
-		Kdu_compressed_source kduIn = null;
-		Jp2_family_src jp2_family_in = new Jp2_family_src();
-		Jp2_locator loc = new Jp2_locator();
+    private static Logger LOGGER = LoggerFactory.getLogger(KduExtractJNI.class);
 
-		try {
-			jp2_family_in.Open(r.getImageFile(), true);
-			inputSource.Open(jp2_family_in, loc);
-			inputSource.Read_header();
-			kduIn = inputSource;
-			Kdu_codestream codestream = new Kdu_codestream();
-			codestream.Create(kduIn);
-			Kdu_channel_mapping channels = new Kdu_channel_mapping();
-			if (inputSource.Exists())
-				channels.Configure(inputSource, false);
-			else
-				channels.Configure(codestream);
-			int ref_component = channels.Get_source_component(0);
-			int minLevels = codestream.Get_min_dwt_levels();
-			int minLayers= codestream.Get_max_tile_layers();
-			Kdu_dims image_dims = new Kdu_dims();
-			codestream.Get_dims(ref_component, image_dims);
-			Kdu_coords imageSize = image_dims.Access_size();
-			
-			r.setWidth(imageSize.Get_x());
-			r.setHeight(imageSize.Get_y());
-			r.setDWTLevels(minLevels);
+    /**
+     * Returns JPEG 2000 props in ImageRecord
+     * 
+     * @param r ImageRecord containing absolute file path of JPEG 2000 image
+     *        file.
+     * @return a populated ImageRecord object
+     * @throws DjatokaException
+     */
+    public final ImageRecord getMetadata(ImageRecord r) throws DjatokaException {
+        if (!new File(r.getImageFile()).exists()) {
+            throw new DjatokaException("Image Does Not Exist");
+        }
+        Jp2_source inputSource = new Jp2_source();
+        Kdu_compressed_source kduIn = null;
+        Jp2_family_src jp2_family_in = new Jp2_family_src();
+        Jp2_locator loc = new Jp2_locator();
 
-			channels.Native_destroy();
-			if (codestream.Exists())
-				codestream.Destroy();
-			kduIn.Native_destroy();
-			inputSource.Native_destroy();
-			jp2_family_in.Native_destroy();
-		} catch (KduException e) {
-			throw new DjatokaException(e.getMessage(), e);
-		}
+        try {
+            jp2_family_in.Open(r.getImageFile(), true);
+            inputSource.Open(jp2_family_in, loc);
+            inputSource.Read_header();
+            kduIn = inputSource;
+            Kdu_codestream codestream = new Kdu_codestream();
+            codestream.Create(kduIn);
+            Kdu_channel_mapping channels = new Kdu_channel_mapping();
+            if (inputSource.Exists()) {
+                channels.Configure(inputSource, false);
+            } else {
+                channels.Configure(codestream);
+            }
+            int ref_component = channels.Get_source_component(0);
+            int minLevels = codestream.Get_min_dwt_levels();
+            int minLayers = codestream.Get_max_tile_layers();
+            Kdu_dims image_dims = new Kdu_dims();
+            codestream.Get_dims(ref_component, image_dims);
+            Kdu_coords imageSize = image_dims.Access_size();
 
-		return r;
-	}
+            r.setWidth(imageSize.Get_x());
+            r.setHeight(imageSize.Get_y());
+            r.setDWTLevels(minLevels);
 
-	public final String[] getXMLBox(ImageRecord r) throws DjatokaException {
-		String[] xml = null;
-		try {
-			if (r.getImageFile() == null && r.getObject() != null
-					&& r.getObject() instanceof InputStream) {
-				xml = new JP2ImageInfo((InputStream) r.getObject()).getXmlDocs();
-			} else {
-				xml = new JP2ImageInfo(new File(r.getImageFile())).getXmlDocs();
-			}
-		} catch (IOException details) {
-			LOGGER.error(details.getMessage(), details);
-		}
-		return xml;
-	}
-	
-	/**
-	 * Extracts region defined in DjatokaDecodeParam as BufferedImage
-	 * @param input absolute file path of JPEG 2000 image file.
-	 * @param params DjatokaDecodeParam instance containing region and transform settings.
-	 * @return extracted region as a BufferedImage
-	 * @throws DjatokaException
-	 */
-	public BufferedImage process(String input, DjatokaDecodeParam params)
-			throws DjatokaException {
-		KduExtractProcessorJNI decoder = new KduExtractProcessorJNI(input, params);
-		return decoder.extract();
-	}
+            channels.Native_destroy();
+            if (codestream.Exists()) {
+                codestream.Destroy();
+            }
+            kduIn.Native_destroy();
+            inputSource.Native_destroy();
+            jp2_family_in.Native_destroy();
+        } catch (KduException e) {
+            throw new DjatokaException(e.getMessage(), e);
+        }
 
-	/**
-	 * Extracts region defined in DjatokaDecodeParam as BufferedImage
-	 * @param input InputStream containing a JPEG 2000 image bitstream.
-	 * @param params DjatokaDecodeParam instance containing region and transform settings.
-	 * @return extracted region as a BufferedImage
-	 * @throws DjatokaException
-	 */
-	public BufferedImage process(InputStream input, DjatokaDecodeParam params)
-			throws DjatokaException {
-		KduExtractProcessorJNI decoder = new KduExtractProcessorJNI(input, params);
-		return decoder.extract();
-	}
-	
-	/**
-	 * Extracts region defined in DjatokaDecodeParam as BufferedImage
-	 * @param input ImageRecord wrapper containing file reference, inputstream, etc.
-	 * @param params DjatokaDecodeParam instance containing region and transform settings.
-	 * @return extracted region as a BufferedImage
-	 * @throws DjatokaException
-	 */
-	public BufferedImage process(ImageRecord input, DjatokaDecodeParam params)
-			throws DjatokaException {
-		if (input.getImageFile() != null)
-			return process(input, params);
-		else if (input.getObject() != null
-				&& (input.getObject() instanceof InputStream))
-			return process((InputStream) input.getObject(), params);
-		else
-			throw new DjatokaException(
-					"File not defined and Input Object Type "
-							+ input.getObject().getClass().getName()
-							+ " is not supported");
-	}
+        return r;
+    }
+
+    /**
+     * Gets the XML box from the image record.
+     * 
+     * @param r The image record
+     */
+    public final String[] getXMLBox(ImageRecord r) throws DjatokaException {
+        String[] xml = null;
+        try {
+            if (r.getImageFile() == null && r.getObject() != null &&
+                    r.getObject() instanceof InputStream) {
+                xml =
+                        new JP2ImageInfo((InputStream) r.getObject())
+                                .getXmlDocs();
+            } else {
+                xml = new JP2ImageInfo(new File(r.getImageFile())).getXmlDocs();
+            }
+        } catch (IOException details) {
+            LOGGER.error(details.getMessage(), details);
+        }
+        return xml;
+    }
+
+    /**
+     * Extracts region defined in DjatokaDecodeParam as BufferedImage
+     * 
+     * @param input absolute file path of JPEG 2000 image file.
+     * @param params DjatokaDecodeParam instance containing region and transform
+     *        settings.
+     * @return extracted region as a BufferedImage
+     * @throws DjatokaException
+     */
+    public BufferedImage process(String input, DjatokaDecodeParam params)
+            throws DjatokaException {
+        KduExtractProcessorJNI decoder =
+                new KduExtractProcessorJNI(input, params);
+        return decoder.extract();
+    }
+
+    /**
+     * Extracts region defined in DjatokaDecodeParam as BufferedImage
+     * 
+     * @param input InputStream containing a JPEG 2000 image bitstream.
+     * @param params DjatokaDecodeParam instance containing region and transform
+     *        settings.
+     * @return extracted region as a BufferedImage
+     * @throws DjatokaException
+     */
+    public BufferedImage process(InputStream input, DjatokaDecodeParam params)
+            throws DjatokaException {
+        KduExtractProcessorJNI decoder =
+                new KduExtractProcessorJNI(input, params);
+        return decoder.extract();
+    }
+
+    /**
+     * Extracts region defined in DjatokaDecodeParam as BufferedImage
+     * 
+     * @param input ImageRecord wrapper containing file reference, inputstream,
+     *        etc.
+     * @param params DjatokaDecodeParam instance containing region and transform
+     *        settings.
+     * @return extracted region as a BufferedImage
+     * @throws DjatokaException
+     */
+    public BufferedImage process(ImageRecord input, DjatokaDecodeParam params)
+            throws DjatokaException {
+        if (input.getImageFile() != null) {
+            return process(input, params);
+        } else if (input.getObject() != null &&
+                (input.getObject() instanceof InputStream)) {
+            return process((InputStream) input.getObject(), params);
+        } else {
+            throw new DjatokaException(
+                    "File not defined and Input Object Type " +
+                            input.getObject().getClass().getName() +
+                            " is not supported");
+        }
+    }
 }

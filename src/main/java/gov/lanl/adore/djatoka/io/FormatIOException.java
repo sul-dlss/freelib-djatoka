@@ -27,23 +27,40 @@ import gov.lanl.adore.djatoka.DjatokaException;
 
 /**
  * Exception handler used during Format I/O operations.
+ * 
  * @author Ryan Chute
- *
  */
 public class FormatIOException extends DjatokaException {
 
-	private static final long serialVersionUID = 1307882022387500079L;
+    private static final long serialVersionUID = 1307882022387500079L;
 
-	public FormatIOException(String message) {
-        super(message);
+    /**
+     * Constructs a format IO exception using the supplied message.
+     * 
+     * @param aMessage The exception message
+     */
+    public FormatIOException(String aMessage) {
+        super(aMessage);
     }
 
-    public FormatIOException(String message, Throwable cause) {
-        super(message, cause);
+    /**
+     * Constructs a format IO exception from the supplied Throwable and using
+     * the supplied message.
+     * 
+     * @param aMessage The exception message
+     * @param aCause The underlying exception
+     */
+    public FormatIOException(String aMessage, Throwable aCause) {
+        super(aMessage, aCause);
     }
 
-    public FormatIOException(Throwable cause) {
-        super(cause);
+    /**
+     * Constructs a format IO exception from the supplied Throwable.
+     * 
+     * @param aCause The underlying exception
+     */
+    public FormatIOException(Throwable aCause) {
+        super(aCause);
     }
 
 }

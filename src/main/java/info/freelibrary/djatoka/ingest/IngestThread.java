@@ -55,6 +55,19 @@ public class IngestThread extends Thread implements Constants {
 
     private boolean myThreadRunsUnattended;
 
+    /**
+     * Creates a new ingest thread with the supplied source and target
+     * directories; this thread looks for files with the extensions in the
+     * supplied array and is configured with a boolean to run attended (by a
+     * human) or unattended.
+     * 
+     * @param aSource A source directory of source files
+     * @param aDest A target directory of JP2 files
+     * @param aExts Extensions of the files to convert and ingest
+     * @param aCfg A configuration to use for the ingest
+     * @param aUnattendedRun Whether the ingest is attended by a person or not
+     * @throws Exception If there is a problem
+     */
     public IngestThread(File aSource, File aDest, String[] aExts,
             Properties aCfg, boolean aUnattendedRun) throws Exception {
         super();
@@ -109,14 +122,27 @@ public class IngestThread extends Thread implements Constants {
         }
     }
 
+    /**
+     * Returns the current ingest count.
+     * 
+     * @return The current ingest count
+     */
     public int getCount() {
         return myCount;
     }
 
+    /**
+     * Cleans up the ingest thread.
+     */
     public void cleanUp() {
         isWaiting = false;
     }
 
+    /**
+     * Returns true if the ingest thread is finished; else, false.
+     * 
+     * @return True if the ingest thread is finished; else, false
+     */
     public boolean isFinished() {
         return isFinished;
     }

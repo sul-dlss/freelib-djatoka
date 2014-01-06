@@ -48,274 +48,278 @@ import org.slf4j.LoggerFactory;
  * transform.
  * 
  * @author Ryan Chute
- * 
  */
 public class DjatokaExtractProcessor {
 
-	private static Logger LOGGER = LoggerFactory
-			.getLogger(DjatokaExtractProcessor.class);
+    private static Logger LOGGER = LoggerFactory
+            .getLogger(DjatokaExtractProcessor.class);
 
-	private static String STDIN = "/dev/stdin";
-	private static FormatFactory fmtFactory = new FormatFactory();
-	private IExtract extractImpl;
+    private static String STDIN = "/dev/stdin";
 
-	/**
-	 * Constructor requiring an IExtract implementation
-	 * 
-	 * @param impl an IExtract implementation
-	 */
-	public DjatokaExtractProcessor(IExtract impl) {
-		this.extractImpl = impl;
-	}
+    private static FormatFactory fmtFactory = new FormatFactory();
 
-	/**
-	 * Sets the format factory used to serialize extracted region
-	 * 
-	 * @param ff the format factory used to serialize extracted region
-	 * @throws DjatokaException
-	 */
-	public void setFormatFactory(FormatFactory ff) throws DjatokaException {
-		fmtFactory = ff;
-	}
+    private IExtract extractImpl;
 
-	/**
-	 * Extract region or resolution level from JPEG 2000 image file.
-	 * 
-	 * @param input absolute file path for input file.
-	 * @param output absolute file path for output file.
-	 * @param params DjatokaDecodeParam instance containing region and transform
-	 *        settings.
-	 * @param fmtId mimetype identifier of output file format (e.g.
-	 *        "image/jpeg")
-	 * @throws DjatokaException
-	 */
-	public void extractImage(String input, String output,
-			DjatokaDecodeParam params, String fmtId) throws DjatokaException {
-		IWriter w = fmtFactory.getWriter(fmtId);
-		extractImage(input, output, params, w);
-	}
+    /**
+     * Constructor requiring an IExtract implementation
+     * 
+     * @param impl an IExtract implementation
+     */
+    public DjatokaExtractProcessor(IExtract impl) {
+        this.extractImpl = impl;
+    }
 
-	/**
-	 * Extract region or resolution level from JPEG 2000 image file.
-	 * 
-	 * @param input absolute file path for input file.
-	 * @param output absolute file path for output file.
-	 * @param params DjatokaDecodeParam instance containing region and transform
-	 *        settings.
-	 * @param outputParams
-	 * @throws DjatokaException
-	 */
-	public void extractImage(String input, String output,
-			DjatokaDecodeParam params, FormatWriterParams outputParams)
-			throws DjatokaException {
-		IWriter w = fmtFactory.getWriter(outputParams.getFormatId(),
-				outputParams.getFormatProps());
-		extractImage(input, output, params, w);
-	}
+    /**
+     * Sets the format factory used to serialize extracted region
+     * 
+     * @param ff the format factory used to serialize extracted region
+     * @throws DjatokaException
+     */
+    public void setFormatFactory(FormatFactory ff) throws DjatokaException {
+        fmtFactory = ff;
+    }
 
-	/**
-	 * Extract region or resolution level from JPEG 2000 image file.
-	 * 
-	 * @param input InputStream containing a JPEG 2000 image bitstream.
-	 * @param output absolute file path for output file.
-	 * @param params DjatokaDecodeParam instance containing region and transform
-	 *        settings.
-	 * @param fmtId mimetype identifier of output file format (e.g.
-	 *        "image/jpeg")
-	 * @throws DjatokaException
-	 */
-	public void extractImage(InputStream input, OutputStream output,
-			DjatokaDecodeParam params, String fmtId) throws DjatokaException {
-		IWriter w = fmtFactory.getWriter(fmtId);
-		extractImage(input, output, params, w);
-	}
+    /**
+     * Extract region or resolution level from JPEG 2000 image file.
+     * 
+     * @param input absolute file path for input file.
+     * @param output absolute file path for output file.
+     * @param params DjatokaDecodeParam instance containing region and transform
+     *        settings.
+     * @param fmtId mimetype identifier of output file format (e.g.
+     *        "image/jpeg")
+     * @throws DjatokaException
+     */
+    public void extractImage(String input, String output,
+            DjatokaDecodeParam params, String fmtId) throws DjatokaException {
+        IWriter w = fmtFactory.getWriter(fmtId);
+        extractImage(input, output, params, w);
+    }
 
-	/**
-	 * Extract region or resolution level from JPEG 2000 image file.
-	 * 
-	 * @param input absolute file path for input file.
-	 * @param os OutputStream to serialize formatted output image to.
-	 * @param params DjatokaDecodeParam instance containing region and transform
-	 *        settings.
-	 * @param fmtId mimetype identifier of output file format (e.g.
-	 *        "image/jpeg")
-	 * @throws DjatokaException
-	 */
-	public void extractImage(String input, OutputStream os,
-			DjatokaDecodeParam params, String fmtId) throws DjatokaException {
-		IWriter w = fmtFactory.getWriter(fmtId);
-		extractImage(input, os, params, w);
-	}
+    /**
+     * Extract region or resolution level from JPEG 2000 image file.
+     * 
+     * @param input absolute file path for input file.
+     * @param output absolute file path for output file.
+     * @param params DjatokaDecodeParam instance containing region and transform
+     *        settings.
+     * @param outputParams
+     * @throws DjatokaException
+     */
+    public void extractImage(String input, String output,
+            DjatokaDecodeParam params, FormatWriterParams outputParams)
+            throws DjatokaException {
+        IWriter w =
+                fmtFactory.getWriter(outputParams.getFormatId(), outputParams
+                        .getFormatProps());
+        extractImage(input, output, params, w);
+    }
 
-	/**
-	 * Extract region or resolution level from JPEG 2000 image file.
-	 * 
-	 * @param input absolute file path for input file.
-	 * @param output absolute file path for output file.
-	 * @param params DjatokaDecodeParam instance containing region and transform
-	 *        settings.
-	 * @param w format writer to be used to serialize extracted region.
-	 * @throws DjatokaException
-	 */
-	public void extractImage(String input, String output,
-			DjatokaDecodeParam params, IWriter w) throws DjatokaException {
-		File in = null;
-		String dest = output;
+    /**
+     * Extract region or resolution level from JPEG 2000 image file.
+     * 
+     * @param input InputStream containing a JPEG 2000 image bitstream.
+     * @param output absolute file path for output file.
+     * @param params DjatokaDecodeParam instance containing region and transform
+     *        settings.
+     * @param fmtId mimetype identifier of output file format (e.g.
+     *        "image/jpeg")
+     * @throws DjatokaException
+     */
+    public void extractImage(InputStream input, OutputStream output,
+            DjatokaDecodeParam params, String fmtId) throws DjatokaException {
+        IWriter w = fmtFactory.getWriter(fmtId);
+        extractImage(input, output, params, w);
+    }
 
-		if (input.equals(STDIN)) {
-			try {
-				in = File.createTempFile("tmp", ".jp2");
-				input = in.getAbsolutePath();
-				in.deleteOnExit();
-				IOUtils.copyFile(new File(STDIN), in);
-			}
-			catch (IOException e) {
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error("Unable to process image from " + STDIN + ": "
-							+ e.getMessage());
-				}
+    /**
+     * Extract region or resolution level from JPEG 2000 image file.
+     * 
+     * @param input absolute file path for input file.
+     * @param os OutputStream to serialize formatted output image to.
+     * @param params DjatokaDecodeParam instance containing region and transform
+     *        settings.
+     * @param fmtId mimetype identifier of output file format (e.g.
+     *        "image/jpeg")
+     * @throws DjatokaException
+     */
+    public void extractImage(String input, OutputStream os,
+            DjatokaDecodeParam params, String fmtId) throws DjatokaException {
+        IWriter w = fmtFactory.getWriter(fmtId);
+        extractImage(input, os, params, w);
+    }
 
-				throw new DjatokaException(e.getMessage(), e);
-			}
-		}
+    /**
+     * Extract region or resolution level from JPEG 2000 image file.
+     * 
+     * @param input absolute file path for input file.
+     * @param output absolute file path for output file.
+     * @param params DjatokaDecodeParam instance containing region and transform
+     *        settings.
+     * @param w format writer to be used to serialize extracted region.
+     * @throws DjatokaException
+     */
+    public void extractImage(String input, String output,
+            DjatokaDecodeParam params, IWriter w) throws DjatokaException {
+        File in = null;
+        String dest = output;
 
-		BufferedImage bi = extractImpl.process(input, params);
-		if (bi != null) {
-			if (params.getScalingFactor() != 1.0
-					|| params.getScalingDimensions() != null) {
-				bi = applyScaling(bi, params);
-			}
+        if (input.equals(STDIN)) {
+            try {
+                in = File.createTempFile("tmp", ".jp2");
+                input = in.getAbsolutePath();
+                in.deleteOnExit();
+                IOUtils.copyFile(new File(STDIN), in);
+            } catch (IOException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Unable to process image from " + STDIN +
+                            ": " + e.getMessage());
+                }
 
-			if (params.getTransform() != null) {
-				bi = params.getTransform().run(bi);
-			}
+                throw new DjatokaException(e.getMessage(), e);
+            }
+        }
 
-			try {
-				BufferedOutputStream os = new BufferedOutputStream(
-						new FileOutputStream(new File(dest)));
-				w.write(bi, os);
-				os.close();
-			}
-			catch (FileNotFoundException e) {
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error("Requested file was not found: " + dest);
-				}
+        BufferedImage bi = extractImpl.process(input, params);
+        if (bi != null) {
+            if (params.getScalingFactor() != 1.0 ||
+                    params.getScalingDimensions() != null) {
+                bi = applyScaling(bi, params);
+            }
 
-				throw new DjatokaException(e.getMessage(), e);
-			}
-			catch (IOException e) {
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error("Error attempting to close: " + dest);
-				}
+            if (params.getTransform() != null) {
+                bi = params.getTransform().run(bi);
+            }
 
-				throw new DjatokaException(e.getMessage(), e);
-			}
-		}
+            try {
+                BufferedOutputStream os =
+                        new BufferedOutputStream(new FileOutputStream(new File(
+                                dest)));
+                w.write(bi, os);
+                os.close();
+            } catch (FileNotFoundException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Requested file was not found: " + dest);
+                }
 
-		if (in != null)
-			in.delete();
-	}
+                throw new DjatokaException(e.getMessage(), e);
+            } catch (IOException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Error attempting to close: " + dest);
+                }
 
-	/**
-	 * Extract region or resolution level from JPEG 2000 image file.
-	 * 
-	 * @param input input absolute file path for input file.
-	 * @param os OutputStream to serialize formatted output image to.
-	 * @param params DjatokaDecodeParam instance containing region and transform
-	 *        settings.
-	 * @param w format writer to be used to serialize extracted region.
-	 * @throws DjatokaException
-	 */
-	public void extractImage(String input, OutputStream os,
-			DjatokaDecodeParam params, IWriter w) throws DjatokaException {
-		File in = null;
+                throw new DjatokaException(e.getMessage(), e);
+            }
+        }
 
-		// If coming in from stdin, copy to tmp file
-		if (input.equals(STDIN)) {
-			try {
-				in = File.createTempFile("tmp", ".jp2");
-				input = in.getAbsolutePath();
-				in.deleteOnExit();
-				IOUtils.copyFile(new File(STDIN), in);
-			}
-			catch (IOException e) {
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error("Unable to process image from " + STDIN + ": "
-							+ e.getMessage());
-				}
+        if (in != null) {
+            in.delete();
+        }
+    }
 
-				throw new DjatokaException(e.getMessage(), e);
-			}
-		}
+    /**
+     * Extract region or resolution level from JPEG 2000 image file.
+     * 
+     * @param input input absolute file path for input file.
+     * @param os OutputStream to serialize formatted output image to.
+     * @param params DjatokaDecodeParam instance containing region and transform
+     *        settings.
+     * @param w format writer to be used to serialize extracted region.
+     * @throws DjatokaException
+     */
+    public void extractImage(String input, OutputStream os,
+            DjatokaDecodeParam params, IWriter w) throws DjatokaException {
+        File in = null;
 
-		BufferedImage bi = extractImpl.process(input, params);
+        // If coming in from stdin, copy to tmp file
+        if (input.equals(STDIN)) {
+            try {
+                in = File.createTempFile("tmp", ".jp2");
+                input = in.getAbsolutePath();
+                in.deleteOnExit();
+                IOUtils.copyFile(new File(STDIN), in);
+            } catch (IOException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Unable to process image from " + STDIN +
+                            ": " + e.getMessage());
+                }
 
-		if (bi != null) {
-			if (params.getScalingFactor() != 1.0
-					|| params.getScalingDimensions() != null) {
-				bi = applyScaling(bi, params);
-			}
+                throw new DjatokaException(e.getMessage(), e);
+            }
+        }
 
-			if (params.getTransform() != null) {
-				bi = params.getTransform().run(bi);
-			}
+        BufferedImage bi = extractImpl.process(input, params);
 
-			w.write(bi, os);
-		}
+        if (bi != null) {
+            if (params.getScalingFactor() != 1.0 ||
+                    params.getScalingDimensions() != null) {
+                bi = applyScaling(bi, params);
+            }
 
-		if (in != null) {
-			in.delete();
-		}
-	}
+            if (params.getTransform() != null) {
+                bi = params.getTransform().run(bi);
+            }
 
-	/**
-	 * Extract region or resolution level from JPEG 2000 image file.
-	 * 
-	 * @param input input absolute file path for input file.
-	 * @param os OutputStream to serialize formatted output image to.
-	 * @param params DjatokaDecodeParam instance containing region and transform
-	 *        settings.
-	 * @param w format writer to be used to serialize extracted region.
-	 * @throws DjatokaException
-	 */
-	public void extractImage(InputStream input, OutputStream os,
-			DjatokaDecodeParam params, IWriter w) throws DjatokaException {
-		BufferedImage bi = extractImpl.process(input, params);
-		if (bi != null) {
-			if (params.getScalingFactor() != 1.0
-					|| params.getScalingDimensions() != null)
-				bi = applyScaling(bi, params);
-			if (params.getTransform() != null)
-				bi = params.getTransform().run(bi);
-			w.write(bi, os);
-		}
-	}
+            w.write(bi, os);
+        }
 
-	/**
-	 * Apply scaling, if Scaling Factor != to 1.0 then check ScalingDimensions
-	 * for w,h vars. A scaling factor value must be greater than 0 and less than
-	 * 2. Note that ScalingFactor overrides ScalingDimensions.
-	 * 
-	 * @param bi BufferedImage to be scaled.
-	 * @param params DjatokaDecodeParam containing ScalingFactor or
-	 *        ScalingDimensions vars
-	 * @return scaled instance of provided BufferedImage
-	 */
-	private static BufferedImage applyScaling(BufferedImage bi,
-			DjatokaDecodeParam params) {
-		if (params.getScalingFactor() != 1.0 && params.getScalingFactor() > 0
-				&& params.getScalingFactor() < 3)
-			bi = ImageProcessingUtils.scale(bi, params.getScalingFactor());
-		else if (params.getScalingDimensions() != null
-				&& params.getScalingDimensions().length == 2) {
-			int width = params.getScalingDimensions()[0];
-			if (width >= 3 * bi.getWidth())
-				return bi;
-			int height = params.getScalingDimensions()[1];
-			if (height >= 3 * bi.getHeight())
-				return bi;
-			bi = ImageProcessingUtils.scale(bi, width, height);
-		}
-		return bi;
-	}
+        if (in != null) {
+            in.delete();
+        }
+    }
+
+    /**
+     * Extract region or resolution level from JPEG 2000 image file.
+     * 
+     * @param input input absolute file path for input file.
+     * @param os OutputStream to serialize formatted output image to.
+     * @param params DjatokaDecodeParam instance containing region and transform
+     *        settings.
+     * @param w format writer to be used to serialize extracted region.
+     * @throws DjatokaException
+     */
+    public void extractImage(InputStream input, OutputStream os,
+            DjatokaDecodeParam params, IWriter w) throws DjatokaException {
+        BufferedImage bi = extractImpl.process(input, params);
+        if (bi != null) {
+            if (params.getScalingFactor() != 1.0 ||
+                    params.getScalingDimensions() != null) {
+                bi = applyScaling(bi, params);
+            }
+            if (params.getTransform() != null) {
+                bi = params.getTransform().run(bi);
+            }
+            w.write(bi, os);
+        }
+    }
+
+    /**
+     * Apply scaling, if Scaling Factor != to 1.0 then check ScalingDimensions
+     * for w,h vars. A scaling factor value must be greater than 0 and less than
+     * 2. Note that ScalingFactor overrides ScalingDimensions.
+     * 
+     * @param bi BufferedImage to be scaled.
+     * @param params DjatokaDecodeParam containing ScalingFactor or
+     *        ScalingDimensions vars
+     * @return scaled instance of provided BufferedImage
+     */
+    private static BufferedImage applyScaling(BufferedImage bi,
+            DjatokaDecodeParam params) {
+        if (params.getScalingFactor() != 1.0 && params.getScalingFactor() > 0 &&
+                params.getScalingFactor() < 3) {
+            bi = ImageProcessingUtils.scale(bi, params.getScalingFactor());
+        } else if (params.getScalingDimensions() != null &&
+                params.getScalingDimensions().length == 2) {
+            int width = params.getScalingDimensions()[0];
+            if (width >= 3 * bi.getWidth()) {
+                return bi;
+            }
+            int height = params.getScalingDimensions()[1];
+            if (height >= 3 * bi.getHeight()) {
+                return bi;
+            }
+            bi = ImageProcessingUtils.scale(bi, width, height);
+        }
+        return bi;
+    }
 }

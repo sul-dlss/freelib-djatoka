@@ -93,14 +93,29 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
         formatMap.put(FORMAT_ID_JPM, FORMAT_MIMEYPE_JPM);
     }
 
+    /**
+     * Sets the pairtree root for the migrator.
+     * 
+     * @param aPtRootDir The Pairtree root directory
+     */
     public void setPairtreeRoot(File aPtRootDir) {
         myPtRootDir = aPtRootDir;
     }
 
+    /**
+     * Gets the pairtree root for the migrator.
+     * 
+     * @return The Pairtree root directory
+     */
     public File getPairtreeRoot() {
         return myPtRootDir;
     }
 
+    /**
+     * Returns true if the migrator has a Pairtree root directory; else, false.
+     * 
+     * @return True if the migrator has a Pairtree root directory; else, false
+     */
     public boolean hasPairtreeRoot() {
         return myPtRootDir != null;
     }

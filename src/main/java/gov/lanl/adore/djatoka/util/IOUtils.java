@@ -93,9 +93,11 @@ public class IOUtils {
             e.printStackTrace();
             return null;
         } finally {
-            if (out != null) try {
-                out.close();
-            } catch (Exception e) {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (Exception e) {
+                }
             }
         }
         return output;
@@ -157,17 +159,40 @@ public class IOUtils {
         return in;
     }
 
+    /**
+     * Gets the output stream of the supplied location.
+     * 
+     * @param location The location of the stream to get
+     * @return The output stream of the supplied location
+     * @throws Exception If there is trouble getting the output stream
+     */
     public static OutputStream getOutputStream(URL location) throws Exception {
         return getOutputStream(getInputStream(location));
     }
 
+    /**
+     * Gets the output stream of the supplied input stream.
+     * 
+     * @param ins The input stream to get an output stream for
+     * @return The output stream of the supplied input stream
+     * @throws Exception If there is trouble getting the output stream
+     */
     public static OutputStream getOutputStream(InputStream ins)
-            throws java.io.IOException, Exception {
+            throws Exception {
         return getOutputStream(ins, 1024 * 4);
     }
 
+    /**
+     * Gets the output stream of the supplied input stream using the supplied
+     * buffer size.
+     * 
+     * @param ins The input stream to get an output stream for
+     * @param bufferSize The buffer size
+     * @return The output stream of the supplied input stream
+     * @throws Exception If there is trouble getting the output stream
+     */
     public static OutputStream getOutputStream(InputStream ins, int bufferSize)
-            throws java.io.IOException, Exception {
+            throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[bufferSize];
         int count = 0;
@@ -179,6 +204,13 @@ public class IOUtils {
         return baos;
     }
 
+    /**
+     * Copies file from source to destination.
+     * 
+     * @param src The source file
+     * @param dest The destination file
+     * @return Returns true if the file was successfully copied
+     */
     public static boolean copyFile(File src, File dest) {
         InputStream in = null;
         OutputStream out = null;
@@ -199,18 +231,29 @@ public class IOUtils {
             e.printStackTrace();
             return false;
         } finally {
-            if (in != null) try {
-                in.close();
-            } catch (Exception e) {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception e) {
+                }
             }
-            if (out != null) try {
-                out.close();
-            } catch (Exception e) {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (Exception e) {
+                }
             }
         }
         return true;
     }
 
+    /**
+     * Copies from an input stream to an output stream.
+     * 
+     * @param src The input stream
+     * @param dest The output stream
+     * @return True if the stream was successfull copied
+     */
     public static boolean copyStream(InputStream src, OutputStream dest) {
         InputStream in = null;
         OutputStream out = null;
@@ -231,29 +274,53 @@ public class IOUtils {
             e.printStackTrace();
             return false;
         } finally {
-            if (in != null) try {
-                in.close();
-            } catch (Exception e) {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception e) {
+                }
             }
-            if (out != null) try {
-                out.close();
-            } catch (Exception e) {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (Exception e) {
+                }
             }
         }
         return true;
     }
 
-    public static byte[] getByteArray(InputStream ins)
-            throws java.io.IOException, Exception {
+    /**
+     * Returns a byte array from a supplied input stream.
+     * 
+     * @param ins The input stream
+     * @return The byte array
+     * @throws Exception If there was a problem getting the byte array
+     */
+    public static byte[] getByteArray(InputStream ins) throws Exception {
         // TODO: remove CR/LFs
         return ((ByteArrayOutputStream) getOutputStream(ins)).toByteArray();
     }
 
+    /**
+     * Loads a configuration file by its path.
+     * 
+     * @param path The path of the configuration file to load
+     * @return A properties object with the configuration information
+     * @throws Exception If there is trouble reading the configuration file
+     */
     public static Properties loadConfigByPath(String path) throws Exception {
         FileInputStream fi = new FileInputStream(path);
         return loadProperty(fi);
     }
 
+    /**
+     * Loads a configuration file from the supplied input stream.
+     * 
+     * @param in The input stream of the configuration file to load
+     * @return A properties object with the configuration information
+     * @throws IOException If there is trouble reading the configuration
+     */
     public static Properties loadProperty(InputStream in) throws IOException {
         Properties prop;
         try {
@@ -270,6 +337,13 @@ public class IOUtils {
         return prop;
     }
 
+    /**
+     * Reads bytes from a file.
+     * 
+     * @param file A file from which to read the bytes
+     * @return The byte array
+     * @throws IOException If there is trouble reading bytes from the file
+     */
     public static byte[] getBytesFromFile(File file) throws IOException {
         InputStream is = new FileInputStream(file);
 
@@ -295,6 +369,13 @@ public class IOUtils {
         return bytes;
     }
 
+    /**
+     * Loads a configuration file from the classpath.
+     * 
+     * @param name The name of the file to read from the classpath
+     * @return A properties object with the configuration data
+     * @throws Exception If there is trouble reading from the classpath file
+     */
     public static Properties loadConfigByCP(String name) throws Exception {
 
         // Get our class loader
@@ -335,11 +416,12 @@ public class IOUtils {
         if (file.exists() && file.isDirectory()) {
             File[] fa = file.listFiles(fileFilter);
             for (int i = 0; i < fa.length; i++) {
-                if (fa[i].isFile())
+                if (fa[i].isFile()) {
                     files.add(fa[i]);
-                else if (recursive && fa[i].isDirectory())
+                } else if (recursive && fa[i].isDirectory()) {
                     files.addAll(getFileList(fa[i].getAbsolutePath(),
                             fileFilter, recursive));
+                }
             }
         } else if (file.exists() && file.isFile()) {
             files.add(file);

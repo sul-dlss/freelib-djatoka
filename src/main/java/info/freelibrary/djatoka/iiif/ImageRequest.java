@@ -36,7 +36,6 @@ public class ImageRequest implements IIIFRequest {
      * Returns a <code>ImageRequest</code> for the supplied {@link URL}.
      * 
      * @param aURL A {@link URL} representing the <code>ImageRequest</code>
-     * @return An <code>ImageRequest</code>
      * @throws IIIFException If there is a problem creating the request
      */
     public ImageRequest(URL aURL) throws IIIFException {
@@ -48,7 +47,6 @@ public class ImageRequest implements IIIFRequest {
      * 
      * @param aURL A {@link URL} representing the <code>ImageRequest</code>
      * @param aPrefix A pre-configured prefix to use in parsing the request
-     * @return An <code>ImageRequest</code>
      * @throws IIIFException If there is a problem creating the request
      */
     public ImageRequest(URL aURL, String aPrefix) throws IIIFException {

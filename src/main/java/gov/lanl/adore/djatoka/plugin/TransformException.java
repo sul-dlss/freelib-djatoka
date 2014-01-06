@@ -26,22 +26,37 @@ package gov.lanl.adore.djatoka.plugin;
 import gov.lanl.adore.djatoka.DjatokaException;
 
 /**
- * 
  * @author Ryan Chute
- *
  */
 public class TransformException extends DjatokaException {
-	
-	private static final long serialVersionUID = -3452607688194996388L;
 
-	public TransformException(String message) {
+    private static final long serialVersionUID = -3452607688194996388L;
+
+    /**
+     * Creates a transform exception using the supplied message.
+     * 
+     * @param message The exception message
+     */
+    public TransformException(String message) {
         super(message);
     }
 
+    /**
+     * Creates a transform exception from the supplied Throwable using the
+     * supplied message.
+     * 
+     * @param message The exception message
+     * @param cause The underlying exception
+     */
     public TransformException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Creates a tranform exception from the supplied Throwable.
+     * 
+     * @param cause The underlying cause of the exception
+     */
     public TransformException(Throwable cause) {
         super(cause);
     }

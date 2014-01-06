@@ -12,16 +12,8 @@ import java.net.URL;
 
 import java.io.File;
 
-import java.util.List;
-
-import java.util.Arrays;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import gov.lanl.adore.djatoka.util.IOUtils;
-
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +24,18 @@ public class IdentifierIntegrationTest {
             .getLogger(IdentifierIntegrationTest.class);
 
     private static final String QUERY =
-            "http://localhost:{}/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format=image/jpeg&svc.level=1";
+            "http://localhost:{}/resolve?url_ver=Z39.88-2004&rft_id={}&"
+                    + "svc_id=info:lanl-repo/svc/getRegion"
+                    + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
+                    + "&svc.format=image/jpeg&svc.level=1";
 
     private static String myJettyPort;
 
+    /**
+     * Sets up the identifier integration test.
+     * 
+     * @throws Exception If there is an exception thrown during testing
+     */
     @BeforeClass
     public static void setUp() throws Exception {
         myJettyPort = System.getProperty("jetty.port");
@@ -47,6 +47,9 @@ public class IdentifierIntegrationTest {
         }
     }
 
+    /**
+     * Sets up the identifier integration test.
+     */
     @Before
     public void setup() {
         File ptRoot = new File(System.getProperty("pairtree.root"));
@@ -74,7 +77,7 @@ public class IdentifierIntegrationTest {
     public void testIDSource() {
         String id = "http://memory.loc.gov/gmd/gmd433/g4330/g4330/np000066.jp2";
         testReferent(id, 9206);
-        
+
         // TODO: check that it put it in the JP2 Pairtree file system
     }
 

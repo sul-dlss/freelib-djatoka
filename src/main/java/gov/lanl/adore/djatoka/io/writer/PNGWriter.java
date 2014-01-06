@@ -43,37 +43,35 @@ import org.slf4j.LoggerFactory;
  * @author Ryan Chute
  * @author Kevin S. Clarke &lt;<a
  *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>&gt;
- * 
  */
 public class PNGWriter implements IWriter {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(PNGWriter.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(PNGWriter.class);
 
-	/**
-	 * Write a BufferedImage instance using implementation to the provided
-	 * OutputStream.
-	 * 
-	 * @param bi a BufferedImage instance to be serialized
-	 * @param os OutputStream to output the image to
-	 * @throws FormatIOException
-	 */
-	public void write(BufferedImage bi, OutputStream os)
-			throws FormatIOException {
-		if (bi != null) {
-			BufferedOutputStream bos = null;
-			try {
-				bos = new BufferedOutputStream(os);
-				ImageIO.write(bi, "png", bos);
-			}
-			catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
-	}
+    /**
+     * Write a BufferedImage instance using implementation to the provided
+     * OutputStream.
+     * 
+     * @param bi a BufferedImage instance to be serialized
+     * @param os OutputStream to output the image to
+     * @throws FormatIOException
+     */
+    public void write(BufferedImage bi, OutputStream os)
+            throws FormatIOException {
+        if (bi != null) {
+            BufferedOutputStream bos = null;
+            try {
+                bos = new BufferedOutputStream(os);
+                ImageIO.write(bi, "png", bos);
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+    }
 
-	/**
-	 * NOT SUPPORTED.
-	 */
-	public void setWriterProperties(Properties props) {
-	}
+    /**
+     * NOT SUPPORTED.
+     */
+    public void setWriterProperties(Properties props) {
+    }
 }

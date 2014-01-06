@@ -48,13 +48,22 @@ public class LogWatcherThread extends Thread {
 
     private int mySessionHashCode;
 
+    /**
+     * Creates a thread that watches the log files.
+     * 
+     * @param aLogPath The path of the files to watch
+     * @param aSessionHashCode A session hash code
+     * @param aRemoteClient The remote endpoint
+     * @throws IOException If there is a problem reading or writing
+     */
     public LogWatcherThread(String aLogPath, int aSessionHashCode,
             RemoteEndpoint aRemoteClient) throws IOException {
         FileSystem fs = FileSystems.getDefault();
         Path logPath = fs.getPath(aLogPath);
 
         if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("[{}] Initializing new {} to monitor file system at {}",
+            LOGGER.info(
+                    "[{}] Initializing new {} to monitor file system at {}",
                     aSessionHashCode, LogWatcherThread.class.getSimpleName(),
                     aLogPath);
         }

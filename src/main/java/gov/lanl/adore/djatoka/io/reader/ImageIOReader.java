@@ -39,44 +39,46 @@ import java.io.InputStream;
 
 /**
  * Use ImageIO API to read image InputStream or image file path.
+ * 
  * @author Ryan Chute
- *
  */
 public class ImageIOReader implements IReader {
 
-	static Logger LOGGER = LoggerFactory.getLogger(ImageIOReader.class);
-	
-	/**
-	 * Returns a BufferedImage instance for provided InputStream
-	 * @param input an InputStream consisting of an image bitstream
-	 * @return a BufferedImage instance for source image InputStream
-	 * @throws FormatIOException
-	 */
-	public BufferedImage open(String input) throws FormatIOException {
-		RenderedImage renderedImage = null;
-		try {
-			renderedImage = javax.imageio.ImageIO.read (new File(input));
-		} catch (IOException details) {
-			LOGGER.error(details.getMessage(), details);
-			return null;
-		}
-		return ImageProcessingUtils.convertRenderedImage(renderedImage);
-	}
-	
-	/**
-	 * Returns a BufferedImage instance for provided image file path
-	 * @param input absolute file path for image file
-	 * @return a BufferedImage instance for source image file
-	 * @throws FormatIOException
-	 */
-	public BufferedImage open(InputStream input) throws FormatIOException {
-		RenderedImage renderedImage = null;
-		try {
-			renderedImage = javax.imageio.ImageIO.read (input);
-		} catch (IOException details) {
-			LOGGER.error(details.getMessage(), details);
-			return null;
-		}
-		return ImageProcessingUtils.convertRenderedImage(renderedImage);
-	}
+    static Logger LOGGER = LoggerFactory.getLogger(ImageIOReader.class);
+
+    /**
+     * Returns a BufferedImage instance for provided InputStream
+     * 
+     * @param input an InputStream consisting of an image bitstream
+     * @return a BufferedImage instance for source image InputStream
+     * @throws FormatIOException
+     */
+    public BufferedImage open(String input) throws FormatIOException {
+        RenderedImage renderedImage = null;
+        try {
+            renderedImage = javax.imageio.ImageIO.read(new File(input));
+        } catch (IOException details) {
+            LOGGER.error(details.getMessage(), details);
+            return null;
+        }
+        return ImageProcessingUtils.convertRenderedImage(renderedImage);
+    }
+
+    /**
+     * Returns a BufferedImage instance for provided image file path
+     * 
+     * @param input absolute file path for image file
+     * @return a BufferedImage instance for source image file
+     * @throws FormatIOException
+     */
+    public BufferedImage open(InputStream input) throws FormatIOException {
+        RenderedImage renderedImage = null;
+        try {
+            renderedImage = javax.imageio.ImageIO.read(input);
+        } catch (IOException details) {
+            LOGGER.error(details.getMessage(), details);
+            return null;
+        }
+        return ImageProcessingUtils.convertRenderedImage(renderedImage);
+    }
 }

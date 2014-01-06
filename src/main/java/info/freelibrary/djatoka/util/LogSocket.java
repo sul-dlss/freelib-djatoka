@@ -82,12 +82,23 @@ public class LogSocket {
         mySession = aSession;
     }
 
+    /**
+     * Called when there is an error in the log socket.
+     * 
+     * @param aSession A log socket session
+     * @param aThrowable An exception associated with the error
+     */
     @OnWebSocketError
     public void onError(Session aSession, Throwable aThrowable) {
         LOGGER.error("[{}] Error: {}", aSession.hashCode(), aThrowable
                 .getMessage());
     }
 
+    /**
+     * Called when there is a message to be exchanged.
+     * 
+     * @param aMessage A message to be exchanged
+     */
     @OnWebSocketMessage
     public void onMessage(String aMessage) {
         if (LOGGER.isDebugEnabled()) {

@@ -45,39 +45,38 @@ import org.slf4j.LoggerFactory;
  */
 public class PNMReader implements IReader {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(PNMReader.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(PNMReader.class);
 
-	/**
-	 * Returns a BufferedImage instance for provided image file path.
-	 * 
-	 * @param aFileName absolute file path for image file
-	 * @return a <code>BufferedImage</code> instance for source image file
-	 * @throws FormatIOException
-	 */
-	public BufferedImage open(String aFileName) throws FormatIOException {
-		try {
-			return new PNMImage(aFileName).getBufferedImage();
-		}
-		catch (IOException details) {
-			throw new FormatIOException(details);
-		}
-	}
+    /**
+     * Returns a BufferedImage instance for provided image file path.
+     * 
+     * @param aFileName absolute file path for image file
+     * @return a <code>BufferedImage</code> instance for source image file
+     * @throws FormatIOException
+     */
+    public BufferedImage open(String aFileName) throws FormatIOException {
+        try {
+            return new PNMImage(aFileName).getBufferedImage();
+        } catch (IOException details) {
+            throw new FormatIOException(details);
+        }
+    }
 
-	/**
-	 * Returns a BufferedImage instance for provided InputStream
-	 * 
-	 * @param aInputStream an InputStream consisting of an image bitstream
-	 * @return a <code>BufferedImage</code> instance for source image InputStream
-	 * @throws FormatIOException
-	 */
-	public BufferedImage open(InputStream aInputStream) throws FormatIOException {
-		try {
-			return new PNMImage(aInputStream).getBufferedImage();
-		}
-		catch (IOException details) {
-			throw new FormatIOException(details);
-		}
-	}
+    /**
+     * Returns a BufferedImage instance for provided InputStream
+     * 
+     * @param aInputStream an InputStream consisting of an image bitstream
+     * @return a <code>BufferedImage</code> instance for source image
+     *         InputStream
+     * @throws FormatIOException
+     */
+    public BufferedImage open(InputStream aInputStream)
+            throws FormatIOException {
+        try {
+            return new PNMImage(aInputStream).getBufferedImage();
+        } catch (IOException details) {
+            throw new FormatIOException(details);
+        }
+    }
 
 }
-	

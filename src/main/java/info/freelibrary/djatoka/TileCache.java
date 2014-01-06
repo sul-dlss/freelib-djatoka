@@ -89,9 +89,7 @@ public class TileCache {
                 printUsageAndExit();
             }
 
-        }
-        // else if (args.length == 1) {} // TODO: descend through directories
-        else {
+        } else {
             printUsageAndExit();
         }
 

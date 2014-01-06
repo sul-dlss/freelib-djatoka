@@ -31,21 +31,36 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * 
  * @author Ryan Chute
- *
  */
 public class HttpDate {
+
     public final static Locale LOCALE_US = Locale.US;
-	public final static TimeZone GMT_ZONE = TimeZone.getTimeZone("GMT");
+
+    public final static TimeZone GMT_ZONE = TimeZone.getTimeZone("GMT");
+
     public final static String RFC1123_PATTERN = "EEE, dd MMM yyyyy HH:mm:ss z";
-    public final static SimpleDateFormat rfc1123Format = new SimpleDateFormat(RFC1123_PATTERN, LOCALE_US);
-    
+
+    public final static SimpleDateFormat rfc1123Format = new SimpleDateFormat(
+            RFC1123_PATTERN, LOCALE_US);
+
+    /**
+     * Returns an HTTP date.
+     * 
+     * @return The date in string form
+     */
     public static String getHttpDate() {
-    	Calendar calendar = new GregorianCalendar(GMT_ZONE, LOCALE_US);
+        Calendar calendar = new GregorianCalendar(GMT_ZONE, LOCALE_US);
         return getHttpDate(calendar, new Date(System.currentTimeMillis()));
     }
-    
+
+    /**
+     * Returns an HTTP date.
+     * 
+     * @param calendar A supplied calendar
+     * @param time A supplied time
+     * @return The date in string form
+     */
     public static String getHttpDate(Calendar calendar, Date time) {
         calendar.setTime(time);
         return rfc1123Format.format(calendar.getTime());

@@ -97,19 +97,19 @@ public class KduExtractExe implements IExtract {
                                 ? KDU_EXPAND_EXE + ".exe" : KDU_EXPAND_EXE);
 
         if (System.getProperty("os.name").startsWith("Mac")) {
-            envParams =
-                    new String[] {"DYLD_LIBRARY_PATH=" +
-                            System.getProperty("DYLD_LIBRARY_PATH")};
+            envParams = new String[] {
+                "DYLD_LIBRARY_PATH=" + System.getProperty("DYLD_LIBRARY_PATH")
+            };
         } else if (System.getProperty("os.name").startsWith("Win")) {
             isWindows = true;
         } else if (System.getProperty("os.name").startsWith("Linux")) {
-            envParams =
-                    new String[] {"LD_LIBRARY_PATH=" +
-                            System.getProperty("LD_LIBRARY_PATH")};
+            envParams = new String[] {
+                "LD_LIBRARY_PATH=" + System.getProperty("LD_LIBRARY_PATH")
+            };
         } else if (System.getProperty("os.name").startsWith("Solaris")) {
-            envParams =
-                    new String[] {"LD_LIBRARY_PATH=" +
-                            System.getProperty("LD_LIBRARY_PATH")};
+            envParams = new String[] {
+                "LD_LIBRARY_PATH=" + System.getProperty("LD_LIBRARY_PATH")
+            };
         }
 
         LOGGER.debug("envParams: " +
@@ -158,9 +158,8 @@ public class KduExtractExe implements IExtract {
      * @return extracted region as a BufferedImage
      * @throws DjatokaException
      */
-    public BufferedImage
-            process(final InputStream is, DjatokaDecodeParam params)
-                    throws DjatokaException {
+    public BufferedImage process(InputStream is, DjatokaDecodeParam params)
+            throws DjatokaException {
         if (isWindows) {
             return processUsingTemp(is, params);
         }
@@ -706,7 +705,9 @@ public class KduExtractExe implements IExtract {
     }
 
     private static final String escape(String path) {
-        if (path.contains(" ")) path = "\"" + path + "\"";
+        if (path.contains(" ")) {
+            path = "\"" + path + "\"";
+        }
         return path;
     }
 

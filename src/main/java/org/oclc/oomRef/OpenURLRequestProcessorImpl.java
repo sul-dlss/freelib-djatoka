@@ -8,6 +8,7 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.oclc.oomRef;
 
 import info.openurl.oom.ContextObject;
@@ -45,148 +46,202 @@ import org.oclc.oomRef.entities.ServiceTypeImpl;
 import org.w3c.dom.Document;
 
 /**
- * For the sake of simplicity, this resolver assumes that multiple
- * ServiceType Identifiers should be processed in sequence until one of
- * them returns a Response instead of null. For example, the ContextObject
- * could specify two services: 1) The desired service 2) A failover service
-
+ * For the sake of simplicity, this resolver assumes that multiple ServiceType
+ * Identifiers should be processed in sequence until one of them returns a
+ * Response instead of null. For example, the ContextObject could specify two
+ * services: 1) The desired service 2) A failover service
+ * 
  * @author Jeffrey A. Young
  */
 public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
 
+    /**
+     * Gets the processor ID.
+     */
     public URI getProcessorID() throws URISyntaxException {
         return new URI("info:oom/oomProcessors/OOMRef-J");
     }
-    
-	public OpenURLResponse resolve(OpenURLRequest openURLRequest)
-	throws OpenURLException {
+
+    /**
+     * Resolves the OpenURLResponse.
+     */
+    public OpenURLResponse resolve(OpenURLRequest openURLRequest)
+            throws OpenURLException {
         OpenURLResponse response = null;
-        
+
         // Try each ContentObject until someone responds
         ContextObject[] contextObjects = openURLRequest.getContextObjects();
-        for (int i=0; response == null && i < contextObjects.length; ++i) {
+        for (int i = 0; response == null && i < contextObjects.length; ++i) {
             ContextObject contextObject = contextObjects[i];
             ServiceType[] serviceTypes = contextObject.getServiceTypes();
 
             // Try each ServiceType/Service until someone responds
-            for (int j=0; response == null && j<serviceTypes.length; ++j) {
-            	ServiceType serviceType = serviceTypes[j];
+            for (int j = 0; response == null && j < serviceTypes.length; ++j) {
+                ServiceType serviceType = serviceTypes[j];
                 Object[] descriptors = serviceType.getDescriptors();
-                
+
                 // Try each Service until someone responds
-                for (int k=0; response == null && k < descriptors.length; ++k) {
-                	Object descriptor = descriptors[k];
+                for (int k = 0; response == null && k < descriptors.length; ++k) {
+                    Object descriptor = descriptors[k];
                     if (descriptor instanceof Service) {
-                    	Service service = (Service) descriptor;
-                    	try {
-                            response = service.resolve(
-//                            		this,
-                            		serviceType,
-                            		contextObject,
-                                    openURLRequest,
-                                    this);
-                    	} catch (Exception e) {
-                    		throw new OpenURLException(e.getMessage(), e);
-                    	}
+                        Service service = (Service) descriptor;
+                        try {
+                            response =
+                                    service.resolve(
+                                            // this,
+                                            serviceType, contextObject,
+                                            openURLRequest, this);
+                        } catch (Exception e) {
+                            throw new OpenURLException(e.getMessage(), e);
+                        }
                     }
                 }
             }
         }
         return response;
-	}
+    }
 
-	public ContextObject contextObjectFactory(Referent referent,
-			ReferringEntity referringEntity, Requester requester,
-			ServiceType serviceType, Resolver resolver, Referrer referrer) {
-		ReferringEntity[] referringEntities = null;
-		Requester[] requesters = null;
-		ServiceType[] serviceTypes = null;
-		Resolver[] resolvers = null;
-		Referrer[] referrers = null;
+    /**
+     * Creates a context object.
+     */
+    public ContextObject contextObjectFactory(Referent referent,
+            ReferringEntity referringEntity, Requester requester,
+            ServiceType serviceType, Resolver resolver, Referrer referrer) {
+        ReferringEntity[] referringEntities = null;
+        Requester[] requesters = null;
+        ServiceType[] serviceTypes = null;
+        Resolver[] resolvers = null;
+        Referrer[] referrers = null;
 
-		if (referringEntity != null)
-			referringEntities = new ReferringEntity[] { referringEntity };
-		if (requester != null)
-			requesters = new Requester[] { requester };
-		if (serviceType != null)
-			serviceTypes = new ServiceType[] { serviceType };
-		if (resolver != null)
-			resolvers = new Resolver[] { resolver };
-		if (referrer != null)
-			referrers = new Referrer[] { referrer };
-			
-		
-		return contextObjectFactory(referent,
-				referringEntities,
-				requesters,
-				serviceTypes,
-				resolvers,
-				referrers);
-	}
-	
-	public ContextObject contextObjectFactory(Referent referent,
-			ReferringEntity[] referringEntities,
-			Requester[] requesters,
-			ServiceType[] serviceTypes,
-			Resolver[] resolvers,
-			Referrer[] referrers) {
-		return new ContextObjectImpl(
-				referent,
-				referringEntities,
-				requesters,
-				serviceTypes,
-				resolvers,
-				referrers);
-	}
-    
-	public Referent referentFactory(Object object) {
-		return new ReferentImpl(object);
-	}
+        if (referringEntity != null) {
+            referringEntities = new ReferringEntity[] {
+                referringEntity
+            };
+        }
+        if (requester != null) {
+            requesters = new Requester[] {
+                requester
+            };
+        }
+        if (serviceType != null) {
+            serviceTypes = new ServiceType[] {
+                serviceType
+            };
+        }
+        if (resolver != null) {
+            resolvers = new Resolver[] {
+                resolver
+            };
+        }
+        if (referrer != null) {
+            referrers = new Referrer[] {
+                referrer
+            };
+        }
 
-	public ServiceType serviceTypeFactory(Object object) {
-		return new ServiceTypeImpl(object);
-	}
-	
-	public Requester requesterFactory(Object object) {
-		return new RequesterImpl(object);
-	}
-	
-	public ReferringEntity referringEntityFactory(Object object) {
-		return new ReferringEntityImpl(object);
-	}
-	
-	public Referrer referrerFactory(Object object) {
-		return new ReferrerImpl(object);
-	}
-	
-	public Resolver resolverFactory(Object object) {
-		return new ResolverImpl(object);
-	}
+        return contextObjectFactory(referent, referringEntities, requesters,
+                serviceTypes, resolvers, referrers);
+    }
 
-	public ByReferenceMetadata byReferenceMetadataFactory(URI ref_fmt, URL ref) {
-		return new ByReferenceMetadataImpl(ref_fmt, ref);
-	}
+    /**
+     * Returns a context object using a factory.
+     * 
+     * @param referent A referent
+     * @param referringEntities Referring entities
+     */
+    public ContextObject contextObjectFactory(Referent referent,
+            ReferringEntity[] referringEntities, Requester[] requesters,
+            ServiceType[] serviceTypes, Resolver[] resolvers,
+            Referrer[] referrers) {
+        return new ContextObjectImpl(referent, referringEntities, requesters,
+                serviceTypes, resolvers, referrers);
+    }
 
-	public ByValueMetadata byValueMetadataFactory(URI val_fmt, String prefix, Set entrySet) {
-		return new ByValueMetadataImpl(val_fmt, prefix, entrySet);
-	}
+    /**
+     * Creates a referent.
+     */
+    public Referent referentFactory(Object object) {
+        return new ReferentImpl(object);
+    }
 
-    public ByValueMetadataKev byValueMetadataKevFactory(URI val_fmt, String prefix, Set entrySet) {
+    /**
+     * Creates a service type.
+     */
+    public ServiceType serviceTypeFactory(Object object) {
+        return new ServiceTypeImpl(object);
+    }
+
+    /**
+     * Creates a requester.
+     */
+    public Requester requesterFactory(Object object) {
+        return new RequesterImpl(object);
+    }
+
+    /**
+     * Creates a referring entity.
+     */
+    public ReferringEntity referringEntityFactory(Object object) {
+        return new ReferringEntityImpl(object);
+    }
+
+    /**
+     * Creates a referrer.
+     */
+    public Referrer referrerFactory(Object object) {
+        return new ReferrerImpl(object);
+    }
+
+    /**
+     * Creates a resolver.
+     */
+    public Resolver resolverFactory(Object object) {
+        return new ResolverImpl(object);
+    }
+
+    /**
+     * Creates a ByReferenceMetadata object.
+     */
+    public ByReferenceMetadata byReferenceMetadataFactory(URI ref_fmt, URL ref) {
+        return new ByReferenceMetadataImpl(ref_fmt, ref);
+    }
+
+    /**
+     * Creates a ByValueMetadata object.
+     */
+    public ByValueMetadata byValueMetadataFactory(URI val_fmt, String prefix,
+            Set entrySet) {
+        return new ByValueMetadataImpl(val_fmt, prefix, entrySet);
+    }
+
+    /**
+     * Creates a ByValueMetadataKev.
+     */
+    public ByValueMetadataKev byValueMetadataKevFactory(URI val_fmt,
+            String prefix, Set entrySet) {
         return new ByValueMetadataKevImpl(val_fmt, prefix, entrySet);
     }
 
-    public ByValueMetadataXml byValueMetadataXmlFactory(URI val_fmt, Document xmlDoc) {
+    /**
+     * Creates a ByValueMetadataXml.
+     */
+    public ByValueMetadataXml byValueMetadataXmlFactory(URI val_fmt,
+            Document xmlDoc) {
         return new ByValueMetadataXmlImpl(val_fmt, xmlDoc);
     }
 
-	public OpenURLRequest openURLRequestFactory(ContextObject contextObject) {
-		return new OpenURLRequestImpl(contextObject);
-	}
+    /**
+     * Creates an OpenURLRequest.
+     */
+    public OpenURLRequest openURLRequestFactory(ContextObject contextObject) {
+        return new OpenURLRequestImpl(contextObject);
+    }
 
-	public OpenURLResponse openURLResponseFactory(int status,
-			String redirectURL,
-			String contentType,
-			byte[] bytes) {
-		return new OpenURLResponse(status, redirectURL, contentType, bytes);
-	}
+    /**
+     * Creates an OpenURLResponse.
+     */
+    public OpenURLResponse openURLResponseFactory(int status,
+            String redirectURL, String contentType, byte[] bytes) {
+        return new OpenURLResponse(status, redirectURL, contentType, bytes);
+    }
 }

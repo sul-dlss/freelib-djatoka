@@ -159,10 +159,11 @@ public class ViewServlet extends HttpServlet implements Constants {
                         "<tifStats fileCount='{}' totalSize='{}'/>"
                                 + "<jp2Stats fileCount='{}' totalSize='{}'/>",
                         new String[] {
-                                (String) session.getAttribute(TIF_COUNT_ATTR),
-                                (String) session.getAttribute(TIF_SIZE_ATTR),
-                                (String) session.getAttribute(JP2_COUNT_ATTR),
-                                (String) session.getAttribute(JP2_SIZE_ATTR)}));
+                            (String) session.getAttribute(TIF_COUNT_ATTR),
+                            (String) session.getAttribute(TIF_SIZE_ATTR),
+                            (String) session.getAttribute(JP2_COUNT_ATTR),
+                            (String) session.getAttribute(JP2_SIZE_ATTR)
+                        }));
 
                 writer.write("<defaultPath>" + servletPath + "</defaultPath>");
                 writer.write("<path>" + tokenize(dirParam) + "</path>");
