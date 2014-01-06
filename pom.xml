@@ -94,12 +94,13 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<console.log>false</console.log>
 
-		<freelib.build.tools.version>0.0.2</freelib.build.tools.version>
+		<freelib.build.tools.version>0.0.3</freelib.build.tools.version>
 		<maven.checkstyle.version>2.10</maven.checkstyle.version>
 		<logback.version>1.0.13</logback.version>
 		<junit.version>4.11</junit.version>
 
 		<!-- used for finding the unpacked checkstyle-suppressions.xml file -->
+		<!-- built-in for eclipse-cs tool so we make it work with maven too -->
 		<config_loc>${project.basedir}/target/classes/checkstyle</config_loc>
 	</properties>
 	<dependencies>
