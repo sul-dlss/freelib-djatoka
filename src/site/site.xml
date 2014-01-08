@@ -85,7 +85,7 @@
     <menu name="Contributions">
       <item name="Test Drive the Project" href="testers-welcome.html" />
       <item name="Help Improve the Docs" href="documenters-welcome.html" />
-      <item name="Translators Welcome" href="translators-welcome.html" />
+      <item name="Translate the Project" href="translators-welcome.html" />
       <item name="Submit a Pull Request" href="coders-welcome.html" />
     </menu>
     <menu name="Donations">
