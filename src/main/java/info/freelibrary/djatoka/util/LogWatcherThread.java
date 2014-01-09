@@ -70,7 +70,7 @@ public class LogWatcherThread extends Thread {
 
         // Start the new watch service for our log files
         myWatchService = fs.newWatchService();
-        myKeys = new ConcurrentHashMap<>();
+        myKeys = new ConcurrentHashMap<WatchKey, Path>();
         mySessionHashCode = aSessionHashCode;
 
         // Register the path of the log files with our watch service
@@ -107,7 +107,9 @@ public class LogWatcherThread extends Thread {
 
             try {
                 key = myWatchService.poll(10, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException | ClosedWatchServiceException e) {
+            } catch (InterruptedException details) {
+                break;
+            } catch (ClosedWatchServiceException details) {
                 break;
             }
 
