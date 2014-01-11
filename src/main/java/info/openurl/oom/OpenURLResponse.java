@@ -254,14 +254,18 @@ public class OpenURLResponse {
     }
 
     /**
-     * @return
+     * Gets a map of session information.
+     * 
+     * @return Map of session information
      */
     public Map getSessionMap() {
         return sessionMap;
     }
 
     /**
-     * @return
+     * Gets a map of header information.
+     * 
+     * @return Map of header information
      */
     public Map getHeaderMap() {
         return headerMap;

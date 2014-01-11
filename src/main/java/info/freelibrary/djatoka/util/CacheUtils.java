@@ -12,7 +12,7 @@ public class CacheUtils {
      * @param aLevel A level to be cached
      * @param aScale A scale to be cached
      * @param aRegion A region to be cached
-     * @return
+     * @return The file name for the cached file
      */
     public static final String getFileName(String aLevel, String aScale,
             String aRegion) {
@@ -104,10 +104,10 @@ public class CacheUtils {
      * characteristics.
      * 
      * @param aLevel A image level
-     * @paran aWidth An image width
+     * @param aWidth An image width
      * @param aHeight An image height
      * @param aX An X coordinate
-     * @param aY A Y coordiate
+     * @param aY A Y coordinate
      */
     public static final String getRegion(int aLevel, int aWidth, int aHeight,
             int aX, int aY) {

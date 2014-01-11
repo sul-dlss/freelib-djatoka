@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link ServletFilter} that parsing incoming IIIF requests for
+ * A {@link javax.servlet.ServletFilter} that parsing incoming IIIF requests for
  * FreeLib-Djatoka.
  * 
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
@@ -35,7 +35,7 @@ public class IIIFServletFilter implements Filter, Constants {
     private FilterConfig myFilterConfig;
 
     /**
-     * Destroys the {@link ServletFilter}.
+     * Destroys the {@link javax.servlet.ServletFilter}.
      */
     public void destroy() {
         myFilterConfig = null;
@@ -133,7 +133,7 @@ public class IIIFServletFilter implements Filter, Constants {
 
     /**
      * Initializes the <code>IIIFServletFilter</code> with the supplied
-     * {@link FilterConfig}.
+     * {@link javax.servlet.FilterConfig}.
      * 
      * @param aFilterConfig A configuration for the servlet filter
      * @throws ServletException If there is trouble initializing the filter

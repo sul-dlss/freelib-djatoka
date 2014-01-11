@@ -34,7 +34,7 @@ public class OOMUtil {
      * Gets a parameter map.
      * 
      * @param queryString
-     * @return
+     * @return A sorted map with the parameters
      */
     public static SortedMap getParameterMap(String queryString) {
         return getParameterMap(new String[] {

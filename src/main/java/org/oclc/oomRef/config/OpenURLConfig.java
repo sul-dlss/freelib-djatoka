@@ -59,7 +59,7 @@ public class OpenURLConfig implements info.openurl.oom.config.OpenURLConfig {
     }
 
     /**
-     * @return
+     * @return The servlet configuration
      */
     public ServletConfig getServletConfig() {
         return servletConfig;

@@ -39,6 +39,12 @@ MAVEN_OPTIONS=""
 DJATOKA_PIDFILE=/var/run/djatoka.pid
 DJATOKA_LOGFILE=/var/log/djatoka-console.log
 
+# Configure a djatoka logs symlink in the standard location
+if [ ! -d ${DJATOKA_HOME}/target/logs ]; then
+    mkdir -p ${DJATOKA_HOME}/target/logs
+    ln -s ${DJATOKA_HOME}/target/logs /var/log/djatoka
+fi
+
 # Find out what Linux distribution we're running under
 DISTRIB_ID=`lsb_release -i |awk ' { print $3 }'`
 

@@ -59,11 +59,11 @@ public interface OpenURLConfig {
      * interpret OpenURLRequests differently, so OOM uses the configuration file
      * to identify the one to be used by this application.
      * 
-     * @return the configured OpenURLRequestProcessor
      * @throws TransformerException
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws IllegalAccessException
+     * @return The configured OpenURLRequestProcessor
      */
     public OpenURLRequestProcessor getProcessor() throws TransformerException,
             ClassNotFoundException, InstantiationException,

@@ -96,14 +96,14 @@ public class ReferentManager {
      * Example:ReferentManager.init((IReferentResolver)
      * Class.forName(implClass).newInstance(), props);
      * 
-     * @param referentResolver
-     * @param props
+     * @param aRefResolver
+     * @param aProps
      * @throws ResolverException
      */
-    public static void init(IReferentResolver refResolver, Properties props)
+    public static void init(IReferentResolver aRefResolver, Properties aProps)
             throws ResolverException {
-        rftResolver = refResolver;
-        rftResolver.setProperties(props);
+        rftResolver = aRefResolver;
+        rftResolver.setProperties(aProps);
         init = true;
     }
 }
