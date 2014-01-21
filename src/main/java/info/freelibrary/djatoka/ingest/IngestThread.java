@@ -4,6 +4,8 @@ package info.freelibrary.djatoka.ingest;
 import info.freelibrary.djatoka.Constants;
 
 import info.freelibrary.util.FileUtils;
+import info.freelibrary.util.Logger;
+import info.freelibrary.util.LoggerFactory;
 import info.freelibrary.util.RegexFileFilter;
 import info.freelibrary.util.DirFileFilter;
 import info.freelibrary.util.FileExtFileFilter;
@@ -25,15 +27,18 @@ import java.io.IOException;
 
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import nu.xom.Builder;
+import nu.xom.Nodes;
+import nu.xom.ParsingException;
 
 public class IngestThread extends Thread implements Constants {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(IngestThread.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+            IngestThread.class, "freelib-djatoka_messages");
 
     private static final String MAX_SIZE = "djatoka.ingest.file.maxSize";
+
+    private static final String ID_QUERY = "//id";
 
     private boolean isFinished;
 
@@ -89,7 +94,7 @@ public class IngestThread extends Thread implements Constants {
         super.run();
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Starting up ingest thread: #{}", getId());
+            LOGGER.debug("INGEST_THREAD_STARTING", getId());
         }
 
         isWaiting = true;
@@ -99,9 +104,9 @@ public class IngestThread extends Thread implements Constants {
             convert(mySource, myDest);
 
             // Add converted file system JP2s to the Pairtree cache directory
-            loadFileSystemImages(myDest);
+            loadFileSystemImages(myDest, mySource);
         } catch (Exception details) {
-            LOGGER.error(details.getMessage(), details);
+            LOGGER.error("INGEST_EXCEPTION", details);
         }
 
         isFinished = true;
@@ -117,8 +122,7 @@ public class IngestThread extends Thread implements Constants {
         }
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Shutting down ingest thread: #{} ({} ingested)",
-                    getId(), myCount);
+            LOGGER.debug("INGEST_SHUTDOWN", getId(), myCount);
         }
     }
 
@@ -155,7 +159,7 @@ public class IngestThread extends Thread implements Constants {
         int pathIndex = myDest.getAbsolutePath().length();
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Found {} directories in {}", dirs.length, aSource);
+            LOGGER.debug("INGEST_DIRS_FOUND", dirs.length, aSource);
         }
 
         // These are the directories into which we convert our JP2s
@@ -171,7 +175,7 @@ public class IngestThread extends Thread implements Constants {
                                     dest.getAbsolutePath());
                 } else {
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Descending into new directory: {}", dest);
+                        LOGGER.debug("INGEST_DESCENDING", dest);
                     }
 
                     if ((!dest.exists() && dest.mkdirs()) ||
@@ -187,7 +191,7 @@ public class IngestThread extends Thread implements Constants {
         }
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Found {} files in {}", files.length, aSource);
+            LOGGER.debug("INGEST_FILES_FOUND", files.length, aSource);
         }
 
         // These are the actual image files that we're going to convert
@@ -198,8 +202,8 @@ public class IngestThread extends Thread implements Constants {
 
             if (next.length() > myMaxSize) {
                 if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Source file too large: {} ({} MB)",
-                            sourceFileName, next.length() / 1048576);
+                    long size = next.length() / 1048576;
+                    LOGGER.error("INGEST_TOO_LARGE", sourceFileName, size);
                 }
 
                 continue; // We've written to the error log, move along...
@@ -221,13 +225,13 @@ public class IngestThread extends Thread implements Constants {
                 File jp2 = new File(ptDir, ptFileName);
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Checking to see if {} already exists", jp2);
+                    LOGGER.debug("INGEST_EXISTS_CHECK", jp2);
                 }
 
                 // We skip if it exists; delete it if you want to re-convert
                 if (jp2.exists()) {
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Skipping already converted JP2: {}", jp2);
+                        LOGGER.debug("INGEST_SKIPPING", jp2);
                     }
 
                     continue;
@@ -238,15 +242,14 @@ public class IngestThread extends Thread implements Constants {
                 // like it should have been... it's an indication of a problem.
                 if (nextDest.exists()) {
                     if (LOGGER.isWarnEnabled()) {
-                        LOGGER.warn("Moving aside stale artifact: {}", nextDest
-                                .getAbsolutePath());
+                        LOGGER.warn("INGEST_MOVING_STALE", nextDest);
                     }
 
                     nextDest.delete(); // clean up old problematic files
                 }
 
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Compressing {} to {} ({})", sourceFileName,
+                    LOGGER.info("INGEST_COMPRESSING", sourceFileName,
                             destFileName, Integer.toString(myCount + 1));
                 }
 
@@ -258,32 +261,29 @@ public class IngestThread extends Thread implements Constants {
                     myCount += 1;
 
                     if (LOGGER.isDebugEnabled()) {
-                        String fileSize =
-                                Long.toString(new File(destFileName).length());
-                        LOGGER.debug("{} written to disk: {}", destFileName,
-                                fileSize);
+                        LOGGER.debug("INGEST_WRITTEN_TO_DISK", destFileName,
+                                Long.toString(new File(destFileName).length()));
                     }
                 } catch (DjatokaException details) {
-                    LOGGER.error("Compression of {} (from {}) failed: {}",
-                            destFileName, sourceFileName, details.getMessage());
+                    LOGGER.error("INGEST_COMPRESSION_FAILED", destFileName,
+                            sourceFileName, details.getMessage());
 
                     if (!new File(destFileName).delete()) {
-                        LOGGER.error("Could not delete broken file: {}",
-                                destFileName);
+                        LOGGER.error("INGEST_BROKEN_FILE", destFileName);
                     }
                 } catch (NullPointerException details) {
-                    LOGGER.error("File ({}) seems to be an empty source image",
-                            sourceFileName);
+                    LOGGER.error("INGEST_EMPTY_SOURCE", sourceFileName);
                 }
             }
         }
     }
 
-    private void loadFileSystemImages(File aJP2Dir) throws IOException,
-            FileNotFoundException {
+    private void loadFileSystemImages(File aJP2Dir, File aSource)
+            throws IOException, FileNotFoundException {
         FilenameFilter filter = new RegexFileFilter(JP2_FILE_PATTERN);
-        String[] skipped = new String[] {"pairtree_root"};
         PairtreeRoot pairtree = new PairtreeRoot(aJP2Dir);
+        String skipped = "pairtree_root";
+        Builder bob = new Builder();
 
         // +1 below is to lose the trailing slash; we add via "--/" below
         int pathIndex = aJP2Dir.getAbsolutePath().length() + 1;
@@ -291,23 +291,67 @@ public class IngestThread extends Thread implements Constants {
         // Descend through file system skipping our already mapped Pairtree dir
         for (File file : FileUtils.listFiles(aJP2Dir, filter, true, skipped)) {
             String id = file.getAbsolutePath().substring(pathIndex);
+            String baseName = FileUtils.stripExt(id);
+            File xmlDescriptor = new File(aSource, baseName + ".xml");
 
-            // Add a path prefix for file-system based Pairtree objects...
-            // Making assumption that no external IDs will start with "--"
-            id = "--/" + FileUtils.stripExt(id);
+            // Check to see if XML descriptor file exists and use ID from it
+            if (xmlDescriptor.exists()) {
+                try {
+                    Nodes nodes = bob.build(xmlDescriptor).query(ID_QUERY);
 
-            PairtreeObject ptDir = pairtree.getObject(id);
-            String ptFileName = PairtreeUtils.encodeID(id);
-            File jp2PtFile = new File(ptDir, ptFileName);
+                    if (nodes.size() > 0) {
+                        String idValue = nodes.get(0).getValue();
 
-            // Move the file into the Pairtree structure
-            file.renameTo(jp2PtFile);
+                        // We store image with its explicit identifier
+                        if (!idValue.equals("")) {
+                            if (LOGGER.isInfoEnabled()) {
+                                LOGGER.info("INGEST_ID_FOUND", file, idValue);
+                            }
 
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.info("Adding image {} to local cache: {}", id, jp2PtFile
-                        .getAbsolutePath());
+                            store(pairtree, idValue, file);
+                        } else {
+                            if (LOGGER.isWarnEnabled()) {
+                                LOGGER.warn("INGEST_MISSING_ID", file);
+                            }
+
+                            // We fall back to the default storage mechanism
+                            store(pairtree, "--/" + baseName, file);
+                        }
+                    } else {
+                        if (LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("INGEST_MISSING_ID", file);
+                        }
+
+                        // We fall back to the default storage mechanism
+                        store(pairtree, "--/" + baseName, file);
+                    }
+                } catch (ParsingException details) {
+                    if (LOGGER.isErrorEnabled()) {
+                        LOGGER.error("INGEST_PARSING_EXCEPTION", file, details);
+                    }
+
+                    // We fall back to the default storage mechanism
+                    store(pairtree, "--/" + baseName, file);
+                }
+            } else {
+                // Add a path prefix for file-system based Pairtree objects...
+                // Making assumption that no external IDs will start with "--"
+                store(pairtree, "--/" + baseName, file);
             }
         }
     }
 
+    private void store(PairtreeRoot aPairtree, String aID, File aFile)
+            throws IOException {
+        PairtreeObject ptDir = aPairtree.getObject(aID);
+        String ptFileName = PairtreeUtils.encodeID(aID);
+        File jp2PtFile = new File(ptDir, ptFileName);
+
+        // Move the file into the Pairtree structure
+        aFile.renameTo(jp2PtFile);
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.info("INGEST_TO_CACHE", aID, jp2PtFile.getAbsolutePath());
+        }
+    }
 }

@@ -38,4 +38,22 @@
   <entry key="INGEST_CONVERSION_COMMAND">Conversion command: {}</entry>
   <entry key="INGEST_KAKADU_CFG">Kakadu environment not correctly configured for image
     conversion and ingest</entry>
+  <entry key="INGEST_MISSING_ID">Found XML file for {} but couldn't find an ID in it</entry>
+  <entry key="INGEST_ID_FOUND">Ingesting {} with ID its its XML file: {}</entry>
+  <entry key="INGEST_SHUTDOWN">Shutting down ingest thread: #{} ({} ingested)</entry>
+  <entry key="INGEST_DIRS_FOUND">Found {} directories in {}</entry>
+  <entry key="INGEST_DESCENDING">Descending into new directory: {}</entry>
+  <entry key="INGEST_FILES_FOUND">Found {} files in {}</entry>
+  <entry key="INGEST_TOO_LARGE">Source file too large: {} ({} MB)</entry>
+  <entry key="INGEST_EXISTS_CHECK">Checking to see if {} already exists</entry>
+  <entry key="INGEST_SKIPPING">Skipping already converted JP2: {}</entry>
+  <entry key="INGEST_MOVING_STALE">Moving aside stale artifact: {}</entry>
+  <entry key="INGEST_COMPRESSING">Compressing {} to {} ({})</entry>
+  <entry key="INGEST_WRITTEN_TO_DISK">{} written to disk: {}</entry>
+  <entry key="INGEST_COMPRESSION_FAILED">Compression of {} (from {}) failed: {}</entry>
+  <entry key="INGEST_BROKEN_FILE">Could not delete broken file: {}</entry>
+  <entry key="INGEST_EMPTY_SOURCE">File ({}) seems to be an empty source image</entry>
+  <entry key="INGEST_TO_CACHE">Adding image {} to local cache: {}</entry>
+  <entry key="INGEST_THREAD_STARTING">Starting up ingest thread: #{}</entry>
+  <entry key="INGEST_PARSING_EXCEPTION">Exception while parsing XML info file for {}</entry>
 </properties>
