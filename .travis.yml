@@ -14,7 +14,7 @@ install: "mvn -DskipTests=true install"
 before_script: "cp src/main/resources/sample-settings.xml ${HOME}/.m2/settings.xml"
 
 script:
-  - sudo ln -s . /opt/freelib-djatoka
+  - sudo ln -s `pwd` /opt/freelib-djatoka
   - etc/init.d/djatoka start
   - mvn -Ptravis install
 
