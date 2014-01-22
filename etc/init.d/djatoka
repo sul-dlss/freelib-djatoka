@@ -2,7 +2,7 @@
 #-----------------------------------------------------
 # djatoka-initd v0.0.2
 #-----------------------------------------------------
-# Script for running djatoka as a service under initd.
+# Script for running djatoka as a service under init.d
 #
 # Usage: service djatoka {start|stop|restart|status}"
 #
@@ -76,7 +76,7 @@ fi
 
 # Find the mvn executable from the system path
 MVNCMD=`which mvn`
-
+echo $MVNCMD
 # Configs that shouldn't need to be changed
 DJATOKA_START_CMD="sudo -u ${DJATOKA_USER} MAVEN_OPTS=${MAVEN_OPTIONS} $TMPSHELL $MVNCMD jetty:run-forked"
 DJATOKA_STOP_CMD="sudo -u ${DJATOKA_USER} $MVNCMD -q jetty:stop"
