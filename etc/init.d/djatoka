@@ -39,12 +39,8 @@ MAVEN_OPTIONS=""
 DJATOKA_PIDFILE=/var/run/djatoka.pid
 DJATOKA_LOGFILE=/var/log/djatoka-console.log
 
-# Configure a djatoka logs symlink in the standard location
-if [ ! -d ${DJATOKA_HOME}/target/logs ]; then
-    mkdir -p ${DJATOKA_HOME}/target/logs
-    # sudo doesn't hurt when running as root, and is necessary on travis
-    sudo ln -s ${DJATOKA_HOME}/target/logs /var/log/djatoka
-fi
+# And a directory for output files
+SYSTEM_LOG_DIR=/var/log
 
 # Find out what Linux distribution we're running under
 DISTRIB_ID=`lsb_release -i |awk ' { print $3 }'`
@@ -58,6 +54,7 @@ if [[ $TRAVIS == 'true' ]]; then
 	DJATOKA_HOME=`pwd`
 	DJATOKA_PIDFILE=djatoka.pid
 	DJATOKA_LOGFILE=djatoka-console.log
+	SYSTEM_LOG_DIR=/tmp
 elif [ $DISTRIB_ID == 'RedHatEnterpriseServer' ] \
 	|| [ $DISTRIB_ID == 'RedHat' ] \
 	|| [ $DISTRIB_ID == 'Fedora' ] \
@@ -69,6 +66,12 @@ elif [ $DISTRIB_ID == 'Ubuntu' ] \
 else
 	echo "Running Djatoka as the '$(id -u -n)' user"
 	DJATOKA_USER="$(id -u -n)"
+fi
+
+# Configure a djatoka logs symlink in the standard location
+if [ ! -d ${DJATOKA_HOME}/target/logs ]; then
+    mkdir -p ${DJATOKA_HOME}/target/logs
+    ln -s ${DJATOKA_HOME}/target/logs ${SYSTEM_LOG_DIR}/djatoka
 fi
 
 # Find the mvn executable from the system path
