@@ -55,7 +55,6 @@ if [[ $TRAVIS == 'true' ]]; then
 	DJATOKA_PIDFILE=djatoka.pid
 	DJATOKA_LOGFILE=djatoka-console.log
 	SYSTEM_LOG_DIR=/tmp
-	TMPSHELL=""
 elif [ $DISTRIB_ID == 'RedHatEnterpriseServer' ] \
 	|| [ $DISTRIB_ID == 'RedHat' ] \
 	|| [ $DISTRIB_ID == 'Fedora' ] \
@@ -109,8 +108,8 @@ start)
 	nohup $DJATOKA_START_CMD > $DJATOKA_LOGFILE 2>&1 &
 	# Maven forks Jetty; wait for Maven's exit before looking for Jetty
 	echo $!
-	echo $!
 	wait $!
+	echo "wait ends... don't think we're getting here"
 	# Now we should be able to find the Jetty process (if it exists)
 	PID=`pgrep -f freelib-djatoka`
 
