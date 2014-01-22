@@ -105,7 +105,6 @@ start)
 
 	STARTED=false
 	cd $DJATOKA_HOME
-	echo $DJATOKA_START_CMD
 	nohup $DJATOKA_START_CMD > $DJATOKA_LOGFILE 2>&1 &
 	# Maven forks Jetty; wait for Maven's exit before looking for Jetty
 	wait $!

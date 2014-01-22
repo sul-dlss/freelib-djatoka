@@ -93,7 +93,7 @@
 		<!-- You shouldn't need to set anything below here; these are generic -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<console.log>true</console.log>
+		<console.log>false</console.log>
 
 		<freelib.build.tools.version>0.0.4</freelib.build.tools.version>
 		<maven.checkstyle.version>2.10</maven.checkstyle.version>
