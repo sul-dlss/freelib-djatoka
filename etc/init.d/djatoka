@@ -1,6 +1,6 @@
 #!/bin/bash
 #-----------------------------------------------------
-# djatoka-initd v0.0.1
+# djatoka-initd v0.0.2
 #-----------------------------------------------------
 # Script for running djatoka as a service under initd.
 #

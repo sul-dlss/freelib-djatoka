@@ -15,8 +15,8 @@ before_script: "cp src/main/resources/sample-settings.xml ${HOME}/.m2/settings.x
 
 script:
   - sudo ln -s `pwd` /opt/freelib-djatoka
-  - etc/init.d/djatoka start
-  - mvn -Ptravis install
+  - sudo etc/init.d/djatoka start
+  - sudo mvn -Ptravis install
 
 notifications:
   email:
