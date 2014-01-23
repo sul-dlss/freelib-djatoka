@@ -16,6 +16,7 @@ before_script: "cp src/main/resources/sample-settings.xml ${HOME}/.m2/settings.x
 script:
   - sudo ln -s `pwd` /opt/freelib-djatoka
   - etc/init.d/djatoka start
+  - test "200" == $(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8888/health")
   - mvn -Ptravis install
 
 notifications:

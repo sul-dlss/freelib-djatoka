@@ -1,6 +1,6 @@
 #!/bin/bash
 #-----------------------------------------------------
-# djatoka-initd v0.0.2
+# djatoka-init.d v0.0.2
 #-----------------------------------------------------
 # Script for running djatoka as a service under init.d
 #
@@ -106,11 +106,13 @@ start)
 	STARTED=false
 	cd $DJATOKA_HOME
 	nohup $DJATOKA_START_CMD > $DJATOKA_LOGFILE 2>&1 &
+
 	# Maven forks Jetty; wait for Maven's exit before looking for Jetty
 	wait $!
+
 	# Now we should be able to find the Jetty process (if it exists)
 	PID=`pgrep -o -f freelib-djatoka`
-    echo "DEBUG: $PID"
+
 	# We remove one line below with sed because it contains `ps` labels
 	# Then, the process is running as long as command below returns a 1
 	while [ `ps -p$PID -o pid | sed "1 d" | wc -l` != 0 ];
@@ -132,6 +134,7 @@ start)
 		if [[ $? != 0 ]]; then
 			echo "Failed to start Djatoka"
 			echo "  Consult the log for more details: $DJATOKA_LOGFILE"
+			exit 1
 		fi
 	fi
 	;;
