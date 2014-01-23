@@ -36,7 +36,9 @@ import gov.lanl.adore.djatoka.plugin.ITransformPlugIn;
 import gov.lanl.adore.djatoka.util.IOUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
 import gov.lanl.util.HttpDate;
+
 import info.freelibrary.djatoka.util.CacheUtils;
+
 import info.openurl.oom.ContextObject;
 import info.openurl.oom.OpenURLRequest;
 import info.openurl.oom.OpenURLRequestProcessor;
@@ -61,6 +63,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletResponse;
 
 import org.oclc.oomRef.descriptors.ByValueMetadataImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -340,15 +343,16 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
                         id = r.getIdentifier();
 
-                        if (file == null ||
-                                (file != null && !(f = new File(file)).exists() && f
-                                        .length() > 0)) {
+                        if (file == null || !(f = new File(file)).exists() &&
+                                f.length() > 0) {
                             if (cacheDir != null) {
                                 File cacheDirFile = new File(cacheDir);
 
                                 // If our cache dir doesn't exist, create it
                                 if (!cacheDirFile.exists()) {
-                                    cacheDirFile.mkdirs();
+                                    if (!cacheDirFile.mkdirs() && LOGGER.isWarnEnabled()) {
+                                        LOGGER.warn("Dirs not created: {}", cacheDirFile);
+                                    }
                                 }
 
                                 f =
@@ -385,7 +389,10 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                                 // Handles simultaneous request on separate
                                 // thread, ignores cache.
                                 bytes = IOUtils.getBytesFromFile(f);
-                                f.delete();
+
+                                if (!f.delete() && LOGGER.isWarnEnabled()) {
+                                    LOGGER.warn("File not deleted: {}", f);
+                                }
 
                                 if (LOGGER.isDebugEnabled()) {
                                     LOGGER.debug("tempTile: " + file + " " +
@@ -396,7 +403,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                             bytes = IOUtils.getBytesFromFile(new File(file));
 
                             if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("tileCache: " + file + " " +
+                                LOGGER.debug("tileCache: {} {}", file,
                                         bytes.length);
                             }
 

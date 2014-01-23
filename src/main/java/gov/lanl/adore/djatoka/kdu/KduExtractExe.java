@@ -79,13 +79,12 @@ public class KduExtractExe implements IExtract {
 
     private final static BufferedImage OOB = getOutOfBoundsImage();
 
-    /** Extract App Name "kdu_expand" */
+    /** Name of extraction executable */
     public static final String KDU_EXPAND_EXE = "kdu_expand";
 
-    /** UNIX/Linux Standard Out Path: "/dev/stdout" */
-    public static String STDOUT = "/dev/stdout";
+    public final static String STDOUT = "/dev/stdout";
 
-    public static String STDIN = "/dev/stdin";
+    public final static String STDIN = "/dev/stdin";
 
     static {
         env =
@@ -143,7 +142,9 @@ public class KduExtractExe implements IExtract {
         BufferedImage bi = process(in.getAbsolutePath(), params);
 
         if (in != null) {
-            in.delete();
+            if (!in.delete() && LOGGER.isWarnEnabled()) {
+                LOGGER.warn("File not deleted: {}", in);
+            }
         }
 
         return bi;
@@ -299,7 +300,9 @@ public class KduExtractExe implements IExtract {
                             LOGGER.error(e.getMessage(), e);
 
                             if (winOut != null) {
-                                winOut.delete();
+                                if (!winOut.delete() && LOGGER.isWarnEnabled()) {
+                                    LOGGER.warn("File not deleted: {}", winOut);
+                                }
                             }
 
                             throw e;
@@ -439,12 +442,17 @@ public class KduExtractExe implements IExtract {
         }
 
         if (f.length() <= 4096) {
-            // If < 4K bytes, image may be corrupt, use safer pure Java Metadata
-            // gatherer.
+            FileInputStream fis = null;
+
+            // If < 4K bytes, image may be corrupt;
+            // use safer pure Java Metadata gatherer.
             try {
-                return getMetadata(new FileInputStream(f));
+                fis = new FileInputStream(f);
+                return getMetadata(fis);
             } catch (Exception e) {
                 throw new DjatokaException("Invalid file.");
+            } finally {
+                info.freelibrary.util.IOUtils.closeQuietly(fis);
             }
         }
 

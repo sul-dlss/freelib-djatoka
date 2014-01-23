@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
+import nu.xom.ParsingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +145,7 @@ public class TileCache {
                 LOGGER.error(BUNDLE.get("TC_SERVER_STATUS_CODE"), status,
                         urlString);
             }
-        } catch (Exception details) {
+        } catch (IOException | ParsingException details) {
             LOGGER.error(details.getMessage());
         }
     }

@@ -228,9 +228,9 @@ public class DjatokaDecodeParam implements DjatokaConstants {
         sb.append("\"scalingFactor\": \"" + scalingFactor + "\", ");
         if (scalingDims == null || scalingDims.length == 0) {
             sb.append("\"scalingDims\": \"\", ");
-        } else if (scalingDims != null && scalingDims.length == 1) {
+        } else if (scalingDims.length == 1) {
             sb.append("\"scalingDims\": \"" + scalingDims[0] + "\", ");
-        } else if (scalingDims != null && scalingDims.length == 2) {
+        } else if (scalingDims.length == 2) {
             sb.append("\"scalingDims\": \"" + scalingDims[0] + "," +
                     scalingDims[1] + "\", ");
         }

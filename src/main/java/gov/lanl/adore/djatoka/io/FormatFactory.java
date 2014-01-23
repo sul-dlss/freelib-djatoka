@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class FormatFactory implements FormatConstants {
 
     private static Logger LOGGER = LoggerFactory.getLogger(FormatFactory.class);
-    private HashMap<String, Class> fmtImpl = new HashMap<String, Class>();
+    private HashMap<String, Class<?>> fmtImpl = new HashMap<String, Class<?>>();
 
     /**
      * Default Constructor, uses default format map.
@@ -57,6 +57,7 @@ public class FormatFactory implements FormatConstants {
         for (Map.Entry<Object, Object> i : formatMap.entrySet()) {
             String k = (String) i.getKey();
             String v = (String) i.getValue();
+
             if (k.endsWith("_writer")) {
                 try {
                     Class<?> impl = Class.forName(v);

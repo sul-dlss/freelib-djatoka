@@ -139,7 +139,7 @@ public class DjatokaExtractProcessor {
      * @param os OutputStream to serialize formatted output image to.
      * @param params DjatokaDecodeParam instance containing region and transform
      *        settings.
-     * @param fmtId mimetype identifier of output file format (e.g.
+     * @param fmtId mime-type identifier of output file format (e.g.
      *        "image/jpeg")
      * @throws DjatokaException
      */
@@ -213,7 +213,9 @@ public class DjatokaExtractProcessor {
         }
 
         if (in != null) {
-            in.delete();
+            if (!in.delete() && LOGGER.isWarnEnabled()) {
+                LOGGER.warn("File not deleted: {}", in);
+            }
         }
     }
 
@@ -264,7 +266,9 @@ public class DjatokaExtractProcessor {
         }
 
         if (in != null) {
-            in.delete();
+            if (!in.delete() && LOGGER.isWarnEnabled()) {
+                LOGGER.warn("File not deleted: {}", in);
+            }
         }
     }
 

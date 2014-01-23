@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
+import nu.xom.ParsingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +95,7 @@ public class ViewServlet extends HttpServlet implements Constants {
                     tifCount = tifs.getAttribute(TIF_COUNT_ATTR).getValue();
                     jp2Size = jp2s.getAttribute(JP2_SIZE_ATTR).getValue();
                     jp2Count = jp2s.getAttribute(JP2_COUNT_ATTR).getValue();
-                } catch (Exception details) {
+                } catch (ParsingException details) {
                     jp2Size = null;
                     tifSize = null;
                     jp2Count = null;

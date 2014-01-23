@@ -189,7 +189,9 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
                 // Clean up the file stub of unsuccessful copies
                 if (file.length() == 0) {
-                    file.delete();
+                    if (!file.delete() && LOGGER.isWarnEnabled()) {
+                        LOGGER.warn("File not deleted: {}", file);
+                    }
                 }
             } else {
                 int extIndex = url.toString().lastIndexOf(".") + 1;
@@ -270,10 +272,14 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                 File jp2Local =
                         File.createTempFile("cache" + uri.hashCode() + "-",
                                 ".jp2");
-                jp2Local.delete();
+                if (!jp2Local.delete() && LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("File not deleted: {}", jp2Local);
+                }
                 jp2.compressImage(img.getAbsolutePath(), jp2Local
                         .getAbsolutePath(), new DjatokaEncodeParam());
-                img.delete();
+                if (!img.delete() && LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("File not deleted: {}", img);
+                }
                 img = jp2Local;
             } else {
                 try {

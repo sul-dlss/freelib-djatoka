@@ -345,28 +345,34 @@ public class IOUtils {
      * @throws IOException If there is trouble reading bytes from the file
      */
     public static byte[] getBytesFromFile(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
+        InputStream is = null;
 
-        // Get the size of the file
-        long length = file.length();
+        try {
+            is = new FileInputStream(file);
 
-        byte[] bytes = new byte[(int) length];
+            // Get the size of the file
+            long length = file.length();
 
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length &&
-                (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
-        }
+            byte[] bytes = new byte[(int) length];
 
-        if (offset < bytes.length) {
+            int offset = 0;
+            int numRead = 0;
+            while (offset < bytes.length &&
+                    (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+                offset += numRead;
+            }
+
+            if (offset < bytes.length) {
+                is.close();
+                throw new IOException("Could not completely read file " +
+                        file.getName());
+            }
+
             is.close();
-            throw new IOException("Could not completely read file " +
-                    file.getName());
+            return bytes;
+        } finally {
+            info.freelibrary.util.IOUtils.closeQuietly(is);
         }
-
-        is.close();
-        return bytes;
     }
 
     /**

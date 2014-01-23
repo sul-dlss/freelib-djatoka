@@ -46,8 +46,7 @@ import com.martiansoftware.jsap.CommandLineTokenizer;
  * Java bridge for kdu_compress application
  * 
  * @author Ryan Chute
- * @author Kevin S. Clarke <a
- *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
+ * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class KduCompressExe implements ICompress {
 
@@ -62,11 +61,10 @@ public class KduCompressExe implements ICompress {
 
     private static String[] envParams;
 
-    /** Compress App Name "kdu_compress" */
+    /** The name of the compressing executable */
     public static final String KDU_COMPRESS_EXE = "kdu_compress";
 
-    /** UNIX/Linux Standard Out Path: "/dev/stdout" */
-    public static String STDOUT = "/dev/stdout";
+    public static final String STDOUT = "/dev/stdout";
 
     static {
         env =
@@ -146,7 +144,9 @@ public class KduCompressExe implements ICompress {
             throw new DjatokaException(e.getMessage(), e);
         } finally {
             if (in != null) {
-                in.delete();
+                if (!in.delete() && LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("File not deleted: {}", in);
+                }
             }
         }
     }
@@ -185,10 +185,14 @@ public class KduCompressExe implements ICompress {
         }
 
         if (in != null) {
-            in.delete();
+            if (!in.delete() && LOGGER.isWarnEnabled()) {
+                LOGGER.warn("File not deleted: {}", in);
+            }
         }
         if (out != null) {
-            out.delete();
+            if (!out.delete() && LOGGER.isWarnEnabled()) {
+                LOGGER.warn("File not deleted: {}", out);
+            }
         }
     }
 
@@ -314,10 +318,14 @@ public class KduCompressExe implements ICompress {
         }
 
         if (inputFile != null) {
-            inputFile.delete();
+            if (!inputFile.delete() && LOGGER.isWarnEnabled()) {
+                LOGGER.warn("File not deleted: {}", inputFile);
+            }
         }
         if (winOut != null) {
-            winOut.delete();
+            if (!winOut.delete() && LOGGER.isWarnEnabled()) {
+                LOGGER.warn("File not deleted: {}", winOut);
+            }
         }
     }
 
@@ -406,7 +414,9 @@ public class KduCompressExe implements ICompress {
             throw new DjatokaException(e.getMessage(), e);
         } finally {
             if (tmp) {
-                inputFile.delete();
+                if (!inputFile.delete() && LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("File not deleted: {}", inputFile);
+                }
             }
         }
 

@@ -75,9 +75,8 @@ public class ImageJReader implements IReader {
             File path = IOUtils.createTempImage(input);
             bi = open(path.getAbsolutePath());
 
-            // Clean-up the temp file if we made one.
-            if (path != null) {
-                path.delete();
+            if (!path.delete() && LOGGER.isWarnEnabled()) {
+                LOGGER.warn("File not deleted: {}", path);
             }
         } else {
             if (LOGGER.isDebugEnabled()) {

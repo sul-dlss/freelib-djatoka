@@ -2,9 +2,7 @@
 package info.freelibrary.djatoka.view;
 
 import info.freelibrary.djatoka.iiif.Region;
-
 import info.freelibrary.djatoka.iiif.ImageRequest;
-
 import info.freelibrary.djatoka.iiif.IIIFRequest;
 
 import gov.lanl.adore.djatoka.openurl.OpenURLJP2KService;
@@ -33,6 +31,7 @@ import java.util.Properties;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -232,6 +231,8 @@ public class ImageServlet extends HttpServlet implements Constants {
                     LOGGER.warn("Unable to load properties file: {}", details
                             .getMessage());
                 }
+            } finally {
+                IOUtils.closeQuietly(is);
             }
         }
     }
@@ -298,7 +299,9 @@ public class ImageServlet extends HttpServlet implements Constants {
                     }
                 } else {
                     if (dziFile.exists()) {
-                        dziFile.delete();
+                        if (!dziFile.delete() && LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("File not deleted: {}", dziFile);
+                        }
                     }
 
                     if (LOGGER.isDebugEnabled()) {

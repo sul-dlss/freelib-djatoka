@@ -56,16 +56,15 @@ public class DjatokaReader implements IReader {
     public BufferedImage open(String input) throws FormatIOException {
         BufferedImage bi = null;
 
-        // Try ImageIO first
         bi = imagejReader.open(input);
 
-        // If null, try ImageJ
-        if (bi == null) {
-            LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
-            bi = imageioReader.open(input);
-        } else {
-            LOGGER.debug("Reading the file using ImageJReader");
-        }
+// FIXME: delete; this block can't be reached can it?
+//        if (bi == null) {
+//            LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
+//            bi = imageioReader.open(input);
+//        } else {
+//            LOGGER.debug("Reading the file using ImageJReader");
+//        }
 
         return bi;
     }
@@ -80,16 +79,15 @@ public class DjatokaReader implements IReader {
     public BufferedImage open(InputStream input) throws FormatIOException {
         BufferedImage bi = null;
 
-        // Try ImageIO
         bi = imagejReader.open(input);
 
-        // If null, try ImageJ
-        if (bi == null) {
-            LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
-            bi = imageioReader.open(input);
-        } else {
-            LOGGER.debug("Reading the file using ImageJReader");
-        }
+// FIXME: delete; this block can't be reached can it?
+//        if (bi == null) {
+//            LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
+//            bi = imageioReader.open(input);
+//        } else {
+//            LOGGER.debug("Reading the file using ImageJReader");
+//        }
 
         return bi;
     }

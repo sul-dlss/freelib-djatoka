@@ -245,7 +245,9 @@ public class IngestThread extends Thread implements Constants {
                         LOGGER.warn("INGEST_MOVING_STALE", nextDest);
                     }
 
-                    nextDest.delete(); // clean up old problematic files
+                    if (!nextDest.delete() && LOGGER.isWarnEnabled()) {
+                        LOGGER.warn("FILE_NOT_DELETED", nextDest);
+                    }
                 }
 
                 if (LOGGER.isInfoEnabled()) {

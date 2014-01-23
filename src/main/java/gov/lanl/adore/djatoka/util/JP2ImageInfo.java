@@ -31,12 +31,18 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * JPEG 2000 Metadata Parser
  * 
  * @author Ryan Chute
  */
 public class JP2ImageInfo implements JP2Markers {
+
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(JP2ImageInfo.class);
 
     private InputStream is;
 
@@ -200,7 +206,12 @@ public class JP2ImageInfo implements JP2Markers {
 
     private byte[] readBytes(int n) throws IOException {
         byte[] b = new byte[n];
-        is.read(b);
+        int bytesRead = is.read(b);
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Bytes read: {}", bytesRead);
+        }
+
         return b;
     }
 
@@ -264,7 +275,7 @@ public class JP2ImageInfo implements JP2Markers {
     private String getXML() throws IOException {
         // Subtract XML Marker, Length Value, XML Flag
         byte[] xml = readBytes(currentDataLength - 16);
-        if (xml != null) {
+        if (xml.length > 0) {
             return new String(xml);
         } else {
             return null;
