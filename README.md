@@ -1,6 +1,6 @@
 # FreeLib-Djatoka [![Build Status](https://travis-ci.org/ksclarke/freelib-djatoka.png?branch=master)](https://travis-ci.org/ksclarke/freelib-djatoka)
 
-This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page).  It was originally created to simplify the image server's use. Over time, additional features were added.  For more detailed information about the project, visit its [project page](http://projects.freelibrary.info/freelib-djatoka).  What's included in this README is just the basic [TL;DR](http://en.wiktionary.org/wiki/TLDR) information about the project.
+This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page).  It was originally created to simplify the image server's use. Over time, additional features were added.  For detailed information about the project, please visit its [project page](http://projects.freelibrary.info/freelib-djatoka).  This README contains just the basic [TL;DR](http://en.wiktionary.org/wiki/TLDR) project information.
 
 ### Getting Started
 
