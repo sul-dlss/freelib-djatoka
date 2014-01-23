@@ -105,12 +105,11 @@ start)
 
 	STARTED=false
 	cd $DJATOKA_HOME
-	echo "DEBUG: $DJATOKA_START_CMD"
 	nohup $DJATOKA_START_CMD > $DJATOKA_LOGFILE 2>&1 &
 	# Maven forks Jetty; wait for Maven's exit before looking for Jetty
 	wait $!
 	# Now we should be able to find the Jetty process (if it exists)
-	PID=`pgrep -f freelib-djatoka`
+	PID=`pgrep -o -f freelib-djatoka`
     echo "DEBUG: $PID"
 	# We remove one line below with sed because it contains `ps` labels
 	# Then, the process is running as long as command below returns a 1
