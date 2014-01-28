@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class Size {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Size.class);
-    
+
     private boolean mySizeIsFull;
 
     private boolean mySizeIsPercent;

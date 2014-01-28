@@ -134,7 +134,7 @@ public class IIIFServletFilter implements Filter, Constants {
                 aFilterChain.doFilter(aRequest, aResponse);
             } catch (IIIFException details) {
                 HttpServletResponse response = (HttpServletResponse) aResponse;
-                
+
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error(details.getMessage(), details);
                 }

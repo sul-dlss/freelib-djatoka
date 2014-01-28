@@ -40,7 +40,7 @@ public class CacheUtils {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Checking cache for scale-oriented tile");
             }
-            
+
             String scale = aScale.equals("") ? "full" : aScale;
             cfName.append(scale).append('_').append(region);
         }
