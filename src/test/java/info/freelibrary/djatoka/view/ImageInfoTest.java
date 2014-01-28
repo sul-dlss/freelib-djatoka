@@ -94,7 +94,7 @@ public class ImageInfoTest {
                         "\"width\" : 42, \"height\" : 24, " +
                         "\"tile_width\" : 256, \"tile_height\" : 256, " +
                         "\"formats\" : [ ], " +
-                        "\"scale_factors\" : [ 0, 1, 2, 3, 4 ], " +
+                        "\"scale_factors\" : [ 1, 2, 3, 4 ], " +
                         "\"qualities\" : [ \"native\" ], " +
                         "\"profile\" : \"" + imageAPI +
                         "/1.1/compliance.html#level0\"}";
