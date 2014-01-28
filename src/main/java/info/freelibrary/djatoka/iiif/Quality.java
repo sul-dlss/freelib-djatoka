@@ -1,12 +1,17 @@
 
 package info.freelibrary.djatoka.iiif;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A representation of the request's image quality.
  * 
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class Quality {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Quality.class);
 
     private String myQuality;
 
@@ -20,7 +25,8 @@ public class Quality {
         int end = aQuality.indexOf(".");
 
         if (end != -1) {
-            myQuality = aQuality.substring(0, end);
+            throw new IIIFException("Unexpected image format: " +
+                    aQuality.substring(end));
         } else {
             myQuality = aQuality;
         }

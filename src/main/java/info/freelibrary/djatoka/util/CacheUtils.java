@@ -4,7 +4,13 @@ package info.freelibrary.djatoka.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CacheUtils {
+
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(CacheUtils.class);
 
     /**
      * Return a file name for the cached file based on its characteristics.
@@ -12,21 +18,35 @@ public class CacheUtils {
      * @param aLevel A level to be cached
      * @param aScale A scale to be cached
      * @param aRegion A region to be cached
+     * @param aRotation A rotation to be cached
      * @return The file name for the cached file
      */
     public static final String getFileName(String aLevel, String aScale,
-            String aRegion) {
+            String aRegion, float aRotation) {
         StringBuilder cfName = new StringBuilder("image_");
-        String region = isEmpty(aRegion) ? "all" : aRegion.replace(',', '-');
+        String region = isEmpty(aRegion) ? "full" : aRegion.replace(',', '-');
 
         /*
          * TODO: Right now this assumes if it gets passed a level that it's not
          * doing a region... what possibilities do we exclude by doing this?
          */
         if (aLevel != null && !aLevel.equals("") && !aLevel.equals("-1")) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Checking cache for level-oriented tile");
+            }
+
             cfName.append(aLevel);
         } else {
-            cfName.append(aScale).append('_').append(region);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Checking cache for scale-oriented tile");
+            }
+            
+            String scale = aScale.equals("") ? "full" : aScale;
+            cfName.append(scale).append('_').append(region);
+        }
+
+        if (aRotation != 0.0f) {
+            cfName.append('_').append((int) aRotation); // djatoka expects int
         }
 
         return cfName.append(".jpg").toString();
@@ -138,7 +158,7 @@ public class CacheUtils {
             return startY + "," + startX + "," + tileSizeY + "," + tileSizeX;
         }
 
-        return "all";
+        return "full";
     }
 
     private static boolean isEmpty(String aString) {

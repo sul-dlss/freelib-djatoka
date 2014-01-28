@@ -62,6 +62,7 @@ public class ImageRequest implements IIIFRequest {
             path = path.substring(1);
         }
 
+        // Check for valid image extensions
         if ((path.endsWith(".jpg") || path.endsWith(".gif") ||
                 path.endsWith(".jp2") || path.endsWith(".pdf") ||
                 path.endsWith(".tif") || path.endsWith(".png")) &&
@@ -73,6 +74,9 @@ public class ImageRequest implements IIIFRequest {
             }
 
             myExtension = extension;
+
+            // If we've set the extension, remove it from the path
+            path = path.substring(0, path.length() - 4);
         }
 
         parts = path.split("/");

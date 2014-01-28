@@ -103,7 +103,7 @@
         region = startY + "," + startX + "," + tileSizeY + ","
             + tileSizeX;
       } else {
-        region = "all";
+        region = "full";
       }
 
       return this.baseURL + this.imageID + "/" + region + "/" + scale;

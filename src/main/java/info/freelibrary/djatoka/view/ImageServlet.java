@@ -66,13 +66,13 @@ public class ImageServlet extends HttpServlet implements Constants {
             "/resolve?url_ver=Z39.88-2004&rft_id={}"
                     + "&svc_id=info:lanl-repo/svc/getRegion"
                     + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
-                    + "&svc.format={}&svc.level={}";
+                    + "&svc.format={}&svc.level={}&svc.rotate={}";
 
     private static final String REGION_URL =
             "/resolve?url_ver=Z39.88-2004&rft_id={}"
                     + "&svc_id=info:lanl-repo/svc/getRegion"
                     + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
-                    + "&svc.format={}&svc.region={}&svc.scale={}";
+                    + "&svc.format={}&svc.region={}&svc.scale={}&svc.rotate={}";
 
     private static final String DZI_NS =
             "http://schemas.microsoft.com/deepzoom/2008";
@@ -129,26 +129,34 @@ public class ImageServlet extends HttpServlet implements Constants {
             ImageRequest imageRequest = (ImageRequest) iiif;
             String size = imageRequest.getSize().toString();
             Region iiifRegion = imageRequest.getRegion();
+            float rotation = imageRequest.getRotation();
+            String region;
 
             // Djatoka expects a different order from what OpenSeadragon sends
             // so we have to reconstruct rather than use Region's toString().
-            StringBuilder rsb = new StringBuilder();
-            rsb.append(iiifRegion.getY()).append(',');
-            rsb.append(iiifRegion.getX()).append(',');
-            rsb.append(iiifRegion.getHeight()).append(',');
-            rsb.append(iiifRegion.getWidth());
+            if (iiifRegion.isFullSize()) {
+                region = "";
+            } else {
+                StringBuilder rsb = new StringBuilder();
+                rsb.append(iiifRegion.getY()).append(',');
+                rsb.append(iiifRegion.getX()).append(',');
+                rsb.append(iiifRegion.getHeight()).append(',');
+                rsb.append(iiifRegion.getWidth());
 
-            // Now, we have the string order that Djatoka wants
-            String region = rsb.toString();
+                // Now, we have the string order that Djatoka wants
+                region = rsb.toString();
+            }
 
             if (myCache != null) {
-                checkImageCache(id, level, size, region, aRequest, aResponse);
+                checkImageCache(id, level, size, region, rotation, aRequest,
+                        aResponse);
             } else {
                 if (LOGGER.isWarnEnabled()) {
                     LOGGER.warn("Cache isn't configured correctly");
                 }
 
-                serveNewImage(id, level, region, size, aRequest, aResponse);
+                serveNewImage(id, level, region, size, rotation, aRequest,
+                        aResponse);
             }
         } else {
             // We are using the now deprecated FreeLib-Djatoka djtilesource.js
@@ -185,13 +193,17 @@ public class ImageServlet extends HttpServlet implements Constants {
             }
 
             if (myCache != null) {
-                checkImageCache(id, level, scale, region, aRequest, aResponse);
+                // Older freelib-djatoka didn't support rotations; use 0.0f
+                checkImageCache(id, level, scale, region, 0.0f, aRequest,
+                        aResponse);
             } else {
                 if (LOGGER.isWarnEnabled()) {
                     LOGGER.warn("Cache isn't configured correctly");
                 }
 
-                serveNewImage(id, level, region, scale, aRequest, aResponse);
+                // Older freelib-djatoka didn't support rotations; use 0.0f
+                serveNewImage(id, level, region, scale, 0.0f, aRequest,
+                        aResponse);
             }
         }
     }
@@ -351,6 +363,11 @@ public class ImageServlet extends HttpServlet implements Constants {
                         if (name.equals("FileNotFoundException")) {
                             throw new FileNotFoundException(id + " not found");
                         } else {
+                            if (LOGGER.isErrorEnabled()) {
+                                LOGGER.error(details.getMessage() + " " +
+                                        imageURL, details);
+                            }
+
                             throw details;
                         }
                     }
@@ -369,7 +386,9 @@ public class ImageServlet extends HttpServlet implements Constants {
             throw new ServletException("Cache not correctly configured");
         }
 
-        return new int[] {height, width};
+        return new int[] {
+            height, width
+        };
     }
 
     private String getFullSizeImageURL(HttpServletRequest aRequest) {
@@ -381,11 +400,12 @@ public class ImageServlet extends HttpServlet implements Constants {
     }
 
     private void checkImageCache(String aID, String aLevel, String aScale,
-            String aRegion, HttpServletRequest aRequest,
+            String aRegion, float aRotation, HttpServletRequest aRequest,
             HttpServletResponse aResponse) throws IOException, ServletException {
         PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
         PairtreeObject cacheObject = cacheDir.getObject(aID);
-        String fileName = CacheUtils.getFileName(aLevel, aScale, aRegion);
+        String fileName =
+                CacheUtils.getFileName(aLevel, aScale, aRegion, aRotation);
         File imageFile = new File(cacheObject, fileName);
 
         if (imageFile.exists()) {
@@ -405,24 +425,35 @@ public class ImageServlet extends HttpServlet implements Constants {
                 LOGGER.debug("{} not found in cache", imageFile);
             }
 
-            serveNewImage(aID, aLevel, aRegion, aScale, aRequest, aResponse);
+            serveNewImage(aID, aLevel, aRegion, aScale, aRotation, aRequest,
+                    aResponse);
             cacheNewImage(aRequest, aID + "_" + fileName, imageFile);
         }
     }
 
     private void serveNewImage(String aID, String aLevel, String aRegion,
-            String aScale, HttpServletRequest aRequest,
+            String aScale, float aRotation, HttpServletRequest aRequest,
             HttpServletResponse aResponse) throws IOException, ServletException {
         String id = URLEncoder.encode(aID, CHARSET);
         RequestDispatcher dispatcher;
         String[] values;
         String url;
 
+        // Cast floats as integers because that's what djatoka expects
         if (aScale == null) {
-            values = new String[] {id, DEFAULT_VIEW_FORMAT, aLevel};
+            values =
+                    new String[] {
+                        id, DEFAULT_VIEW_FORMAT, aLevel,
+                        Integer.toString((int) aRotation)
+                    };
             url = StringUtils.format(IMAGE_URL, values);
         } else {
-            values = new String[] {id, DEFAULT_VIEW_FORMAT, aRegion, aScale};
+            values =
+                    new String[] {
+                        id, DEFAULT_VIEW_FORMAT, aRegion,
+                        aScale.equals("full") ? "1.0" : aScale,
+                        Integer.toString((int) aRotation)
+                    };
             url = StringUtils.format(REGION_URL, values);
         }
 

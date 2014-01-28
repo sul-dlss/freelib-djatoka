@@ -1,6 +1,9 @@
 
 package info.freelibrary.djatoka.iiif;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A representation of the size aspect of an IIIF request.
  * 
@@ -8,6 +11,8 @@ package info.freelibrary.djatoka.iiif;
  */
 public class Size {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Size.class);
+    
     private boolean mySizeIsFull;
 
     private boolean mySizeIsPercent;
@@ -189,7 +194,9 @@ public class Size {
         StringBuilder builder = new StringBuilder();
 
         if (maintainsAspectRatio()) {
-            if (isPercent()) {
+            if (isFullSize()) {
+                builder.append("full");
+            } else if (isPercent()) {
                 builder.append("pct:").append(myPercent);
             } else {
                 if (hasHeight() && hasWidth()) {

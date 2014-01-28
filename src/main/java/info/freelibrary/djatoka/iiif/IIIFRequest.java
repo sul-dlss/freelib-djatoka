@@ -96,7 +96,8 @@ public interface IIIFRequest {
                 return new InfoRequest(aURL, aServicePrefix);
             } else {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("IIIF ImageRequest created from '{}'", aURL);
+                    LOGGER.debug("\n\nIIIF ImageRequest created from '{}'",
+                            aURL);
                 }
 
                 // May not be an ImageRequest if the filter is misconfigured

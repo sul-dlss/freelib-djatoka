@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,60 +76,74 @@ public class IIIFServletFilter implements Filter, Constants {
                 } else {
                     iiif = IIIFRequest.Builder.getRequest(url);
                 }
-            } catch (IIIFException details) {
-                throw new ServletException("Trouble handling IIIF request",
-                        details);
-            }
 
-            if (iiif.hasExtension()) {
-                String extension = iiif.getExtension();
+                if (iiif.hasExtension()) {
+                    String extension = iiif.getExtension();
 
-                if (extension.equals("xml")) {
-                    aResponse.setCharacterEncoding(DEFAULT_CHARSET);
-                    aResponse.setContentType(XML_CONTENT_TYPE);
-                    aRequest.setAttribute(CONTENT_TYPE_KEY, XML_CONTENT_TYPE);
-                } else if (extension.equals("json")) {
-                    aRequest.setAttribute(CONTENT_TYPE_KEY, JSON_CONTENT_TYPE);
-                    aResponse.setContentType(JSON_CONTENT_TYPE);
-                } else if (extension.equals("jpg")) {
-                    aRequest.setAttribute(CONTENT_TYPE_KEY, JPG_CONTENT_TYPE);
-                    aResponse.setContentType(JPG_CONTENT_TYPE);
-                } else if (extension.equals("gif")) {
-                    aRequest.setAttribute(CONTENT_TYPE_KEY, GIF_CONTENT_TYPE);
-                    aResponse.setContentType(GIF_CONTENT_TYPE);
-                } else if (extension.equals("jp2")) {
-                    aRequest.setAttribute(CONTENT_TYPE_KEY, JP2_CONTENT_TYPE);
-                    aResponse.setContentType(JP2_CONTENT_TYPE);
-                } else if (extension.equals("pdf")) {
-                    aRequest.setAttribute(CONTENT_TYPE_KEY, PDF_CONTENT_TYPE);
-                    aResponse.setContentType(PDF_CONTENT_TYPE);
-                } else if (extension.equals("tif")) {
-                    aRequest.setAttribute(CONTENT_TYPE_KEY, TIF_CONTENT_TYPE);
-                    aResponse.setContentType(TIF_CONTENT_TYPE);
-                } else if (extension.equals("png")) {
-                    aRequest.setAttribute(CONTENT_TYPE_KEY, PNG_CONTENT_TYPE);
-                    aResponse.setContentType(PNG_CONTENT_TYPE);
+                    if (extension.equals("xml")) {
+                        aResponse.setCharacterEncoding(DEFAULT_CHARSET);
+                        aResponse.setContentType(XML_CONTENT_TYPE);
+                        aRequest.setAttribute(CONTENT_TYPE_KEY,
+                                XML_CONTENT_TYPE);
+                    } else if (extension.equals("json")) {
+                        aRequest.setAttribute(CONTENT_TYPE_KEY,
+                                JSON_CONTENT_TYPE);
+                        aResponse.setContentType(JSON_CONTENT_TYPE);
+                    } else if (extension.equals("jpg")) {
+                        aRequest.setAttribute(CONTENT_TYPE_KEY,
+                                JPG_CONTENT_TYPE);
+                        aResponse.setContentType(JPG_CONTENT_TYPE);
+                    } else if (extension.equals("gif")) {
+                        aRequest.setAttribute(CONTENT_TYPE_KEY,
+                                GIF_CONTENT_TYPE);
+                        aResponse.setContentType(GIF_CONTENT_TYPE);
+                    } else if (extension.equals("jp2")) {
+                        aRequest.setAttribute(CONTENT_TYPE_KEY,
+                                JP2_CONTENT_TYPE);
+                        aResponse.setContentType(JP2_CONTENT_TYPE);
+                    } else if (extension.equals("pdf")) {
+                        aRequest.setAttribute(CONTENT_TYPE_KEY,
+                                PDF_CONTENT_TYPE);
+                        aResponse.setContentType(PDF_CONTENT_TYPE);
+                    } else if (extension.equals("tif")) {
+                        aRequest.setAttribute(CONTENT_TYPE_KEY,
+                                TIF_CONTENT_TYPE);
+                        aResponse.setContentType(TIF_CONTENT_TYPE);
+                    } else if (extension.equals("png")) {
+                        aRequest.setAttribute(CONTENT_TYPE_KEY,
+                                PNG_CONTENT_TYPE);
+                        aResponse.setContentType(PNG_CONTENT_TYPE);
+                    } else {
+                        throw new RuntimeException(
+                                "Unexpected extension found: " + extension);
+                    }
                 } else {
-                    throw new RuntimeException("Unexpected extension found: " +
-                            extension);
-                }
-            } else {
-                String accept = request.getHeader("Accept");
-                String[] values = accept.split(";")[0].split(",");
-                String contentType = getPreferredContentType(values);
+                    String accept = request.getHeader("Accept");
+                    String[] values = accept.split(";")[0].split(",");
+                    String contentType = getPreferredContentType(values);
 
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Evaluated content type: {}", contentType);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Evaluated content type: {}", contentType);
+                    }
+
+                    aRequest.setAttribute(CONTENT_TYPE_KEY, contentType);
+                    aResponse.setContentType(contentType);
                 }
 
-                aRequest.setAttribute(CONTENT_TYPE_KEY, contentType);
-                aResponse.setContentType(contentType);
+                aRequest.setAttribute(IIIFRequest.KEY, iiif);
+                aFilterChain.doFilter(aRequest, aResponse);
+            } catch (IIIFException details) {
+                HttpServletResponse response = (HttpServletResponse) aResponse;
+                
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error(details.getMessage(), details);
+                }
+
+                response.sendError(400, details.getMessage());
             }
-
-            aRequest.setAttribute(IIIFRequest.KEY, iiif);
+        } else {
+            aFilterChain.doFilter(aRequest, aResponse);
         }
-
-        aFilterChain.doFilter(aRequest, aResponse);
     }
 
     /**

@@ -21,11 +21,8 @@
 
 package gov.lanl.adore.djatoka.openurl;
 
-import info.openurl.oom.entities.ReferringEntity;
-
-import info.openurl.oom.entities.Requester;
-
 import info.freelibrary.djatoka.view.IdentifierResolver;
+import info.freelibrary.djatoka.util.CacheUtils;
 
 import gov.lanl.adore.djatoka.DjatokaDecodeParam;
 import gov.lanl.adore.djatoka.DjatokaException;
@@ -35,9 +32,8 @@ import gov.lanl.adore.djatoka.kdu.KduExtractExe;
 import gov.lanl.adore.djatoka.plugin.ITransformPlugIn;
 import gov.lanl.adore.djatoka.util.IOUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
-import gov.lanl.util.HttpDate;
 
-import info.freelibrary.djatoka.util.CacheUtils;
+import gov.lanl.util.HttpDate;
 
 import info.openurl.oom.ContextObject;
 import info.openurl.oom.OpenURLRequest;
@@ -48,6 +44,8 @@ import info.openurl.oom.config.ClassConfig;
 import info.openurl.oom.config.OpenURLConfig;
 import info.openurl.oom.entities.Referent;
 import info.openurl.oom.entities.ServiceType;
+import info.openurl.oom.entities.ReferringEntity;
+import info.openurl.oom.entities.Requester;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -285,7 +283,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
         } else {
             String region = params.getRegion();
 
-            if (LOGGER.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled() && region != null) {
                 LOGGER.debug("Service has a valid region request: {}", region);
             }
 
@@ -350,8 +348,10 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
                                 // If our cache dir doesn't exist, create it
                                 if (!cacheDirFile.exists()) {
-                                    if (!cacheDirFile.mkdirs() && LOGGER.isWarnEnabled()) {
-                                        LOGGER.warn("Dirs not created: {}", cacheDirFile);
+                                    if (!cacheDirFile.mkdirs() &&
+                                            LOGGER.isWarnEnabled()) {
+                                        LOGGER.warn("Dirs not created: {}",
+                                                cacheDirFile);
                                     }
                                 }
 
@@ -458,6 +458,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
             String scale = dims != null ? Integer.toString(dims[1]) : "";
             String level = Integer.toString(params.getLevel());
             String region = params.getRegion();
+            int rotation = params.getRotationDegree();
             String ext = getExtension(format);
             String hash;
 
@@ -471,12 +472,13 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                 hash = null;
             }
 
-            id = id + "_" + CacheUtils.getFileName(level, scale, region);
+            String f = CacheUtils.getFileName(level, scale, region, rotation);
+            id = id + "_" + f;
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("OpenURL service: [ {} | {} | {} ] = {}",
-                        new String[] {
-                            level, scale, region, id
+                LOGGER.debug("OpenURL service: [ {} | {} | {} | {} ] = {}",
+                        new Object[] {
+                            level, scale, region, rotation, id
                         });
             }
 
@@ -486,7 +488,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Setting cache session data [ {} | {} ]",
-                            new String[] {
+                            new Object[] {
                                 id, djatokaCacheFile
                             });
                 }
