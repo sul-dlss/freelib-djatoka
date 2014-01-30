@@ -20,11 +20,12 @@ To run FreeLib-Djatoka, just [download](https://github.com/ksclarke/freelib-djat
 
     git clone https://github.com/ksclarke/freelib-djatoka.git
 
-Change into the project's base directory:
+Change into the project's base directory and install FreeLib-Djatoka:
 
     cd freelib-djatoka
+    mvn install
 
-And run Maven by typing:
+Then start the server by typing:
 
     mvn jetty:run-forked
 
