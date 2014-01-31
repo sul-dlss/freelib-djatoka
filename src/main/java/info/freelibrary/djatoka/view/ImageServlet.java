@@ -530,6 +530,7 @@ public class ImageServlet extends HttpServlet implements Constants {
         if (path.contains("%")) { // Path is URLEncoded
             try {
                 path = URLDecoder.decode(path, "UTF-8");
+                path = URLDecoder.decode(path, "UTF-8");
             } catch (UnsupportedEncodingException details) {
                 // Never happens, all JVMs are required to support UTF-8
                 if (LOGGER.isWarnEnabled()) {

@@ -3,7 +3,9 @@ package info.freelibrary.djatoka.iiif;
 
 import info.freelibrary.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,10 +94,15 @@ public class ImageRequest implements IIIFRequest {
                     "Request doesn't contain correct number of parts: " + path);
         }
 
-        myIdentifier = parts[0];
+        try {
+            myIdentifier = URLDecoder.decode(parts[0], "UTF-8");
+            myIdentifier = URLDecoder.decode(myIdentifier, "UTF-8");
+        } catch (UnsupportedEncodingException details) {
+            throw new RuntimeException(details); // All JVMs must support UTF-8
+        }
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Setting image identifier: {}", parts[0]);
+            LOGGER.debug("Setting image identifier: {}", myIdentifier);
         }
 
         myRegion = new Region(parts[1]);

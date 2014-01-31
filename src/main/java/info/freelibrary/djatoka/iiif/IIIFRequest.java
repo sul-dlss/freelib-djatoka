@@ -90,14 +90,13 @@ public interface IIIFRequest {
 
             if (path.endsWith(".xml") || path.endsWith(".json")) {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("IIIF InfoRequest created from '{}'", aURL);
+                    LOGGER.debug("IIIF InfoRequest created from: {}", aURL);
                 }
 
                 return new InfoRequest(aURL, aServicePrefix);
             } else {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("\n\nIIIF ImageRequest created from '{}'",
-                            aURL);
+                    LOGGER.debug("IIIF ImageRequest created from: {}", aURL);
                 }
 
                 // May not be an ImageRequest if the filter is misconfigured
