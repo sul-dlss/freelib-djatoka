@@ -102,4 +102,115 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
+
+    /**
+     * Runs random ID test.
+     */
+    @Test
+    public void testRandomID() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running test random ID: {}", c);
+        }
+
+        try {
+            String id = "c959c260-8a3b-11e3-a8e5-0050569b3c3f";
+            String query = StringUtils.format(QUERY, myJettyPort, id);
+            URL url = new URL(query + "full/full/0/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 404, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+
+    /**
+     * Runs ID with unescaped characters test.
+     */
+    @Test
+    public void testUnescapedCharacters() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running test unescaped characters: {}", c);
+        }
+
+        try {
+            String id = "%5Bfrob%5D";
+            String query = StringUtils.format(QUERY, myJettyPort, id);
+            URL url = new URL(query + "full/full/0/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 404, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Runs ID with forward slash test.
+     */
+    @Test
+    public void testIDWithForwardSlash() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running test ID with forward slash: {}", c);
+        }
+
+        try {
+            String id = "a%2Fb";
+            String query = StringUtils.format(QUERY, myJettyPort, id);
+            URL url = new URL(query + "full/full/0/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 404, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Runs invalid region test.
+     */
+    @Test
+    public void testInvalidRegion() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running test invalid region: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "lrq%3Bc8/full/0/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 400, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
 }
