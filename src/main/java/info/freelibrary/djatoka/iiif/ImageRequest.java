@@ -94,31 +94,26 @@ public class ImageRequest implements IIIFRequest {
                     "Request doesn't contain correct number of parts: " + path);
         }
 
-        try {
-            myIdentifier = URLDecoder.decode(parts[0], "UTF-8");
-            myIdentifier = URLDecoder.decode(myIdentifier, "UTF-8");
-        } catch (UnsupportedEncodingException details) {
-            throw new RuntimeException(details); // All JVMs must support UTF-8
-        }
+        myIdentifier = decode(parts[0]);
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Setting image identifier: {}", myIdentifier);
         }
 
-        myRegion = new Region(parts[1]);
+        myRegion = new Region(decode(parts[1]));
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Setting requested region: {}", myRegion.toString());
         }
 
-        mySize = new Size(parts[2]);
+        mySize = new Size(decode(parts[2]));
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Setting requested size: {}", mySize.toString());
         }
 
         try {
-            myRotation = Float.parseFloat(parts[3]);
+            myRotation = Float.parseFloat(decode(parts[3]));
 
             if (LOGGER.isWarnEnabled()) {
                 if (myRotation != 0 && myRotation != 90 && myRotation != 180 &&
@@ -134,7 +129,7 @@ public class ImageRequest implements IIIFRequest {
             throw new IIIFException("Rotation value isn't a float: " + parts[3]);
         }
 
-        myQuality = new Quality(parts[4]);
+        myQuality = new Quality(decode(parts[4]));
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Setting requested quality: {}", myQuality);
@@ -222,4 +217,14 @@ public class ImageRequest implements IIIFRequest {
         return myPrefix != null;
     }
 
+    private String decode(String aString) {
+        String string;
+
+        try {
+            string = URLDecoder.decode(aString, "UTF-8");
+            return URLDecoder.decode(string, "UTF-8");
+        } catch (UnsupportedEncodingException details) {
+            throw new RuntimeException(details); // every JVM supports UTF-8
+        }
+    }
 }

@@ -104,6 +104,33 @@ public class IIIFLevel1IntegrationTest {
     }
 
     /**
+     * Runs check image is correct test.
+     */
+    @Test
+    public void testCheckImageIsCorrect() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running test check image is correct: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "full/full/0/native.jpg");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 200, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
      * Runs random ID test.
      */
     @Test
@@ -204,6 +231,87 @@ public class IIIFLevel1IntegrationTest {
 
             huc.connect();
             assertEquals(url + " failed", 400, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Runs check error is 400 on invalid quality test.
+     */
+    @Test
+    public void testCheck400onInvalidQuality() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running check for 400 on invalid quality: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "full/full/0/%3A_g%40OY");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 400, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Runs check error is 400 on invalid format test.
+     */
+    @Test
+    public void testCheck400onInvalidFormat() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running check for 400 on invalid format: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "full/full/0/native.udm");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 400, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Runs check size with percent test.
+     */
+    @Test
+    public void testCheckSizeWithPercent() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running check size with percent test: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "full/pct%3A62/0/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 200, huc.getResponseCode());
 
         } catch (Exception details) {
             if (LOGGER.isDebugEnabled()) {

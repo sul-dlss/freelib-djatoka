@@ -197,7 +197,7 @@ public class Size {
             if (isFullSize()) {
                 builder.append("full");
             } else if (isPercent()) {
-                builder.append("pct:").append(myPercent);
+                builder.append(Float.toString((float)myPercent / 100));
             } else {
                 if (hasHeight() && hasWidth()) {
                     builder.append('!').append(myWidth).append(',');
