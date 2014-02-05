@@ -203,9 +203,9 @@ public class Size {
                     builder.append('!').append(myWidth).append(',');
                     builder.append(myHeight);
                 } else if (hasHeight()) {
-                    builder.append(',').append(myHeight);
+                    builder.append("0,").append(myHeight);
                 } else {
-                    builder.append(myWidth).append(',');
+                    builder.append(myWidth).append(",0");
                 }
             }
         } else {

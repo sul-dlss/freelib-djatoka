@@ -118,7 +118,7 @@ public class ImageRequest implements IIIFRequest {
             if (LOGGER.isWarnEnabled()) {
                 if (myRotation != 0 && myRotation != 90 && myRotation != 180 &&
                         myRotation != 270) {
-                    LOGGER.warn("Request requires optional level support");
+                    LOGGER.warn("{}° rotation not supported", myRotation);
                 }
             }
 

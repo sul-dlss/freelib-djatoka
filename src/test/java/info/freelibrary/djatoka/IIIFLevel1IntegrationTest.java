@@ -49,7 +49,7 @@ public class IIIFLevel1IntegrationTest {
     }
 
     /**
-     * Runs basic image does not error test.
+     * Retrieve basic image does not error test.
      */
     @Test
     public void testBasicImageDoesNotError() {
@@ -76,7 +76,7 @@ public class IIIFLevel1IntegrationTest {
     }
 
     /**
-     * Runs escaped characters processed test.
+     * Check escaped characters processed test.
      */
     @Test
     public void testEscapedCharactersProcessed() {
@@ -104,7 +104,7 @@ public class IIIFLevel1IntegrationTest {
     }
 
     /**
-     * Runs check image is correct test.
+     * Check image is correct test.
      */
     @Test
     public void testCheckImageIsCorrect() {
@@ -131,7 +131,7 @@ public class IIIFLevel1IntegrationTest {
     }
     
     /**
-     * Runs random ID test.
+     * 404 by Random ID test.
      */
     @Test
     public void testRandomID() {
@@ -159,7 +159,7 @@ public class IIIFLevel1IntegrationTest {
     }
 
     /**
-     * Runs ID with unescaped characters test.
+     * 400 by ID with Unescaped Characters test.
      */
     @Test
     public void testUnescapedCharacters() {
@@ -187,7 +187,7 @@ public class IIIFLevel1IntegrationTest {
     }
     
     /**
-     * Runs ID with forward slash test.
+     * 404 by ID with Forward Slash test.
      */
     @Test
     public void testIDWithForwardSlash() {
@@ -215,7 +215,7 @@ public class IIIFLevel1IntegrationTest {
     }
     
     /**
-     * Runs invalid region test.
+     * Check error is 400 on invalid region test.
      */
     @Test
     public void testInvalidRegion() {
@@ -242,7 +242,7 @@ public class IIIFLevel1IntegrationTest {
     }
     
     /**
-     * Runs check error is 400 on invalid quality test.
+     * Check error is 400 on invalid quality test.
      */
     @Test
     public void testCheck400onInvalidQuality() {
@@ -269,7 +269,7 @@ public class IIIFLevel1IntegrationTest {
     }
     
     /**
-     * Runs check error is 400 on invalid format test.
+     * Check error is 400 on invalid format test.
      */
     @Test
     public void testCheck400onInvalidFormat() {
@@ -296,7 +296,7 @@ public class IIIFLevel1IntegrationTest {
     }
     
     /**
-     * Runs check size with percent test.
+     * Check size with percent test.
      */
     @Test
     public void testCheckSizeWithPercent() {
@@ -312,6 +312,168 @@ public class IIIFLevel1IntegrationTest {
 
             huc.connect();
             assertEquals(url + " failed", 200, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Check size with only width test.
+     */
+    @Test
+    public void testCheckSizeWithOnlyWidth() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running check size with only width test: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "full/593%2C/0/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 200, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Check size with only height test.
+     */
+    @Test
+    public void testCheckSizeWithOnlyHeight() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running check size with only height test: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "full/%2C661/0/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 200, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Check error is 400 on invalid size test.
+     */
+    @Test
+    public void testCheck400ErrorOnInvalidSize() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running check for 400 on invalid size test: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "full/2ascX%5B/0/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 400, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Check 90o rotations of full image test.
+     */
+    @Test
+    public void testCheck90DegreeRotationOfFullImage() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running check full image 90 rotation test: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "full/full/180/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 200, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Check 90o rotations of region test.
+     */
+    @Test
+    public void testCheck90DegreeRotationOfRegion() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running check 90 rotation of region test: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "313%2C613%2C76%2C76/full/180/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 200, huc.getResponseCode());
+
+        } catch (Exception details) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error connecting to djatoka server", details);
+            }
+
+            fail(details.getMessage());
+        }
+    }
+    
+    /**
+     * Check error is 400 on invalid rotation test.
+     */
+    @Test
+    public void testCheck400ErrorOnInvalidRotation() {
+        if (LOGGER.isDebugEnabled()) {
+            String c = IIIFLevel1IntegrationTest.class.getSimpleName();
+            LOGGER.debug("Running check 400 on invalid rotation test: {}", c);
+        }
+
+        try {
+            String query = StringUtils.format(QUERY, myJettyPort, ID);
+            URL url = new URL(query + "full/full/9u1h/native");
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+            huc.connect();
+            assertEquals(url + " failed", 400, huc.getResponseCode());
 
         } catch (Exception details) {
             if (LOGGER.isDebugEnabled()) {
