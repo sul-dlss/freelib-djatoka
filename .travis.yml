@@ -7,7 +7,6 @@ jdk:
 branches:
   only:
     - master
-    - stage
 
 install: "mvn -DskipTests=true install"
 
