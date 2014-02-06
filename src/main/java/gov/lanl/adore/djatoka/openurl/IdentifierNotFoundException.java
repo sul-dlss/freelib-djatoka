@@ -25,20 +25,37 @@ package gov.lanl.adore.djatoka.openurl;
 
 /**
  * Identifier Not Found Exception Handler
+ * 
  * @author Ryan Chute
- *
  */
 public class IdentifierNotFoundException extends ResolverException {
-	private static final long serialVersionUID = 5668199623801201337L;
 
-	public IdentifierNotFoundException(String message) {
+    private static final long serialVersionUID = 5668199623801201337L;
+
+    /**
+     * Creates an identifier not found exception using the supplied message.
+     * 
+     * @param message The exception message
+     */
+    public IdentifierNotFoundException(String message) {
         super(message);
     }
 
+    /**
+     * Creates an identifier not found exception from the supplied Throwable using the supplied message.
+     * 
+     * @param message The exception message
+     * @param cause The cause of the exception
+     */
     public IdentifierNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Creates an identifier not found exception from the supplied cause.
+     * 
+     * @param cause The underlying cause of the exception
+     */
     public IdentifierNotFoundException(Throwable cause) {
         super(cause);
     }

@@ -1,4 +1,4 @@
-# These files are dynamically created by the maven-dependency-plugin
+# These files are dynamically created by the maven-dependency-plugin 
 src/main/resources/site
 src/main/resources/checkstyle
 

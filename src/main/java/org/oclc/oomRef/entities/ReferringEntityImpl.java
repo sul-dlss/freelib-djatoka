@@ -8,24 +8,25 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.oclc.oomRef.entities;
 
 import info.openurl.oom.entities.ReferringEntity;
 
 /**
- * The resource that references the Referent; an <em>Entity</em>
- * of the <em>ContextObject</em>.
+ * The resource that references the Referent; an <em>Entity</em> of the
+ * <em>ContextObject</em>.
  * 
  * @author Jeffrey A. Young
  */
 public class ReferringEntityImpl extends EntityImpl implements ReferringEntity {
 
-	/**
-	 * Constructs a ReferringEntity.
-	 * 
-	 * @param descriptors Descriptor(s) for the ReferringEntity
-	 */
-	public ReferringEntityImpl(Object descriptors) {
-		super(descriptors);
-	}
+    /**
+     * Constructs a ReferringEntity.
+     * 
+     * @param descriptors Descriptor(s) for the ReferringEntity
+     */
+    public ReferringEntityImpl(Object descriptors) {
+        super(descriptors);
+    }
 }

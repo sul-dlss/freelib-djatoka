@@ -7,14 +7,17 @@ jdk:
 branches:
   only:
     - master
+    - stage
 
 install: "mvn -DskipTests=true install"
 
 before_script: "cp src/main/resources/sample-settings.xml ${HOME}/.m2/settings.xml"
 
 script:
-  - sudo ln -s . /opt/freelib-djatoka
+  - sudo ln -s `pwd` /opt/freelib-djatoka
   - etc/init.d/djatoka start
+  - test "200" == $(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8888/health")
+  - mvn djatoka:ingest -Dcsv.file=src/test/resources/id_map.csv
   - mvn -Ptravis install
 
 notifications:

@@ -27,20 +27,38 @@ import gov.lanl.adore.djatoka.DjatokaException;
 
 /**
  * General Resolver Exception Handler
+ * 
  * @author Ryan Chute
- *
  */
 public class ResolverException extends DjatokaException {
+
     private static final long serialVersionUID = 6532963984240949392L;
 
+    /**
+     * Creates a resolver exception using the supplied message.
+     * 
+     * @param message The message of the exception
+     */
     public ResolverException(String message) {
         super(message);
     }
 
+    /**
+     * Creates a resolver exception from the supplied Throwable using the
+     * supplied message.
+     * 
+     * @param message The message of the exception
+     * @param cause The underlying cause of the exception
+     */
     public ResolverException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Creates a resolver exception from the supplied Throwable.
+     * 
+     * @param cause The underlying cause
+     */
     public ResolverException(Throwable cause) {
         super(cause);
     }

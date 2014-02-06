@@ -1,20 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="TC_SERVER_404">{} did not respond</entry>
-    <entry key="TC_CACHE_ID">Caching derivative files for {}</entry>
-    <entry key="TC_SLASH_ID">Should the ID '{}' start with '/'?</entry>
-    <entry key="TC_ID_404">Couldn't find image file for '{}'</entry>
-    <entry key="TC_INVALID_DIMS">Invalid image dimensions for {}</entry>
-    <entry key="TC_SERVER_STATUS_CODE">Server returned status code '{}' for {}</entry>
-    <entry key="TC_STATUS_CHECK">Checking server status at {}</entry>
-    <entry key="TC_UNEXPECTED_STATUS">Unexpected server status: {}</entry>
-    <entry key="TC_SERVER_STATUS">Server is '{}'</entry>
-    <entry key="TC_UNKNOWN_HOST">Unknown host: {}</entry>
-    <entry key="TC_FILE_NOT_FOUND">File not found: {}</entry>
-    <entry key="TC_USAGE_1">Usage: mvn exec:java </entry>
-    <entry key="TC_USAGE_2"> or: mvn exec:java </entry>
-    <entry key="TC_USAGE_EXEC">-Dexec.mainClass="info.freelibrary.djatoka.TileCache" </entry>
-    <entry key="TC_ARGS_OPT_1">-Dexec.args="/path/to/ids.csv ID_column_number [server_URL]"</entry>
-    <entry key="TC_ARGS_OPT_2">-Dexec.args=\"/path/to/tiff/files/dir/\" (not yet implemented)</entry>
+  <entry key="TC_SERVER_404">{} did not respond</entry>
+  <entry key="TC_CACHE_ID">Caching derivative files for {}</entry>
+  <entry key="TC_SLASH_ID">Should the ID '{}' start with '/'?</entry>
+  <entry key="TC_ID_404">Couldn't find image file for '{}'</entry>
+  <entry key="TC_INVALID_DIMS">Invalid image dimensions for {}</entry>
+  <entry key="TC_SERVER_STATUS_CODE">Server returned status code '{}' for {}</entry>
+  <entry key="TC_STATUS_CHECK">Checking server status at {}</entry>
+  <entry key="TC_UNEXPECTED_STATUS">Unexpected server status: {}</entry>
+  <entry key="TC_SERVER_STATUS">Server is '{}'</entry>
+  <entry key="TC_UNKNOWN_HOST">Unknown host: {}</entry>
+  <entry key="TC_FILE_NOT_FOUND">File not found: {}</entry>
+  <entry key="TC_USAGE_1">Usage: mvn exec:java </entry>
+  <entry key="TC_USAGE_2"> or: mvn exec:java </entry>
+  <entry key="TC_USAGE_EXEC">-Dexec.mainClass="info.freelibrary.djatoka.TileCache" </entry>
+  <entry key="TC_ARGS_OPT_1">-Dexec.args="/path/to/ids.csv ID_column_number
+    [server_URL]"</entry>
+  <entry key="TC_ARGS_OPT_2">-Dexec.args=\"/path/to/tiff/files/dir/\" (not yet
+    implemented)</entry>
+  <entry key="INGEST_INDEX">Path column index ({}) or ID column index ({}) is
+    invalid; total columns in this row: {}</entry>
+  <entry key="INGEST_CSV">Ingesting images from CSV file: {} [Path: column {}]
+    [ID: column {}]</entry>
+  <entry key="INGEST_EMPTY">Didn't find any images to ingest</entry>
+  <entry key="INGEST_FILE_FAIL">Failed to find source file where it was expected to
+    be: {}</entry>
+  <entry key="INGEST_FORMAT_UNKNOWN">Found file extension isn't a known TIFF or JP2
+    extension: {}</entry>
+  <entry key="INGEST_COPY">Copying JP2 file ({}) into Pairtree directory
+    structure: {}</entry>
+  <entry key="INGEST_MAXSIZE">Ingest image's max size ({}) was larger than allowed
+    max size: {}</entry>
+  <entry key="INGEST_CONFIG_MAXSIZE">The configured maximum size for source images is: {}</entry>
+  <entry key="INGEST_INTERRUPTED">Image conversion of {} interrupted => {}</entry>
+  <entry key="INGEST_CONVERSION_FAILED">Image conversion of {} failed => {}</entry>
+  <entry key="INGEST_CONVERSION_COMMAND">Conversion command: {}</entry>
+  <entry key="INGEST_KAKADU_CFG">Kakadu environment not correctly configured for image
+    conversion and ingest</entry>
+  <entry key="INGEST_MISSING_ID">Found XML file for {} but couldn't find an ID in it</entry>
+  <entry key="INGEST_ID_FOUND">Ingesting {} with ID its its XML file: {}</entry>
+  <entry key="INGEST_SHUTDOWN">Shutting down ingest thread: #{} ({} ingested)</entry>
+  <entry key="INGEST_DIRS_FOUND">Found {} directories in {}</entry>
+  <entry key="INGEST_DESCENDING">Descending into new directory: {}</entry>
+  <entry key="INGEST_FILES_FOUND">Found {} files in {}</entry>
+  <entry key="INGEST_TOO_LARGE">Source file too large: {} ({} MB)</entry>
+  <entry key="INGEST_EXISTS_CHECK">Checking to see if {} already exists</entry>
+  <entry key="INGEST_SKIPPING">Skipping already converted JP2: {}</entry>
+  <entry key="INGEST_MOVING_STALE">Moving aside stale artifact: {}</entry>
+  <entry key="INGEST_COMPRESSING">Compressing {} to {} ({})</entry>
+  <entry key="INGEST_WRITTEN_TO_DISK">{} written to disk: {}</entry>
+  <entry key="INGEST_COMPRESSION_FAILED">Compression of {} (from {}) failed: {}</entry>
+  <entry key="INGEST_BROKEN_FILE">Could not delete broken file: {}</entry>
+  <entry key="INGEST_EMPTY_SOURCE">File ({}) seems to be an empty source image</entry>
+  <entry key="INGEST_TO_CACHE">Adding image {} to local cache: {}</entry>
+  <entry key="INGEST_THREAD_STARTING">Starting up ingest thread: #{}</entry>
+  <entry key="INGEST_PARSING_EXCEPTION">Exception while parsing XML info file for {}</entry>
+  <entry key="FILE_NOT_DELETED">File not deleted: {}</entry>
 </properties>

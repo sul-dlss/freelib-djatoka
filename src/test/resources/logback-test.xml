@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n</pattern>
-        </encoder>
-    </appender>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n</pattern>
+    </encoder>
+  </appender>
 
-    <!-- these classes have debugging in them; set level to DEBUG to see -->
-    <logger name="info.freelibrary.djatoka.util.CacheUtilsTest" level="INFO"/>
-    <logger name="info.freelibrary.djatoka.IdentifierIntegrationTest" level="DEBUG"/>
+  <!-- these classes have debugging in them; set level to DEBUG to see -->
+  <logger name="info.freelibrary.djatoka.util.CacheUtilsTest"
+    level="INFO" />
+  <logger name="info.freelibrary.djatoka.IdentifierIntegrationTest"
+    level="DEBUG" />
 
-    <root level="ERROR">
-        <appender-ref ref="STDOUT"/>
-    </root>
+  <root level="ERROR">
+    <appender-ref ref="STDOUT" />
+  </root>
 </configuration>

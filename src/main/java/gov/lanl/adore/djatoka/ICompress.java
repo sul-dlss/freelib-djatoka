@@ -28,62 +28,69 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Abstract compression interface. Allows use of common input method
- * (e.g. String path, InputStream, BufferedImage) and output methods. The 
- * underlying implementations are responsible for handling these variants.
+ * Abstract compression interface. Allows use of common input method (e.g.
+ * String path, InputStream, BufferedImage) and output methods. The underlying
+ * implementations are responsible for handling these variants.
+ * 
  * @author Ryan Chute
- *
  */
 public interface ICompress {
 
-	/**
-	 * Compress input using provided DjatokaEncodeParam parameters.
-	 * @param input absolute file path for input file.
-	 * @param output absolute file path for output file.
-	 * @param params DjatokaEncodeParam containing compression parameters.
-	 * @throws DjatokaException
-	 */
-	public void compressImage(String input, String output,
-			DjatokaEncodeParam params) throws DjatokaException;
+    /**
+     * Compress input using provided DjatokaEncodeParam parameters.
+     * 
+     * @param input absolute file path for input file.
+     * @param output absolute file path for output file.
+     * @param params DjatokaEncodeParam containing compression parameters.
+     * @throws DjatokaException
+     */
+    public void compressImage(String input, String output,
+            DjatokaEncodeParam params) throws DjatokaException;
 
-	/**
-	 * Compress input using provided DjatokaEncodeParam parameters.
-	 * @param input InputStream containing image bitstream
-	 * @param output absolute file path for output file.
-	 * @param params DjatokaEncodeParam containing compression parameters.
-	 * @throws DjatokaException
-	 */
-	public void compressImage(InputStream input, String output,
-			DjatokaEncodeParam params) throws DjatokaException;
+    /**
+     * Compress input using provided DjatokaEncodeParam parameters.
+     * 
+     * @param input InputStream containing image bitstream
+     * @param output absolute file path for output file.
+     * @param params DjatokaEncodeParam containing compression parameters.
+     * @throws DjatokaException
+     */
+    public void compressImage(InputStream input, String output,
+            DjatokaEncodeParam params) throws DjatokaException;
 
-	/**
-	 * Compress input using provided DjatokaEncodeParam parameters.
-	 * @param input InputStream containing image bitstream
-	 * @param output OutputStream to serialize compressed image.
-	 * @param params DjatokaEncodeParam containing compression parameters.
-	 * @throws DjatokaException
-	 */
-	public void compressImage(InputStream input, OutputStream output,
-			DjatokaEncodeParam params) throws DjatokaException;
+    /**
+     * Compress input using provided DjatokaEncodeParam parameters.
+     * 
+     * @param input InputStream containing image bitstream
+     * @param output OutputStream to serialize compressed image.
+     * @param params DjatokaEncodeParam containing compression parameters.
+     * @throws DjatokaException
+     */
+    public void compressImage(InputStream input, OutputStream output,
+            DjatokaEncodeParam params) throws DjatokaException;
 
-	/**
-	 * Compress input BufferedImage using provided DjatokaEncodeParam parameters.
-	 * @param bi in-memory image to be compressed
-	 * @param output OutputStream to serialize compressed image.
-	 * @param params DjatokaEncodeParam containing compression parameters.
-	 * @throws DjatokaException
-	 */
-	public void compressImage(BufferedImage bi, OutputStream output,
-			DjatokaEncodeParam params) throws DjatokaException;
+    /**
+     * Compress input BufferedImage using provided DjatokaEncodeParam
+     * parameters.
+     * 
+     * @param bi in-memory image to be compressed
+     * @param output OutputStream to serialize compressed image.
+     * @param params DjatokaEncodeParam containing compression parameters.
+     * @throws DjatokaException
+     */
+    public void compressImage(BufferedImage bi, OutputStream output,
+            DjatokaEncodeParam params) throws DjatokaException;
 
-	/**
-	 * Compress input BufferedImage using provided DjatokaEncodeParam parameters.
-	 * @param bi in-memory image to be compressed
-	 * @param output absolute file path for output file.
-	 * @param params DjatokaEncodeParam containing compression parameters.
-	 * @throws DjatokaException
-	 */
-	public void compressImage(BufferedImage bi, String output,
-			DjatokaEncodeParam params) throws DjatokaException;
+    /**
+     * Compress input BufferedImage using provided DjatokaEncodeParam
+     * parameters.
+     * 
+     * @param bi in-memory image to be compressed
+     * @param output absolute file path for output file.
+     * @param params DjatokaEncodeParam containing compression parameters.
+     * @throws DjatokaException
+     */
+    public void compressImage(BufferedImage bi, String output,
+            DjatokaEncodeParam params) throws DjatokaException;
 
 }

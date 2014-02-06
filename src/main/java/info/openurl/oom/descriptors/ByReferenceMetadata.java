@@ -8,28 +8,31 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package info.openurl.oom.descriptors;
 
 import java.net.URI;
 import java.net.URL;
 
 /**
- * This class represents the By-Reference Metadata Descriptor described
- * in section 5.2.2 of the 
- * <a href="http://alcme.oclc.org/openurl/docs/pdf/z39_88_2004.pdf">OpenURL 1.0 spec</a>.
+ * This class represents the By-Reference Metadata Descriptor described in
+ * section 5.2.2 of the <a
+ * href="http://alcme.oclc.org/openurl/docs/pdf/z39_88_2004.pdf">OpenURL 1.0
+ * spec</a>.
+ * 
  * @author Jeffrey A. Young
  */
 public interface ByReferenceMetadata {
+
     /**
      * Get an identifier for the type of key/value pairs in the fieldMap
      * 
-     * @return a URI indicating the <a href="http://alcme.oclc.org/openurl/servlet/OAIHandler?verb=ListRecords&metadataPrefix=oai_dc&set=Core:Metadata+Formats">metadata format</a>
-     * represented in the fieldMap.
+     * @return a URI indicating the metadata format represented in the fieldMap.
      */
-	public URI getRefFmt();
-    
-	/**
-	 * @return a URL pointing to the location of the metadata
-	 */
-	public URL getRef();
+    public URI getRefFmt();
+
+    /**
+     * @return a URL pointing to the location of the metadata
+     */
+    public URL getRef();
 }

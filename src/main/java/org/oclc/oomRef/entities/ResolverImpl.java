@@ -8,25 +8,25 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.oclc.oomRef.entities;
 
 import info.openurl.oom.entities.Resolver;
 
 /**
- * The resource at which a service request pertaining to
- * the <em>Referent</em> is targeted; an <em>Entity</em>
- * of the <em>ContextObject</em>.
+ * The resource at which a service request pertaining to the <em>Referent</em>
+ * is targeted; an <em>Entity</em> of the <em>ContextObject</em>.
  * 
  * @author Jeffrey A. Young
  */
 public class ResolverImpl extends EntityImpl implements Resolver {
 
-	/**
-	 * Construct a Resolver.
-	 * 
-	 * @param descriptors Descriptor(s) for the Resolver
-	 */
-	public ResolverImpl(Object descriptors) {
-		super(descriptors);
-	}
+    /**
+     * Construct a Resolver.
+     * 
+     * @param descriptors Descriptor(s) for the Resolver
+     */
+    public ResolverImpl(Object descriptors) {
+        super(descriptors);
+    }
 }

@@ -1,9 +1,15 @@
 
 package info.freelibrary.djatoka.view;
 
+import info.freelibrary.djatoka.iiif.Region;
+import info.freelibrary.djatoka.iiif.ImageRequest;
+import info.freelibrary.djatoka.iiif.IIIFRequest;
+
 import gov.lanl.adore.djatoka.openurl.OpenURLJP2KService;
+
 import info.freelibrary.djatoka.Constants;
 import info.freelibrary.djatoka.util.CacheUtils;
+
 import info.freelibrary.util.IOUtils;
 import info.freelibrary.util.PairtreeObject;
 import info.freelibrary.util.PairtreeRoot;
@@ -11,6 +17,7 @@ import info.freelibrary.util.PairtreeUtils;
 import info.freelibrary.util.StringUtils;
 
 import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,6 +31,7 @@ import java.util.Properties;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -55,10 +63,16 @@ public class ImageServlet extends HttpServlet implements Constants {
             .getLogger(ImageServlet.class);
 
     private static final String IMAGE_URL =
-            "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.level={}";
+            "/resolve?url_ver=Z39.88-2004&rft_id={}"
+                    + "&svc_id=info:lanl-repo/svc/getRegion"
+                    + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
+                    + "&svc.format={}&svc.level={}&svc.rotate={}";
 
     private static final String REGION_URL =
-            "/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format={}&svc.region={}&svc.scale={}";
+            "/resolve?url_ver=Z39.88-2004&rft_id={}"
+                    + "&svc_id=info:lanl-repo/svc/getRegion"
+                    + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
+                    + "&svc.format={}&svc.region={}&svc.scale={}&svc.rotate={}";
 
     private static final String DZI_NS =
             "http://schemas.microsoft.com/deepzoom/2008";
@@ -73,6 +87,7 @@ public class ImageServlet extends HttpServlet implements Constants {
     protected void doGet(HttpServletRequest aRequest,
             HttpServletResponse aResponse) throws ServletException, IOException {
         String level = getServletConfig().getInitParameter("level");
+        IIIFRequest iiif = (IIIFRequest) aRequest.getAttribute(IIIFRequest.KEY);
         String reqURI = aRequest.getRequestURI();
         String servletPath = aRequest.getServletPath();
         String path = reqURI.substring(servletPath.length());
@@ -84,13 +99,67 @@ public class ImageServlet extends HttpServlet implements Constants {
                 ImageInfo imageInfo = new ImageInfo(id, dims[0], dims[1]);
                 ServletOutputStream outStream = aResponse.getOutputStream();
 
-                imageInfo.toStream(outStream);
+                if (reqURI.endsWith("/info.xml")) {
+                    imageInfo.toStream(outStream);
+                } else {
+                    StringBuilder serviceSb = new StringBuilder();
+
+                    serviceSb.append(aRequest.getScheme()).append("://");
+                    serviceSb.append(aRequest.getServerName()).append(":");
+                    serviceSb.append(aRequest.getServerPort());
+
+                    String service = serviceSb.toString();
+                    String prefix = iiif.getServicePrefix();
+
+                    imageInfo.addFormat("jpg"); // FIXME
+
+                    outStream.print(imageInfo.toJSON(service, prefix));
+                }
+
                 outStream.close();
             } catch (FileNotFoundException details) {
                 aResponse.sendError(HttpServletResponse.SC_NOT_FOUND, id +
                         " not found");
             }
+        } else if (iiif != null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Request is handled via the IIIFRequest shim");
+            }
+
+            ImageRequest imageRequest = (ImageRequest) iiif;
+            String size = imageRequest.getSize().toString();
+            Region iiifRegion = imageRequest.getRegion();
+            float rotation = imageRequest.getRotation();
+            String region;
+
+            // Djatoka expects a different order from what OpenSeadragon sends
+            // so we have to reconstruct rather than use Region's toString().
+            if (iiifRegion.isFullSize()) {
+                region = "";
+            } else {
+                StringBuilder rsb = new StringBuilder();
+                rsb.append(iiifRegion.getY()).append(',');
+                rsb.append(iiifRegion.getX()).append(',');
+                rsb.append(iiifRegion.getHeight()).append(',');
+                rsb.append(iiifRegion.getWidth());
+
+                // Now, we have the string order that Djatoka wants
+                region = rsb.toString();
+            }
+
+            if (myCache != null) {
+                checkImageCache(id, level, size, region, rotation, aRequest,
+                        aResponse);
+            } else {
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Cache isn't configured correctly");
+                }
+
+                serveNewImage(id, level, region, size, rotation, aRequest,
+                        aResponse);
+            }
         } else {
+            // We are using the now deprecated FreeLib-Djatoka djtilesource.js
             String[] regionCoords = getRegion(path);
             String scale = getScale(path);
             String region;
@@ -109,7 +178,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                 StringBuilder request = new StringBuilder();
 
                 request.append("id[").append(id).append("] ");
-                
+
                 if (level != null) {
                     request.append("level[").append(level).append("] ");
                 }
@@ -124,40 +193,17 @@ public class ImageServlet extends HttpServlet implements Constants {
             }
 
             if (myCache != null) {
-                PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
-                PairtreeObject cacheObject = cacheDir.getObject(id);
-                String fileName = CacheUtils.getFileName(level, scale, region);
-                File imageFile = new File(cacheObject, fileName);
-
-                if (imageFile.exists()) {
-                    aResponse.setHeader("Content-Length", "" +
-                            imageFile.length());
-                    aResponse.setHeader("Cache-Control",
-                            "public, max-age=4838400");
-                    aResponse.setContentType("image/jpg");
-
-                    ServletOutputStream outStream = aResponse.getOutputStream();
-                    IOUtils.copyStream(imageFile, outStream);
-                    IOUtils.closeQuietly(outStream);
-
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("{} served from Pairtree cache", imageFile);
-                    }
-                } else {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("{} not found in cache", imageFile);
-                    }
-
-                    serveNewImage(id, level, region, scale, aRequest, aResponse);
-                    cacheNewImage(aRequest, id + "_" + fileName, imageFile);
-                }
+                // Older freelib-djatoka didn't support rotations; use 0.0f
+                checkImageCache(id, level, scale, region, 0.0f, aRequest,
+                        aResponse);
             } else {
                 if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("Cache isn't configured correctly (null)");
+                    LOGGER.warn("Cache isn't configured correctly");
                 }
 
-                serveNewImage(id, level, region, scale, aRequest, aResponse);
-                // We can't cache, because we don't have a cache configured
+                // Older freelib-djatoka didn't support rotations; use 0.0f
+                serveNewImage(id, level, region, scale, 0.0f, aRequest,
+                        aResponse);
             }
         }
     }
@@ -174,7 +220,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                 if (props.containsKey(VIEW_CACHE_DIR)) {
                     myCache = props.getProperty(VIEW_CACHE_DIR);
                 }
-                
+
                 // If we couldn't get cache from config, fall back to tmpdir
                 if (myCache == null) {
                     myCache = System.getProperty("java.io.tmpdir");
@@ -197,6 +243,8 @@ public class ImageServlet extends HttpServlet implements Constants {
                     LOGGER.warn("Unable to load properties file: {}", details
                             .getMessage());
                 }
+            } finally {
+                IOUtils.closeQuietly(is);
             }
         }
     }
@@ -239,6 +287,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                 PairtreeObject cacheObject = cacheDir.getObject(id);
                 ServletContext context = getServletContext();
                 String filename = PairtreeUtils.encodeID(id);
+                // FIXME: Make this something other than a DZI file; IIIF XML?
                 File dziFile = new File(cacheObject, filename + ".dzi");
 
                 if (dziFile.exists() && dziFile.length() > 0) {
@@ -262,7 +311,9 @@ public class ImageServlet extends HttpServlet implements Constants {
                     }
                 } else {
                     if (dziFile.exists()) {
-                        dziFile.delete();
+                        if (!dziFile.delete() && LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("File not deleted: {}", dziFile);
+                        }
                     }
 
                     if (LOGGER.isDebugEnabled()) {
@@ -312,6 +363,11 @@ public class ImageServlet extends HttpServlet implements Constants {
                         if (name.equals("FileNotFoundException")) {
                             throw new FileNotFoundException(id + " not found");
                         } else {
+                            if (LOGGER.isErrorEnabled()) {
+                                LOGGER.error(details.getMessage() + " " +
+                                        imageURL, details);
+                            }
+
                             throw details;
                         }
                     }
@@ -330,7 +386,9 @@ public class ImageServlet extends HttpServlet implements Constants {
             throw new ServletException("Cache not correctly configured");
         }
 
-        return new int[] {height, width};
+        return new int[] {
+            height, width
+        };
     }
 
     private String getFullSizeImageURL(HttpServletRequest aRequest) {
@@ -341,19 +399,61 @@ public class ImageServlet extends HttpServlet implements Constants {
         return url.append("view/fullSize/").toString();
     }
 
+    private void checkImageCache(String aID, String aLevel, String aScale,
+            String aRegion, float aRotation, HttpServletRequest aRequest,
+            HttpServletResponse aResponse) throws IOException, ServletException {
+        PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
+        PairtreeObject cacheObject = cacheDir.getObject(aID);
+        String fileName =
+                CacheUtils.getFileName(aLevel, aScale, aRegion, aRotation);
+        File imageFile = new File(cacheObject, fileName);
+
+        if (imageFile.exists()) {
+            aResponse.setHeader("Content-Length", "" + imageFile.length());
+            aResponse.setHeader("Cache-Control", "public, max-age=4838400");
+            aResponse.setContentType("image/jpg");
+
+            ServletOutputStream outStream = aResponse.getOutputStream();
+            IOUtils.copyStream(imageFile, outStream);
+            IOUtils.closeQuietly(outStream);
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("{} served from Pairtree cache", imageFile);
+            }
+        } else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("{} not found in cache", imageFile);
+            }
+
+            serveNewImage(aID, aLevel, aRegion, aScale, aRotation, aRequest,
+                    aResponse);
+            cacheNewImage(aRequest, aID + "_" + fileName, imageFile);
+        }
+    }
+
     private void serveNewImage(String aID, String aLevel, String aRegion,
-            String aScale, HttpServletRequest aRequest,
+            String aScale, float aRotation, HttpServletRequest aRequest,
             HttpServletResponse aResponse) throws IOException, ServletException {
         String id = URLEncoder.encode(aID, CHARSET);
         RequestDispatcher dispatcher;
         String[] values;
         String url;
 
+        // Cast floats as integers because that's what djatoka expects
         if (aScale == null) {
-            values = new String[] {id, DEFAULT_VIEW_FORMAT, aLevel};
+            values =
+                    new String[] {
+                        id, DEFAULT_VIEW_FORMAT, aLevel,
+                        Integer.toString((int) aRotation)
+                    };
             url = StringUtils.format(IMAGE_URL, values);
         } else {
-            values = new String[] {id, DEFAULT_VIEW_FORMAT, aRegion, aScale};
+            values =
+                    new String[] {
+                        id, DEFAULT_VIEW_FORMAT, aRegion,
+                        aScale.equals("full") ? "1.0" : aScale,
+                        Integer.toString((int) aRotation)
+                    };
             url = StringUtils.format(REGION_URL, values);
         }
 
@@ -430,6 +530,7 @@ public class ImageServlet extends HttpServlet implements Constants {
         if (path.contains("%")) { // Path is URLEncoded
             try {
                 path = URLDecoder.decode(path, "UTF-8");
+                path = URLDecoder.decode(path, "UTF-8");
             } catch (UnsupportedEncodingException details) {
                 // Never happens, all JVMs are required to support UTF-8
                 if (LOGGER.isWarnEnabled()) {
@@ -483,7 +584,7 @@ public class ImageServlet extends HttpServlet implements Constants {
             scale = scale.substring(4);
             scale = Double.toString(Double.parseDouble(scale) * .01);
         }
-        
+
         return scale;
     }
 }

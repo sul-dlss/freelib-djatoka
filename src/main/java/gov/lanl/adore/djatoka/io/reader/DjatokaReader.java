@@ -33,63 +33,62 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Djatoka Reader Wrapper - Uses known IReader impl. to  
- * read image InputStream or image file path.
+ * Djatoka Reader Wrapper - Uses known IReader impl. to read image InputStream
+ * or image file path.
+ * 
  * @author Ryan Chute
- *
  */
 public class DjatokaReader implements IReader {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(DjatokaReader.class);
-	
-	private ImageJReader imagejReader = new ImageJReader();
-	private ImageIOReader imageioReader = new ImageIOReader();
-	
-	/**
-	 * Returns a BufferedImage instance for provided InputStream
-	 * @param input an InputStream consisting of an image bitstream
-	 * @return a BufferedImage instance for source image InputStream
-	 * @throws FormatIOException
-	 */
-	public BufferedImage open(String input) throws FormatIOException {
-		BufferedImage bi = null;
+    private static Logger LOGGER = LoggerFactory.getLogger(DjatokaReader.class);
 
-		// Try ImageIO first
-		bi = imagejReader.open(input);
-		
-		// If null, try ImageJ
-		if (bi == null) {
-			LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
-			bi = imageioReader.open(input);
-		}
-		else {
-			LOGGER.debug("Reading the file using ImageJReader");
-		}
-		
-		return bi;
-	}
+    private ImageJReader imagejReader = new ImageJReader();
 
-	/**
-	 * Returns a BufferedImage instance for provided image file path
-	 * @param input absolute file path for image file
-	 * @return a BufferedImage instance for source image file
-	 * @throws FormatIOException
-	 */
-	public BufferedImage open(InputStream input) throws FormatIOException {
-		BufferedImage bi = null;
-		
-		// Try ImageIO
-		bi = imagejReader.open(input);
-		
-		// If null, try ImageJ
-		if (bi == null) {
-			LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
-			bi = imageioReader.open(input);
-		}
-		else {
-			LOGGER.debug("Reading the file using ImageJReader");
-		}
-		
-		return bi;
-	}
+    private ImageIOReader imageioReader = new ImageIOReader();
+
+    /**
+     * Returns a BufferedImage instance for provided InputStream
+     * 
+     * @param input an InputStream consisting of an image bitstream
+     * @return a BufferedImage instance for source image InputStream
+     * @throws FormatIOException
+     */
+    public BufferedImage open(String input) throws FormatIOException {
+        BufferedImage bi = null;
+
+        bi = imagejReader.open(input);
+
+// FIXME: delete; this block can't be reached can it?
+//        if (bi == null) {
+//            LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
+//            bi = imageioReader.open(input);
+//        } else {
+//            LOGGER.debug("Reading the file using ImageJReader");
+//        }
+
+        return bi;
+    }
+
+    /**
+     * Returns a BufferedImage instance for provided image file path
+     * 
+     * @param input absolute file path for image file
+     * @return a BufferedImage instance for source image file
+     * @throws FormatIOException
+     */
+    public BufferedImage open(InputStream input) throws FormatIOException {
+        BufferedImage bi = null;
+
+        bi = imagejReader.open(input);
+
+// FIXME: delete; this block can't be reached can it?
+//        if (bi == null) {
+//            LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
+//            bi = imageioReader.open(input);
+//        } else {
+//            LOGGER.debug("Reading the file using ImageJReader");
+//        }
+
+        return bi;
+    }
 }

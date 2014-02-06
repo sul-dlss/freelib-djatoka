@@ -1,8 +1,8 @@
 #!/bin/bash
 #-----------------------------------------------------
-# djatoka-initd v0.0.1
+# djatoka-init.d v0.0.2
 #-----------------------------------------------------
-# Script for running djatoka as a service under initd.
+# Script for running djatoka as a service under init.d
 #
 # Usage: service djatoka {start|stop|restart|status}"
 #
@@ -39,6 +39,9 @@ MAVEN_OPTIONS=""
 DJATOKA_PIDFILE=/var/run/djatoka.pid
 DJATOKA_LOGFILE=/var/log/djatoka-console.log
 
+# And a directory for output files
+SYSTEM_LOG_DIR=/var/log
+
 # Find out what Linux distribution we're running under
 DISTRIB_ID=`lsb_release -i |awk ' { print $3 }'`
 
@@ -51,6 +54,7 @@ if [[ $TRAVIS == 'true' ]]; then
 	DJATOKA_HOME=`pwd`
 	DJATOKA_PIDFILE=djatoka.pid
 	DJATOKA_LOGFILE=djatoka-console.log
+	SYSTEM_LOG_DIR=/tmp
 elif [ $DISTRIB_ID == 'RedHatEnterpriseServer' ] \
 	|| [ $DISTRIB_ID == 'RedHat' ] \
 	|| [ $DISTRIB_ID == 'Fedora' ] \
@@ -64,11 +68,17 @@ else
 	DJATOKA_USER="$(id -u -n)"
 fi
 
+# Configure a djatoka logs symlink in the standard location
+if [ ! -d ${DJATOKA_HOME}/target/logs ]; then
+    mkdir -p ${DJATOKA_HOME}/target/logs
+    ln -s ${DJATOKA_HOME}/target/logs ${SYSTEM_LOG_DIR}/djatoka
+fi
+
 # Find the mvn executable from the system path
 MVNCMD=`which mvn`
 
 # Configs that shouldn't need to be changed
-DJATOKA_START_CMD="sudo -u ${DJATOKA_USER} MAVEN_OPTS=${MAVEN_OPTIONS} $TMPSHELL $MVNCMD jetty:run-forked"
+DJATOKA_START_CMD="sudo -u ${DJATOKA_USER} MAVEN_OPTS=${MAVEN_OPTIONS} $TMPSHELL $MVNCMD -DskipTests=true jetty:run-forked"
 DJATOKA_STOP_CMD="sudo -u ${DJATOKA_USER} $MVNCMD -q jetty:stop"
 
 if [[ -z $MVNCMD ]]; then
@@ -96,10 +106,12 @@ start)
 	STARTED=false
 	cd $DJATOKA_HOME
 	nohup $DJATOKA_START_CMD > $DJATOKA_LOGFILE 2>&1 &
+
 	# Maven forks Jetty; wait for Maven's exit before looking for Jetty
 	wait $!
+
 	# Now we should be able to find the Jetty process (if it exists)
-	PID=`pgrep -f freelib-djatoka`
+	PID=`pgrep -o -f freelib-djatoka`
 
 	# We remove one line below with sed because it contains `ps` labels
 	# Then, the process is running as long as command below returns a 1
@@ -122,6 +134,7 @@ start)
 		if [[ $? != 0 ]]; then
 			echo "Failed to start Djatoka"
 			echo "  Consult the log for more details: $DJATOKA_LOGFILE"
+			exit 1
 		fi
 	fi
 	;;

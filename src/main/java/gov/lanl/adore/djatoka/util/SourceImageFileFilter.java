@@ -26,15 +26,19 @@ package gov.lanl.adore.djatoka.util;
 import java.io.File;
 
 public class SourceImageFileFilter implements java.io.FileFilter {
+
+    /**
+     * Determines whether to accept the supplied file.
+     * 
+     * @param f A file to filter in or out
+     */
     public boolean accept(File f) {
-        if (f.isDirectory()) return true;
+        if (f.isDirectory()) {
+            return true;
+        }
         String n = f.getName().toLowerCase();
-        return n.endsWith("tif") 
-           ||  n.endsWith("tiff")
-           ||  n.endsWith("jpg")
-           ||  n.endsWith("jpeg")
-           ||  n.endsWith("png")
-           ||  n.endsWith("gif")
-           ||  n.endsWith("bmp");
+        return n.endsWith("tif") || n.endsWith("tiff") || n.endsWith("jpg") ||
+                n.endsWith("jpeg") || n.endsWith("png") || n.endsWith("gif") ||
+                n.endsWith("bmp");
     }
 }

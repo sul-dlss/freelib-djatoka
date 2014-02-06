@@ -36,41 +36,42 @@ import org.slf4j.LoggerFactory;
  * @author Ryan Chute
  * @author Kevin S. Clarke <a
  *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
- * 
  */
 public class ImageRecordUtils {
 
     private static final Logger LOGGER = LoggerFactory
-	    .getLogger(ImageRecordUtils.class);
+            .getLogger(ImageRecordUtils.class);
 
     /**
      * Return an ImageRecord containing the images pixel dimensions.
      * 
-     * @param file
-     *            absolute file path to image
+     * @param file absolute file path to image
      * @return ImageRecord containing the images pixel dimensions
      */
     public static ImageRecord getImageDimensions(String file) {
-	if (LOGGER.isDebugEnabled()) {
-	    LOGGER.debug("Getting image dimensions from: {}", file);
-	}
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Getting image dimensions from: {}", file);
+        }
 
-	ImageRecord dim = new ImageRecord(file);
-	Opener o = new Opener();
-	ImagePlus imp = o.openImage(file);
-	if (imp == null) return null;
-	ImageProcessor ip = imp.getProcessor();
-	int width = ip.getWidth();
-	int height = ip.getHeight();
+        ImageRecord dim = new ImageRecord(file);
+        Opener o = new Opener();
+        ImagePlus imp = o.openImage(file);
+        if (imp == null) {
+            return null;
+        }
+        ImageProcessor ip = imp.getProcessor();
+        int width = ip.getWidth();
+        int height = ip.getHeight();
 
-	if (LOGGER.isDebugEnabled()) {
-	    LOGGER.debug("{} (width: {} | height: {})", new String[] { file,
-		    Integer.toString(width), Integer.toString(height) });
-	}
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("{} (width: {} | height: {})", new String[] {
+                file, Integer.toString(width), Integer.toString(height)
+            });
+        }
 
-	dim.setWidth(width);
-	dim.setHeight(height);
-	ip = null;
-	return dim;
+        dim.setWidth(width);
+        dim.setHeight(height);
+        ip = null;
+        return dim;
     }
 }

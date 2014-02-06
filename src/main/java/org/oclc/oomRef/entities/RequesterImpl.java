@@ -8,24 +8,25 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.oclc.oomRef.entities;
 
 import info.openurl.oom.entities.Requester;
 
 /**
- * The resource that requests services pertaining to the
- * Referent; an <em>Entity</em> of the <em>ContextObject</em>.
+ * The resource that requests services pertaining to the Referent; an
+ * <em>Entity</em> of the <em>ContextObject</em>.
  * 
  * @author Jeffrey A. Young
  */
 public class RequesterImpl extends EntityImpl implements Requester {
 
-	/**
-	 * Construct a Requester.
-	 * 
-	 * @param descriptors Descriptor(s) for the Requester.
-	 */
-	public RequesterImpl(Object descriptors) {
-		super(descriptors);
-	}
+    /**
+     * Construct a Requester.
+     * 
+     * @param descriptors Descriptor(s) for the Requester.
+     */
+    public RequesterImpl(Object descriptors) {
+        super(descriptors);
+    }
 }

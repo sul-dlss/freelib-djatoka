@@ -23,8 +23,14 @@ public class HelloWorldIntegrationTest {
             .getLogger(HelloWorldIntegrationTest.class);
 
     private static final String QUERY =
-            "http://localhost:{}/resolve?url_ver=Z39.88-2004&rft_id=http%3A%2F%2Fmemory.loc.gov%2Fgmd%2Fgmd433%2Fg4330%2Fg4330%2Fnp000066.jp2&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format=image/jpeg&svc.level=1";
+            "http://localhost:{}/resolve?url_ver=Z39.88-2004"
+                    + "&rft_id=http%3A%2F%2Fmemory.loc.gov%2Fgmd%2Fgmd433%2Fg4330%2Fg4330%2Fnp000066.jp2"
+                    + "&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
+                    + "&svc.format=image/jpeg&svc.level=1";
 
+    /**
+     * Sets up the Hello World integration test.
+     */
     @Before
     public void setup() {
         File ptRoot = new File(System.getProperty("pairtree.root"));
@@ -35,6 +41,9 @@ public class HelloWorldIntegrationTest {
         }
     }
 
+    /**
+     * Runs the Hello World integration test.
+     */
     @Test
     public void test() {
         String jettyPort = System.getProperty("jetty.port");

@@ -2,110 +2,112 @@
 
 <configuration debug="false">
 
-    <appender name="INGEST"
-        class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>target/logs/ingest.log</file>
-        <rollingPolicy
-            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>target/logs/ingest.%d{yyyy-MM-dd}.log</FileNamePattern>
-        </rollingPolicy>
-        <encoder>
-            <pattern><![CDATA[[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n]]></pattern>
-        </encoder>
-    </appender>
+  <!-- used with the djatoka maven plugins -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern><![CDATA[[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n]]></pattern>
+    </encoder>
+  </appender>
 
-    <appender name="DJATOKA"
-        class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>target/logs/djatoka.log</file>
-        <rollingPolicy
-            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>target/logs/djatoka.%d{yyyy-MM-dd}.log</FileNamePattern>
-        </rollingPolicy>
-        <encoder>
-            <pattern><![CDATA[[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n]]></pattern>
-        </encoder>
-    </appender>
+  <appender name="INGEST"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>target/logs/ingest.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <FileNamePattern>target/logs/ingest.%d{yyyy-MM-dd}.log</FileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern><![CDATA[[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n]]></pattern>
+    </encoder>
+  </appender>
 
-    <appender name="CACHER"
-        class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>target/logs/tilecache.log</file>
-        <rollingPolicy
-            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>target/logs/tilecache.%d{yyyy-MM-dd}.log</FileNamePattern>
-        </rollingPolicy>
-        <encoder>
-            <pattern><![CDATA[[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n]]></pattern>
-        </encoder>
-    </appender>
+  <appender name="DJATOKA"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>target/logs/djatoka.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <FileNamePattern>target/logs/djatoka.%d{yyyy-MM-dd}.log</FileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern><![CDATA[[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n]]></pattern>
+    </encoder>
+  </appender>
 
-    <!-- Note location for LOGVIEWER is different so it's not watched/polled -->
+  <appender name="CACHER"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>target/logs/tilecache.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <FileNamePattern>target/logs/tilecache.%d{yyyy-MM-dd}.log</FileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern><![CDATA[[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n]]></pattern>
+    </encoder>
+  </appender>
 
-    <appender name="LOGVIEWER"
-        class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>target/tmp/logviewer.log</file>
-        <rollingPolicy
-            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>target/tmp/logviewer.%d{yyyy-MM-dd}.log</FileNamePattern>
-        </rollingPolicy>
-        <encoder>
-            <pattern><![CDATA[%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n]]></pattern>
-        </encoder>
-    </appender>
+  <!-- Note location for LOGVIEWER is different so it's not watched/polled -->
 
-    <!-- class level logging -->
-    <logger name="info.freelibrary.djatoka.view.IdentifierResolver"
-        level="DEBUG"/>
-    <logger name="gov.lanl.adore.djatoka.openurl.DjatokaImageMigrator"
-        level="DEBUG"/>
-    <logger name="gov.lanl.adore.djatoka.util.IOUtils" level="ERROR"/>
+  <appender name="LOGVIEWER"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>target/tmp/logviewer.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <FileNamePattern>target/tmp/logviewer.%d{yyyy-MM-dd}.log</FileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern><![CDATA[%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n]]></pattern>
+    </encoder>
+  </appender>
 
-    <logger name="info.freelibrary.djatoka.view.ImageServlet" level="DEBUG"/>
+  <!-- class level logging -->
+  <logger name="info.freelibrary.djatoka.iiif" level="DEBUG" />
 
-    <logger name="info.freelibrary.djatoka.view.ViewServlet" level="ERROR"/>
-    <logger name="info.freelibrary.djatoka.util.HealthServlet" level="ERROR"/>
+  <logger name="info.freelibrary.djatoka.view.ImageServlet"
+    level="DEBUG" />
+  <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService"
+    level="DEBUG" />
 
-    <logger name="info.freelibrary.util.PairtreeObject" level="ERROR"/>
-    <logger name="info.freelibrary.util.PairtreeRoot" level="ERROR"/>
+  <!-- <logger name="info.freelibrary.djatoka.view.ImageInfo" level="DEBUG"/> 
+    <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="DEBUG"/> 
+    <logger name="gov.lanl.adore.djatoka.openurl.DjatokaImageMigrator" level="DEBUG"/> 
+    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="DEBUG"/> 
+    <logger name="gov.lanl.adore.djatoka.util.IOUtils" level="DEBUG"/> <logger 
+    name="info.freelibrary.util.PairtreeObject" level="DEBUG"/> <logger name="info.freelibrary.util.PairtreeRoot" 
+    level="DEBUG"/> -->
+  <!-- Log files for log viewer; addivity is false so the log watcher ignores -->
 
-    <logger name="gov.lanl.adore.djatoka.openurl.TileCacheManager" level="ERROR"/>
-    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="ERROR"/>
-    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService"
-        level="ERROR"/>
-    <logger name="gov.lanl.adore.djatoka.kdu.KduCompressExe" level="ERROR"/>
+  <logger name="info.freelibrary.djatoka.util.LogSocketServlet"
+    level="DEBUG" additivity="false">
+    <appender-ref ref="LOGVIEWER" />
+  </logger>
+  <logger name="info.freelibrary.djatoka.util.LogSocket" level="DEBUG"
+    additivity="false">
+    <appender-ref ref="LOGVIEWER" />
+  </logger>
+  <logger name="info.freelibrary.djatoka.util.LogWatcherThread"
+    level="DEBUG" additivity="false">
+    <appender-ref ref="LOGVIEWER" />
+  </logger>
 
-    <!-- Log files for log viewer; addivity is false so the log watcher ignores -->
+  <!-- Log file for the file system ingest process -->
 
-    <logger name="info.freelibrary.djatoka.util.LogSocketServlet" level="DEBUG"
-        additivity="false">
-        <appender-ref ref="LOGVIEWER"/>
-    </logger>
-    <logger name="info.freelibrary.djatoka.util.LogSocket" level="DEBUG"
-        additivity="false">
-        <appender-ref ref="LOGVIEWER"/>
-    </logger>
-    <logger name="info.freelibrary.djatoka.util.LogWatcherThread" level="DEBUG"
-        additivity="false">
-        <appender-ref ref="LOGVIEWER"/>
-    </logger>
+  <logger name="info.freelibrary.djatoka.ingest" level="DEBUG"
+    additivity="false">
+    <appender-ref ref="INGEST" />
+  </logger>
 
-    <!-- Log file for the file system ingest process -->
+  <logger name="info.freelibrary.maven" level="DEBUG" additivity="false">
+    <appender-ref ref="INGEST" />
+    <appender-ref ref="CONSOLE" />
+  </logger>
 
-    <logger name="info.freelibrary.djatoka.ingest" level="DEBUG"
-        additivity="false">
-        <appender-ref ref="INGEST"/>
-    </logger>
+  <!-- Log file for the pre-generating tile cache utility -->
 
-    <!-- Log file for the pre-generating tile cache utility -->
+  <logger name="info.freelibrary.djatoka.TileCache" level="DEBUG"
+    additivity="false">
+    <appender-ref ref="CACHER" />
+  </logger>
 
-    <logger name="info.freelibrary.djatoka.TileCache" level="DEBUG"
-        additivity="false">
-        <appender-ref ref="CACHER"/>
-    </logger>
+  <!-- Log file for everything else -->
 
-    <!-- Log file for everything else -->
-
-    <root level="ERROR">
-        <appender-ref ref="DJATOKA"/>
-    </root>
+  <root level="ERROR">
+    <appender-ref ref="DJATOKA" />
+  </root>
 
 </configuration>

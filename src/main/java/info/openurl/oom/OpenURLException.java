@@ -8,30 +8,32 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package info.openurl.oom;
 
 /**
  * A fatal error occurred within the OpenURL infrastructure.
- * @see OpenURLResponse for non-fatal response conditions
  * 
+ * @see OpenURLResponse for non-fatal response conditions
  * @author Jeffrey A. Young
  */
 public class OpenURLException extends Exception {
-	/**
-	 * Initial version
-	 */
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Indicates a fatal condition
-	 * 
-	 * @param message provides a clue to the conditions of the problem
-	 * @param e the original exception
-	 */
-	public OpenURLException(String message, Exception e) {
-		super(message, e);
-	}
-    
+    /**
+     * Initial version
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Indicates a fatal condition
+     * 
+     * @param message provides a clue to the conditions of the problem
+     * @param e the original exception
+     */
+    public OpenURLException(String message, Exception e) {
+        super(message, e);
+    }
+
     /**
      * Indicates a fatal condition
      * 

@@ -93,14 +93,29 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
         formatMap.put(FORMAT_ID_JPM, FORMAT_MIMEYPE_JPM);
     }
 
+    /**
+     * Sets the pairtree root for the migrator.
+     * 
+     * @param aPtRootDir The Pairtree root directory
+     */
     public void setPairtreeRoot(File aPtRootDir) {
         myPtRootDir = aPtRootDir;
     }
 
+    /**
+     * Gets the pairtree root for the migrator.
+     * 
+     * @return The Pairtree root directory
+     */
     public File getPairtreeRoot() {
         return myPtRootDir;
     }
 
+    /**
+     * Returns true if the migrator has a Pairtree root directory; else, false.
+     * 
+     * @return True if the migrator has a Pairtree root directory; else, false
+     */
     public boolean hasPairtreeRoot() {
         return myPtRootDir != null;
     }
@@ -174,7 +189,9 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
                 // Clean up the file stub of unsuccessful copies
                 if (file.length() == 0) {
-                    file.delete();
+                    if (!file.delete() && LOGGER.isWarnEnabled()) {
+                        LOGGER.warn("File not deleted: {}", file);
+                    }
                 }
             } else {
                 int extIndex = url.toString().lastIndexOf(".") + 1;
@@ -255,10 +272,14 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                 File jp2Local =
                         File.createTempFile("cache" + uri.hashCode() + "-",
                                 ".jp2");
-                jp2Local.delete();
+                if (!jp2Local.delete() && LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("File not deleted: {}", jp2Local);
+                }
                 jp2.compressImage(img.getAbsolutePath(), jp2Local
                         .getAbsolutePath(), new DjatokaEncodeParam());
-                img.delete();
+                if (!img.delete() && LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("File not deleted: {}", img);
+                }
                 img = jp2Local;
             } else {
                 try {

@@ -41,49 +41,53 @@ import java.util.Properties;
 
 /**
  * JP2 File Writer. Uses KduCompressExe to write BufferedImage as JP2
+ * 
  * @author Ryan Chute
- *
  */
 public class JP2Writer implements IWriter {
 
-	static Logger LOGGER = LoggerFactory.getLogger(JP2Writer.class);
+    static Logger LOGGER = LoggerFactory.getLogger(JP2Writer.class);
 
-	private DjatokaEncodeParam params = new DjatokaEncodeParam();
-	
-	/**
-	 * Write a BufferedImage instance using implementation to the 
-	 * provided OutputStream.
-	 * @param bi a BufferedImage instance to be serialized
-	 * @param os OutputStream to output the image to
-	 * @throws FormatIOException
-	 */
-	public void write(BufferedImage bi, OutputStream os) throws FormatIOException {
-		if (bi != null) {
-			BufferedOutputStream bos = null;
-			try {
-				params.setLevels(ImageProcessingUtils.getLevelCount(bi.getWidth(), bi.getHeight()));
-				KduCompressExe encoder = new KduCompressExe();
-				bos = new BufferedOutputStream(os);
-				encoder.compressImage(bi, bos, params);
-				bos.close();
-			} catch (IOException details) {
-				LOGGER.error(details.getMessage(), details);
-				throw new FormatIOException(details.getMessage(), details);
-			} catch (DjatokaException details) {
-				LOGGER.error(details.getMessage(), details);
-				throw new FormatIOException(details.getMessage(), details);
-			} catch (Exception details) {
-				LOGGER.error(details.getMessage(), details);
-				throw new FormatIOException(details.getMessage(), details);
-			}
-		}
-	}
-	
-	/**
-	 * Set the Writer Implementations Serialization properties.
-	 * @param props writer serialization properties
-	 */
-	public void setWriterProperties(Properties props) {
-		params = new DjatokaEncodeParam(props);
-	}
+    private DjatokaEncodeParam params = new DjatokaEncodeParam();
+
+    /**
+     * Write a BufferedImage instance using implementation to the provided
+     * OutputStream.
+     * 
+     * @param bi a BufferedImage instance to be serialized
+     * @param os OutputStream to output the image to
+     * @throws FormatIOException
+     */
+    public void write(BufferedImage bi, OutputStream os)
+            throws FormatIOException {
+        if (bi != null) {
+            BufferedOutputStream bos = null;
+            try {
+                params.setLevels(ImageProcessingUtils.getLevelCount(bi
+                        .getWidth(), bi.getHeight()));
+                KduCompressExe encoder = new KduCompressExe();
+                bos = new BufferedOutputStream(os);
+                encoder.compressImage(bi, bos, params);
+                bos.close();
+            } catch (IOException details) {
+                LOGGER.error(details.getMessage(), details);
+                throw new FormatIOException(details.getMessage(), details);
+            } catch (DjatokaException details) {
+                LOGGER.error(details.getMessage(), details);
+                throw new FormatIOException(details.getMessage(), details);
+            } catch (Exception details) {
+                LOGGER.error(details.getMessage(), details);
+                throw new FormatIOException(details.getMessage(), details);
+            }
+        }
+    }
+
+    /**
+     * Set the Writer Implementations Serialization properties.
+     * 
+     * @param props writer serialization properties
+     */
+    public void setWriterProperties(Properties props) {
+        params = new DjatokaEncodeParam(props);
+    }
 }

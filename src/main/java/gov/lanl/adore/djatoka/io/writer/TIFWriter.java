@@ -27,7 +27,6 @@ import gov.lanl.adore.djatoka.io.FormatIOException;
 import gov.lanl.adore.djatoka.io.IWriter;
 
 import ij.ImagePlus;
-import ij.io.FileInfo;
 import ij.io.TiffEncoder;
 
 import java.awt.image.BufferedImage;
@@ -46,39 +45,37 @@ import org.slf4j.LoggerFactory;
  * @author Ryan Chute
  * @author Kevin S. Clarke <a
  *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
- * 
  */
 public class TIFWriter implements IWriter {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(TIFWriter.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(TIFWriter.class);
 
-	/**
-	 * Write a BufferedImage instance to the provided OutputStream.
-	 * 
-	 * @param aImage A BufferedImage instance to be serialized
-	 * @param aOutputStream OutputStream to output the image to
-	 * @throws FormatIOException
-	 */
-	public void write(BufferedImage aImage, OutputStream aOutStream)
-			throws FormatIOException {
-		ImagePlus imagePlus = new ImagePlus("tempTif", aImage);
-		TiffEncoder encoder = new TiffEncoder(imagePlus.getFileInfo());
-		BufferedOutputStream bufStream = new BufferedOutputStream(aOutStream);
-		DataOutputStream out = new DataOutputStream(bufStream);
+    /**
+     * Write a BufferedImage instance to the provided OutputStream.
+     * 
+     * @param aImage A BufferedImage instance to be serialized
+     * @param aOutStream OutputStream to output the image to
+     * @throws FormatIOException
+     */
+    public void write(BufferedImage aImage, OutputStream aOutStream)
+            throws FormatIOException {
+        ImagePlus imagePlus = new ImagePlus("tempTif", aImage);
+        TiffEncoder encoder = new TiffEncoder(imagePlus.getFileInfo());
+        BufferedOutputStream bufStream = new BufferedOutputStream(aOutStream);
+        DataOutputStream out = new DataOutputStream(bufStream);
 
-		try {
-			encoder.write(out);
-		}
-		catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new FormatIOException(e.getMessage(), e);
-		}
-	}
+        try {
+            encoder.write(out);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new FormatIOException(e.getMessage(), e);
+        }
+    }
 
-	/**
-	 * NOT SUPPORTED. TODO: Add support for key TIFF properties
-	 */
-	public void setWriterProperties(Properties props) {
-	}
+    /**
+     * NOT SUPPORTED. TODO: Add support for key TIFF properties
+     */
+    public void setWriterProperties(Properties props) {
+    }
 }

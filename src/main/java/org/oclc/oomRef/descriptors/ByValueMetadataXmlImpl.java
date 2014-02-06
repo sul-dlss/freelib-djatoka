@@ -8,6 +8,7 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.oclc.oomRef.descriptors;
 
 import info.openurl.oom.descriptors.ByValueMetadataXml;
@@ -17,8 +18,8 @@ import java.net.URI;
 import org.w3c.dom.Document;
 
 /**
- * A <em>Descriptor</em> that specifies properties of an <em>Entity</em>
- * by the combination of: (1) a URI reference to a <em>Metadata
+ * A <em>Descriptor</em> that specifies properties of an <em>Entity</em> by the
+ * combination of: (1) a URI reference to a <em>Metadata
  * Format</em> and (2) a particular instance of metadata about the
  * <em>Entity</em>, expressed according to the indicated <em>Metadata
  * Format</em>.
@@ -26,25 +27,33 @@ import org.w3c.dom.Document;
  * @author Jeffrey A. Young
  */
 public class ByValueMetadataXmlImpl implements ByValueMetadataXml {
-	private URI val_fmt;
+
+    private URI val_fmt;
+
     private Document xmlDoc;
-	
-	/**
-	 * Constructs a By-Value Metadata descriptor
-	 * 
-	 * @param val_fmt A URI reference to a <em>Metadata Format</em>.
-	 * will be extracted according to the specified prefix.
-	 * @param xmlDoc the Document representation of the record
-	 */
-	public ByValueMetadataXmlImpl(URI val_fmt, Document xmlDoc) {
-		this.val_fmt = val_fmt;
+
+    /**
+     * Constructs a By-Value Metadata descriptor
+     * 
+     * @param val_fmt A URI reference to a <em>Metadata Format</em>. will be
+     *        extracted according to the specified prefix.
+     * @param xmlDoc the Document representation of the record
+     */
+    public ByValueMetadataXmlImpl(URI val_fmt, Document xmlDoc) {
+        this.val_fmt = val_fmt;
         this.xmlDoc = xmlDoc;
-	}
+    }
 
-	public URI getValFmt() {
-		return val_fmt;
-	}
+    /**
+     * Gets value format.
+     */
+    public URI getValFmt() {
+        return val_fmt;
+    }
 
+    /**
+     * Gets document.
+     */
     public Document getDocument() {
         return xmlDoc;
     }

@@ -8,6 +8,7 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.oclc.util;
 
 import java.io.ByteArrayOutputStream;
@@ -29,22 +30,31 @@ import java.util.Map.Entry;
  */
 public class OOMUtil {
 
+    /**
+     * Gets a parameter map.
+     * 
+     * @param queryString
+     * @return A sorted map with the parameters
+     */
     public static SortedMap getParameterMap(String queryString) {
-        return getParameterMap(new String[] { queryString });
+        return getParameterMap(new String[] {
+            queryString
+        });
     }
-	/**
-	 * Transforms a queryString into a Map of String/Object[]
-	 * 
-	 * @param queryStrings
-	 * @return a Map of key/values from the queryString.
-	 */
-	public static SortedMap getParameterMap(String[] queryStrings) {
-		HashMap tempMap = new HashMap();
-		
+
+    /**
+     * Transforms a queryString into a Map of String/Object[]
+     * 
+     * @param queryStrings
+     * @return a Map of key/values from the queryString.
+     */
+    public static SortedMap getParameterMap(String[] queryStrings) {
+        HashMap tempMap = new HashMap();
+
         if (queryStrings != null) {
-            for (int i=0; i<queryStrings.length; ++i) {
+            for (int i = 0; i < queryStrings.length; ++i) {
                 String[] parameters = queryStrings[i].split("&");
-                for (int j=0; j<parameters.length; ++j) {
+                for (int j = 0; j < parameters.length; ++j) {
                     String[] parameter = parameters[j].split("=", 2);
                     ArrayList list = (ArrayList) tempMap.get(parameter[0]);
                     if (list == null) {
@@ -59,21 +69,22 @@ public class OOMUtil {
                 }
             }
         }
-		
-		// Switch the values from ArrayList to String[]
-		SortedMap parameterMap = new TreeMap();
-		Iterator iter = tempMap.entrySet().iterator();
-		while (iter.hasNext()) {
-			Map.Entry entry = (Entry) iter.next();
-			String key = (String) entry.getKey();
-			ArrayList value = (ArrayList) entry.getValue();
-			parameterMap.put(key, value.toArray(new String[value.size()]));
-		}
-		return parameterMap;
-	}
+
+        // Switch the values from ArrayList to String[]
+        SortedMap parameterMap = new TreeMap();
+        Iterator iter = tempMap.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Entry) iter.next();
+            String key = (String) entry.getKey();
+            ArrayList value = (ArrayList) entry.getValue();
+            parameterMap.put(key, value.toArray(new String[value.size()]));
+        }
+        return parameterMap;
+    }
 
     /**
      * Get the bytes out of an InputStream.
+     * 
      * @param is the stream to be read.
      * @return the bytes found in the stream.
      * @throws IOException

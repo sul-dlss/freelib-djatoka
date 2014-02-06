@@ -8,6 +8,7 @@
  * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 package org.oclc.oomRef.demo;
 
 import info.openurl.oom.ContextObject;
@@ -26,31 +27,32 @@ import java.net.URISyntaxException;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
 
-import org.oclc.oomRef.OpenURLResponseImpl;
-
 /**
  * A web service to say "Hello" to someone.
  * 
  * @author Jeffrey A. Young
  */
 public class HelloWorld implements Service {
-    
+
     private String something;
-    
+
     /**
      * Construct a Hello World web service class.
      * 
      * @param openURLConfig
      * @param classConfig
-     * @throws TransformerException 
+     * @throws TransformerException
      */
-    public HelloWorld(OpenURLConfig openURLConfig,
-    		ClassConfig classConfig) throws TransformerException {
+    public HelloWorld(OpenURLConfig openURLConfig, ClassConfig classConfig)
+            throws TransformerException {
         this.something = classConfig.getArg("something");
     }
-    
+
+    /**
+     * Returns the service ID.
+     */
     public URI getServiceID() throws URISyntaxException {
-    	return new URI("info:localhost/svc_id/HelloWorld");
+        return new URI("info:localhost/svc_id/HelloWorld");
     }
 
     /**
@@ -63,20 +65,24 @@ public class HelloWorld implements Service {
         return "Hello " + name + " (" + something + ")";
     }
 
-    public OpenURLResponse resolve(
-//    		OpenURLRequestProcessor processor,
-    		ServiceType serviceType,
-            ContextObject contextObject,
-            OpenURLRequest openURLRequest,
+    /**
+     * Resolves the OpenURLResponse.
+     * 
+     * @param serviceType A service type
+     * @param contextObject A context object
+     * @param openURLRequest An OpenURL request
+     * @param processor An OpenURL request processor
+     */
+    public OpenURLResponse resolve(ServiceType serviceType,
+            ContextObject contextObject, OpenURLRequest openURLRequest,
             OpenURLRequestProcessor processor)
-    throws UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         String[] privateData =
-            (String[]) contextObject.getReferent().getDescriptors(String.class);
+                (String[]) contextObject.getReferent().getDescriptors(
+                        String.class);
         String name = privateData[0];
-        return new OpenURLResponse(
-        		HttpServletResponse.SC_OK,
-                "text/plain; charset=utf-8",
-                sayHello(name).getBytes("UTF-8"));
+        return new OpenURLResponse(HttpServletResponse.SC_OK,
+                "text/plain; charset=utf-8", sayHello(name).getBytes("UTF-8"));
     }
 
 }

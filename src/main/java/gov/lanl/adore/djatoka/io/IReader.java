@@ -27,27 +27,28 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
 /**
- * Image Reader Interface; implementing classes must return a
- * BufferedImage given a file path or InputStream as input. 
+ * Image Reader Interface; implementing classes must return a BufferedImage
+ * given a file path or InputStream as input.
+ * 
  * @author Ryan Chute
- *
  */
 public interface IReader {
-	
-	/**
-	 * Returns a BufferedImage instance for provided image file path
-	 * @param input absolute file path for image file
-	 * @return a BufferedImage instance for source image file
-	 * @throws FormatIOException
-	 */
-	public BufferedImage open(String input) throws FormatIOException;
 
-	/**
-	 * Returns a BufferedImage instance for provided InputStream
-	 * @param input an InputStream consisting of an image bitstream
-	 * @return a BufferedImage instance for source image InputStream
-	 * @throws FormatIOException
-	 */
-	public BufferedImage open(InputStream input)
-			throws FormatIOException;
+    /**
+     * Returns a BufferedImage instance for provided image file path
+     * 
+     * @param input absolute file path for image file
+     * @return a BufferedImage instance for source image file
+     * @throws FormatIOException
+     */
+    public BufferedImage open(String input) throws FormatIOException;
+
+    /**
+     * Returns a BufferedImage instance for provided InputStream
+     * 
+     * @param input an InputStream consisting of an image bitstream
+     * @return a BufferedImage instance for source image InputStream
+     * @throws FormatIOException
+     */
+    public BufferedImage open(InputStream input) throws FormatIOException;
 }

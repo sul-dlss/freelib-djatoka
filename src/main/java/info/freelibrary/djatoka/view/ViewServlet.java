@@ -4,13 +4,11 @@ package info.freelibrary.djatoka.view;
 import gov.lanl.adore.djatoka.util.IOUtils;
 
 import info.freelibrary.djatoka.Constants;
-import info.freelibrary.util.FileUtils;
 import info.freelibrary.util.RegexDirFilter;
 import info.freelibrary.util.RegexFileFilter;
 import info.freelibrary.util.StringUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,13 +20,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import nu.xom.Attribute;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.ParsingException;
-import nu.xom.Serializer;
-import nu.xom.ValidityException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +95,7 @@ public class ViewServlet extends HttpServlet implements Constants {
                     tifCount = tifs.getAttribute(TIF_COUNT_ATTR).getValue();
                     jp2Size = jp2s.getAttribute(JP2_SIZE_ATTR).getValue();
                     jp2Count = jp2s.getAttribute(JP2_COUNT_ATTR).getValue();
-                } catch (Exception details) {
+                } catch (ParsingException details) {
                     jp2Size = null;
                     tifSize = null;
                     jp2Count = null;
@@ -165,10 +160,11 @@ public class ViewServlet extends HttpServlet implements Constants {
                         "<tifStats fileCount='{}' totalSize='{}'/>"
                                 + "<jp2Stats fileCount='{}' totalSize='{}'/>",
                         new String[] {
-                                (String) session.getAttribute(TIF_COUNT_ATTR),
-                                (String) session.getAttribute(TIF_SIZE_ATTR),
-                                (String) session.getAttribute(JP2_COUNT_ATTR),
-                                (String) session.getAttribute(JP2_SIZE_ATTR)}));
+                            (String) session.getAttribute(TIF_COUNT_ATTR),
+                            (String) session.getAttribute(TIF_SIZE_ATTR),
+                            (String) session.getAttribute(JP2_COUNT_ATTR),
+                            (String) session.getAttribute(JP2_SIZE_ATTR)
+                        }));
 
                 writer.write("<defaultPath>" + servletPath + "</defaultPath>");
                 writer.write("<path>" + tokenize(dirParam) + "</path>");

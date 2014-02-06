@@ -42,7 +42,7 @@ public class LogSocketServlet extends WebSocketServlet {
         BufferedInputStream inStream = new BufferedInputStream(fileStream);
 
         IOUtils.copy(inStream, outStream);
-        
+
         inStream.close();
         outStream.close();
     }

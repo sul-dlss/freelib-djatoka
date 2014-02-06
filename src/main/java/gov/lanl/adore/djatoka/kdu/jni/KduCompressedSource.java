@@ -28,41 +28,67 @@ import kdu_jni.Kdu_compressed_source_nonnative;
 import kdu_jni.Kdu_global;
 
 public class KduCompressedSource extends Kdu_compressed_source_nonnative {
-	private byte[] b;
-	int offset = 0;
-	
-	public KduCompressedSource(byte[] b) {
-		this.b = b;
-	}
-	
-	public int Get_capabilities() {
-		return Kdu_global.KDU_SOURCE_CAP_SEQUENTIAL;
-	}
-	
-	public int Post_read(int num_bytes) {
-		try {
-			Push_data(b, offset, num_bytes);
-			offset = offset + num_bytes;
-		} catch (KduException e) {
-			e.printStackTrace();
-		}
-		return num_bytes;
-	}
-	
-	public boolean Seek(long offset) {
-		if (offset > -1 && offset <= b.length) {
-		    this.offset = (int) offset;
-		    return true;
-		}
-		return false;
-	}
-	
-	public long Get_pos() {
-		return offset;
-	}
-	
-	public void close() {
-		this.b = null;
-	}
-	
+
+    private byte[] b;
+
+    int offset = 0;
+
+    /**
+     * Creates a compressed source from the supplied byte array.
+     * 
+     * @param b A byte array
+     */
+    public KduCompressedSource(byte[] b) {
+        this.b = b;
+    }
+
+    /**
+     * Gets the capabilities of the compressed source.
+     */
+    public int Get_capabilities() {
+        return Kdu_global.KDU_SOURCE_CAP_SEQUENTIAL;
+    }
+
+    /**
+     * Reads bytes from the compressed source.
+     * 
+     * @param num_bytes The number of bytes to read
+     */
+    public int Post_read(int num_bytes) {
+        try {
+            Push_data(b, offset, num_bytes);
+            offset = offset + num_bytes;
+        } catch (KduException e) {
+            e.printStackTrace();
+        }
+        return num_bytes;
+    }
+
+    /**
+     * Seeks ahead in the compressed source.
+     * 
+     * @param offset An offset to seek
+     */
+    public boolean Seek(long offset) {
+        if (offset > -1 && offset <= b.length) {
+            this.offset = (int) offset;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Gets the current offset position.
+     */
+    public long Get_pos() {
+        return offset;
+    }
+
+    /**
+     * Closes the compressed source.
+     */
+    public void close() {
+        this.b = null;
+    }
+
 }

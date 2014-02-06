@@ -8,24 +8,25 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.oclc.oomRef.entities;
 
 import info.openurl.oom.entities.Referrer;
 
 /**
- * The resource that generates the ContextObject; an <em>Entity</em>
- * of the <em>ContextObject</em>.
-
+ * The resource that generates the ContextObject; an <em>Entity</em> of the
+ * <em>ContextObject</em>.
+ * 
  * @author Jeffrey A. Young
  */
 public class ReferrerImpl extends EntityImpl implements Referrer {
 
-	/**
-	 * Constructs a Referrer.
-	 * 
-	 * @param descriptors Descriptor(s) for the Referrer.
-	 */
-	public ReferrerImpl(Object descriptors) {
-		super(descriptors);
-	}
+    /**
+     * Constructs a Referrer.
+     * 
+     * @param descriptors Descriptor(s) for the Referrer.
+     */
+    public ReferrerImpl(Object descriptors) {
+        super(descriptors);
+    }
 }

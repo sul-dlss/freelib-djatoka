@@ -8,6 +8,7 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package info.openurl.oom.util;
 
 import info.openurl.oom.entities.Entity;
@@ -38,16 +39,18 @@ public class OOMUtil {
      * @throws UnsupportedEncodingException
      */
     public static SortedMap getParameterMap(String queryString)
-    throws UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         String[] queryStrings;
         if (queryString == null) {
             queryStrings = new String[0];
         } else {
-            queryStrings = new String[] { queryString };
+            queryStrings = new String[] {
+                queryString
+            };
         }
         return getParameterMap(queryStrings);
     }
-    
+
     /**
      * @param parameterMap
      * @param key
@@ -55,29 +58,30 @@ public class OOMUtil {
      */
     public static Object getSingleParameterValue(Map parameterMap, Object key) {
         Object parameterValue = null;
-        
+
         Object[] values = (Object[]) parameterMap.get(key);
         if (values != null && values.length > 0) {
             parameterValue = values[0];
         }
-        
+
         return parameterValue;
     }
-	/**
-	 * Transforms a queryString into a Map of String/Object[]
-	 * 
-	 * @param queryStrings
-	 * @return a Map of key/values from the queryString.
-	 * @throws UnsupportedEncodingException 
-	 */
-	public static SortedMap getParameterMap(String[] queryStrings)
-    throws UnsupportedEncodingException {
-		HashMap tempMap = new HashMap();
-		
+
+    /**
+     * Transforms a queryString into a Map of String/Object[]
+     * 
+     * @param queryStrings
+     * @return a Map of key/values from the queryString.
+     * @throws UnsupportedEncodingException
+     */
+    public static SortedMap getParameterMap(String[] queryStrings)
+            throws UnsupportedEncodingException {
+        HashMap tempMap = new HashMap();
+
         if (queryStrings != null) {
-            for (int i=0; i<queryStrings.length; ++i) {
+            for (int i = 0; i < queryStrings.length; ++i) {
                 String[] parameters = queryStrings[i].split("&");
-                for (int j=0; j<parameters.length; ++j) {
+                for (int j = 0; j < parameters.length; ++j) {
                     String[] parameter = parameters[j].split("=", 2);
                     String key = URLDecoder.decode(parameter[0], "UTF-8");
                     String value = URLDecoder.decode(parameter[1], "UTF-8");
@@ -94,21 +98,22 @@ public class OOMUtil {
                 }
             }
         }
-		
-		// Switch the values from ArrayList to String[]
-		SortedMap parameterMap = new TreeMap();
-		Iterator iter = tempMap.entrySet().iterator();
-		while (iter.hasNext()) {
-			Map.Entry entry = (Entry) iter.next();
-			String key = (String) entry.getKey();
-			ArrayList value = (ArrayList) entry.getValue();
-			parameterMap.put(key, value.toArray(new String[value.size()]));
-		}
-		return parameterMap;
-	}
+
+        // Switch the values from ArrayList to String[]
+        SortedMap parameterMap = new TreeMap();
+        Iterator iter = tempMap.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Entry) iter.next();
+            String key = (String) entry.getKey();
+            ArrayList value = (ArrayList) entry.getValue();
+            parameterMap.put(key, value.toArray(new String[value.size()]));
+        }
+        return parameterMap;
+    }
 
     /**
      * Get the bytes out of an InputStream.
+     * 
      * @param is the stream to be read.
      * @return the bytes found in the stream.
      * @throws IOException
@@ -122,9 +127,10 @@ public class OOMUtil {
         }
         return baos.toByteArray();
     }
-    
+
     /**
      * Get a single Descriptor of the specified time from the Entity.
+     * 
      * @param entity
      * @param c
      * @return the first specified Descriptor

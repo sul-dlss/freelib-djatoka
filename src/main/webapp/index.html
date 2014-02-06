@@ -1,80 +1,148 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-<title>freelib-djatoka test page</title>
-<script type="text/javascript" src="javascript/openseadragon.js"></script>
-<script type="text/javascript" src="javascript/djtilesource.js"></script>
 
-<link href='http://fonts.googleapis.com/css?family=Karla:400,700'
-	rel='stylesheet' type='text/css'>
+<meta charset="utf-8">
+<meta name="author" content="http://kevinclarke.info">
+<meta name="keywords" content="djatoka,jp2,jpeg2000">
+<meta name="description"
+	content="The default page for the FreeLib-Djatoka JPEG2000 image server">
 
-<style type="text/css">
-body {
-	padding: 0px;
-	margin: 0px;
-	font-family: 'Karla', sans-serif;
-}
+<title>FreeLib-Djatoka: A JPEG2000 Image Server</title>
 
-h2 {
-	padding: 4px 0px 4px 10px;
-	margin: 5px 0px 5px 0px;
-}
+<!-- Tiled viewed - https://github.com/openseadragon/openseadragon -->
+<script src="./javascript/openseadragon.min.js"></script>
 
-a:link,a:visited,a:hover,a:active {
-	text-decoration: none;
-	color: white;
-}
+<!-- URL parsing - https://github.com/allmarkedup/purl -->
+<script src="./javascript/purl.js"></script>
 
-span {
-	padding-right: 10px;
-	font-weight: bold;
-}
+<!-- Less essential JavaScripts can found at the bottom of the page -->
 
-#header {
-	background-color: black;
-	font-size: 10px;
-	text-align: right;
-	color: white;
-	width: 100%;
-	padding: 5px 0px 5px;
-}
+<link href="./css/bootstrap.min.css" rel="stylesheet" />
+<link href="./css/docs.css" rel="stylesheet" />
+<link href="./css/reflow-skin.css" rel="stylesheet" />
+<link href="./css/bootstrap-responsive.min.css" rel="stylesheet" />
 
-#container {
-	height: 500px;
-	background-color: black;
-	border: 1px solid black;
-	color: white; /* for error messages, etc. */
-}
+<!-- Last stylesheet has some OpenSeadragon specific styling -->
+<link href="./css/site.css" rel="stylesheet" />
 
-.centered {
-	width: 800px;
-	margin-left: auto;
-	margin-right: auto;
-}
-</style>
+<!-- Ye old HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
 
 </head>
 
-<body>
+<body class="page-index project-freelib-djatoka" data-spy="scroll"
+	data-offset="60" data-target="#toc-scroll-target">
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand"
+					href="http://projects.freelibrary.info/freelib-djatoka">FreeLib-Djatoka</a>
+				<div class="nav-collapse">
+					<ul class="nav pull-right">
+						<li><a href="https://github.com/ksclarke/freelib-djatoka"
+							title="GitHub Page" target="_new" class="externalLink">GitHub
+								Page</a></li>
+						<!--
+						<li><a href="./admin/" title="Test page">Admin Page</a></li>
+
+						<li class="dropdown active"><a href="#"
+							class="dropdown-toggle" data-toggle="dropdown">View Logs <b
+								class="caret"></b>
+						</a>
+							<ul class="dropdown-menu">
+								<li><a href="" title="Standard Log">Standard </a></li>
+								<li><a href="" title="Ingest Log">Ingest</a></li>
+								<li><a href="" title="Tile Log">Tile Cacher</a></li>
+							</ul></li>
+						-->
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container" id="container">
+		<div class="main-body">
+			<div style="margin-top: 24px;">
+				<div id="freelib-djatoka-demo" class="openseadragon"></div>
+				<script type="text/javascript">
+					var url = purl();
+					var debug = url.param('debug');
+					var protocol = url.attr('protocol');
+					var host = url.attr('host');
+					var port = url.attr('port');
+
+					if (debug === 'true') {
+						debug = true;
+					} else {
+						debug = false;
+					}
+
+					/* Test if we're in an IE < 10 browser and handle differently */
+					if (typeof XDomainRequest != 'undefined' && !window.atob) {
+						OpenSeadragon({
+							id : "freelib-djatoka-demo",
+							prefixUrl : "/images/",
+							preserveViewport : true,
+							debugMode : debug,
+							debugGridColor : "#00ff00",
+							tileSources : [ {
+								"@context" : "http://library.stanford.edu/iiif/image-api/1.1/context.json",
+								"@id" : protocol + "://" + host + ":" + port
+										+ "/iiif/--%2Fms0332_gra_21503",
+								"width" : 1684,
+								"height" : 2338,
+								"tile_width" : 256,
+								"tile_height" : 256,
+								"formats" : [ "jpg" ],
+								"scale_factors" : [ 0, 1, 2, 3, 4 ],
+								"qualities" : [ "native" ],
+								"profile" : "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level0"
+							} ]
+						});
+					} else {
+						OpenSeadragon({
+							id : "freelib-djatoka-demo",
+							prefixUrl : "/images/",
+							preserveViewport : true, /* Useful for pages */
+							//panHorizontal: false, /* false freezes panning */
+							//panVertical: false, /* false freezes panning */
+							debugMode : debug,
+							debugGridColor : "#00ff00",
+							tileSources : [ protocol + "://" + host + ":"
+									+ port
+									+ "/iiif/--%2Fms0332_gra_21503/info.json" ]
+						});
+					}
+				</script>
+			</div>
+		</div>
+	</div>
+
+	<!-- ========================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+
+	<!-- Fallback jQuery loading from Google CDN:
+	     http://stackoverflow.com/questions/1014203/best-way-to-use-googles-hosted-jquery-but-fall-back-to-my-hosted-library-on-go -->
+	<script type="text/javascript"
+		src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script type="text/javascript">
-		function init() {
-			var id = "--%2Fms0332_gra_21503"; /* local image ID */
-			var ts = new OpenSeadragon.DjTileSource("/view/", id);
-			var viewer = new OpenSeadragon.Viewer("container");
-
-			viewer.openTileSource(ts);
+		if (typeof jQuery == 'undefined') {
+			document
+					.write(unescape("%3Cscript src='./js/jquery-1.8.3.min.js' type='text/javascript'%3E%3C/script%3E"));
 		}
-
-		OpenSeadragon.addEvent(window, "load", init);
 	</script>
 
-	<div class="centered">
-		<div id="header">
-			<span><a href="">Browse file system</a></span>
-		</div>
-		<h2>FreeLib-Djatoka Test Page</h2>
-		<div id="container"></div>
-	</div>
+	<script src="./javascript/bootstrap.min.js"></script>
+	<script src="./javascript/jquery.smooth-scroll.min.js"></script>
+	<script src="./javascript/jquery.ba-bbq.min.js"></script>
+	<script src="./javascript/reflow-skin.js"></script>
 </body>
 
 </html>

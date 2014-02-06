@@ -54,22 +54,34 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
     private File myJP2Dir;
 
+    /**
+     * Gets the image record for the requested image.
+     * 
+     * @param aRequest An image request
+     * @return An image record
+     */
     public ImageRecord getImageRecord(String aRequest) throws ResolverException {
+        String decodedRequest;
         ImageRecord image;
+
+        try {
+            decodedRequest = URLDecoder.decode(aRequest, "UTF-8");
+            decodedRequest = URLDecoder.decode(decodedRequest, "UTF-8");
+        } catch (UnsupportedEncodingException details) {
+            // Should not be possible; JVMs must support UTF-8
+            throw new RuntimeException(details);
+        }
 
         // Check to see if the image is resolvable from a remote source
         if (isResolvableURI(aRequest)) {
-            String decodedURL;
             String referent;
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Found a remotely resolvable resource ID: {}",
-                        aRequest);
+                LOGGER.debug("Found a remotely resolvable ID: {}", aRequest);
             }
 
             try {
-                decodedURL = URLDecoder.decode(aRequest, "UTF-8");
-                referent = parseReferent(decodedURL);
+                referent = parseReferent(decodedRequest);
             } catch (UnsupportedEncodingException details) {
                 // Should not be possible; JVMs must support UTF-8
                 throw new RuntimeException(details);
@@ -80,17 +92,17 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
             // Otherwise, we retrieve the image from the remote source
             if (image == null) {
-                image = getRemoteImage(referent, decodedURL);
+                image = getRemoteImage(referent, aRequest);
             }
         } else {
-            image = getCachedImage(aRequest);
+            image = getCachedImage(decodedRequest);
 
             // If we can't find the "non-remote" image in our local cache,
             // make one last ditch attempt to find it as a remote image...
             if (image == null) {
                 for (int index = 0; index < myIngestGuesses.size(); index++) {
                     String urlPattern = myIngestGuesses.get(index);
-                    String url = StringUtils.format(urlPattern, aRequest);
+                    String url = StringUtils.format(urlPattern, decodedRequest);
 
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Trying to resolve using URL pattern: {}",
@@ -105,16 +117,31 @@ public class IdentifierResolver implements IReferentResolver, Constants {
         return image;
     }
 
+    /**
+     * Gets an image record for the supplied referent.
+     * 
+     * @param aReferent A referent for the desired image
+     * @return An image record
+     */
     public ImageRecord getImageRecord(Referent aReferent)
             throws ResolverException {
         String id = ((URI) aReferent.getDescriptors()[0]).toASCIIString();
         return getImageRecord(id);
     }
 
+    /**
+     * Gets the referent migrator for this resolver.
+     */
     public IReferentMigrator getReferentMigrator() {
         return myMigrator;
     }
 
+    /**
+     * Gets the HTTP status of the referent ID request.
+     * 
+     * @param aReferentID The ID of a requested referent
+     * @return An HTTP status code
+     */
     public int getStatus(String aReferentID) {
         if (myRemoteImages.get(aReferentID) != null || // TODO: reversed?
                 getCachedImage(aReferentID) != null) {
@@ -126,6 +153,11 @@ public class IdentifierResolver implements IReferentResolver, Constants {
         }
     }
 
+    /**
+     * Sets the properties for this identifier resolver.
+     * 
+     * @param aProps A supplied properties configuration
+     */
     public void setProperties(Properties aProps) throws ResolverException {
         String sources = aProps.getProperty("djatoka.known.ingest.sources");
         String guesses = aProps.getProperty("djatoka.known.ingest.guesses");
@@ -152,14 +184,13 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
         try {
             PairtreeRoot pairtree = new PairtreeRoot(myJP2Dir);
-            String id = URLDecoder.decode(aReferentID, "UTF-8");
-            PairtreeObject dir = pairtree.getObject(id);
-            String filename = PairtreeUtils.encodeID(id);
+            PairtreeObject dir = pairtree.getObject(aReferentID);
+            String filename = PairtreeUtils.encodeID(aReferentID);
             File file = new File(dir, filename);
 
             if (file.exists()) {
                 image = new ImageRecord();
-                image.setIdentifier(id);
+                image.setIdentifier(aReferentID);
                 image.setImageFile(file.getAbsolutePath());
 
                 if (LOGGER.isDebugEnabled()) {
@@ -219,7 +250,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
             }
         } catch (Exception details) {
             LOGGER.error(StringUtils.format("Unable to access {} ({})",
-                    aReferent, details.getMessage()), details);
+                    aReferent, details.getMessage()));
 
             return null;
         }

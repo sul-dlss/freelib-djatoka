@@ -76,7 +76,7 @@ public class RandomImageServlet extends HttpServlet implements Constants {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Image randomly selected is: {}", image);
         }
-        
+
         image = aRequest.getRequestURI().replace("random", image);
         aRequest.getRequestDispatcher(image).forward(aRequest, aResponse);
     }

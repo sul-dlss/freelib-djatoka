@@ -8,6 +8,7 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.oclc.oomRef.entities;
 
 import info.openurl.oom.entities.Entity;
@@ -18,31 +19,38 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author Jeffrey A. Young
- *
- * TODO Describe type
+ * @author Jeffrey A. Young TODO Describe type
  */
 public class EntityImpl implements Entity {
 
     private List descriptors;
-	
-	protected EntityImpl(Object descriptors) {
-		if (descriptors == null) {
-			this.descriptors = null;
-        } else if (descriptors instanceof Object[]) {
-            this.descriptors = new ArrayList(Arrays.asList((Object[]) descriptors));
-        } else {
-			this.descriptors = new ArrayList(Arrays.asList(new Object[] { descriptors }));
-        }
-	}
 
-	public Object[] getDescriptors() {
-		return descriptors.toArray();
-	}
-    
+    protected EntityImpl(Object descriptors) {
+        if (descriptors == null) {
+            this.descriptors = null;
+        } else if (descriptors instanceof Object[]) {
+            this.descriptors =
+                    new ArrayList(Arrays.asList((Object[]) descriptors));
+        } else {
+            this.descriptors = new ArrayList(Arrays.asList(new Object[] {
+                descriptors
+            }));
+        }
+    }
+
+    /**
+     * Gets the descriptors.
+     */
+    public Object[] getDescriptors() {
+        return descriptors.toArray();
+    }
+
+    /**
+     * Gets the descriptors for the supplied class.
+     */
     public Object[] getDescriptors(Class c) {
         ArrayList<Object> list = new ArrayList<Object>();
-        for (int i=0; i<descriptors.size(); ++i) {
+        for (int i = 0; i < descriptors.size(); ++i) {
             Object descriptor = descriptors.get(i);
             if (c.isInstance(descriptor)) {
                 list.add(descriptor);
@@ -50,16 +58,23 @@ public class EntityImpl implements Entity {
         }
         return list.toArray((Object[]) Array.newInstance(c, list.size()));
     }
-	
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		for (int i=0; i<descriptors.size(); ++i) {
-			sb.append(descriptors.get(i).toString())
-			.append("\n");
-		}
-		return sb.toString();
-	}
 
+    /**
+     * Gets a string representation of the entity.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < descriptors.size(); ++i) {
+            sb.append(descriptors.get(i).toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Adds a descriptor to the entity.
+     * 
+     * @param descriptor A descriptor
+     */
     public void addDescriptor(Object descriptor) {
         descriptors.add(descriptor);
     }
