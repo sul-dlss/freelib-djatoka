@@ -7,6 +7,7 @@ jdk:
 branches:
   only:
     - master
+    - develop
 
 install: "mvn -DskipTests=true install"
 
