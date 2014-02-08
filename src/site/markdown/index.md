@@ -1,18 +1,16 @@
 ## Introduction
 
-This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page). It was created to simplify the image server's use; over time, additional features (e.g., a Pairtree-based file system cache, a tile pre-generation script, et al.) were added.
+This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page). It was created to simplify the image server's use; over time, additional features were added and [OpenSeadragon](http://openseadragon.github.io/) was made the project's preferred user interface.
 
-[OpenSeadragon](http://openseadragon.github.io/) was also added as the project's preferred user interface.
+While FreeLib-Djatoka is a fork, it is not 100% backwards-compatible with aDORe-djatoka.  The main difference is that the [identifier resolver](identifier-resolver.md) is no longer a pluggable interface. In addition, the OpenURL API is deprecated and will be removed in a future version; FreeLib-Djatoka now supports the [International Image Interoperability Framework (IIIF)](http://iiif.io). 
 
-While FreeLib-Djatoka is a fork, it is not 100% backwards-compatible with aDORe-djatoka.  The main difference is that the [identifier resolver](identifier-resolver.md) is now statically configured rather than being a pluggable interface.  The OpenURL API will also be removed in a future version (once full support for the [IIIF API](http://iiif.io/) is complete).
-
-FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system. It's currently tested against [Islandora](http://islandora.ca/).
+FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system. It's currently tested against [Islandora](http://islandora.ca/) and testing against [Mirador](http://dmstech.github.io/mirador/) is planned.
 
 Note that [OpenJDK](http://openjdk.java.net/) or [OracleJDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (1.7 or later) and [Maven](http://maven.apache.org/) (3.x or later) are required to run Freelib-Djatoka. These need to be installed prior to downloading and running FreeLib-Djatoka.  All the other dependencies are automatically resolved by the project's Maven configuration.
 
 The original [aDORe-djatoka documentation](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page) is available at that project's Sourceforge site.  The documentation on this project's site supplements (and sometimes supersedes) the original project's documentation.  Feel free to [open an issue](https://github.com/ksclarke/freelib-djatoka/issues?state=open) if you find an area of the documentation that needs improvement.
-
-_***Administrivia:*** the 'djatoka' in the original project's name is pronounced J-2-K (like the JPEG 2000 extension). The 'djatoka' in FreeLib-Djatoka is pronounced dja-TOE-kuh (similar to Dakota). Don't worry if you mistakenly call it the Dakota Image Server... it's a real tongue twister._
+<br/><br/>
+_***Project Administrivia:*** The 'djatoka' in aDORe-djatoka is pronounced J-2-K (like the JPEG 2000 extension). The 'djatoka' in FreeLib-Djatoka is pronounced dja-TOE-kuh (similar to Dakota). But, don't worry if you mistakenly call it the Dakota Image Server... it's a real tongue twister._
 
 ## Getting Started
 
@@ -39,7 +37,7 @@ When you want to stop the server, type the following from within the project's b
 <br/>
 **Putting Djatoka into Production**
 
-If you want to run FreeLib-Djatoka in a production Linux environment, you might want to use the project's [init.d script](as-a-service.html)... this isn't required, but it will make your <s>already overloaded</s>&nbsp;hard-working system administrator(s) much happier.
+If you want to run FreeLib-Djatoka in a production Linux environment, you might want to use the project's [init.d script](as-a-service.html).  You can also choose to run the FreeLib-Djatoka server behind an Apache proxy or at port 80 using iptables. Consult the [production options](production-options.html) page for more details.
 
 ## Configuring Djatoka
 
