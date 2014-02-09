@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -74,6 +75,8 @@ public class ImageServlet extends HttpServlet implements Constants {
                     + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
                     + "&svc.format={}&svc.region={}&svc.scale={}&svc.rotate={}";
 
+    private static final String DZI_TEMPLATE = "/WEB-INF/classes/dzi.xml";
+
     private static final String DZI_NS =
             "http://schemas.microsoft.com/deepzoom/2008";
 
@@ -111,7 +114,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                     String service = serviceSb.toString();
                     String prefix = iiif.getServicePrefix();
 
-                    imageInfo.addFormat("jpg"); // FIXME
+                    imageInfo.addFormat("jpg"); // FIXME: Configurable options
 
                     outStream.print(imageInfo.toJSON(service, prefix));
                 }
@@ -282,6 +285,9 @@ public class ImageServlet extends HttpServlet implements Constants {
         int width = 0, height = 0;
 
         if (myCache != null) {
+            OutputStream outStream = null;
+            InputStream inStream = null;
+
             try {
                 PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
                 PairtreeObject cacheObject = cacheDir.getObject(id);
@@ -310,6 +316,9 @@ public class ImageServlet extends HttpServlet implements Constants {
                                 height);
                     }
                 } else {
+                    outStream = new FileOutputStream(dziFile);
+                    inStream = context.getResource(DZI_TEMPLATE).openStream();
+
                     if (dziFile.exists()) {
                         if (!dziFile.delete() && LOGGER.isWarnEnabled()) {
                             LOGGER.warn("File not deleted: {}", dziFile);
@@ -321,9 +330,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                                 dziFile.getAbsolutePath());
                     }
 
-                    URL url = context.getResource("/WEB-INF/classes/dzi.xml");
-                    Document dzi = new Builder().build(url.openStream());
-                    FileOutputStream outStream = new FileOutputStream(dziFile);
+                    Document dzi = new Builder().build(inStream);
                     Serializer serializer = new Serializer(outStream);
                     URL imageURL =
                             new URL(getFullSizeImageURL(aRequest) +
@@ -380,6 +387,9 @@ public class ImageServlet extends HttpServlet implements Constants {
                 aResponse.sendError(
                         HttpServletResponse.SC_INTERNAL_SERVER_ERROR, details
                                 .getMessage());
+            } finally {
+                IOUtils.closeQuietly(inStream);
+                IOUtils.closeQuietly(outStream);
             }
         } else {
             // TODO: work around rather than throwing an exception
