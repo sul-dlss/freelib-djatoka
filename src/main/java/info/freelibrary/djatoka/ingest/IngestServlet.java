@@ -124,13 +124,14 @@ public class IngestServlet extends HttpServlet {
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Looking for '{}' files in {}", StringUtils
-                        .toString(exts, ' '), dataDir);
+                        .toString(exts, ' '), src.getAbsolutePath());
             }
 
             if (src.exists()) {
                 if (!src.isDirectory() || !src.canRead()) {
                     throw new IOException(StringUtils.format(
-                            "{} cannot be read or is not a dir", dataDir));
+                            "{} cannot be read or is not a dir", src
+                                    .getAbsolutePath()));
                 } else {
                     if (unattended) {
                         thread = new IngestThread(src, dest, exts, p, true);
@@ -149,7 +150,8 @@ public class IngestServlet extends HttpServlet {
                 }
             } else {
                 throw new FileNotFoundException(StringUtils.format(
-                        "Supplied source directory didn't exist: {}", dataDir));
+                        "Supplied source directory didn't exist: {}", src
+                                .getAbsolutePath()));
             }
         } catch (Exception details) {
             throw new IOException(details.getMessage(), details);
