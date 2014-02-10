@@ -171,7 +171,7 @@ public class ImageInfo {
         sb.append("\"scale_factors\" : [ 1, 2, 3, 4 ], ");
 
         sb.append("\"qualities\" : [ \"native\" ], \"profile\" : \"");
-        sb.append(Constants.IIIF_URL).append("1.1/compliance.html#level0\"");
+        sb.append(Constants.IIIF_URL).append("1.1/compliance.html#level1\"");
 
         return sb.append("}").toString();
     }
