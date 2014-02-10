@@ -97,7 +97,7 @@ public class ImageInfoTest {
                         "\"scale_factors\" : [ 1, 2, 3, 4 ], " +
                         "\"qualities\" : [ \"native\" ], " +
                         "\"profile\" : \"" + imageAPI +
-                        "/1.1/compliance.html#level0\"}";
+                        "/1.1/compliance.html#level1\"}";
         assertEquals(json, imageInfo.toJSON("http://localhost", "iiif"));
     }
 
