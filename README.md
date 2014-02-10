@@ -10,11 +10,12 @@ To install and run freelib-djatoka, [download](https://github.com/ksclarke/freel
 
     git clone https://github.com/ksclarke/freelib-djatoka.git
 
-Change into the project's base directory:
+Change into the project’s base directory and install FreeLib-Djatoka:
 
     cd freelib-djatoka
+    mvn install
 
-And run Maven by typing:
+Then start the server by typing:
 
     mvn jetty:run-forked
 
@@ -58,9 +59,11 @@ Per Definition 3 of the Kakadu's Non-Commercial License Agreement:
 > Applications.  All copies of Applications shall contain notification
 > that they were developed using the Kakadu software.
 
-Developers who would like to obtain the Kakadu Software source code modifications used in djatoka will need to purchase a license from Kakadu Software <http://www.kakadusoftware.com/>.  It's worth noting that the licensing of Kakadu has changed since the release that was packaged with the original aDORe-djatoka (and is now repackaged with FreeLib-Djatoka).  It's not know whether the latest license would be compatible with the LGPL or whether the code would even work with Djatoka.
+Developers who would like to obtain the Kakadu Software source code modifications used in djatoka will need to purchase a license from Kakadu Software <http://www.kakadusoftware.com/>.
 
-FreeLib-Djatoka plans to incorporate the OpenJPEG JPEG 2000 library in a future release, providing an open source alternative to the proprietary Kakadu library.
+It's worth noting that the licensing of Kakadu has changed since the release that was packaged with the original aDORe-djatoka (and is now repackaged with FreeLib-Djatoka).  It's not know whether the latest version's license would be compatible with the LGPL or whether the code would even work with Djatoka.
+
+The FreeLib-Djatoka project plans to incorporate the OpenJPEG JPEG 2000 library in a future release, providing an open source alternative to the currently used proprietary Kakadu library.
 
 ### Contact
 
