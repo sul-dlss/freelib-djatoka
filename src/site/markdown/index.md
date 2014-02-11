@@ -1,14 +1,14 @@
 ## Introduction
 
-This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page). It was created to simplify the image server's use; over time, additional features were added and [OpenSeadragon](http://openseadragon.github.io/) was made the project's preferred user interface.
+This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page). It was created to simplify the server's use. Over time, additional features (e.g., support for the [OpenSeadragon](http://openseadragon.github.io/) user interface and for the [International Image Interoperability Framework's Image API](http://iiif.io)) were added.
 
-While FreeLib-Djatoka is a fork, it is not 100% backwards-compatible with aDORe-djatoka.  The main difference is that the [identifier resolver](identifier-resolver.md) is no longer a pluggable interface. In addition, the OpenURL API is deprecated and will be removed in a future version; FreeLib-Djatoka now supports the [International Image Interoperability Framework (IIIF)](http://iiif.io). 
+While FreeLib-Djatoka is a fork, it is not 100% backwards-compatible with aDORe-djatoka.  The main difference is the [identifier resolver](identifier-resolver.md); it's no longer a pluggable class, but one whose behavior is defined. It's also worth noting that support for the OpenURL API has been deprecated. It will be removed in a future version. 
 
-FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system. It's currently tested against [Islandora](http://islandora.ca/) and testing against [Mirador](http://dmstech.github.io/mirador/) is planned.
+FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system. It's currently tested against [Islandora](http://islandora.ca/).
 
-Note that [OpenJDK](http://openjdk.java.net/) or [OracleJDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (1.7 or later) and [Maven](http://maven.apache.org/) (3.x or later) are required to run Freelib-Djatoka. These need to be installed prior to downloading and running FreeLib-Djatoka.  All the other dependencies are automatically resolved by the project's Maven configuration.
+Note that [OpenJDK](http://openjdk.java.net/) or [OracleJDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (version 1.7 or later) and [Maven](http://maven.apache.org/) (version 3.x or later) are required to run Freelib-Djatoka. These should be installed prior to running FreeLib-Djatoka.  All the other dependencies are automatically resolved by the project's Maven configuration.
 
-The original [aDORe-djatoka documentation](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page) is available at that project's Sourceforge site.  The documentation on this project's site supplements (and sometimes supersedes) the original project's documentation.  Feel free to [open an issue](https://github.com/ksclarke/freelib-djatoka/issues?state=open) if you find an area of the documentation that needs improvement.
+The original [aDORe-djatoka docs](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page) are still available at that project's Sourceforge site.  The documentation on this site supersedes the original project's documentation.  Please [open an issue](https://github.com/ksclarke/freelib-djatoka/issues?state=open) if you find an area of this site's documentation that needs improvement.
 <br/><br/>
 _***Project Administrivia:*** The 'djatoka' in aDORe-djatoka is pronounced J-2-K (like the JPEG 2000 extension). The 'djatoka' in FreeLib-Djatoka is pronounced dja-TOE-kuh (similar to Dakota). But, don't worry if you mistakenly call it the Dakota Image Server... it's a real tongue twister._
 
