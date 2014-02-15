@@ -9,7 +9,7 @@
 <meta name="description"
 	content="The default page for the FreeLib-Djatoka JPEG2000 image server">
 
-<title>FreeLib-Djatoka: A JPEG2000 Image Server</title>
+<title>FreeLib-Djatoka: A JPEG 2000 Image Server</title>
 
 <!-- Tiled viewed - https://github.com/openseadragon/openseadragon -->
 <script src="./javascript/openseadragon.min.js"></script>
@@ -46,6 +46,8 @@
 					href="http://projects.freelibrary.info/freelib-djatoka">FreeLib-Djatoka</a>
 				<div class="nav-collapse">
 					<ul class="nav pull-right">
+						<li><a href="iiif-tests.html" title="IIIF API Tests">IIIF
+								API Tests</a></li>
 						<li><a href="https://github.com/ksclarke/freelib-djatoka"
 							title="GitHub Page" target="_new" class="externalLink">GitHub
 								Page</a></li>
@@ -72,55 +74,54 @@
 			<div style="margin-top: 24px;">
 				<div id="freelib-djatoka-demo" class="openseadragon"></div>
 				<script type="text/javascript">
-					var url = purl();
-					var debug = url.param('debug');
-					var protocol = url.attr('protocol');
-					var host = url.attr('host');
-					var port = url.attr('port');
+          var url = purl();
+          var debug = url.param('debug');
+          var protocol = url.attr('protocol');
+          var host = url.attr('host');
+          var port = url.attr('port');
 
-					if (debug === 'true') {
-						debug = true;
-					} else {
-						debug = false;
-					}
+          if (debug === 'true') {
+            debug = true;
+          } else {
+            debug = false;
+          }
 
-					/* Test if we're in an IE < 10 browser and handle differently */
-					if (typeof XDomainRequest != 'undefined' && !window.atob) {
-						OpenSeadragon({
-							id : "freelib-djatoka-demo",
-							prefixUrl : "/images/",
-							preserveViewport : true,
-							debugMode : debug,
-							debugGridColor : "#00ff00",
-							tileSources : [ {
-								"@context" : "http://library.stanford.edu/iiif/image-api/1.1/context.json",
-								"@id" : protocol + "://" + host + ":" + port
-										+ "/iiif/--%2Fms0332_gra_21503",
-								"width" : 1684,
-								"height" : 2338,
-								"tile_width" : 256,
-								"tile_height" : 256,
-								"formats" : [ "jpg" ],
-								"scale_factors" : [ 0, 1, 2, 3, 4 ],
-								"qualities" : [ "native" ],
-								"profile" : "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level0"
-							} ]
-						});
-					} else {
-						OpenSeadragon({
-							id : "freelib-djatoka-demo",
-							prefixUrl : "/images/",
-							preserveViewport : true, /* Useful for pages */
-							//panHorizontal: false, /* false freezes panning */
-							//panVertical: false, /* false freezes panning */
-							debugMode : debug,
-							debugGridColor : "#00ff00",
-							tileSources : [ protocol + "://" + host + ":"
-									+ port
-									+ "/iiif/--%2Fms0332_gra_21503/info.json" ]
-						});
-					}
-				</script>
+          /* Test if we're in an IE < 10 browser and handle differently */
+          if (typeof XDomainRequest != 'undefined' && !window.atob) {
+            OpenSeadragon({
+              id : "freelib-djatoka-demo",
+              prefixUrl : "/images/",
+              preserveViewport : true,
+              debugMode : debug,
+              debugGridColor : "#00ff00",
+              tileSources : [ {
+                "@context" : "http://library.stanford.edu/iiif/image-api/1.1/context.json",
+                "@id" : protocol + "://" + host + ":" + port
+                    + "/iiif/--%2Fms0332_gra_21503",
+                "width" : 1684,
+                "height" : 2338,
+                "tile_width" : 256,
+                "tile_height" : 256,
+                "formats" : [ "jpg" ],
+                "scale_factors" : [ 1, 2, 3, 4 ],
+                "qualities" : [ "native" ],
+                "profile" : "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level1"
+              } ]
+            });
+          } else {
+            OpenSeadragon({
+              id : "freelib-djatoka-demo",
+              prefixUrl : "/images/",
+              preserveViewport : true, /* Useful for pages */
+              //panHorizontal: false, /* false freezes panning */
+              //panVertical: false, /* false freezes panning */
+              debugMode : debug,
+              debugGridColor : "#00ff00",
+              tileSources : [ protocol + "://" + host + ":" + port
+                  + "/iiif/--%2Fms0332_gra_21503/info.json" ]
+            });
+          }
+        </script>
 			</div>
 		</div>
 	</div>
@@ -133,11 +134,11 @@
 	<script type="text/javascript"
 		src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script type="text/javascript">
-		if (typeof jQuery == 'undefined') {
-			document
-					.write(unescape("%3Cscript src='./js/jquery-1.8.3.min.js' type='text/javascript'%3E%3C/script%3E"));
-		}
-	</script>
+    if (typeof jQuery == 'undefined') {
+      document
+          .write(unescape("%3Cscript src='./js/jquery-1.8.3.min.js' type='text/javascript'%3E%3C/script%3E"));
+    }
+  </script>
 
 	<script src="./javascript/bootstrap.min.js"></script>
 	<script src="./javascript/jquery.smooth-scroll.min.js"></script>
