@@ -316,14 +316,19 @@ public class ImageServlet extends HttpServlet implements Constants {
                                 height);
                     }
                 } else {
-                    outStream = new FileOutputStream(dziFile);
                     inStream = context.getResource(DZI_TEMPLATE).openStream();
 
                     if (dziFile.exists()) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("DZI file exists: {}", dziFile);
+                        }
+
                         if (!dziFile.delete() && LOGGER.isWarnEnabled()) {
                             LOGGER.warn("File not deleted: {}", dziFile);
                         }
                     }
+
+                    outStream = new FileOutputStream(dziFile);
 
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Creating new dzi file: " +
@@ -332,9 +337,9 @@ public class ImageServlet extends HttpServlet implements Constants {
 
                     Document dzi = new Builder().build(inStream);
                     Serializer serializer = new Serializer(outStream);
-                    URL imageURL =
-                            new URL(getFullSizeImageURL(aRequest) +
-                                    URLEncoder.encode(id, "UTF-8"));
+                    String templateURL = getFullSizeImageURL(aRequest);
+                    String encodedID = URLEncoder.encode(id, "UTF-8");
+                    URL imageURL = new URL(templateURL + encodedID);
 
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Writing DZI file for: {}", imageURL
@@ -363,6 +368,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                         hAttribute.setValue(Integer.toString(height));
 
                         serializer.write(dzi);
+                        serializer.flush();
                     } catch (IIOException details) {
                         Class<?> thrown = details.getCause().getClass();
                         String name = thrown.getSimpleName();
@@ -388,8 +394,8 @@ public class ImageServlet extends HttpServlet implements Constants {
                         HttpServletResponse.SC_INTERNAL_SERVER_ERROR, details
                                 .getMessage());
             } finally {
-                IOUtils.closeQuietly(inStream);
                 IOUtils.closeQuietly(outStream);
+                IOUtils.closeQuietly(inStream);
             }
         } else {
             // TODO: work around rather than throwing an exception
