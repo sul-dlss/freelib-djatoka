@@ -55,8 +55,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -90,6 +92,9 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
     private static final String PROPS_KEY_CACHE_TMPDIR =
             "OpenURLJP2KService.cacheTmpDir";
+
+    private static final String SCALE_CACHE_EXCEPTIONS =
+            "OpenURLJP2KService.scaleCacheExceptions";
 
     private static final String PROPS_KEY_TRANSFORM =
             "OpenURLJP2KService.transformPlugin";
@@ -125,6 +130,8 @@ public class OpenURLJP2KService implements Service, FormatConstants {
     private static DjatokaExtractProcessor extractor;
 
     private static int maxPixels = DEFAULT_CACHE_MAXPIXELS;
+
+    private static Set<Double> scaleCacheExceptions;
 
     /**
      * Construct an info:lanl-repo/svc/getRegion web service class. Initializes
@@ -172,6 +179,29 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                     maxPixels =
                             Integer.parseInt(props
                                     .getProperty(PROP_KEY_CACHE_MAX_PIXELS));
+                }
+                if (props.getProperty(SCALE_CACHE_EXCEPTIONS) != null) {
+                    scaleCacheExceptions = new HashSet<Double>();
+
+                    for (String exception : props.getProperty(
+                            SCALE_CACHE_EXCEPTIONS).split(" ")) {
+                        try {
+                            scaleCacheExceptions.add(new Double(exception));
+
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Scale cache exception added: {}",
+                                        exception);
+                            }
+                        } catch (NumberFormatException details) {
+                            if (LOGGER.isWarnEnabled()) {
+                                LOGGER.warn(
+                                        "Configured scale cache exception isn't a valid double: {}",
+                                        exception);
+                            }
+                        }
+                    }
+                } else {
+                    scaleCacheExceptions = new HashSet<Double>();
                 }
                 extractor = new DjatokaExtractProcessor(new KduExtractExe());
                 init = true;
@@ -515,12 +545,19 @@ public class OpenURLJP2KService implements Service, FormatConstants {
     }
 
     private boolean isCacheable(DjatokaDecodeParam params) {
+        double scale = params.getScalingFactor();
+        boolean exception;
+
         if (transformCheck && params.getTransform().isTransformable()) {
             return false;
         }
-        if (params.getScalingFactor() != 1.0) {
+
+        exception = scaleCacheExceptions.contains(new Double(scale));
+
+        if (scale != 1.0 && !exception && params.getRegion() == null) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("NOT CACHING BECAUSE SCALING FACTOR != 1.0");
+                LOGGER.debug("NOT CACHING BECAUSE SCALING FACTOR {} != 1.0",
+                        params.getScalingFactor());
             }
 
             return false;

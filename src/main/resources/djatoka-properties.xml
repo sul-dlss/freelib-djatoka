@@ -14,6 +14,7 @@
   <entry key="IdentifierResolver.checkDatabase">false</entry>
   <entry key="OpenURLJP2KService.referentResolverImpl">info.freelibrary.djatoka.view.IdentifierResolver</entry>
   <entry key="OpenURLJP2KService.cacheEnabled">true</entry>
+  <entry key="OpenURLJP2KService.scaleCacheExceptions">${djatoka.scale.cache.exceptions}</entry>
   <entry key="OpenURLJP2KService.cacheTmpDir">${openurl.cache.dir}</entry>
   <entry key="OpenURLJP2KService.cacheSize">1000</entry>
   <entry key="OpenURLJP2KService.cacheImageMaxPixels">100000</entry>
