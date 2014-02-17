@@ -24,7 +24,7 @@ public class TIFWriterTest {
             .getLogger(TIFWriterTest.class);
 
     private static final String TIF =
-            "src/test/resources/images/ms0332_gra_21518.tiff";
+            "src/test/resources/images/envelopes/MS0332_gra_09954.tiff";
 
     /**
      * Tests writing a TIFF file.

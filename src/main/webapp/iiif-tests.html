@@ -78,6 +78,7 @@ td {
 					href="http://projects.freelibrary.info/freelib-djatoka">FreeLib-Djatoka</a>
 				<div class="nav-collapse">
 					<ul class="nav pull-right">
+						<li><a href="index.html" title="IIIF API Tests">Test Pages</a></li>
 						<li><a href="iiif-tests.html" title="IIIF API Tests">IIIF
 								API Tests</a></li>
 						<li><a href="https://github.com/ksclarke/freelib-djatoka"
@@ -133,21 +134,20 @@ td {
 							</select></td>
 							<td class="delimiter">/</td>
 							<td><select id="djidentifier" style="width: auto;">
-									<option value="--%2Fms0332_gra_21503">--%2Fms0332_gra_21503</option>
-									<option value="--%2Fenvelopes%2FMS0332_gra_09954">--%2Fenvelopes%2FMS0332_gra_09954</option>
+									<option value="--%2Fwalters%2FW102_000059_950">--%2Fwalters%2FW102_000059_950</option>
+									<option value="--%2Fwalters%2FW102_000061_950">--%2Fwalters%2FW102_000061_950</option>
 							</select></td>
 							<td class="delimiter">/</td>
 							<td><select id="djregion" style="width: auto;">
 									<!-- add these regions dynamically depending on id -->
 									<option value="full">full</option>
-									<option value="850,850,550,550">850,850,550,550</option>
+									<!-- <option value="850,850,550,550">850,850,550,550</option> -->
 							</select></td>
 							<td class="delimiter">/</td>
 							<td><select id="djsize" style="width: auto;">
-									<option value="full">full</option>
-									<option value="pct:80">pct:80</option>
-									<option value="pct:50">pct:50</option>
-									<option value="pct:20">pct:20</option>
+									<option value="pct:15">pct:15</option>
+									<option value="pct:10">pct:10</option>
+									<option value="pct:5">pct:5</option>
 							</select></td>
 							<td class="delimiter">/</td>
 							<td><select id="djrotation" style="width: auto;">
@@ -169,13 +169,14 @@ td {
 				</form>
 			</div>
 			<iframe width="100%" height="400px" id="iiif-image"
-				src="http://localhost:8888/iiif/--%2Fms0332_gra_21503/full/full/0/native.jpg"></iframe>
-			<!-- <div width="800px;">
-				<img id="iiif-image"
-					src="http://localhost:8888/iiif/--%2Fms0332_gra_21503/full/full/0/native.jpg"
-					alt="IIIF API Tests"
-					style="display: block; margin: auto; max-width: 100%; max-height: 100%;" />
-			</div> -->
+				src="http://localhost:8888/iiif/--%2Fwalters%2FW102_000059_950/full/pct:15/0/native.jpg"></iframe>
+		    <div style="text-align: center;">
+                Images used are published by the <a target="_new"
+                    href="http://www.thedigitalwalters.org/">Walter's Art Museum</a>
+                under the <a target="_new"
+                    href="http://creativecommons.org/licenses/by-sa/3.0/deed.en">Creative
+                    Commons Attribution-ShareAlike 3.0 Unported</a> license.
+            </div>
 		</div>
 	</div>
 

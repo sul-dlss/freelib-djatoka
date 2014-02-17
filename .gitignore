@@ -7,3 +7,7 @@ src/site/markdown/coders-welcome.md
 src/site/markdown/testers-welcome.md
 src/site/markdown/documenters-welcome.md
 src/site/markdown/translators-welcome.md
+
+# Not sure I want to check in 200+ MB TIFFs, so ignoring for now...
+src/test/resources/images/walters/*.tif
+src/test/resources/walters_id_map.csv
