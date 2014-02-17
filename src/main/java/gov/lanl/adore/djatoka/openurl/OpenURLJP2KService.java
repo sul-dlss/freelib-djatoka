@@ -454,13 +454,24 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
         // Record where our cache file was (if we had/created one)
         if (djatokaCacheFile != null) {
+            StringBuilder dimBuilder = new StringBuilder();
             int[] dims = params.getScalingDimensions();
-            String scale = dims != null ? Integer.toString(dims[1]) : "";
             String level = Integer.toString(params.getLevel());
             String region = params.getRegion();
             int rotation = params.getRotationDegree();
             String ext = getExtension(format);
+            String scale;
             String hash;
+
+            if (dims != null) {
+                if (dims.length == 2) {
+                    dimBuilder.append(dims[0]).append(',').append(dims[1]);
+                } else {
+                    dimBuilder.append(dims[0]);
+                }
+            }
+
+            scale = dimBuilder.toString();
 
             try {
                 hash = getTileHash(id, params);
