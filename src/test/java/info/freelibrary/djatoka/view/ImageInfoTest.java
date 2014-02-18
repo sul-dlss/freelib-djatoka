@@ -17,7 +17,7 @@ public class ImageInfoTest {
      */
     @Test
     public void testImageInfo() {
-        ImageInfo imageInfo = new ImageInfo("id", 24, 42);
+        ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
 
         assertEquals("id", imageInfo.getIdentifier());
         assertEquals(24, imageInfo.getHeight());
@@ -29,7 +29,7 @@ public class ImageInfoTest {
      */
     @Test
     public void testAddFormat() {
-        ImageInfo imageInfo = new ImageInfo("id", 24, 42);
+        ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
         imageInfo.addFormat("jpg");
 
         assertEquals("jpg", imageInfo.getFormats().get(0));
@@ -40,7 +40,7 @@ public class ImageInfoTest {
      */
     @Test
     public void testToXML() {
-        ImageInfo imageInfo = new ImageInfo("id", 24, 42);
+        ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
         Document xml = new Document(new Element("info", Constants.IIIF_NS));
         Element identifier = new Element("identifier", Constants.IIIF_NS);
         Element height = new Element("height", Constants.IIIF_NS);
@@ -63,7 +63,7 @@ public class ImageInfoTest {
      */
     @Test
     public void testToString() {
-        ImageInfo imageInfo = new ImageInfo("id", 24, 42);
+        ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
         Document xml = new Document(new Element("info", Constants.IIIF_NS));
         Element identifier = new Element("identifier", Constants.IIIF_NS);
         Element height = new Element("height", Constants.IIIF_NS);
@@ -86,7 +86,7 @@ public class ImageInfoTest {
      */
     @Test
     public void testToJSON() {
-        ImageInfo imageInfo = new ImageInfo("id", 24, 42);
+        ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
         String imageAPI = "http://library.stanford.edu/iiif/image-api";
         String json =
                 "{\"@context\" : \"" + imageAPI + "/1.1/context.json\", " +

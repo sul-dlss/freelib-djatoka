@@ -16,8 +16,6 @@ import info.freelibrary.util.PairtreeRoot;
 import info.freelibrary.util.PairtreeUtils;
 import info.freelibrary.util.StringUtils;
 
-import java.awt.image.BufferedImage;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -31,7 +29,6 @@ import java.net.URLEncoder;
 import java.util.Properties;
 
 import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -53,6 +50,9 @@ import nu.xom.ValidityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class ImageServlet extends HttpServlet implements Constants {
 
     /**
@@ -62,6 +62,11 @@ public class ImageServlet extends HttpServlet implements Constants {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ImageServlet.class);
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private static final String METADATA_URL =
+            "http://{}:{}/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getMetadata";
 
     private static final String IMAGE_URL =
             "/resolve?url_ver=Z39.88-2004&rft_id={}"
@@ -75,10 +80,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                     + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
                     + "&svc.format={}&svc.region={}&svc.scale={}&svc.rotate={}";
 
-    private static final String DZI_TEMPLATE = "/WEB-INF/classes/dzi.xml";
-
-    private static final String DZI_NS =
-            "http://schemas.microsoft.com/deepzoom/2008";
+    private static final String XML_TEMPLATE = "/WEB-INF/metadata.xml";
 
     private static final String CHARSET = "UTF-8";
 
@@ -98,12 +100,13 @@ public class ImageServlet extends HttpServlet implements Constants {
 
         if (reqURI.endsWith("/info.xml") || reqURI.endsWith("/info.json")) {
             try {
-                int[] dims = getHeightWidth(aRequest, aResponse);
-                ImageInfo imageInfo = new ImageInfo(id, dims[0], dims[1]);
+                int[] config = getHeightWidthAndLevels(aRequest, aResponse);
+                ImageInfo info =
+                        new ImageInfo(id, config[0], config[1], config[2]);
                 ServletOutputStream outStream = aResponse.getOutputStream();
 
                 if (reqURI.endsWith("/info.xml")) {
-                    imageInfo.toStream(outStream);
+                    info.toStream(outStream);
                 } else {
                     StringBuilder serviceSb = new StringBuilder();
 
@@ -114,9 +117,9 @@ public class ImageServlet extends HttpServlet implements Constants {
                     String service = serviceSb.toString();
                     String prefix = iiif.getServicePrefix();
 
-                    imageInfo.addFormat("jpg"); // FIXME: Configurable options
+                    info.addFormat("jpg"); // FIXME: Configurable options
 
-                    outStream.print(imageInfo.toJSON(service, prefix));
+                    outStream.print(info.toJSON(service, prefix));
                 }
 
                 outStream.close();
@@ -256,7 +259,7 @@ public class ImageServlet extends HttpServlet implements Constants {
     protected void doHead(HttpServletRequest aRequest,
             HttpServletResponse aResponse) throws ServletException, IOException {
         try {
-            int[] dimensions = getHeightWidth(aRequest, aResponse);
+            int[] dimensions = getHeightWidthAndLevels(aRequest, aResponse);
 
             // TODO: add a content length header too
             if (!aResponse.isCommitted()) {
@@ -276,13 +279,13 @@ public class ImageServlet extends HttpServlet implements Constants {
         return super.getLastModified(aRequest);
     }
 
-    private int[] getHeightWidth(HttpServletRequest aRequest,
+    private int[] getHeightWidthAndLevels(HttpServletRequest aRequest,
             HttpServletResponse aResponse) throws IOException, ServletException {
         String reqURI = aRequest.getRequestURI();
         String servletPath = aRequest.getServletPath();
         String path = reqURI.substring(servletPath.length());
+        int width = 0, height = 0, levels = 0;
         String id = getID(path);
-        int width = 0, height = 0;
 
         if (myCache != null) {
             OutputStream outStream = null;
@@ -293,92 +296,111 @@ public class ImageServlet extends HttpServlet implements Constants {
                 PairtreeObject cacheObject = cacheDir.getObject(id);
                 ServletContext context = getServletContext();
                 String filename = PairtreeUtils.encodeID(id);
-                // FIXME: Make this something other than a DZI file; IIIF XML?
-                File dziFile = new File(cacheObject, filename + ".dzi");
+                File xmlFile = new File(cacheObject, filename + ".xml");
 
-                if (dziFile.exists() && dziFile.length() > 0) {
+                if (xmlFile.exists() && xmlFile.length() > 0) {
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Reading dzi file: " +
-                                dziFile.getAbsolutePath());
+                        LOGGER.debug("Reading XML metadata file: " +
+                                xmlFile.getAbsolutePath());
                     }
 
-                    Document dzi = new Builder().build(dziFile);
-                    Element root = dzi.getRootElement();
-                    Element size = root.getFirstChildElement("Size", DZI_NS);
-                    String wString = size.getAttributeValue("Width");
-                    String hString = size.getAttributeValue("Height");
+                    Document xml = new Builder().build(xmlFile);
+                    Element root = xml.getRootElement();
+                    Element sElement = root.getFirstChildElement("Size");
+                    String wString = sElement.getAttributeValue("Width");
+                    String hString = sElement.getAttributeValue("Height");
+                    Element lElement = root.getFirstChildElement("Levels");
 
                     width = wString.equals("") ? 0 : Integer.parseInt(wString);
                     height = hString.equals("") ? 0 : Integer.parseInt(hString);
 
+                    if (lElement != null) {
+                        try {
+                            levels = Integer.parseInt(lElement.getValue());
+                        } catch (NumberFormatException details) {
+                            if (LOGGER.isErrorEnabled()) {
+                                LOGGER.error(
+                                        "{} doesn't look like an integer level",
+                                        lElement.getValue());
+                            }
+
+                            levels = 0;
+                        }
+                    }
+
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Returning width/height: {}/{}", width,
-                                height);
+                        LOGGER.debug("Returning width/height/levels: {}/{}/{}",
+                                width, height, levels);
                     }
                 } else {
-                    inStream = context.getResource(DZI_TEMPLATE).openStream();
+                    inStream = context.getResource(XML_TEMPLATE).openStream();
 
-                    if (dziFile.exists()) {
+                    if (xmlFile.exists()) {
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("DZI file exists: {}", dziFile);
+                            LOGGER.debug("XML metadata file exists: {}",
+                                    xmlFile);
                         }
 
-                        if (!dziFile.delete() && LOGGER.isWarnEnabled()) {
-                            LOGGER.warn("File not deleted: {}", dziFile);
+                        if (!xmlFile.delete() && LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("File not deleted: {}", xmlFile);
                         }
                     }
 
-                    outStream = new FileOutputStream(dziFile);
+                    outStream = new FileOutputStream(xmlFile);
 
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Creating new dzi file: " +
-                                dziFile.getAbsolutePath());
+                        LOGGER.debug("Creating new xml metadata file: " +
+                                xmlFile.getAbsolutePath());
                     }
 
-                    Document dzi = new Builder().build(inStream);
+                    Document xml = new Builder().build(inStream);
                     Serializer serializer = new Serializer(outStream);
-                    String templateURL = getFullSizeImageURL(aRequest);
                     String encodedID = URLEncoder.encode(id, "UTF-8");
-                    URL imageURL = new URL(templateURL + encodedID);
-
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Writing DZI file for: {}", imageURL
-                                .toExternalForm());
-                    }
 
                     try {
-                        BufferedImage image = ImageIO.read(imageURL);
-                        Element root = dzi.getRootElement();
-                        Element size =
-                                root.getFirstChildElement("Size", DZI_NS);
-                        Attribute wAttribute = size.getAttribute("Width");
-                        Attribute hAttribute = size.getAttribute("Height");
-
-                        // Return the width and height in response headers
-                        height = image.getHeight();
-                        width = image.getWidth();
+                        String host = aRequest.getLocalName();
+                        String port = Integer.toString(aRequest.getLocalPort());
+                        URL url =
+                                new URL(StringUtils.format(METADATA_URL, host,
+                                        port, encodedID));
 
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Returning width/height: {}/{}",
-                                    width, height);
+                            LOGGER.debug("Querying image metadata: {}", url);
                         }
 
-                        // Save it in our dzi file for easier access next time
+                        JsonNode json = MAPPER.readTree(url.openStream());
+
+                        // Pull out relevant info from our metadata service
+                        width = json.get("width").asInt();
+                        height = json.get("height").asInt();
+                        levels = json.get("levels").asInt();
+
+                        Element root = xml.getRootElement();
+                        Element sElement = root.getFirstChildElement("Size");
+                        Attribute wAttribute = sElement.getAttribute("Width");
+                        Attribute hAttribute = sElement.getAttribute("Height");
+                        Element lElement = root.getFirstChildElement("Levels");
+
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Width: {}; Height: {}; Level: {}",
+                                    width, height, levels);
+                        }
+
+                        // Save it in our xml file for easier access next time
                         wAttribute.setValue(Integer.toString(width));
                         hAttribute.setValue(Integer.toString(height));
+                        lElement.appendChild(Integer.toString(levels));
 
-                        serializer.write(dzi);
+                        serializer.write(xml);
                         serializer.flush();
                     } catch (IIOException details) {
-                        Class<?> thrown = details.getCause().getClass();
-                        String name = thrown.getSimpleName();
-
-                        if (name.equals("FileNotFoundException")) {
+                        if (details.getCause().getClass().getSimpleName()
+                                .equals("FileNotFoundException")) {
                             throw new FileNotFoundException(id + " not found");
                         } else {
                             if (LOGGER.isErrorEnabled()) {
-                                LOGGER.error(details.getMessage() + " " +
-                                        imageURL, details);
+                                LOGGER.error("[{}] " + details.getMessage(),
+                                        encodedID, details);
                             }
 
                             throw details;
@@ -403,17 +425,17 @@ public class ImageServlet extends HttpServlet implements Constants {
         }
 
         return new int[] {
-            height, width
+            height, width, levels
         };
     }
 
-    private String getFullSizeImageURL(HttpServletRequest aRequest) {
-        StringBuilder url = new StringBuilder();
-        url.append(aRequest.getScheme()).append("://");
-        url.append(aRequest.getServerName()).append(":");
-        url.append(aRequest.getServerPort()).append("/");
-        return url.append("view/fullSize/").toString();
-    }
+    // private String getFullSizeImageURL(HttpServletRequest aRequest) {
+    // StringBuilder url = new StringBuilder();
+    // url.append(aRequest.getScheme()).append("://");
+    // url.append(aRequest.getServerName()).append(":");
+    // url.append(aRequest.getServerPort()).append("/");
+    // return url.append("view/fullSize/").toString();
+    // }
 
     private void checkImageCache(String aID, String aLevel, String aScale,
             String aRegion, float aRotation, HttpServletRequest aRequest,
@@ -527,12 +549,6 @@ public class ImageServlet extends HttpServlet implements Constants {
                     aKey, aDestFile.getAbsolutePath());
         }
     }
-
-    /*
-     * Working towards:
-     * http://www.example.org/service/abcd1234/80,15,60,75/pct:100/0/color.jpg
-     * /domain /service /ark /region /scale /rotation /filename /ext
-     */
 
     private String getID(String aPath) {
         String path;

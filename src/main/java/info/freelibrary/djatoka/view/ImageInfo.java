@@ -23,14 +23,17 @@ public class ImageInfo {
 
     private Document myInfoDoc;
 
+    private int myLevel;
+
     /**
-     * Creates an image info object.
+     * Creates an image info object. This was written back when XML was a
+     * allowed response... should be rewritten now that it's JSON-only.
      * 
      * @param aID An image ID
      * @param aHeight The height of the image represented by the supplied ID
      * @param aWidth The width of the image represented by the supplied ID
      */
-    public ImageInfo(String aID, int aHeight, int aWidth) {
+    public ImageInfo(String aID, int aHeight, int aWidth, int aLevel) {
         Element id = new Element("identifier", Constants.IIIF_NS);
         Element height = new Element("height", Constants.IIIF_NS);
         Element width = new Element("width", Constants.IIIF_NS);
@@ -44,6 +47,8 @@ public class ImageInfo {
         root.appendChild(id);
         root.appendChild(width);
         root.appendChild(height);
+
+        myLevel = aLevel;
     }
 
     /**
@@ -168,7 +173,17 @@ public class ImageInfo {
 
         sb.append("], ");
 
-        sb.append("\"scale_factors\" : [ 1, 2, 3, 4 ], ");
+        sb.append("\"scale_factors\" : [ ");
+        for (int index = 0; index < myLevel; index++) {
+            sb.append(index + 1);
+
+            if (index + 1 < myLevel) {
+                sb.append(", ");
+            } else {
+                sb.append(' ');
+            }
+        }
+        sb.append("], ");
 
         sb.append("\"qualities\" : [ \"native\" ], \"profile\" : \"");
         sb.append(Constants.IIIF_URL).append("1.1/compliance.html#level1\"");
