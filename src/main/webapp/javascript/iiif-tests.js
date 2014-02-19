@@ -2,9 +2,12 @@ $(document).ready(
     function() {
       var url = purl();
       var protocol = url.attr('protocol'); /* Not currently using, but we will */
-      var host = url.attr('host');
       var port = url.attr('port');
-      var service = host + ':' + port;
+      var service = url.attr('host');
+      
+      if (port) {
+        service += (':' + port);
+      }
 
       /* resets the default server value to this machine */
       $option = $('<option></option>').attr('value', service).text(service);
@@ -44,6 +47,7 @@ $(document).ready(
 
       /* sets the default select value */
       function setDefaultSelectValue(idName, idValue) {
+        console.log(idValue);
         $('#' + idName + ' option').filter(function(index) {
           if ($(this).text() === idValue) {
             $(this).prop('selected', true);
@@ -59,7 +63,7 @@ $(document).ready(
         $('#' + idName).css('width', width + fontSizeHalved);
       }
 
-      setDefaultSelectValue('djserver', 'localhost:8888');
+      setDefaultSelectValue('djserver', $('#djserver > option:last').val());
       setDefaultSelectValue('djregion', 'full');
       setDefaultSelectValue('djsize', 'full');
       setDefaultSelectValue('djrotation', '0');

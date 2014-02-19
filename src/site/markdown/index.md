@@ -1,6 +1,6 @@
 ## Introduction
 
-This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page). It was created to simplify the server's use. Over time, additional features (like support for [OpenSeadragon](http://openseadragon.github.io/) and the [International Image Interoperability Framework (IIIF)'s Image API](http://iiif.io)) were added.
+This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page). It was created to simplify the server's use. Over time, additional features (like support for [OpenSeadragon](http://openseadragon.github.io/) and the [International Image Interoperability Framework (IIIF)'s Image API](http://iiif.io) were added.  A sample server (running on a small AWS instance) is available at [djatoka.freelibrary.info](http://djatoka.freelibrary.info).
 
 While FreeLib-Djatoka is a fork, it is not 100% backwards-compatible with aDORe-djatoka.  The main difference is the [identifier resolver](identifier-resolver.md); it's no longer a pluggable class, but one whose behavior is defined. It's also worth noting that support for the OpenURL API has been deprecated. It will be removed in a future version. 
 
