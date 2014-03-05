@@ -94,7 +94,8 @@
 			The reasonable default is to not cache scale requests that aren't 1.0.  Since pct:XX is so easy, though, we
 			might want exceptions for specific ones (for full images only); one possible use case is thumbnail creation.
 		-->
-		<djatoka.scale.cache.exceptions>0.15 0.10 0.05</djatoka.scale.cache.exceptions>
+		<djatoka.scale.cache.exceptions>0.15 0.10
+			0.05</djatoka.scale.cache.exceptions>
 
 		<!-- You shouldn't need to set anything below here; these are generic -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -183,11 +184,9 @@
 			<systemPath>${project.basedir}/lib/ij-ImageIO.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>imagej</groupId>
+			<groupId>net.imagej</groupId>
 			<artifactId>ij</artifactId>
-			<version>0.0.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/ij.jar</systemPath>
+			<version>1.48r</version>
 		</dependency>
 		<dependency>
 			<groupId>xom</groupId>

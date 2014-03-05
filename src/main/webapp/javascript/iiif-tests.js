@@ -9,9 +9,11 @@ $(document).ready(
         service += (':' + port);
       }
 
-      /* resets the default server value to this machine */
-      $option = $('<option></option>').attr('value', service).text(service);
-      $('#djserver').append($option);
+      /* resets the default server value to this machine if it's different */
+      if ($('#djserver option:first').text() != service) {
+        $option = $('<option></option>').attr('value', service).text(service);
+        $('#djserver').append($option);
+      }
 
       /* sets width to correct size for each select value */
       $('select').change(function() {
@@ -63,7 +65,10 @@ $(document).ready(
         $('#' + idName).css('width', width + fontSizeHalved);
       }
 
-      setDefaultSelectValue('djserver', $('#djserver > option:last').val());
+      if ($('#djserver option:first').text() != service) {
+        setDefaultSelectValue('djserver', $('#djserver > option:last').val());
+      }
+
       setDefaultSelectValue('djregion', 'full');
       setDefaultSelectValue('djsize', 'full');
       setDefaultSelectValue('djrotation', '0');
