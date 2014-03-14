@@ -29,8 +29,7 @@ import info.openurl.oom.entities.Referent;
 import java.util.Properties;
 
 /**
- * Allows access to the single ReferentResolver instance across multiple service
- * implementations.
+ * Allows access to the single ReferentResolver instance across multiple service implementations.
  * 
  * @author Ryan Chute
  */
@@ -53,8 +52,7 @@ public class ReferentManager {
     }
 
     /**
-     * Indicates whether the manager has been initialized and a
-     * IReferentResolver is properly configured
+     * Indicates whether the manager has been initialized and a IReferentResolver is properly configured
      * 
      * @return true if initialized and ready for use
      */
@@ -63,18 +61,16 @@ public class ReferentManager {
     }
 
     /**
-     * Gets ImageRecord for the initialized IReferentResolver impl.. This method
-     * may be used when metadata is provided about the resource and the
-     * underlying resource resolver needs to resolve the metadata to an
-     * identifier and resource location.
+     * Gets ImageRecord for the initialized IReferentResolver impl.. This method may be used when metadata is provided
+     * about the resource and the underlying resource resolver needs to resolve the metadata to an identifier and
+     * resource location.
      * 
      * @param rft OpenURL OOM Referent object for the requested ImageRecord
-     * @return an ImageRecord containing a file path to resource or resource
-     *         defined in object, typically byte[] or InputStream
+     * @return an ImageRecord containing a file path to resource or resource defined in object, typically byte[] or
+     *         InputStream
      * @throws ResolverException
      */
-    public static ImageRecord getImageRecord(Referent rft)
-            throws ResolverException {
+    public static ImageRecord getImageRecord(Referent rft) throws ResolverException {
         return rftResolver.getImageRecord(rft);
     }
 
@@ -82,26 +78,23 @@ public class ReferentManager {
      * Gets ImageRecord for the initialized IReferentResolver impl.
      * 
      * @param rft identifier/url for the requested ImageRecord
-     * @return an ImageRecord containing a file path to resource or resource
-     *         defined in object, typically byte[] or InputStream
+     * @return an ImageRecord containing a file path to resource or resource defined in object, typically byte[] or
+     *         InputStream
      * @throws ResolverException
      */
-    public static ImageRecord getImageRecord(String rft)
-            throws ResolverException {
+    public static ImageRecord getImageRecord(String rft) throws ResolverException {
         return rftResolver.getImageRecord(rft);
     }
 
     /**
      * Initialize referent manager w/ resource resolver instance and properties.
-     * Example:ReferentManager.init((IReferentResolver)
-     * Class.forName(implClass).newInstance(), props);
+     * Example:ReferentManager.init((IReferentResolver) Class.forName(implClass).newInstance(), props);
      * 
      * @param aRefResolver
      * @param aProps
      * @throws ResolverException
      */
-    public static void init(IReferentResolver aRefResolver, Properties aProps)
-            throws ResolverException {
+    public static void init(IReferentResolver aRefResolver, Properties aProps) throws ResolverException {
         rftResolver = aRefResolver;
         rftResolver.setProperties(aProps);
         init = true;

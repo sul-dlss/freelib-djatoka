@@ -1,25 +1,24 @@
 
 package info.freelibrary.djatoka.view;
 
-import info.freelibrary.djatoka.Constants;
-import info.freelibrary.util.FileUtils;
-import info.freelibrary.util.RegexFileFilter;
-
 import java.io.File;
 import java.io.FileOutputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Serializer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import info.freelibrary.djatoka.Constants;
+import info.freelibrary.util.FileUtils;
+import info.freelibrary.util.RegexFileFilter;
+
 public class StatsCompilation implements Constants {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(StatsCompilation.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatsCompilation.class);
 
     private String myJP2sSize;
 
@@ -30,15 +29,14 @@ public class StatsCompilation implements Constants {
     private String myTIFsCount;
 
     /**
-     * A compilation of statistics about the ingest source and target
-     * directories.
-     *
+     * A compilation of statistics about the ingest source and target directories.
+     * 
      * @param aTIFDir A source directory
      * @param aJP2Dir A target directory
      */
-    public StatsCompilation(File aTIFDir, File aJP2Dir) {
-        RegexFileFilter jp2Pattern = new RegexFileFilter(JP2_FILE_PATTERN);
-        RegexFileFilter tifPattern = new RegexFileFilter(TIFF_FILE_PATTERN);
+    public StatsCompilation(final File aTIFDir, final File aJP2Dir) {
+        final RegexFileFilter jp2Pattern = new RegexFileFilter(JP2_FILE_PATTERN);
+        final RegexFileFilter tifPattern = new RegexFileFilter(TIFF_FILE_PATTERN);
         long jp2CountLong = 0;
         long tifCountLong = 0;
 
@@ -47,15 +45,15 @@ public class StatsCompilation implements Constants {
         }
 
         try {
-            File[] jp2Files = FileUtils.listFiles(aJP2Dir, jp2Pattern, true);
-            File[] tifFiles = FileUtils.listFiles(aTIFDir, tifPattern, true);
+            final File[] jp2Files = FileUtils.listFiles(aJP2Dir, jp2Pattern, true);
+            final File[] tifFiles = FileUtils.listFiles(aTIFDir, tifPattern, true);
 
             // These two just count the size of the files, not directories
-            for (File file : jp2Files) {
+            for (final File file : jp2Files) {
                 jp2CountLong += file.length();
             }
 
-            for (File file : tifFiles) {
+            for (final File file : tifFiles) {
                 tifCountLong += file.length();
             }
 
@@ -65,13 +63,10 @@ public class StatsCompilation implements Constants {
             myTIFsCount = Integer.toString(tifFiles.length);
 
             if (LOGGER.isDebugEnabled()) {
-                String[] tifStats = new String[] {myTIFsCount, myTIFsSize};
-                String[] jp2Stats = new String[] {myJP2sCount, myJP2sSize};
-
-                LOGGER.debug("TIF file count (size): {} ({})", tifStats);
-                LOGGER.debug("JP2 file count (size): {} ({})", jp2Stats);
+                LOGGER.debug("TIF file count (size): {} ({})", myTIFsCount, myTIFsSize);
+                LOGGER.debug("JP2 file count (size): {} ({})", myJP2sCount, myJP2sSize);
             }
-        } catch (Exception details) {
+        } catch (final Exception details) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error(details.getMessage(), details);
             }
@@ -80,16 +75,16 @@ public class StatsCompilation implements Constants {
 
     /**
      * Saves a stats file to disk.
-     *
+     * 
      * @param aStatsFile A file of statistics
      */
-    public void save(File aStatsFile) {
+    public void save(final File aStatsFile) {
         try {
-            FileOutputStream outStream = new FileOutputStream(aStatsFile);
-            Serializer serializer = new Serializer(outStream);
-            Element root = new Element("djatoka");
-            Element jp2Elem = new Element("jp2s");
-            Element tifElem = new Element("tifs");
+            final FileOutputStream outStream = new FileOutputStream(aStatsFile);
+            final Serializer serializer = new Serializer(outStream);
+            final Element root = new Element("djatoka");
+            final Element jp2Elem = new Element("jp2s");
+            final Element tifElem = new Element("tifs");
 
             jp2Elem.addAttribute(new Attribute(JP2_SIZE_ATTR, myJP2sSize));
             jp2Elem.addAttribute(new Attribute(JP2_COUNT_ATTR, myJP2sCount));
@@ -99,7 +94,7 @@ public class StatsCompilation implements Constants {
             root.appendChild(jp2Elem);
             root.appendChild(tifElem);
             serializer.write(new Document(root));
-        } catch (Exception details) {
+        } catch (final Exception details) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error(details.getMessage(), details);
             }
@@ -108,7 +103,7 @@ public class StatsCompilation implements Constants {
 
     /**
      * Gets the total size of JP2 files.
-     *
+     * 
      * @return The total size of the JP2 files
      */
     public String getJP2sSize() {
@@ -117,7 +112,7 @@ public class StatsCompilation implements Constants {
 
     /**
      * Gets the total number of JP2 files.
-     *
+     * 
      * @return The total size of the JP2 files
      */
     public String getJP2sCount() {
@@ -126,7 +121,7 @@ public class StatsCompilation implements Constants {
 
     /**
      * Gets the total size of TIFF files.
-     *
+     * 
      * @return The total size of the TIFF files
      */
     public String getTIFsSize() {
@@ -135,7 +130,7 @@ public class StatsCompilation implements Constants {
 
     /**
      * Gets the total number of TIFF files.
-     *
+     * 
      * @return The total size of the TIFF files
      */
     public String getTIFsCount() {

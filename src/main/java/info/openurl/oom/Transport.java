@@ -17,19 +17,15 @@ import java.net.URISyntaxException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Transports are responsible for parsing information contained in a
- * HttpServletRequest and representing it in the OpenURL model. Each
- * implementation of this interface should be able to deal with a particular
- * pattern of HTTP requests.
+ * Transports are responsible for parsing information contained in a HttpServletRequest and representing it in the
+ * OpenURL model. Each implementation of this interface should be able to deal with a particular pattern of HTTP
+ * requests.
  * <p />
- * Analysis: I didn't fully understand or appreciate Transports for the longest
- * time. I now understand that they represent the class responsible for taking
- * an HTTP request and transforming it into OpenURL terms. This means it is
- * possible to create Transports capable of interpreting any web service request
- * in existence.
+ * Analysis: I didn't fully understand or appreciate Transports for the longest time. I now understand that they
+ * represent the class responsible for taking an HTTP request and transforming it into OpenURL terms. This means it is
+ * possible to create Transports capable of interpreting any web service request in existence.
  * <p />
- * Hallelujah! I don't have to worry about url_ver=Z39.88-2004 and rft_id's
- * anymore!
+ * Hallelujah! I don't have to worry about url_ver=Z39.88-2004 and rft_id's anymore!
  * 
  * @author Jeffrey A. Young
  */
@@ -42,15 +38,14 @@ public interface Transport {
     public URI getTransportID() throws URISyntaxException;
 
     /**
-     * Transforms an HttpServletRequest into an equivalent OpenURLRequest
-     * representation.
+     * Transforms an HttpServletRequest into an equivalent OpenURLRequest representation.
      * 
-     * @param processor - this is required because we want to preserve the
-     *        option of replacing one OOM implementation with another.
+     * @param processor - this is required because we want to preserve the option of replacing one OOM implementation
+     *        with another.
      * @param req the HTTP request as it was received from the client
      * @return the entire request represented in the OpenURL model
      * @throws OpenURLException
      */
-    public OpenURLRequest toOpenURLRequest(OpenURLRequestProcessor processor,
-            HttpServletRequest req) throws OpenURLException;
+    public OpenURLRequest toOpenURLRequest(OpenURLRequestProcessor processor, HttpServletRequest req)
+            throws OpenURLException;
 }

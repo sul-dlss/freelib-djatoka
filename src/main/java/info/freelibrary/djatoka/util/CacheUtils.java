@@ -9,8 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class CacheUtils {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(CacheUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CacheUtils.class);
 
     /**
      * Return a file name for the cached file based on its characteristics.
@@ -21,14 +20,13 @@ public class CacheUtils {
      * @param aRotation A rotation to be cached
      * @return The file name for the cached file
      */
-    public static final String getFileName(String aLevel, String aScale,
-            String aRegion, float aRotation) {
+    public static final String getFileName(String aLevel, String aScale, String aRegion, float aRotation) {
         StringBuilder cfName = new StringBuilder("image_");
         String region = isEmpty(aRegion) ? "full" : aRegion.replace(',', '-');
 
         /*
-         * TODO: Right now this assumes if it gets passed a level that it's not
-         * doing a region... what possibilities do we exclude by doing this?
+         * TODO: Right now this assumes if it gets passed a level that it's not doing a region... what possibilities do
+         * we exclude by doing this?
          */
         if (aLevel != null && !aLevel.equals("") && !aLevel.equals("-1")) {
             if (LOGGER.isDebugEnabled()) {
@@ -60,8 +58,7 @@ public class CacheUtils {
      * @return The maximum level using the supplied height and width
      */
     public static final int getMaxLevel(int aHeight, int aWidth) {
-        return (int) Math.ceil(Math.log(Math.max(aHeight, aWidth)) /
-                Math.log(2));
+        return (int) Math.ceil(Math.log(Math.max(aHeight, aWidth)) / Math.log(2));
     }
 
     /**
@@ -120,8 +117,7 @@ public class CacheUtils {
     }
 
     /**
-     * Gets a string representation of the region for the supplied
-     * characteristics.
+     * Gets a string representation of the region for the supplied characteristics.
      * 
      * @param aLevel A image level
      * @param aWidth An image width
@@ -129,8 +125,7 @@ public class CacheUtils {
      * @param aX An X coordinate
      * @param aY A Y coordinate
      */
-    public static final String getRegion(int aLevel, int aWidth, int aHeight,
-            int aX, int aY) {
+    public static final String getRegion(int aLevel, int aWidth, int aHeight, int aX, int aY) {
         // All the other code uses width, height (rather than height, width); I
         // should probably change to match their use pattern/order for
         // consistency

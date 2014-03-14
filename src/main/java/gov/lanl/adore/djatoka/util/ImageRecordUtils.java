@@ -21,26 +21,23 @@
 
 package gov.lanl.adore.djatoka.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ij.ImagePlus;
 import ij.io.Opener;
 import ij.process.ImageProcessor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * Image Information Utility used to obtain width and height information. This
- * util is useful when processing images using external compression
- * applications, such as Kakadu JPEG 2000 kdu_compress.
+ * Image Information Utility used to obtain width and height information. This util is useful when processing images
+ * using external compression applications, such as Kakadu JPEG 2000 kdu_compress.
  * 
  * @author Ryan Chute
- * @author Kevin S. Clarke <a
- *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
+ * @author Kevin S. Clarke <a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
  */
 public class ImageRecordUtils {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ImageRecordUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageRecordUtils.class);
 
     /**
      * Return an ImageRecord containing the images pixel dimensions.
@@ -48,25 +45,23 @@ public class ImageRecordUtils {
      * @param file absolute file path to image
      * @return ImageRecord containing the images pixel dimensions
      */
-    public static ImageRecord getImageDimensions(String file) {
+    public static ImageRecord getImageDimensions(final String file) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Getting image dimensions from: {}", file);
         }
 
-        ImageRecord dim = new ImageRecord(file);
-        Opener o = new Opener();
-        ImagePlus imp = o.openImage(file);
+        final ImageRecord dim = new ImageRecord(file);
+        final Opener o = new Opener();
+        final ImagePlus imp = o.openImage(file);
         if (imp == null) {
             return null;
         }
         ImageProcessor ip = imp.getProcessor();
-        int width = ip.getWidth();
-        int height = ip.getHeight();
+        final int width = ip.getWidth();
+        final int height = ip.getHeight();
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("{} (width: {} | height: {})", new String[] {
-                file, Integer.toString(width), Integer.toString(height)
-            });
+            LOGGER.debug("{} (width: {} | height: {})", file, Integer.toString(width), Integer.toString(height));
         }
 
         dim.setWidth(width);

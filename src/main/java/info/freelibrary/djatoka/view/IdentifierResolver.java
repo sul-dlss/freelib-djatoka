@@ -41,8 +41,7 @@ import org.slf4j.LoggerFactory;
 
 public class IdentifierResolver implements IReferentResolver, Constants {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(IdentifierResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdentifierResolver.class);
 
     private IReferentMigrator myMigrator = new DjatokaImageMigrator();
 
@@ -105,8 +104,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                     String url = StringUtils.format(urlPattern, decodedRequest);
 
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Trying to resolve using URL pattern: {}",
-                                url);
+                        LOGGER.debug("Trying to resolve using URL pattern: {}", url);
                     }
 
                     image = getRemoteImage(aRequest, url);
@@ -123,8 +121,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
      * @param aReferent A referent for the desired image
      * @return An image record
      */
-    public ImageRecord getImageRecord(Referent aReferent)
-            throws ResolverException {
+    public ImageRecord getImageRecord(Referent aReferent) throws ResolverException {
         String id = ((URI) aReferent.getDescriptors()[0]).toASCIIString();
         return getImageRecord(id);
     }
@@ -178,8 +175,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
         ImageRecord image = null;
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Checking in Pairtree file system for: {}",
-                    aReferentID);
+            LOGGER.debug("Checking in Pairtree file system for: {}", aReferentID);
         }
 
         try {
@@ -194,8 +190,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                 image.setImageFile(file.getAbsolutePath());
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("JP2 found in Pairtree cache: {}", file
-                            .getAbsolutePath());
+                    LOGGER.debug("JP2 found in Pairtree cache: {}", file.getAbsolutePath());
                 }
             } else if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Failed to find a JP2 in Pairtree cache");
@@ -223,16 +218,14 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                 Thread.sleep(1000);
                 int index = 0;
 
-                while (myMigrator.getProcessingList().contains(aReferent) &&
-                        index < (5 * 60)) {
+                while (myMigrator.getProcessingList().contains(aReferent) && index < (5 * 60)) {
                     Thread.sleep(1000);
                     index++;
                 }
 
                 if (myRemoteImages.containsKey(aReferent)) {
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Retrieving {} from remote images cache",
-                                aReferent);
+                        LOGGER.debug("Retrieving {} from remote images cache", aReferent);
                     }
 
                     return myRemoteImages.get(aReferent);
@@ -245,12 +238,10 @@ public class IdentifierResolver implements IReferentResolver, Constants {
             if (imageFile.length() > 0) {
                 myRemoteImages.put(aReferent, image);
             } else {
-                throw new ResolverException(
-                        "An error occurred processing file: " + uri.toURL());
+                throw new ResolverException("An error occurred processing file: " + uri.toURL());
             }
         } catch (Exception details) {
-            LOGGER.error(StringUtils.format("Unable to access {} ({})",
-                    aReferent, details.getMessage()));
+            LOGGER.error(StringUtils.format("Unable to access {} ({})", aReferent, details.getMessage()));
 
             return null;
         }
@@ -262,8 +253,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
         return image;
     }
 
-    private String parseReferent(String aReferent)
-            throws UnsupportedEncodingException {
+    private String parseReferent(String aReferent) throws UnsupportedEncodingException {
         String referent = aReferent;
 
         for (int index = 0; index < myIngestSources.size(); index++) {
@@ -275,14 +265,12 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                 referent = URLDecoder.decode(matcher.group(1), "UTF-8");
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("ID '{}' extracted from a known pattern",
-                            referent);
+                    LOGGER.debug("ID '{}' extracted from a known pattern", referent);
                 }
 
                 break; // We don't need to keep checking at this point
             } else if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("No Match in {} for {}", referent, pattern
-                        .toString());
+                LOGGER.debug("No Match in {} for {}", referent, pattern.toString());
             }
         }
 

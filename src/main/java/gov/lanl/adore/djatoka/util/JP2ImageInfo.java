@@ -41,8 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JP2ImageInfo implements JP2Markers {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(JP2ImageInfo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JP2ImageInfo.class);
 
     private InputStream is;
 
@@ -314,19 +313,15 @@ public class JP2ImageInfo implements JP2Markers {
                 int sgcod_ctrans = read(1); // Component Transformation Type
                 int sgcod_levels = read(1); // Number of levels
                 ir.setDWTLevels(sgcod_levels);
-                int djatokaLevels =
-                        ImageProcessingUtils.getLevelCount(ir.getWidth(), ir
-                                .getHeight());
-                ir.setLevels((djatokaLevels > sgcod_levels) ? sgcod_levels
-                        : djatokaLevels);
+                int djatokaLevels = ImageProcessingUtils.getLevelCount(ir.getWidth(), ir.getHeight());
+                ir.setLevels((djatokaLevels > sgcod_levels) ? sgcod_levels : djatokaLevels);
                 int sgcod_cb_width = read(1); // code-block width
                 int sgcod_cb_height = read(1); // code-block height
                 int sgcod_cb_style = read(1); // code-block style
                 int sgcod_wavelet = read(1); // wavelet type (9:7 && 5:3)
                 hend = true;
             } else {
-                throw new IOException(
-                        "Expecting MARKER_COD or MARKER_SIZ in header");
+                throw new IOException("Expecting MARKER_COD or MARKER_SIZ in header");
             }
 
         }

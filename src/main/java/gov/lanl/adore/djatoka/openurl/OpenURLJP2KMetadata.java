@@ -61,14 +61,11 @@ import org.slf4j.LoggerFactory;
  */
 public class OpenURLJP2KMetadata implements Service, FormatConstants {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(OpenURLJP2KMetadata.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(OpenURLJP2KMetadata.class);
 
-    private static final String DEFAULT_IMPL_CLASS = IdentifierResolver.class
-            .getCanonicalName();
+    private static final String DEFAULT_IMPL_CLASS = IdentifierResolver.class.getCanonicalName();
 
-    private static final String PROPS_KEY_IMPL_CLASS =
-            "OpenURLJP2KService.referentResolverImpl";
+    private static final String PROPS_KEY_IMPL_CLASS = "OpenURLJP2KService.referentResolverImpl";
 
     private static final String SVC_ID = "info:lanl-repo/svc/getMetadata";
 
@@ -79,55 +76,43 @@ public class OpenURLJP2KMetadata implements Service, FormatConstants {
     private static Properties props = new Properties();
 
     /**
-     * Construct an info:lanl-repo/svc/getMetadata web service class.
-     * Initializes Referent Resolver instance using
+     * Construct an info:lanl-repo/svc/getMetadata web service class. Initializes Referent Resolver instance using
      * OpenURLJP2KService.referentResolverImpl property.
      * 
      * @param openURLConfig OOM Properties forwarded from OpenURLServlet
-     * @param classConfig Implementation Properties forwarded from
-     *        OpenURLServlet
+     * @param classConfig Implementation Properties forwarded from OpenURLServlet
      * @throws ResolverException
      */
-    public OpenURLJP2KMetadata(OpenURLConfig openURLConfig,
-            ClassConfig classConfig) throws ResolverException {
+    public OpenURLJP2KMetadata(OpenURLConfig openURLConfig, ClassConfig classConfig) throws ResolverException {
         try {
             if (!ReferentManager.isInit()) {
                 props = IOUtils.loadConfigByCP(classConfig.getArg("props"));
-                implClass =
-                        props.getProperty(PROPS_KEY_IMPL_CLASS,
-                                DEFAULT_IMPL_CLASS);
-                ReferentManager.init((IReferentResolver) Class.forName(
-                        implClass).newInstance(), props);
+                implClass = props.getProperty(PROPS_KEY_IMPL_CLASS, DEFAULT_IMPL_CLASS);
+                ReferentManager.init((IReferentResolver) Class.forName(implClass).newInstance(), props);
             }
         } catch (IOException e) {
-            throw new ResolverException(
-                    "Error attempting to open props file from classpath, disabling " +
-                            SVC_ID + " : " + e.getMessage());
+            throw new ResolverException("Error attempting to open props file from classpath, disabling " + SVC_ID +
+                    " : " + e.getMessage());
         } catch (Exception e) {
-            throw new ResolverException(
-                    "Unable to inititalize implementation: " +
-                            props.getProperty(implClass) + " - " +
-                            e.getMessage());
+            throw new ResolverException("Unable to inititalize implementation: " + props.getProperty(implClass) +
+                    " - " + e.getMessage());
         }
     }
 
     /**
-     * Returns the OpenURL service identifier for this implementation of
-     * info.openurl.oom.Service
+     * Returns the OpenURL service identifier for this implementation of info.openurl.oom.Service
      */
     public URI getServiceID() throws URISyntaxException {
         return new URI(SVC_ID);
     }
 
     /**
-     * Returns the OpenURLResponse of a JSON object defining the core image
-     * properties. Having obtained a result, this method is then responsible for
-     * transforming it into an OpenURLResponse that acts as a proxy for
+     * Returns the OpenURLResponse of a JSON object defining the core image properties. Having obtained a result, this
+     * method is then responsible for transforming it into an OpenURLResponse that acts as a proxy for
      * HttpServletResponse.
      */
-    public OpenURLResponse resolve(ServiceType serviceType,
-            ContextObject contextObject, OpenURLRequest openURLRequest,
-            OpenURLRequestProcessor processor) {
+    public OpenURLResponse resolve(ServiceType serviceType, ContextObject contextObject,
+            OpenURLRequest openURLRequest, OpenURLRequestProcessor processor) {
 
         String responseFormat = RESPONSE_TYPE;
         int status = HttpServletResponse.SC_OK;
@@ -135,8 +120,7 @@ public class OpenURLJP2KMetadata implements Service, FormatConstants {
         try {
             baos = new ByteArrayOutputStream();
             IExtract jp2 = new KduExtractExe();
-            ImageRecord r =
-                    ReferentManager.getImageRecord(contextObject.getReferent());
+            ImageRecord r = ReferentManager.getImageRecord(contextObject.getReferent());
             r = jp2.getMetadata(r);
             StringBuffer sb = new StringBuffer();
             sb.append("{");
@@ -146,8 +130,7 @@ public class OpenURLJP2KMetadata implements Service, FormatConstants {
             sb.append("\n\"height\": \"" + r.getHeight() + "\",");
             sb.append("\n\"dwtLevels\": \"" + r.getDWTLevels() + "\",");
             sb.append("\n\"levels\": \"" + r.getLevels() + "\",");
-            sb.append("\n\"compositingLayerCount\": \"" +
-                    r.getCompositingLayerCount() + "\"");
+            sb.append("\n\"compositingLayerCount\": \"" + r.getCompositingLayerCount() + "\"");
             sb.append("\n}");
             baos.write(sb.toString().getBytes());
         } catch (DjatokaException e) {
@@ -173,7 +156,6 @@ public class OpenURLJP2KMetadata implements Service, FormatConstants {
         HashMap<String, String> header_map = new HashMap<String, String>();
         header_map.put("Content-Length", baos.size() + "");
         header_map.put("Date", HttpDate.getHttpDate());
-        return new OpenURLResponse(status, responseFormat, baos.toByteArray(),
-                header_map);
+        return new OpenURLResponse(status, responseFormat, baos.toByteArray(), header_map);
     }
 }

@@ -38,15 +38,12 @@ public class OOMUtil {
      * @return a SortedMap of the parameters
      * @throws UnsupportedEncodingException
      */
-    public static SortedMap getParameterMap(String queryString)
-            throws UnsupportedEncodingException {
+    public static SortedMap getParameterMap(String queryString) throws UnsupportedEncodingException {
         String[] queryStrings;
         if (queryString == null) {
             queryStrings = new String[0];
         } else {
-            queryStrings = new String[] {
-                queryString
-            };
+            queryStrings = new String[] { queryString };
         }
         return getParameterMap(queryStrings);
     }
@@ -74,8 +71,7 @@ public class OOMUtil {
      * @return a Map of key/values from the queryString.
      * @throws UnsupportedEncodingException
      */
-    public static SortedMap getParameterMap(String[] queryStrings)
-            throws UnsupportedEncodingException {
+    public static SortedMap getParameterMap(String[] queryStrings) throws UnsupportedEncodingException {
         HashMap tempMap = new HashMap();
 
         if (queryStrings != null) {

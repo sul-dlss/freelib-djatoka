@@ -60,25 +60,20 @@ public class ImageServlet extends HttpServlet implements Constants {
      */
     private static final long serialVersionUID = -4142816720756238591L;
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ImageServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageServlet.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final String METADATA_URL =
             "http://{}:{}/resolve?url_ver=Z39.88-2004&rft_id={}&svc_id=info:lanl-repo/svc/getMetadata";
 
-    private static final String IMAGE_URL =
-            "/resolve?url_ver=Z39.88-2004&rft_id={}"
-                    + "&svc_id=info:lanl-repo/svc/getRegion"
-                    + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
-                    + "&svc.format={}&svc.level={}&svc.rotate={}";
+    private static final String IMAGE_URL = "/resolve?url_ver=Z39.88-2004&rft_id={}"
+            + "&svc_id=info:lanl-repo/svc/getRegion" + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
+            + "&svc.format={}&svc.level={}&svc.rotate={}";
 
-    private static final String REGION_URL =
-            "/resolve?url_ver=Z39.88-2004&rft_id={}"
-                    + "&svc_id=info:lanl-repo/svc/getRegion"
-                    + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
-                    + "&svc.format={}&svc.region={}&svc.scale={}&svc.rotate={}";
+    private static final String REGION_URL = "/resolve?url_ver=Z39.88-2004&rft_id={}"
+            + "&svc_id=info:lanl-repo/svc/getRegion" + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
+            + "&svc.format={}&svc.region={}&svc.scale={}&svc.rotate={}";
 
     private static final String XML_TEMPLATE = "/WEB-INF/metadata.xml";
 
@@ -89,8 +84,8 @@ public class ImageServlet extends HttpServlet implements Constants {
     private static String myCache;
 
     @Override
-    protected void doGet(HttpServletRequest aRequest,
-            HttpServletResponse aResponse) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse) throws ServletException,
+            IOException {
         String level = getServletConfig().getInitParameter("level");
         IIIFRequest iiif = (IIIFRequest) aRequest.getAttribute(IIIFRequest.KEY);
         String reqURI = aRequest.getRequestURI();
@@ -101,8 +96,7 @@ public class ImageServlet extends HttpServlet implements Constants {
         if (reqURI.endsWith("/info.xml") || reqURI.endsWith("/info.json")) {
             try {
                 int[] config = getHeightWidthAndLevels(aRequest, aResponse);
-                ImageInfo info =
-                        new ImageInfo(id, config[0], config[1], config[2]);
+                ImageInfo info = new ImageInfo(id, config[0], config[1], config[2]);
                 ServletOutputStream outStream = aResponse.getOutputStream();
 
                 if (reqURI.endsWith("/info.xml")) {
@@ -124,8 +118,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 
                 outStream.close();
             } catch (FileNotFoundException details) {
-                aResponse.sendError(HttpServletResponse.SC_NOT_FOUND, id +
-                        " not found");
+                aResponse.sendError(HttpServletResponse.SC_NOT_FOUND, id + " not found");
             }
         } else if (iiif != null) {
             if (LOGGER.isDebugEnabled()) {
@@ -154,15 +147,13 @@ public class ImageServlet extends HttpServlet implements Constants {
             }
 
             if (myCache != null) {
-                checkImageCache(id, level, size, region, rotation, aRequest,
-                        aResponse);
+                checkImageCache(id, level, size, region, rotation, aRequest, aResponse);
             } else {
                 if (LOGGER.isWarnEnabled()) {
                     LOGGER.warn("Cache isn't configured correctly");
                 }
 
-                serveNewImage(id, level, region, size, rotation, aRequest,
-                        aResponse);
+                serveNewImage(id, level, region, size, rotation, aRequest, aResponse);
             }
         } else {
             // We are using the now deprecated FreeLib-Djatoka djtilesource.js
@@ -200,16 +191,14 @@ public class ImageServlet extends HttpServlet implements Constants {
 
             if (myCache != null) {
                 // Older freelib-djatoka didn't support rotations; use 0.0f
-                checkImageCache(id, level, scale, region, 0.0f, aRequest,
-                        aResponse);
+                checkImageCache(id, level, scale, region, 0.0f, aRequest, aResponse);
             } else {
                 if (LOGGER.isWarnEnabled()) {
                     LOGGER.warn("Cache isn't configured correctly");
                 }
 
                 // Older freelib-djatoka didn't support rotations; use 0.0f
-                serveNewImage(id, level, region, scale, 0.0f, aRequest,
-                        aResponse);
+                serveNewImage(id, level, region, scale, 0.0f, aRequest, aResponse);
             }
         }
     }
@@ -237,8 +226,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                 }
 
                 if (props.containsKey(VIEW_FORMAT_EXT)) {
-                    myFormatExt =
-                            props.getProperty(VIEW_FORMAT_EXT, DEFAULT_VIEW_EXT);
+                    myFormatExt = props.getProperty(VIEW_FORMAT_EXT, DEFAULT_VIEW_EXT);
 
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Format extension set to {}", myFormatExt);
@@ -246,8 +234,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                 }
             } catch (IOException details) {
                 if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("Unable to load properties file: {}", details
-                            .getMessage());
+                    LOGGER.warn("Unable to load properties file: {}", details.getMessage());
                 }
             } finally {
                 IOUtils.closeQuietly(is);
@@ -256,8 +243,8 @@ public class ImageServlet extends HttpServlet implements Constants {
     }
 
     @Override
-    protected void doHead(HttpServletRequest aRequest,
-            HttpServletResponse aResponse) throws ServletException, IOException {
+    protected void doHead(HttpServletRequest aRequest, HttpServletResponse aResponse) throws ServletException,
+            IOException {
         try {
             int[] dimensions = getHeightWidthAndLevels(aRequest, aResponse);
 
@@ -279,8 +266,8 @@ public class ImageServlet extends HttpServlet implements Constants {
         return super.getLastModified(aRequest);
     }
 
-    private int[] getHeightWidthAndLevels(HttpServletRequest aRequest,
-            HttpServletResponse aResponse) throws IOException, ServletException {
+    private int[] getHeightWidthAndLevels(HttpServletRequest aRequest, HttpServletResponse aResponse)
+            throws IOException, ServletException {
         String reqURI = aRequest.getRequestURI();
         String servletPath = aRequest.getServletPath();
         String path = reqURI.substring(servletPath.length());
@@ -300,8 +287,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 
                 if (xmlFile.exists() && xmlFile.length() > 0) {
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Reading XML metadata file: " +
-                                xmlFile.getAbsolutePath());
+                        LOGGER.debug("Reading XML metadata file: " + xmlFile.getAbsolutePath());
                     }
 
                     Document xml = new Builder().build(xmlFile);
@@ -319,9 +305,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                             levels = Integer.parseInt(lElement.getValue());
                         } catch (NumberFormatException details) {
                             if (LOGGER.isErrorEnabled()) {
-                                LOGGER.error(
-                                        "{} doesn't look like an integer level",
-                                        lElement.getValue());
+                                LOGGER.error("{} doesn't look like an integer level", lElement.getValue());
                             }
 
                             levels = 0;
@@ -329,16 +313,14 @@ public class ImageServlet extends HttpServlet implements Constants {
                     }
 
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Returning width/height/levels: {}/{}/{}",
-                                width, height, levels);
+                        LOGGER.debug("Returning width/height/levels: {}/{}/{}", width, height, levels);
                     }
                 } else {
                     inStream = context.getResource(XML_TEMPLATE).openStream();
 
                     if (xmlFile.exists()) {
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("XML metadata file exists: {}",
-                                    xmlFile);
+                            LOGGER.debug("XML metadata file exists: {}", xmlFile);
                         }
 
                         if (!xmlFile.delete() && LOGGER.isWarnEnabled()) {
@@ -349,8 +331,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                     outStream = new FileOutputStream(xmlFile);
 
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Creating new xml metadata file: " +
-                                xmlFile.getAbsolutePath());
+                        LOGGER.debug("Creating new xml metadata file: " + xmlFile.getAbsolutePath());
                     }
 
                     Document xml = new Builder().build(inStream);
@@ -360,9 +341,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                     try {
                         String host = aRequest.getLocalName();
                         String port = Integer.toString(aRequest.getLocalPort());
-                        URL url =
-                                new URL(StringUtils.format(METADATA_URL, host,
-                                        port, encodedID));
+                        URL url = new URL(StringUtils.format(METADATA_URL, host, port, encodedID));
 
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Querying image metadata: {}", url);
@@ -382,8 +361,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                         Element lElement = root.getFirstChildElement("Levels");
 
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Width: {}; Height: {}; Level: {}",
-                                    width, height, levels);
+                            LOGGER.debug("Width: {}; Height: {}; Level: {}", width, height, levels);
                         }
 
                         // Save it in our xml file for easier access next time
@@ -394,13 +372,11 @@ public class ImageServlet extends HttpServlet implements Constants {
                         serializer.write(xml);
                         serializer.flush();
                     } catch (IIOException details) {
-                        if (details.getCause().getClass().getSimpleName()
-                                .equals("FileNotFoundException")) {
+                        if (details.getCause().getClass().getSimpleName().equals("FileNotFoundException")) {
                             throw new FileNotFoundException(id + " not found");
                         } else {
                             if (LOGGER.isErrorEnabled()) {
-                                LOGGER.error("[{}] " + details.getMessage(),
-                                        encodedID, details);
+                                LOGGER.error("[{}] " + details.getMessage(), encodedID, details);
                             }
 
                             throw details;
@@ -408,13 +384,9 @@ public class ImageServlet extends HttpServlet implements Constants {
                     }
                 }
             } catch (ValidityException details) {
-                aResponse.sendError(
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR, details
-                                .getMessage());
+                aResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, details.getMessage());
             } catch (ParsingException details) {
-                aResponse.sendError(
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR, details
-                                .getMessage());
+                aResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, details.getMessage());
             } finally {
                 IOUtils.closeQuietly(outStream);
                 IOUtils.closeQuietly(inStream);
@@ -424,9 +396,7 @@ public class ImageServlet extends HttpServlet implements Constants {
             throw new ServletException("Cache not correctly configured");
         }
 
-        return new int[] {
-            height, width, levels
-        };
+        return new int[] { height, width, levels };
     }
 
     // private String getFullSizeImageURL(HttpServletRequest aRequest) {
@@ -437,13 +407,11 @@ public class ImageServlet extends HttpServlet implements Constants {
     // return url.append("view/fullSize/").toString();
     // }
 
-    private void checkImageCache(String aID, String aLevel, String aScale,
-            String aRegion, float aRotation, HttpServletRequest aRequest,
-            HttpServletResponse aResponse) throws IOException, ServletException {
+    private void checkImageCache(String aID, String aLevel, String aScale, String aRegion, float aRotation,
+            HttpServletRequest aRequest, HttpServletResponse aResponse) throws IOException, ServletException {
         PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
         PairtreeObject cacheObject = cacheDir.getObject(aID);
-        String fileName =
-                CacheUtils.getFileName(aLevel, aScale, aRegion, aRotation);
+        String fileName = CacheUtils.getFileName(aLevel, aScale, aRegion, aRotation);
         File imageFile = new File(cacheObject, fileName);
 
         if (imageFile.exists()) {
@@ -463,15 +431,13 @@ public class ImageServlet extends HttpServlet implements Constants {
                 LOGGER.debug("{} not found in cache", imageFile);
             }
 
-            serveNewImage(aID, aLevel, aRegion, aScale, aRotation, aRequest,
-                    aResponse);
+            serveNewImage(aID, aLevel, aRegion, aScale, aRotation, aRequest, aResponse);
             cacheNewImage(aRequest, aID + "_" + fileName, imageFile);
         }
     }
 
-    private void serveNewImage(String aID, String aLevel, String aRegion,
-            String aScale, float aRotation, HttpServletRequest aRequest,
-            HttpServletResponse aResponse) throws IOException, ServletException {
+    private void serveNewImage(String aID, String aLevel, String aRegion, String aScale, float aRotation,
+            HttpServletRequest aRequest, HttpServletResponse aResponse) throws IOException, ServletException {
         String id = URLEncoder.encode(aID, CHARSET);
         RequestDispatcher dispatcher;
         String[] values;
@@ -479,19 +445,12 @@ public class ImageServlet extends HttpServlet implements Constants {
 
         // Cast floats as integers because that's what djatoka expects
         if (aScale == null) {
-            values =
-                    new String[] {
-                        id, DEFAULT_VIEW_FORMAT, aLevel,
-                        Integer.toString((int) aRotation)
-                    };
+            values = new String[] { id, DEFAULT_VIEW_FORMAT, aLevel, Integer.toString((int) aRotation) };
             url = StringUtils.format(IMAGE_URL, values);
         } else {
             values =
-                    new String[] {
-                        id, DEFAULT_VIEW_FORMAT, aRegion,
-                        aScale.equals("full") ? "1.0" : aScale,
-                        Integer.toString((int) aRotation)
-                    };
+                    new String[] { id, DEFAULT_VIEW_FORMAT, aRegion, aScale.equals("full") ? "1.0" : aScale,
+                        Integer.toString((int) aRotation) };
             url = StringUtils.format(REGION_URL, values);
         }
 
@@ -505,8 +464,7 @@ public class ImageServlet extends HttpServlet implements Constants {
         dispatcher.forward(aRequest, aResponse);
     }
 
-    private void cacheNewImage(HttpServletRequest aRequest, String aKey,
-            File aDestFile) {
+    private void cacheNewImage(HttpServletRequest aRequest, String aKey, File aDestFile) {
         HttpSession session = aRequest.getSession();
         String fileName = (String) session.getAttribute(aKey);
 
@@ -518,35 +476,28 @@ public class ImageServlet extends HttpServlet implements Constants {
             // to the freelib-djatoka cache (which is pure-FS/Pairtree-based)
             if (cachedFile.exists() && aDestFile != null) {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Renaming cache file from {} to {}",
-                            cachedFile, aDestFile);
+                    LOGGER.debug("Renaming cache file from {} to {}", cachedFile, aDestFile);
                 }
 
                 if (!cachedFile.renameTo(aDestFile) && LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Unable to move cache file: {}", cachedFile);
                 } else {
                     // This is the temp file cache used by the OpenURL layer
-                    if (!OpenURLJP2KService.removeFromTileCache(cacheName) &&
-                            LOGGER.isDebugEnabled()) {
-                        LOGGER.debug(
-                                "Unable to remove OpenURL cache file link: {}",
-                                fileName);
+                    if (!OpenURLJP2KService.removeFromTileCache(cacheName) && LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Unable to remove OpenURL cache file link: {}", fileName);
                     } else {
                         session.removeAttribute(aKey);
                         session.removeAttribute(fileName);
                     }
                 }
             } else if (LOGGER.isWarnEnabled() && !cachedFile.exists()) {
-                LOGGER.warn(
-                        "Session had a cache file ({}), but it didn't exist",
-                        cachedFile.getAbsoluteFile());
+                LOGGER.warn("Session had a cache file ({}), but it didn't exist", cachedFile.getAbsoluteFile());
             } else if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Location for destination cache file was null");
             }
         } else if (LOGGER.isWarnEnabled()) {
-            LOGGER.warn(
-                    "Couldn't cache ({} = {}); session lacked new image information",
-                    aKey, aDestFile.getAbsolutePath());
+            LOGGER.warn("Couldn't cache ({} = {}); session lacked new image information", aKey, aDestFile
+                    .getAbsolutePath());
         }
     }
 
@@ -589,9 +540,8 @@ public class ImageServlet extends HttpServlet implements Constants {
                     if (coords.length == 4) {
                         coordArray = coords;
                     } else if (LOGGER.isWarnEnabled()) {
-                        LOGGER.warn(
-                                "Invalid coordinates ({}) requested in: {}",
-                                StringUtils.toString(coords, ','), aPathInfo);
+                        LOGGER.warn("Invalid coordinates ({}) requested in: {}", StringUtils.toString(coords, ','),
+                                aPathInfo);
                         // TODO: throw exception?
                     }
                 }

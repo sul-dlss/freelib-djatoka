@@ -21,10 +21,10 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 /**
- * A <em>Descriptor</em> that specifies properties of an <em>Entity</em> by the
- * combination of: (1) a URI reference to a <em>Metadata
- * Format</em> and (2) a particular instance of metadata about the
- * <em>Entity</em>, expressed according to the indicated <em>Metadata
+ * A <em>Descriptor</em> that specifies properties of an <em>Entity</em> by the combination of: (1) a URI reference to a
+ * <em>Metadata
+ * Format</em> and (2) a particular instance of metadata about the <em>Entity</em>, expressed according to the indicated
+ * <em>Metadata
  * Format</em>.
  * 
  * @author Jeffrey A. Young
@@ -41,8 +41,7 @@ public class ByValueMetadataImpl implements ByValueMetadata {
      * 
      * @param val_fmt A URI reference to a <em>Metadata Format</em>.
      * @param prefix The KEV key prefix to be extracted from the entrySet
-     * @param entrySet A set of all KEV keys from which a subset will be
-     *        extracted according to the specified prefix.
+     * @param entrySet A set of all KEV keys from which a subset will be extracted according to the specified prefix.
      */
     public ByValueMetadataImpl(URI val_fmt, String prefix, Set entrySet) {
         this.val_fmt = val_fmt;

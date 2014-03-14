@@ -48,8 +48,7 @@ import kdu_jni.Kdu_coords;
 import kdu_jni.Kdu_dims;
 
 /**
- * Uses Kakadu Java Native Interface to extract JP2 regions. This is modified
- * port of the kdu_expand app.
+ * Uses Kakadu Java Native Interface to extract JP2 regions. This is modified port of the kdu_expand app.
  * 
  * @author Ryan Chute
  */
@@ -60,8 +59,7 @@ public class KduExtractJNI implements IExtract {
     /**
      * Returns JPEG 2000 props in ImageRecord
      * 
-     * @param r ImageRecord containing absolute file path of JPEG 2000 image
-     *        file.
+     * @param r ImageRecord containing absolute file path of JPEG 2000 image file.
      * @return a populated ImageRecord object
      * @throws DjatokaException
      */
@@ -120,11 +118,8 @@ public class KduExtractJNI implements IExtract {
     public final String[] getXMLBox(ImageRecord r) throws DjatokaException {
         String[] xml = null;
         try {
-            if (r.getImageFile() == null && r.getObject() != null &&
-                    r.getObject() instanceof InputStream) {
-                xml =
-                        new JP2ImageInfo((InputStream) r.getObject())
-                                .getXmlDocs();
+            if (r.getImageFile() == null && r.getObject() != null && r.getObject() instanceof InputStream) {
+                xml = new JP2ImageInfo((InputStream) r.getObject()).getXmlDocs();
             } else {
                 xml = new JP2ImageInfo(new File(r.getImageFile())).getXmlDocs();
             }
@@ -138,15 +133,12 @@ public class KduExtractJNI implements IExtract {
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
      * 
      * @param input absolute file path of JPEG 2000 image file.
-     * @param params DjatokaDecodeParam instance containing region and transform
-     *        settings.
+     * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
      * @throws DjatokaException
      */
-    public BufferedImage process(String input, DjatokaDecodeParam params)
-            throws DjatokaException {
-        KduExtractProcessorJNI decoder =
-                new KduExtractProcessorJNI(input, params);
+    public BufferedImage process(String input, DjatokaDecodeParam params) throws DjatokaException {
+        KduExtractProcessorJNI decoder = new KduExtractProcessorJNI(input, params);
         return decoder.extract();
     }
 
@@ -154,40 +146,31 @@ public class KduExtractJNI implements IExtract {
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
      * 
      * @param input InputStream containing a JPEG 2000 image bitstream.
-     * @param params DjatokaDecodeParam instance containing region and transform
-     *        settings.
+     * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
      * @throws DjatokaException
      */
-    public BufferedImage process(InputStream input, DjatokaDecodeParam params)
-            throws DjatokaException {
-        KduExtractProcessorJNI decoder =
-                new KduExtractProcessorJNI(input, params);
+    public BufferedImage process(InputStream input, DjatokaDecodeParam params) throws DjatokaException {
+        KduExtractProcessorJNI decoder = new KduExtractProcessorJNI(input, params);
         return decoder.extract();
     }
 
     /**
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
      * 
-     * @param input ImageRecord wrapper containing file reference, inputstream,
-     *        etc.
-     * @param params DjatokaDecodeParam instance containing region and transform
-     *        settings.
+     * @param input ImageRecord wrapper containing file reference, inputstream, etc.
+     * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
      * @throws DjatokaException
      */
-    public BufferedImage process(ImageRecord input, DjatokaDecodeParam params)
-            throws DjatokaException {
+    public BufferedImage process(ImageRecord input, DjatokaDecodeParam params) throws DjatokaException {
         if (input.getImageFile() != null) {
             return process(input, params);
-        } else if (input.getObject() != null &&
-                (input.getObject() instanceof InputStream)) {
+        } else if (input.getObject() != null && (input.getObject() instanceof InputStream)) {
             return process((InputStream) input.getObject(), params);
         } else {
-            throw new DjatokaException(
-                    "File not defined and Input Object Type " +
-                            input.getObject().getClass().getName() +
-                            " is not supported");
+            throw new DjatokaException("File not defined and Input Object Type " +
+                    input.getObject().getClass().getName() + " is not supported");
         }
     }
 }

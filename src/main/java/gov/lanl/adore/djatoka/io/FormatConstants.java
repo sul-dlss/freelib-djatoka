@@ -24,8 +24,8 @@
 package gov.lanl.adore.djatoka.io;
 
 /**
- * Format Writer/Reader Constants. Defines default image writer implementations
- * and mimetypes / ext. associated with image format.
+ * Format Writer/Reader Constants. Defines default image writer implementations and mimetypes / ext. associated with
+ * image format.
  * 
  * @author Ryan Chute
  */
@@ -52,9 +52,6 @@ public interface FormatConstants {
 
     /** TIFF Alternate Identifier Constant - "tif" */
     public static final String FORMAT_ID_TIF = "tif";
-
-    /** GIF Identifier Constant - "gif" */
-    public static final String FORMAT_ID_GIF = "gif";
 
     /** Additional JPEG 2000 Identifiers */
     public static final String FORMAT_ID_JPF = "jpf";
@@ -91,9 +88,6 @@ public interface FormatConstants {
     /** TIFF Mimetype Constant - "image/tiff" */
     public static final String FORMAT_MIMEYPE_TIFF = "image/tiff";
 
-    /** GIF Mimetype Constant - "image/gif" */
-    public static final String FORMAT_MIMEYPE_GIF = "image/gif";
-
     /** Reader Suffix Constant - "_reader" */
     public static final String FORMAT_READER_SUFFIX = "_reader";
 
@@ -102,23 +96,15 @@ public interface FormatConstants {
 
     // default implementations for define formats
     /** Default JPEG Writer - "gov.lanl.adore.djatoka.io.writer.JPGWriter" */
-    public static final String DEFAULT_JPEG_WRITER =
-            "gov.lanl.adore.djatoka.io.writer.JPGWriter";
+    public static final String DEFAULT_JPEG_WRITER = "gov.lanl.adore.djatoka.io.writer.JPGWriter";
 
     /** Default JP2 Writer - "gov.lanl.adore.djatoka.io.writer.JP2Writer" */
-    public static final String DEFAULT_JP2_WRITER =
-            "gov.lanl.adore.djatoka.io.writer.JP2Writer";
+    public static final String DEFAULT_JP2_WRITER = "gov.lanl.adore.djatoka.io.writer.JP2Writer";
 
     /** Default PNG Writer - "gov.lanl.adore.djatoka.io.writer.PNGWriter" */
-    public static final String DEFAULT_PNG_WRITER =
-            "gov.lanl.adore.djatoka.io.writer.PNGWriter";
+    public static final String DEFAULT_PNG_WRITER = "gov.lanl.adore.djatoka.io.writer.PNGWriter";
 
     /** Default TIFF Writer - "gov.lanl.adore.djatoka.io.writer.TIFWriter" */
-    public static final String DEFAULT_TIFF_WRITER =
-            "gov.lanl.adore.djatoka.io.writer.TIFWriter";
-
-    /** Default GIF Writer - "gov.lanl.adore.djatoka.io.writer.GIFWriter" */
-    public static final String DEFAULT_GIF_WRITER =
-            "gov.lanl.adore.djatoka.io.writer.GIFWriter";
+    public static final String DEFAULT_TIFF_WRITER = "gov.lanl.adore.djatoka.io.writer.TIFWriter";
 
 }

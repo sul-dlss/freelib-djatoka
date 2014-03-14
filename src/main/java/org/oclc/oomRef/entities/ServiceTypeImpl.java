@@ -14,9 +14,8 @@ package org.oclc.oomRef.entities;
 import info.openurl.oom.entities.ServiceType;
 
 /**
- * The resource that defines the type of service (pertaining to the
- * <em>Referent</em>) that is requested; an <em>Entity</em> of the
- * <em>ContextObject</em>.
+ * The resource that defines the type of service (pertaining to the <em>Referent</em>) that is requested; an
+ * <em>Entity</em> of the <em>ContextObject</em>.
  * 
  * @author Jeffrey A. Young
  */

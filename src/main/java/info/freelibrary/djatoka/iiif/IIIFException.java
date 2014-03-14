@@ -18,8 +18,7 @@ public class IIIFException extends Exception {
     }
 
     /**
-     * Creates a new <code>IIIFException</code> using the supplied exception
-     * message.
+     * Creates a new <code>IIIFException</code> using the supplied exception message.
      * 
      * @param aMessage The detailed exception message
      */
@@ -28,8 +27,7 @@ public class IIIFException extends Exception {
     }
 
     /**
-     * Creates a new <code>IIIFException</code> with the supplied exception as
-     * the cause.
+     * Creates a new <code>IIIFException</code> with the supplied exception as the cause.
      * 
      * @param aException The exception that was the cause of this exception
      */
@@ -38,8 +36,7 @@ public class IIIFException extends Exception {
     }
 
     /**
-     * Creates a new <code>IIIFException</code> with the supplied detailed
-     * exception message and parent exception.
+     * Creates a new <code>IIIFException</code> with the supplied detailed exception message and parent exception.
      * 
      * @param aMessage The detailed exception message
      * @param aException The exception that was the cause of this exception

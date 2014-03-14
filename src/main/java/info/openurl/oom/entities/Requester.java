@@ -8,11 +8,11 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package info.openurl.oom.entities;
 
 /**
- * Requester is a fancy word meaning "who". In other words,
- * <em>who</em> issued the request? A Transport might obtain
+ * Requester is a fancy word meaning "who". In other words, <em>who</em> issued the request? A Transport might obtain
  * this from the HttpServletRequest.getRemoteUser() method.
  * 
  * @author Jeffrey A. Young

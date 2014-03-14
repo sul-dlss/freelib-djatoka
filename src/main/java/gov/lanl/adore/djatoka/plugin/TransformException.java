@@ -42,8 +42,7 @@ public class TransformException extends DjatokaException {
     }
 
     /**
-     * Creates a transform exception from the supplied Throwable using the
-     * supplied message.
+     * Creates a transform exception from the supplied Throwable using the supplied message.
      * 
      * @param message The exception message
      * @param cause The underlying exception

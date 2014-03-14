@@ -44,8 +44,7 @@ public class FormatIOException extends DjatokaException {
     }
 
     /**
-     * Constructs a format IO exception from the supplied Throwable and using
-     * the supplied message.
+     * Constructs a format IO exception from the supplied Throwable and using the supplied message.
      * 
      * @param aMessage The exception message
      * @param aCause The underlying exception

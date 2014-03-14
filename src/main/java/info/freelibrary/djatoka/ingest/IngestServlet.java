@@ -24,25 +24,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Allows ingest jobs to be triggered from a Web interface. It can operate in
- * "unattended" or "attended" (the default) mode. If it runs attended, the
- * ingestion process doesn't finish until the user reloads the page and sees
- * "Finished # ingested." When run in unattended mode, the job finishes when
- * it's done, BUT there is still the final notice available through the web
- * interface; so, when you come after a job that has been run in "unattended"
- * mode, you'll see the notice about "Finished # ingested." You can ignore it
- * and start a new job of your own with a new page reload. Your job has been
- * started when you see, "Ingesting... reload to see progress." A side-effect of
- * this is that when you want to run in unattended mode, you need to make sure
- * the response you get starts with "Ingesting" rather than "Finished" (which
- * doesn't start a new job but notifies you the old one has completed).
+ * Allows ingest jobs to be triggered from a Web interface. It can operate in "unattended" or "attended" (the default)
+ * mode. If it runs attended, the ingestion process doesn't finish until the user reloads the page and sees
+ * "Finished # ingested." When run in unattended mode, the job finishes when it's done, BUT there is still the final
+ * notice available through the web interface; so, when you come after a job that has been run in "unattended" mode,
+ * you'll see the notice about "Finished # ingested." You can ignore it and start a new job of your own with a new page
+ * reload. Your job has been started when you see, "Ingesting... reload to see progress." A side-effect of this is that
+ * when you want to run in unattended mode, you need to make sure the response you get starts with "Ingesting" rather
+ * than "Finished" (which doesn't start a new job but notifies you the old one has completed).
  * 
  * @author <a href="mailto:ksclarke@gmail.com>Kevin S. Clarke</a>
  */
 public class IngestServlet extends HttpServlet {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(IngestServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IngestServlet.class);
 
     /**
      * IngestServlet's <code>serialVersionUID</code>.
@@ -52,8 +47,8 @@ public class IngestServlet extends HttpServlet {
     private static final String PROPERTIES_FILE = "djatoka-properties.xml";
 
     @Override
-    protected void doGet(HttpServletRequest aRequest,
-            HttpServletResponse aResponse) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse) throws IOException,
+            ServletException {
         String runUnattended = aRequest.getParameter("unattended");
         ServletContext servletContext = getServletContext();
 
@@ -63,8 +58,7 @@ public class IngestServlet extends HttpServlet {
             toBrowser.write(ingestFileSystem(runUnattended, servletContext));
             toBrowser.close();
         } catch (IOException details) {
-            aResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    details.getMessage());
+            aResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, details.getMessage());
         }
     }
 
@@ -83,8 +77,7 @@ public class IngestServlet extends HttpServlet {
         }
     }
 
-    private String ingestFileSystem(String aUnattendedRun,
-            ServletContext aServletContext) throws IOException {
+    private String ingestFileSystem(String aUnattendedRun, ServletContext aServletContext) throws IOException {
         String dir = aServletContext.getRealPath("/WEB-INF/classes") + "/";
         String propertiesFile = dir + PROPERTIES_FILE;
         boolean unattended = aUnattendedRun != null ? true : false;
@@ -115,23 +108,20 @@ public class IngestServlet extends HttpServlet {
                     context.removeAttribute("ingest");
                     thread.cleanUp();
 
-                    return StringUtils.format("Finished: {} ingested{}",
-                            Integer.toString(count), data.toString());
+                    return StringUtils.format("Finished: {} ingested{}", Integer.toString(count), data.toString());
                 }
 
                 return "Ingesting... at number " + count + data;
             }
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Looking for '{}' files in {}", StringUtils
-                        .toString(exts, ' '), src.getAbsolutePath());
+                LOGGER.debug("Looking for '{}' files in {}", StringUtils.toString(exts, ' '), src.getAbsolutePath());
             }
 
             if (src.exists()) {
                 if (!src.isDirectory() || !src.canRead()) {
-                    throw new IOException(StringUtils.format(
-                            "{} cannot be read or is not a dir", src
-                                    .getAbsolutePath()));
+                    throw new IOException(StringUtils.format("{} cannot be read or is not a dir", src
+                            .getAbsolutePath()));
                 } else {
                     if (unattended) {
                         thread = new IngestThread(src, dest, exts, p, true);
@@ -149,9 +139,8 @@ public class IngestServlet extends HttpServlet {
                     return ""; // no-one to see it anyway
                 }
             } else {
-                throw new FileNotFoundException(StringUtils.format(
-                        "Supplied source directory didn't exist: {}", src
-                                .getAbsolutePath()));
+                throw new FileNotFoundException(StringUtils.format("Supplied source directory didn't exist: {}", src
+                        .getAbsolutePath()));
             }
         } catch (Exception details) {
             throw new IOException(details.getMessage(), details);

@@ -24,8 +24,8 @@ package gov.lanl.adore.djatoka;
 import java.util.Properties;
 
 /**
- * Encode Parameters for djatoka compression. Defines compression parameters
- * (i.e. levels, slope, layers, etc.) to be performed during extraction of JP2.
+ * Encode Parameters for djatoka compression. Defines compression parameters (i.e. levels, slope, layers, etc.) to be
+ * performed during extraction of JP2.
  * 
  * @author Ryan Chute
  * @author Kevin S. Clarke
@@ -73,27 +73,19 @@ public class DjatokaEncodeParam implements DjatokaConstants {
             } else {
                 slope = props.getProperty("slope", DEFAULT_SLOPE);
             }
-            layers =
-                    props.getProperty("Clayers") != null ? Integer
-                            .parseInt(props.getProperty("Clayers")) : layers;
-            levels =
-                    props.getProperty("Clevels") != null ? Integer
-                            .parseInt(props.getProperty("Clevels")) : levels;
+            layers = props.getProperty("Clayers") != null ? Integer.parseInt(props.getProperty("Clayers")) : layers;
+            levels = props.getProperty("Clevels") != null ? Integer.parseInt(props.getProperty("Clevels")) : levels;
             useReversible =
-                    props.getProperty("Creversible") != null ? Boolean
-                            .parseBoolean(props.getProperty("Creversible"))
+                    props.getProperty("Creversible") != null ? Boolean.parseBoolean(props.getProperty("Creversible"))
                             : useReversible;
             precincts = props.getProperty("Cprecincts", precincts);
             progressionOrder = props.getProperty("Corder", progressionOrder);
             insertPLT =
-                    props.getProperty("ORGgen_plt") != null ? Boolean
-                            .parseBoolean(props.getProperty("ORGgen_plt"))
+                    props.getProperty("ORGgen_plt") != null ? Boolean.parseBoolean(props.getProperty("ORGgen_plt"))
                             : insertPLT;
             packetDivision = props.getProperty("ORGtparts", packetDivision);
             codeBlockSize = props.getProperty("Cblk", codeBlockSize);
-            jp2ColorSpace =
-                    props.getProperty("djatoka.ingest.jp2.color.space",
-                            jp2ColorSpace);
+            jp2ColorSpace = props.getProperty("djatoka.ingest.jp2.color.space", jp2ColorSpace);
 
             // Just in case someone removes the config from the pom.xml file
             if (jp2ColorSpace.equals("${djatoka.ingest.color.space}")) {
@@ -142,8 +134,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Returns the slope distortion slope, that applies a compression rate based
-     * on the content of the image.
+     * Returns the slope distortion slope, that applies a compression rate based on the content of the image.
      * 
      * @return the slope distortion slope
      */
@@ -152,8 +143,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Sets the slope distortion slope, that applies a compression rate based on
-     * the content of the image.
+     * Sets the slope distortion slope, that applies a compression rate based on the content of the image.
      * 
      * @param slope the slope distortion slope
      */
@@ -165,8 +155,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Returns the number of quality layers, must correspond with number of
-     * slope values.
+     * Returns the number of quality layers, must correspond with number of slope values.
      * 
      * @return the number of quality layers
      */
@@ -175,8 +164,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Sets the number of quality layers, must correspond with number of slope
-     * values.
+     * Sets the number of quality layers, must correspond with number of slope values.
      * 
      * @param layers the number of quality layers
      */
@@ -203,8 +191,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Returns indicator of whether or not a reversible compression wavelet
-     * should be used.
+     * Returns indicator of whether or not a reversible compression wavelet should be used.
      * 
      * @return use reversible wavelet
      */
@@ -213,8 +200,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Sets indicator of whether or not a reversible compression wavelet should
-     * be used.
+     * Sets indicator of whether or not a reversible compression wavelet should be used.
      * 
      * @param useReversible use reversible wavelet
      */
@@ -232,8 +218,8 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Sets the size of the layer packets. Default values improved random access
-     * performance. Format: "{256,256},{256,256},{128,128}"
+     * Sets the size of the layer packets. Default values improved random access performance. Format:
+     * "{256,256},{256,256},{128,128}"
      * 
      * @param precincts the size of the layer packets.
      */
@@ -260,8 +246,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Returns indicator of whether or not packet organization header info
-     * should be included.
+     * Returns indicator of whether or not packet organization header info should be included.
      * 
      * @return include packet info
      */
@@ -270,8 +255,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Sets indicator of whether or not packet organization header info should
-     * be included.
+     * Sets indicator of whether or not packet organization header info should be included.
      * 
      * @param insertPLT include packet info
      */
@@ -280,8 +264,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Returns order of header information. Default values improve resolution
-     * access performance.
+     * Returns order of header information. Default values improve resolution access performance.
      * 
      * @return packet division order
      */
@@ -290,8 +273,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     }
 
     /**
-     * Sets order of header information. Default values improve resolution
-     * access performance.
+     * Sets order of header information. Default values improve resolution access performance.
      * 
      * @param packetDivision packet division order
      */

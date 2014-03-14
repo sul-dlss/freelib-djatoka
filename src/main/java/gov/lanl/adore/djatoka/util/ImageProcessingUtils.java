@@ -53,12 +53,10 @@ import org.slf4j.LoggerFactory;
  */
 public class ImageProcessingUtils {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ImageProcessingUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageProcessingUtils.class);
 
     /**
-     * Perform a rotation of the provided BufferedImage using degrees of 90,
-     * 180, or 270.
+     * Perform a rotation of the provided BufferedImage using degrees of 90, 180, or 270.
      * 
      * @param bi BufferedImage to be rotated
      * @param degree
@@ -88,8 +86,7 @@ public class ImageProcessingUtils {
         if (degree == 180) {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
-                    biFlip.setRGB(width - i - 1, height - j - 1, bi
-                            .getRGB(i, j));
+                    biFlip.setRGB(width - i - 1, height - j - 1, bi.getRGB(i, j));
                 }
             }
         }
@@ -109,8 +106,7 @@ public class ImageProcessingUtils {
     }
 
     /**
-     * Return the number of resolution levels the djatoka API will generate
-     * based on the provided pixel dimensions.
+     * Return the number of resolution levels the djatoka API will generate based on the provided pixel dimensions.
      * 
      * @param w max pixel width
      * @param h max pixel height
@@ -131,8 +127,7 @@ public class ImageProcessingUtils {
     }
 
     /**
-     * Return the resolution level the djatoka API will use to extract an image
-     * for scaling.
+     * Return the resolution level the djatoka API will use to extract an image for scaling.
      * 
      * @param w max pixel width
      * @param h max pixel height
@@ -153,26 +148,22 @@ public class ImageProcessingUtils {
     }
 
     /**
-     * Scale provided BufferedImage by the provided factor. A scaling factor
-     * value should be greater than 0 and less than 2. Note that scaling will
-     * impact performance and image quality.
+     * Scale provided BufferedImage by the provided factor. A scaling factor value should be greater than 0 and less
+     * than 2. Note that scaling will impact performance and image quality.
      * 
      * @param bi BufferedImage to be scaled.
      * @param scale positive scaling factor
      * @return scaled instance of provided BufferedImage
      */
     public static BufferedImage scale(BufferedImage bi, double scale) {
-        AffineTransformOp op =
-                new AffineTransformOp(AffineTransform.getScaleInstance(scale,
-                        scale), null);
+        AffineTransformOp op = new AffineTransformOp(AffineTransform.getScaleInstance(scale, scale), null);
         return op.filter(bi, null);
     }
 
     /**
-     * Scale provided BufferedImage to the specified width and height
-     * dimensions. If a provided dimension is 0, the aspect ratio is used to
-     * calculate a value. Also, if either contains -1, the positive value will
-     * be used as for the long side.
+     * Scale provided BufferedImage to the specified width and height dimensions. If a provided dimension is 0, the
+     * aspect ratio is used to calculate a value. Also, if either contains -1, the positive value will be used as for
+     * the long side.
      * 
      * @param bi BufferedImage to be scaled.
      * @param w width the image is to be scaled to.
@@ -222,9 +213,7 @@ public class ImageProcessingUtils {
         boolean isJP2 = false;
 
         try {
-            BufferedInputStream inStream =
-                    new BufferedInputStream(new FileInputStream(new File(
-                            aFilename)));
+            BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(new File(aFilename)));
             isJP2 = checkIfJp2(inStream);
             inStream.close();
         } catch (FileNotFoundException e) {
@@ -237,8 +226,8 @@ public class ImageProcessingUtils {
     }
 
     /**
-     * Read first 12 bytes from InputStream to determine if JP2 file. Note: Be
-     * sure to reset your stream after calling this method.
+     * Read first 12 bytes from InputStream to determine if JP2 file. Note: Be sure to reset your stream after calling
+     * this method.
      * 
      * @param in InputStream of possible JP2 codestream
      * @return true is JP2 compatible format
@@ -313,8 +302,7 @@ public class ImageProcessingUtils {
     }
 
     /**
-     * Populates a BufferedImage from a RenderedImage Source:
-     * http://www.jguru.com/faq/view.jsp?EID=114602
+     * Populates a BufferedImage from a RenderedImage Source: http://www.jguru.com/faq/view.jsp?EID=114602
      * 
      * @param img RenderedImage to be converted to BufferedImage
      * @return BufferedImage with complete raster data
@@ -326,8 +314,7 @@ public class ImageProcessingUtils {
         ColorModel cm = img.getColorModel();
         int width = img.getWidth();
         int height = img.getHeight();
-        WritableRaster raster =
-                cm.createCompatibleWritableRaster(width, height);
+        WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
         boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
         Hashtable properties = new Hashtable();
         String[] keys = img.getPropertyNames();
@@ -336,8 +323,7 @@ public class ImageProcessingUtils {
                 properties.put(keys[i], img.getProperty(keys[i]));
             }
         }
-        BufferedImage result =
-                new BufferedImage(cm, raster, isAlphaPremultiplied, properties);
+        BufferedImage result = new BufferedImage(cm, raster, isAlphaPremultiplied, properties);
         img.copyData(raster);
         return result;
     }

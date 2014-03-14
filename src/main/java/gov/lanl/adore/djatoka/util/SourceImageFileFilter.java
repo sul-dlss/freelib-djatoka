@@ -32,13 +32,13 @@ public class SourceImageFileFilter implements java.io.FileFilter {
      * 
      * @param f A file to filter in or out
      */
-    public boolean accept(File f) {
+    @Override
+    public boolean accept(final File f) {
         if (f.isDirectory()) {
             return true;
         }
-        String n = f.getName().toLowerCase();
-        return n.endsWith("tif") || n.endsWith("tiff") || n.endsWith("jpg") ||
-                n.endsWith("jpeg") || n.endsWith("png") || n.endsWith("gif") ||
-                n.endsWith("bmp");
+        final String n = f.getName().toLowerCase();
+        return n.endsWith("tif") || n.endsWith("tiff") || n.endsWith("jpg") || n.endsWith("jpeg") ||
+                n.endsWith("png") || n.endsWith("bmp");
     }
 }

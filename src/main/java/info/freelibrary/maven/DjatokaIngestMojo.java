@@ -60,11 +60,10 @@ public class DjatokaIngestMojo extends AbstractMojo {
 
     private static final String PAIRTREE_FS = "djatoka.jp2.data";
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(DjatokaIngestMojo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DjatokaIngestMojo.class);
 
-    private final XMLResourceBundle BUNDLE = (XMLResourceBundle) ResourceBundle
-            .getBundle("freelib-djatoka_messages", new XMLBundleControl());
+    private final XMLResourceBundle BUNDLE = (XMLResourceBundle) ResourceBundle.getBundle("freelib-djatoka_messages",
+            new XMLBundleControl());
 
     private long myMaxSize;
 
@@ -103,8 +102,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
 
             if (myCsvFile != null && myCsvFile.exists()) {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(BUNDLE.get("INGEST_CSV", myCsvFile,
-                            myCsvPathCol, myCsvIdCol));
+                    LOGGER.debug(BUNDLE.get("INGEST_CSV", myCsvFile, myCsvPathCol, myCsvIdCol));
                 }
 
                 ingestCSVFile(pairtree);
@@ -122,8 +120,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
         }
     }
 
-    private void ingestCSVFile(PairtreeRoot aPairtree) throws IOException,
-            MojoExecutionException {
+    private void ingestCSVFile(PairtreeRoot aPairtree) throws IOException, MojoExecutionException {
         CSVReader csvReader = null;
         Pattern jp2Pattern;
         Pattern tifPattern;
@@ -140,10 +137,8 @@ public class DjatokaIngestMojo extends AbstractMojo {
             csvReader = new CSVReader(new FileReader(myCsvFile));
 
             while ((csv = csvReader.readNext()) != null) {
-                if (myCsvIdCol >= csv.length || myCsvPathCol >= csv.length ||
-                        (myCsvIdCol == myCsvPathCol)) {
-                    throw new MojoExecutionException(BUNDLE.get("INGEST_INDEX",
-                            myCsvPathCol, myCsvIdCol, csv.length));
+                if (myCsvIdCol >= csv.length || myCsvPathCol >= csv.length || (myCsvIdCol == myCsvPathCol)) {
+                    throw new MojoExecutionException(BUNDLE.get("INGEST_INDEX", myCsvPathCol, myCsvIdCol, csv.length));
                 }
 
                 if (jp2Pattern.matcher(csv[myCsvPathCol]).matches()) {
@@ -167,8 +162,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
                                 storeJP2(csv[myCsvIdCol], jp2, aPairtree);
                             }
                         } else if (LOGGER.isErrorEnabled()) {
-                            LOGGER.error(BUNDLE.get("INGEST_MAXSIZE", tiff
-                                    .length(), myMaxSize));
+                            LOGGER.error(BUNDLE.get("INGEST_MAXSIZE", tiff.length(), myMaxSize));
                         }
                     } else if (LOGGER.isWarnEnabled()) {
                         LOGGER.warn(BUNDLE.get("INGEST_FILE_FAIL", tiff));
@@ -195,8 +189,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
         }
     }
 
-    private void storeJP2(String aID, File aJP2File, PairtreeRoot aPairtree)
-            throws IOException {
+    private void storeJP2(String aID, File aJP2File, PairtreeRoot aPairtree) throws IOException {
         PairtreeObject dir = aPairtree.getObject(aID);
         String filename = PairtreeUtils.encodeID(aID);
         File newJP2File = new File(dir, filename);
@@ -208,8 +201,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
         FileUtils.copy(aJP2File, newJP2File);
     }
 
-    private File convert(File aSource, DjatokaEncodeParam aParams)
-            throws IOException, MojoExecutionException {
+    private File convert(File aSource, DjatokaEncodeParam aParams) throws IOException, MojoExecutionException {
         File tmpFile = File.createTempFile("djatoka-", Constants.JP2_EXT);
         Properties properties = myProject.getProperties();
         String kakadu = properties.getProperty("LD_LIBRARY_PATH");
@@ -219,9 +211,8 @@ public class DjatokaIngestMojo extends AbstractMojo {
         }
 
         String command =
-                KduCompressExe.getKduCompressCommand(aSource.getAbsolutePath(),
-                        tmpFile.getAbsolutePath(), myParams).replaceFirst(
-                        "^null/", kakadu + "/");
+                KduCompressExe.getKduCompressCommand(aSource.getAbsolutePath(), tmpFile.getAbsolutePath(), myParams)
+                        .replaceFirst("^null/", kakadu + "/");
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(BUNDLE.get("INGEST_CONVERSION_COMMAND"), command);
@@ -249,15 +240,13 @@ public class DjatokaIngestMojo extends AbstractMojo {
             handler.waitFor();
         } catch (InterruptedException details) {
             if (LOGGER.isErrorEnabled()) {
-                LOGGER.error(BUNDLE.get("INGEST_INTERRUPTED", aSource, error
-                        .toString()));
+                LOGGER.error(BUNDLE.get("INGEST_INTERRUPTED", aSource, error.toString()));
             }
         }
 
         if (handler.getExitValue() != 0) {
             if (LOGGER.isErrorEnabled()) {
-                LOGGER.error(BUNDLE.get("INGEST_CONVERSION_FAILED", aSource,
-                        error.toString()));
+                LOGGER.error(BUNDLE.get("INGEST_CONVERSION_FAILED", aSource, error.toString()));
             }
 
             return null;

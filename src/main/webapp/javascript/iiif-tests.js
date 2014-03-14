@@ -4,7 +4,7 @@ $(document).ready(
       var protocol = url.attr('protocol'); /* Not currently using, but we will */
       var port = url.attr('port');
       var service = url.attr('host');
-      
+
       if (port) {
         service += (':' + port);
       }

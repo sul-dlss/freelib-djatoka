@@ -1,3 +1,4 @@
+
 package gov.lanl.util;
 
 /*
@@ -24,25 +25,23 @@ import java.io.OutputStream;
 // MODIFIED FROM ANT CVS HEAD:
 //    http://cvs.apache.org/viewcvs.cgi/ant/src/main/org/apache/tools/ant/taskdefs/
 /**
- * Used by <code>Execute</code> to handle input and output stream of
- * subprocesses.
- *
+ * Used by <code>Execute</code> to handle input and output stream of subprocesses.
+ * 
  * @since Ant 1.2
  */
 public interface ExecuteStreamHandler {
 
     /**
      * Install a handler for the input stream of the subprocess.
-     *
-     * @param os output stream to write to the standard input stream of the
-     *           subprocess
+     * 
+     * @param os output stream to write to the standard input stream of the subprocess
      * @throws IOException on error
      */
     void setProcessInputStream(OutputStream os) throws IOException;
 
     /**
      * Install a handler for the error stream of the subprocess.
-     *
+     * 
      * @param is input stream to read from the error stream from the subprocess
      * @throws IOException on error
      */
@@ -50,7 +49,7 @@ public interface ExecuteStreamHandler {
 
     /**
      * Install a handler for the output stream of the subprocess.
-     *
+     * 
      * @param is input stream to read from the error stream from the subprocess
      * @throws IOException on error
      */
@@ -58,6 +57,7 @@ public interface ExecuteStreamHandler {
 
     /**
      * Start handling of the streams.
+     * 
      * @throws IOException on error
      */
     void start() throws IOException;

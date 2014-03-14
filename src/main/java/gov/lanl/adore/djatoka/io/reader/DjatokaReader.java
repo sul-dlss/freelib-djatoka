@@ -23,28 +23,20 @@
 
 package gov.lanl.adore.djatoka.io.reader;
 
-import gov.lanl.adore.djatoka.io.FormatIOException;
-import gov.lanl.adore.djatoka.io.IReader;
-
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import gov.lanl.adore.djatoka.io.FormatIOException;
+import gov.lanl.adore.djatoka.io.IReader;
 
 /**
- * Djatoka Reader Wrapper - Uses known IReader impl. to read image InputStream
- * or image file path.
+ * Djatoka Reader Wrapper - Uses known IReader impl. to read image InputStream or image file path.
  * 
  * @author Ryan Chute
  */
 public class DjatokaReader implements IReader {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(DjatokaReader.class);
-
-    private ImageJReader imagejReader = new ImageJReader();
-
-    private ImageIOReader imageioReader = new ImageIOReader();
+    private final ImageJReader imagejReader = new ImageJReader();
 
     /**
      * Returns a BufferedImage instance for provided InputStream
@@ -53,20 +45,9 @@ public class DjatokaReader implements IReader {
      * @return a BufferedImage instance for source image InputStream
      * @throws FormatIOException
      */
-    public BufferedImage open(String input) throws FormatIOException {
-        BufferedImage bi = null;
-
-        bi = imagejReader.open(input);
-
-// FIXME: delete; this block can't be reached can it?
-//        if (bi == null) {
-//            LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
-//            bi = imageioReader.open(input);
-//        } else {
-//            LOGGER.debug("Reading the file using ImageJReader");
-//        }
-
-        return bi;
+    @Override
+    public BufferedImage open(final String input) throws FormatIOException {
+        return imagejReader.open(input);
     }
 
     /**
@@ -76,18 +57,19 @@ public class DjatokaReader implements IReader {
      * @return a BufferedImage instance for source image file
      * @throws FormatIOException
      */
-    public BufferedImage open(InputStream input) throws FormatIOException {
+    @Override
+    public BufferedImage open(final InputStream input) throws FormatIOException {
         BufferedImage bi = null;
 
         bi = imagejReader.open(input);
 
-// FIXME: delete; this block can't be reached can it?
-//        if (bi == null) {
-//            LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
-//            bi = imageioReader.open(input);
-//        } else {
-//            LOGGER.debug("Reading the file using ImageJReader");
-//        }
+        // FIXME: delete; this block can't be reached can it?
+        // if (bi == null) {
+        // LOGGER.debug("Unable to open using ImageJReader, trying ImageIOReader");
+        // bi = imageioReader.open(input);
+        // } else {
+        // LOGGER.debug("Reading the file using ImageJReader");
+        // }
 
         return bi;
     }

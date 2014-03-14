@@ -15,10 +15,8 @@ import java.net.URI;
 import java.net.URL;
 
 /**
- * This class represents the By-Reference Metadata Descriptor described in
- * section 5.2.2 of the <a
- * href="http://alcme.oclc.org/openurl/docs/pdf/z39_88_2004.pdf">OpenURL 1.0
- * spec</a>.
+ * This class represents the By-Reference Metadata Descriptor described in section 5.2.2 of the <a
+ * href="http://alcme.oclc.org/openurl/docs/pdf/z39_88_2004.pdf">OpenURL 1.0 spec</a>.
  * 
  * @author Jeffrey A. Young
  */

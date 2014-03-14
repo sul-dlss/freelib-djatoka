@@ -67,16 +67,14 @@ public class IOUtils {
         BufferedImage bi = new DjatokaReader().open(input);
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("BufferedImage created with h/w: {}/{}", bi
-                    .getHeight(), bi.getWidth());
+            LOGGER.debug("BufferedImage created with h/w: {}/{}", bi.getHeight(), bi.getWidth());
         }
 
         return createTempTiff(bi);
     }
 
     /**
-     * Create temporary tiff file from provided InputStream. Returns null if
-     * exception occurs.
+     * Create temporary tiff file from provided InputStream. Returns null if exception occurs.
      * 
      * @param input InputStream containing a image bitstream
      * @return File object for temporary image file
@@ -120,8 +118,7 @@ public class IOUtils {
         outStream.close();
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Temp tiff file created: {} (size: {})", tifFile,
-                    tifFile.length());
+            LOGGER.debug("Temp tiff file created: {} (size: {})", tifFile, tifFile.length());
         }
 
         return tifFile;
@@ -130,8 +127,7 @@ public class IOUtils {
     /**
      * Gets an InputStream object for provide URL location
      * 
-     * @param location File, http, or ftp URL to open connection and obtain
-     *        InputStream
+     * @param location File, http, or ftp URL to open connection and obtain InputStream
      * @return InputStream containing the requested resource
      * @throws Exception
      */
@@ -147,12 +143,10 @@ public class IOUtils {
                 huc.connect();
                 in = huc.getInputStream();
             } catch (MalformedURLException details) {
-                throw new Exception("A MalformedURLException occurred for " +
-                        location.toString(), details);
+                throw new Exception("A MalformedURLException occurred for " + location.toString(), details);
             } catch (IOException details) {
-                throw new Exception(
-                        "An IOException occurred attempting to connect to " +
-                                location.toString(), details);
+                throw new Exception("An IOException occurred attempting to connect to " + location.toString(),
+                        details);
             }
         }
 
@@ -177,22 +171,19 @@ public class IOUtils {
      * @return The output stream of the supplied input stream
      * @throws Exception If there is trouble getting the output stream
      */
-    public static OutputStream getOutputStream(InputStream ins)
-            throws Exception {
+    public static OutputStream getOutputStream(InputStream ins) throws Exception {
         return getOutputStream(ins, 1024 * 4);
     }
 
     /**
-     * Gets the output stream of the supplied input stream using the supplied
-     * buffer size.
+     * Gets the output stream of the supplied input stream using the supplied buffer size.
      * 
      * @param ins The input stream to get an output stream for
      * @param bufferSize The buffer size
      * @return The output stream of the supplied input stream
      * @throws Exception If there is trouble getting the output stream
      */
-    public static OutputStream getOutputStream(InputStream ins, int bufferSize)
-            throws Exception {
+    public static OutputStream getOutputStream(InputStream ins, int bufferSize) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[bufferSize];
         int count = 0;
@@ -357,15 +348,13 @@ public class IOUtils {
 
             int offset = 0;
             int numRead = 0;
-            while (offset < bytes.length &&
-                    (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+            while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
                 offset += numRead;
             }
 
             if (offset < bytes.length) {
                 is.close();
-                throw new IOException("Could not completely read file " +
-                        file.getName());
+                throw new IOException("Could not completely read file " + file.getName());
             }
 
             is.close();
@@ -415,8 +404,7 @@ public class IOUtils {
      * @param recursive Recursively search for files
      * @return ArrayList of File objects matching specified criteria.
      */
-    public static ArrayList<File> getFileList(String filePath,
-            FileFilter fileFilter, boolean recursive) {
+    public static ArrayList<File> getFileList(String filePath, FileFilter fileFilter, boolean recursive) {
         ArrayList<File> files = new ArrayList<File>();
         File file = new File(filePath);
         if (file.exists() && file.isDirectory()) {
@@ -425,8 +413,7 @@ public class IOUtils {
                 if (fa[i].isFile()) {
                     files.add(fa[i]);
                 } else if (recursive && fa[i].isDirectory()) {
-                    files.addAll(getFileList(fa[i].getAbsolutePath(),
-                            fileFilter, recursive));
+                    files.addAll(getFileList(fa[i].getAbsolutePath(), fileFilter, recursive));
                 }
             }
         } else if (file.exists() && file.isFile()) {

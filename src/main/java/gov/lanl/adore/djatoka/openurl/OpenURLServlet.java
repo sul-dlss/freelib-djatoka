@@ -11,17 +11,6 @@
 
 package gov.lanl.adore.djatoka.openurl;
 
-import info.openurl.oom.entities.ReferringEntity;
-
-import info.openurl.oom.ContextObject;
-
-import info.openurl.oom.OpenURLRequest;
-import info.openurl.oom.OpenURLRequestProcessor;
-import info.openurl.oom.OpenURLResponse;
-import info.openurl.oom.Transport;
-import info.openurl.oom.config.OpenURLConfig;
-import gov.lanl.util.AccessManager;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
@@ -41,6 +30,15 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gov.lanl.util.AccessManager;
+import info.openurl.oom.ContextObject;
+import info.openurl.oom.OpenURLRequest;
+import info.openurl.oom.OpenURLRequestProcessor;
+import info.openurl.oom.OpenURLResponse;
+import info.openurl.oom.Transport;
+import info.openurl.oom.config.OpenURLConfig;
+import info.openurl.oom.entities.ReferringEntity;
+
 /**
  * OpenURL Servlet - Added referrer and requester to Context Object
  * 
@@ -49,8 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class OpenURLServlet extends HttpServlet {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(OpenURLServlet.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(OpenURLServlet.class);
 
     /**
      * Initial version
@@ -70,7 +67,8 @@ public class OpenURLServlet extends HttpServlet {
      * 
      * @param config The configuration of the servlet
      */
-    public void init(ServletConfig config) throws ServletException {
+    @Override
+    public void init(final ServletConfig config) throws ServletException {
         super.init(config);
 
         try {
@@ -83,25 +81,24 @@ public class OpenURLServlet extends HttpServlet {
             // Construct a processor
             processor = openURLConfig.getProcessor();
 
-            ClassLoader cl = OpenURLServlet.class.getClassLoader();
-            java.net.URL url = cl.getResource("access.txt");
+            final ClassLoader cl = OpenURLServlet.class.getClassLoader();
+            final java.net.URL url = cl.getResource("access.txt");
             if (url != null) {
                 am = new AccessManager(url.getFile());
             }
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new ServletException(e.getMessage(), e);
         }
     }
 
     /**
-     * Extends HttpServlet Request to build OpenURL Request and Context Objects.
-     * The req.getHeader("referer") is used to add an OpenURL ReferringEntities
-     * and req.getRemoteAddr() is used to add a Requester.
+     * Extends HttpServlet Request to build OpenURL Request and Context Objects. The req.getHeader("referer") is used to
+     * add an OpenURL ReferringEntities and req.getRemoteAddr() is used to add a Requester.
      */
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException {
+    @Override
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException {
         try {
             // Try each Transport until someone takes responsibility
             OpenURLRequest openURLRequest = null;
@@ -111,8 +108,7 @@ public class OpenURLServlet extends HttpServlet {
             }
 
             if (openURLRequest == null) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                        "Invalid Request");
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Request");
                 return;
             }
 
@@ -123,36 +119,35 @@ public class OpenURLServlet extends HttpServlet {
                 }
 
                 try {
-                    String url =
-                            ((java.net.URI) openURLRequest.getContextObjects()[0]
-                                    .getReferent().getDescriptors()[0])
+                    final String url =
+                            ((java.net.URI) openURLRequest.getContextObjects()[0].getReferent().getDescriptors()[0])
                                     .toASCIIString();
 
                     if (url.startsWith("http") || url.startsWith("ftp")) {
                         if (!am.checkAccess(new URL(url).getHost())) {
-                            int status = HttpServletResponse.SC_FORBIDDEN;
+                            final int status = HttpServletResponse.SC_FORBIDDEN;
                             resp.sendError(status);
                             return;
                         }
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
 
             // rchute: Add referrer for possible extension processing
             if (req.getHeader("referer") != null) {
-                ContextObject[] coa = openURLRequest.getContextObjects();
-                ReferringEntity[] rea = coa[0].getReferringEntities();
+                final ContextObject[] coa = openURLRequest.getContextObjects();
+                final ReferringEntity[] rea = coa[0].getReferringEntities();
                 rea[0].addDescriptor(req.getHeader("referer"));
             }
 
             // rchute: Add requester for possible extension processing
-            ContextObject[] coa = openURLRequest.getContextObjects();
+            final ContextObject[] coa = openURLRequest.getContextObjects();
             coa[0].getRequesters()[0].addDescriptor(req.getRemoteAddr());
 
             // Process the ContextObjects
-            OpenURLResponse result = processor.resolve(openURLRequest);
+            final OpenURLResponse result = processor.resolve(openURLRequest);
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("OpenURLRequestProcessor resolving to a result");
@@ -169,7 +164,7 @@ public class OpenURLServlet extends HttpServlet {
                 status = HttpServletResponse.SC_NOT_FOUND;
             } else {
                 status = result.getStatus();
-                Cookie[] cookies = result.getCookies();
+                final Cookie[] cookies = result.getCookies();
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("OpenURLRequestProcessor status: {}", status);
@@ -181,31 +176,30 @@ public class OpenURLServlet extends HttpServlet {
                     }
                 }
 
-                Map sessionMap = result.getSessionMap();
+                final Map<?, ?> sessionMap = result.getSessionMap();
 
                 if (sessionMap != null) {
-                    HttpSession session = req.getSession(true);
-                    Iterator iter = sessionMap.entrySet().iterator();
+                    final HttpSession session = req.getSession(true);
+                    final Iterator<?> iter = sessionMap.entrySet().iterator();
 
                     while (iter.hasNext()) {
-                        Map.Entry entry = (Entry) iter.next();
-                        String key = (String) entry.getKey();
-                        String value = (String) entry.getValue();
+                        final Map.Entry<?, ?> entry = (Entry<?, ?>) iter.next();
+                        final String key = (String) entry.getKey();
+                        final String value = (String) entry.getValue();
 
                         session.setAttribute(key, value);
                     }
                 }
 
-                Map headerMap = result.getHeaderMap();
+                final Map<?, ?> headerMap = result.getHeaderMap();
 
                 if (headerMap != null) {
-                    Iterator iter = headerMap.entrySet().iterator();
+                    final Iterator<?> iter = headerMap.entrySet().iterator();
 
                     while (iter.hasNext()) {
-                        Map.Entry entry = (Entry) iter.next();
+                        final Map.Entry<?, ?> entry = (Entry<?, ?>) iter.next();
 
-                        resp.setHeader((String) entry.getKey(), (String) entry
-                                .getValue());
+                        resp.setHeader((String) entry.getKey(), (String) entry.getValue());
                     }
                 }
             }
@@ -213,8 +207,7 @@ public class OpenURLServlet extends HttpServlet {
             // Allow the processor to generate a variety of response types
             switch (status) {
                 case HttpServletResponse.SC_MOVED_TEMPORARILY:
-                    resp.sendRedirect(resp.encodeRedirectURL(result
-                            .getRedirectURL()));
+                    resp.sendRedirect(resp.encodeRedirectURL(result.getRedirectURL()));
                     break;
                 case HttpServletResponse.SC_SEE_OTHER:
                 case HttpServletResponse.SC_MOVED_PERMANENTLY:
@@ -222,13 +215,12 @@ public class OpenURLServlet extends HttpServlet {
                     resp.setHeader("Location", result.getRedirectURL());
 
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Redirect URL: {}", result
-                                .getRedirectURL());
+                        LOGGER.debug("Redirect URL: {}", result.getRedirectURL());
                     }
 
                     break;
                 case HttpServletResponse.SC_NOT_FOUND:
-                    String id = req.getParameter("rft_id");
+                    final String id = req.getParameter("rft_id");
                     resp.sendError(status, id != null ? id + " not found" : "");
 
                     if (LOGGER.isDebugEnabled()) {
@@ -237,13 +229,13 @@ public class OpenURLServlet extends HttpServlet {
 
                     break;
                 default:
-                    OutputStream out = resp.getOutputStream();
+                    final OutputStream out = resp.getOutputStream();
 
                     resp.setStatus(status);
                     resp.setContentType(result.getContentType());
 
-                    InputStream is = result.getInputStream();
-                    byte[] bytes = new byte[1024];
+                    final InputStream is = result.getInputStream();
+                    final byte[] bytes = new byte[1024];
                     int len;
 
                     while ((len = is.read(bytes)) != -1) {
@@ -253,9 +245,9 @@ public class OpenURLServlet extends HttpServlet {
                     out.close();
                     break;
             }
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             LOGGER.error(e.getMessage(), e);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             LOGGER.debug(e.getMessage(), e);
 
             // throw new ServletException(e.getMessage(), e);
@@ -263,8 +255,8 @@ public class OpenURLServlet extends HttpServlet {
         }
     }
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException {
+    @Override
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException {
         doGet(req, resp);
     }
 }

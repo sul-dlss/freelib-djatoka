@@ -43,8 +43,7 @@ public class HelloWorld implements Service {
      * @param classConfig
      * @throws TransformerException
      */
-    public HelloWorld(OpenURLConfig openURLConfig, ClassConfig classConfig)
-            throws TransformerException {
+    public HelloWorld(OpenURLConfig openURLConfig, ClassConfig classConfig) throws TransformerException {
         this.something = classConfig.getArg("something");
     }
 
@@ -73,16 +72,12 @@ public class HelloWorld implements Service {
      * @param openURLRequest An OpenURL request
      * @param processor An OpenURL request processor
      */
-    public OpenURLResponse resolve(ServiceType serviceType,
-            ContextObject contextObject, OpenURLRequest openURLRequest,
-            OpenURLRequestProcessor processor)
-            throws UnsupportedEncodingException {
-        String[] privateData =
-                (String[]) contextObject.getReferent().getDescriptors(
-                        String.class);
+    public OpenURLResponse resolve(ServiceType serviceType, ContextObject contextObject,
+            OpenURLRequest openURLRequest, OpenURLRequestProcessor processor) throws UnsupportedEncodingException {
+        String[] privateData = (String[]) contextObject.getReferent().getDescriptors(String.class);
         String name = privateData[0];
-        return new OpenURLResponse(HttpServletResponse.SC_OK,
-                "text/plain; charset=utf-8", sayHello(name).getBytes("UTF-8"));
+        return new OpenURLResponse(HttpServletResponse.SC_OK, "text/plain; charset=utf-8", sayHello(name).getBytes(
+                "UTF-8"));
     }
 
 }

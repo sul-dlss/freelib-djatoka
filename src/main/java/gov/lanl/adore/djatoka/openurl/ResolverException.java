@@ -44,8 +44,7 @@ public class ResolverException extends DjatokaException {
     }
 
     /**
-     * Creates a resolver exception from the supplied Throwable using the
-     * supplied message.
+     * Creates a resolver exception from the supplied Throwable using the supplied message.
      * 
      * @param message The message of the exception
      * @param cause The underlying cause of the exception

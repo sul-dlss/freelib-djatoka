@@ -21,56 +21,53 @@ import info.openurl.oom.entities.ServiceType;
 /**
  * ContextObject represents a single task to be performed.
  * <p />
- * Note that Transports have the option, if necessary, to create a sequence of
- * ContextObjects needed to fulfill a single HTTP request from the client.
+ * Note that Transports have the option, if necessary, to create a sequence of ContextObjects needed to fulfill a single
+ * HTTP request from the client.
  * 
  * @author Jeffrey A. Young
  */
 public interface ContextObject {
 
     /**
-     * Get the Referent. Note that every ContextObject MUST contain one and only
-     * one Referent indicating the "what" portion of a ContextObject task.
+     * Get the Referent. Note that every ContextObject MUST contain one and only one Referent indicating the "what"
+     * portion of a ContextObject task.
      * 
      * @return the referent for this ContextObject
      */
     public Referent getReferent();
 
     /**
-     * Get a sequence of ReferringEntities. There might be several, with each
-     * one indicating a different "where".
+     * Get a sequence of ReferringEntities. There might be several, with each one indicating a different "where".
      * 
      * @return the ReferringEntities contained in this ContextObject
      */
     public ReferringEntity[] getReferringEntities();
 
     /**
-     * Get a sequence of Requesters. There might be several, with each one
-     * indicating a different "who".
+     * Get a sequence of Requesters. There might be several, with each one indicating a different "who".
      * 
      * @return the Requesters contained in this ContextObject
      */
     public Requester[] getRequesters();
 
     /**
-     * Get a sequence of ServiceTypes. There might be several, with each one
-     * indicating a different "why".
+     * Get a sequence of ServiceTypes. There might be several, with each one indicating a different "why".
      * 
      * @return the ServiceTypes contained in this ContextObject
      */
     public ServiceType[] getServiceTypes();
 
     /**
-     * Get a sequence of Resolvers. There might be several, with each one
-     * indicating a different server capable of processing the ContextObject.
+     * Get a sequence of Resolvers. There might be several, with each one indicating a different server capable of
+     * processing the ContextObject.
      * 
      * @return the Resolvers contained in this ContextObject
      */
     public Resolver[] getResolvers();
 
     /**
-     * Get a sequence of Referrers. There might be several, with each one
-     * indicating the entity responsible for formulating the ContextObject.
+     * Get a sequence of Referrers. There might be several, with each one indicating the entity responsible for
+     * formulating the ContextObject.
      * 
      * @return the Referrers contained in this ContextObject
      */

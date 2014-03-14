@@ -26,8 +26,8 @@ public class ImageInfo {
     private int myLevel;
 
     /**
-     * Creates an image info object. This was written back when XML was a
-     * allowed response... should be rewritten now that it's JSON-only.
+     * Creates an image info object. This was written back when XML was a allowed response... should be rewritten now
+     * that it's JSON-only.
      * 
      * @param aID An image ID
      * @param aHeight The height of the image represented by the supplied ID
@@ -194,10 +194,8 @@ public class ImageInfo {
     /**
      * Serializes the image info the supplied output stream.
      * 
-     * @param aOutputStream The output stream to which the image info should be
-     *        serialized
-     * @throws IOException If there is a problem reading or writing the image
-     *         info
+     * @param aOutputStream The output stream to which the image info should be serialized
+     * @throws IOException If there is a problem reading or writing the image info
      */
     public void toStream(OutputStream aOutputStream) throws IOException {
         new Serializer(aOutputStream).write(myInfoDoc);
@@ -210,8 +208,7 @@ public class ImageInfo {
 
         for (int eIndex = 0; eIndex < elements.size(); eIndex++) {
             Element element = elements.get(eIndex);
-            Elements children =
-                    element.getChildElements(aName, Constants.IIIF_NS);
+            Elements children = element.getChildElements(aName, Constants.IIIF_NS);
 
             if (children.size() > 0) {
                 for (int cIndex = 0; cIndex < children.size(); cIndex++) {

@@ -25,8 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DebugServletFilter implements Filter {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(DebugServletFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DebugServletFilter.class);
 
     private FilterConfig myFilterConfig;
 
@@ -37,22 +36,20 @@ public class DebugServletFilter implements Filter {
      */
     public void destroy() {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Shutting down ServletFilter: {}", myFilterConfig
-                    .getFilterName());
+            LOGGER.debug("Shutting down ServletFilter: {}", myFilterConfig.getFilterName());
         }
 
         myFilterConfig = null;
     }
 
     /**
-     * Records a new URI in the request log or provides a list of all the
-     * requested URIs.
+     * Records a new URI in the request log or provides a list of all the requested URIs.
      * 
      * @param aRequest The servlet request
      * @param aResponse The servlet response
      */
-    public void doFilter(ServletRequest aRequest, ServletResponse aResponse,
-            FilterChain aFilterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest aRequest, ServletResponse aResponse, FilterChain aFilterChain)
+            throws IOException, ServletException {
         if (LOGGER.isDebugEnabled() && aRequest instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) aRequest;
             String peek = aRequest.getParameter("peek");

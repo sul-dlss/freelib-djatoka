@@ -1,17 +1,12 @@
 
 package info.freelibrary.djatoka.iiif;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A representation of the size aspect of an IIIF request.
  * 
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class Size {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Size.class);
 
     private boolean mySizeIsFull;
 
@@ -31,7 +26,7 @@ public class Size {
      * @param aSize The string value of a request size
      * @throws IIIFException If there is trouble constructing the request size
      */
-    public Size(String aSize) throws IIIFException {
+    public Size(final String aSize) throws IIIFException {
         if (aSize.equalsIgnoreCase("full")) {
             mySizeIsFull = true;
             myAspectRatioIsPreserved = true;
@@ -40,18 +35,15 @@ public class Size {
             myAspectRatioIsPreserved = true;
 
             try {
-                int size = Integer.parseInt(aSize.substring(4));
+                final int size = Integer.parseInt(aSize.substring(4));
 
                 if (size < 0 || size > 100) {
-                    throw new IIIFException(
-                            "Size percent isn't in the range of 0 to 100: " +
-                                    size);
+                    throw new IIIFException("Size percent isn't in the range of 0 to 100: " + size);
                 }
 
                 myPercent = size;
-            } catch (NumberFormatException details) {
-                throw new IIIFException("Size percent isn't an integer: " +
-                        aSize.substring(4));
+            } catch (final NumberFormatException details) {
+                throw new IIIFException("Size percent isn't an integer: " + aSize.substring(4));
             }
         } else if (aSize.contains(",")) {
             if (aSize.length() == 1) {
@@ -62,21 +54,17 @@ public class Size {
                 try {
                     myHeight = Integer.parseInt(aSize.substring(1));
                     myAspectRatioIsPreserved = true;
-                } catch (NumberFormatException details) {
-                    throw new IIIFException(
-                            "Size's scaled height is not an integer: " +
-                                    aSize.substring(1));
+                } catch (final NumberFormatException details) {
+                    throw new IIIFException("Size's scaled height is not an integer: " + aSize.substring(1));
                 }
             } else if (aSize.endsWith(",")) {
-                int end = aSize.length() - 1;
+                final int end = aSize.length() - 1;
 
                 try {
                     myWidth = Integer.parseInt(aSize.substring(0, end));
                     myAspectRatioIsPreserved = true;
-                } catch (NumberFormatException details) {
-                    throw new IIIFException(
-                            "Size's scaled width is not an integer: " +
-                                    aSize.substring(0, end));
+                } catch (final NumberFormatException details) {
+                    throw new IIIFException("Size's scaled width is not an integer: " + aSize.substring(0, end));
                 }
             } else {
                 String size = aSize;
@@ -90,25 +78,23 @@ public class Size {
                 parts = size.split(",");
 
                 if (parts.length != 2) {
-                    throw new IIIFException(
-                            "Size shouldn't have more than 2 parts");
+                    throw new IIIFException("Size shouldn't have more than 2 parts");
                 }
 
                 try {
                     myWidth = Integer.parseInt(parts[0]);
-                } catch (NumberFormatException details) {
+                } catch (final NumberFormatException details) {
                     throw new IIIFException("Size's width isn't an integer");
                 }
 
                 try {
                     myHeight = Integer.parseInt(parts[1]);
-                } catch (NumberFormatException details) {
+                } catch (final NumberFormatException details) {
                     throw new IIIFException("Size's height isn't a integer");
                 }
             }
         } else {
-            throw new IIIFException(
-                    "Size parameter isn't formatted correctly: " + aSize);
+            throw new IIIFException("Size parameter isn't formatted correctly: " + aSize);
         }
     }
 
@@ -122,8 +108,7 @@ public class Size {
     }
 
     /**
-     * Returns true if the request's size is expressed as a percent; else,
-     * false.
+     * Returns true if the request's size is expressed as a percent; else, false.
      * 
      * @return True if the request's size is expressed as a percent; else, false
      */
@@ -190,14 +175,15 @@ public class Size {
      * 
      * @return The string representation of the request's size
      */
+    @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
 
         if (maintainsAspectRatio()) {
             if (isFullSize()) {
                 builder.append("full");
             } else if (isPercent()) {
-                builder.append(Float.toString((float)myPercent / 100));
+                builder.append(Float.toString((float) myPercent / 100));
             } else {
                 if (hasHeight() && hasWidth()) {
                     builder.append('!').append(myWidth).append(',');

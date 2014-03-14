@@ -41,8 +41,7 @@ public class HttpDate {
 
     public final static String RFC1123_PATTERN = "EEE, dd MMM yyyyy HH:mm:ss z";
 
-    public final static SimpleDateFormat rfc1123Format = new SimpleDateFormat(
-            RFC1123_PATTERN, LOCALE_US);
+    public final static SimpleDateFormat rfc1123Format = new SimpleDateFormat(RFC1123_PATTERN, LOCALE_US);
 
     /**
      * Returns an HTTP date.

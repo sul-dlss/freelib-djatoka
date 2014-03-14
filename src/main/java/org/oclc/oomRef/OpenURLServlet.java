@@ -11,12 +11,6 @@
 
 package org.oclc.oomRef;
 
-import info.openurl.oom.OpenURLRequest;
-import info.openurl.oom.OpenURLRequestProcessor;
-import info.openurl.oom.OpenURLResponse;
-import info.openurl.oom.Transport;
-import info.openurl.oom.config.OpenURLConfig;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -30,6 +24,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import info.openurl.oom.OpenURLRequest;
+import info.openurl.oom.OpenURLRequestProcessor;
+import info.openurl.oom.OpenURLResponse;
+import info.openurl.oom.Transport;
+import info.openurl.oom.config.OpenURLConfig;
 
 /**
  * @author Jeffrey A. Young OpenURL Servlet
@@ -50,7 +50,8 @@ public class OpenURLServlet extends HttpServlet {
     /**
      * Initializes the servlet.
      */
-    public void init(ServletConfig config) throws ServletException {
+    @Override
+    public void init(final ServletConfig config) throws ServletException {
         super.init(config);
 
         try {
@@ -62,14 +63,14 @@ public class OpenURLServlet extends HttpServlet {
 
             // Construct a processor
             processor = openURLConfig.getProcessor();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new ServletException(e.getMessage(), e);
         }
     }
 
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException {
+    @Override
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException {
         try {
             // Try each Transport until someone takes responsibility
             OpenURLRequest openURLRequest = null;
@@ -78,13 +79,12 @@ public class OpenURLServlet extends HttpServlet {
             }
 
             if (openURLRequest == null) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                        "Invalid Request");
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Request");
                 return;
             }
 
             // Process the ContextObjects
-            OpenURLResponse result = processor.resolve(openURLRequest);
+            final OpenURLResponse result = processor.resolve(openURLRequest);
 
             // See if anyone handled the request
             int status;
@@ -92,31 +92,29 @@ public class OpenURLServlet extends HttpServlet {
                 status = HttpServletResponse.SC_NOT_FOUND;
             } else {
                 status = result.getStatus();
-                Cookie[] cookies = result.getCookies();
+                final Cookie[] cookies = result.getCookies();
                 if (cookies != null) {
                     for (int i = 0; i < cookies.length; ++i) {
                         resp.addCookie(cookies[i]);
                     }
                 }
 
-                Map sessionMap = result.getSessionMap();
+                final Map sessionMap = result.getSessionMap();
                 if (sessionMap != null) {
-                    HttpSession session = req.getSession(true);
-                    Iterator iter = sessionMap.entrySet().iterator();
+                    final HttpSession session = req.getSession(true);
+                    final Iterator iter = sessionMap.entrySet().iterator();
                     while (iter.hasNext()) {
-                        Map.Entry entry = (Entry) iter.next();
-                        session.setAttribute((String) entry.getKey(), entry
-                                .getValue());
+                        final Map.Entry entry = (Entry) iter.next();
+                        session.setAttribute((String) entry.getKey(), entry.getValue());
                     }
                 }
 
-                Map headerMap = result.getHeaderMap();
+                final Map headerMap = result.getHeaderMap();
                 if (headerMap != null) {
-                    Iterator iter = headerMap.entrySet().iterator();
+                    final Iterator iter = headerMap.entrySet().iterator();
                     while (iter.hasNext()) {
-                        Map.Entry entry = (Entry) iter.next();
-                        resp.setHeader((String) entry.getKey(), (String) entry
-                                .getValue());
+                        final Map.Entry entry = (Entry) iter.next();
+                        resp.setHeader((String) entry.getKey(), (String) entry.getValue());
                     }
                 }
             }
@@ -124,8 +122,7 @@ public class OpenURLServlet extends HttpServlet {
             // Allow the processor to generate a variety of response types
             switch (status) {
                 case HttpServletResponse.SC_MOVED_TEMPORARILY:
-                    resp.sendRedirect(resp.encodeRedirectURL(result
-                            .getRedirectURL()));
+                    resp.sendRedirect(resp.encodeRedirectURL(result.getRedirectURL()));
                     break;
                 case HttpServletResponse.SC_SEE_OTHER:
                 case HttpServletResponse.SC_MOVED_PERMANENTLY:
@@ -136,27 +133,29 @@ public class OpenURLServlet extends HttpServlet {
                     resp.sendError(status);
                     break;
                 default:
-                    OutputStream out = resp.getOutputStream();
+                    final OutputStream out = resp.getOutputStream();
                     resp.setStatus(status);
                     resp.setContentType(result.getContentType());
-                    InputStream is = result.getInputStream();
-                    byte[] bytes = new byte[1024];
+                    final InputStream is = result.getInputStream();
+                    final byte[] bytes = new byte[1024];
                     int len;
+
                     while ((len = is.read(bytes)) != -1) {
                         out.write(bytes, 0, len);
                     }
+
                     out.close();
                     break;
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
             // throw new ServletException(e.getMessage(), e);
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException {
+    @Override
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException {
         doGet(req, resp);
     }
 }

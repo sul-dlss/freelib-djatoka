@@ -33,8 +33,7 @@ import nu.xom.ParsingException;
 
 public class IngestThread extends Thread implements Constants {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(
-            IngestThread.class, "freelib-djatoka_messages");
+    private static final Logger LOGGER = LoggerFactory.getLogger(IngestThread.class, "freelib-djatoka_messages");
 
     private static final String MAX_SIZE = "djatoka.ingest.file.maxSize";
 
@@ -61,10 +60,8 @@ public class IngestThread extends Thread implements Constants {
     private boolean myThreadRunsUnattended;
 
     /**
-     * Creates a new ingest thread with the supplied source and target
-     * directories; this thread looks for files with the extensions in the
-     * supplied array and is configured with a boolean to run attended (by a
-     * human) or unattended.
+     * Creates a new ingest thread with the supplied source and target directories; this thread looks for files with the
+     * extensions in the supplied array and is configured with a boolean to run attended (by a human) or unattended.
      * 
      * @param aSource A source directory of source files
      * @param aDest A target directory of JP2 files
@@ -73,8 +70,8 @@ public class IngestThread extends Thread implements Constants {
      * @param aUnattendedRun Whether the ingest is attended by a person or not
      * @throws Exception If there is a problem
      */
-    public IngestThread(File aSource, File aDest, String[] aExts,
-            Properties aCfg, boolean aUnattendedRun) throws Exception {
+    public IngestThread(File aSource, File aDest, String[] aExts, Properties aCfg, boolean aUnattendedRun)
+            throws Exception {
         super();
 
         mySource = aSource;
@@ -151,8 +148,7 @@ public class IngestThread extends Thread implements Constants {
         return isFinished;
     }
 
-    private void convert(File aSource, File aDest) throws IOException,
-            Exception {
+    private void convert(File aSource, File aDest) throws IOException, Exception {
         File[] files = aSource.listFiles(new FileExtFileFilter(myExts));
         File[] dirs = aSource.listFiles(new DirFileFilter());
         PairtreeRoot ptRoot = new PairtreeRoot(myDest); // JP2 directory
@@ -170,21 +166,16 @@ public class IngestThread extends Thread implements Constants {
                 File dest = new File(aDest, nextSource.getName());
 
                 if (dest.exists() && (!dest.canWrite() || !dest.isDirectory())) {
-                    throw new IOException(
-                            "Problem with destination directory: " +
-                                    dest.getAbsolutePath());
+                    throw new IOException("Problem with destination directory: " + dest.getAbsolutePath());
                 } else {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("INGEST_DESCENDING", dest);
                     }
 
-                    if ((!dest.exists() && dest.mkdirs()) ||
-                            (dest.exists() && dest.isDirectory())) {
+                    if ((!dest.exists() && dest.mkdirs()) || (dest.exists() && dest.isDirectory())) {
                         convert(nextSource, dest); // go into a sub-directory
                     } else {
-                        throw new IOException(
-                                "Failed to create a new directory: " +
-                                        dest.getAbsolutePath());
+                        throw new IOException("Failed to create a new directory: " + dest.getAbsolutePath());
                     }
                 }
             }
@@ -210,8 +201,7 @@ public class IngestThread extends Thread implements Constants {
             }
 
             if (!aDest.exists() && !aDest.mkdirs()) {
-                throw new IOException("Unable to create new directory: " +
-                        nextDest.getAbsolutePath());
+                throw new IOException("Unable to create new directory: " + nextDest.getAbsolutePath());
             }
 
             if (!fileName.startsWith(".")) {
@@ -251,24 +241,21 @@ public class IngestThread extends Thread implements Constants {
                 }
 
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("INGEST_COMPRESSING", sourceFileName,
-                            destFileName, Integer.toString(myCount + 1));
+                    LOGGER.info("INGEST_COMPRESSING", sourceFileName, destFileName, Integer.toString(myCount + 1));
                 }
 
                 try {
-                    DjatokaCompress.compress(myCompression, sourceFileName,
-                            destFileName, myParams);
+                    DjatokaCompress.compress(myCompression, sourceFileName, destFileName, myParams);
 
                     // If we get here, the conversion was successful; note it
                     myCount += 1;
 
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("INGEST_WRITTEN_TO_DISK", destFileName,
-                                Long.toString(new File(destFileName).length()));
+                        LOGGER.debug("INGEST_WRITTEN_TO_DISK", destFileName, Long.toString(new File(destFileName)
+                                .length()));
                     }
                 } catch (DjatokaException details) {
-                    LOGGER.error("INGEST_COMPRESSION_FAILED", destFileName,
-                            sourceFileName, details.getMessage());
+                    LOGGER.error("INGEST_COMPRESSION_FAILED", destFileName, sourceFileName, details.getMessage());
 
                     if (!new File(destFileName).delete()) {
                         LOGGER.error("INGEST_BROKEN_FILE", destFileName);
@@ -280,8 +267,7 @@ public class IngestThread extends Thread implements Constants {
         }
     }
 
-    private void loadFileSystemImages(File aJP2Dir, File aSource)
-            throws IOException, FileNotFoundException {
+    private void loadFileSystemImages(File aJP2Dir, File aSource) throws IOException, FileNotFoundException {
         FilenameFilter filter = new RegexFileFilter(JP2_FILE_PATTERN);
         PairtreeRoot pairtree = new PairtreeRoot(aJP2Dir);
         String skipped = "pairtree_root";
@@ -343,8 +329,7 @@ public class IngestThread extends Thread implements Constants {
         }
     }
 
-    private void store(PairtreeRoot aPairtree, String aID, File aFile)
-            throws IOException {
+    private void store(PairtreeRoot aPairtree, String aID, File aFile) throws IOException {
         PairtreeObject ptDir = aPairtree.getObject(aID);
         String ptFileName = PairtreeUtils.encodeID(aID);
         File jp2PtFile = new File(ptDir, ptFileName);

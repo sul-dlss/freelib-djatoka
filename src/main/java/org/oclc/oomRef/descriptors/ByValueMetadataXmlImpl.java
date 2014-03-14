@@ -18,10 +18,10 @@ import java.net.URI;
 import org.w3c.dom.Document;
 
 /**
- * A <em>Descriptor</em> that specifies properties of an <em>Entity</em> by the
- * combination of: (1) a URI reference to a <em>Metadata
- * Format</em> and (2) a particular instance of metadata about the
- * <em>Entity</em>, expressed according to the indicated <em>Metadata
+ * A <em>Descriptor</em> that specifies properties of an <em>Entity</em> by the combination of: (1) a URI reference to a
+ * <em>Metadata
+ * Format</em> and (2) a particular instance of metadata about the <em>Entity</em>, expressed according to the indicated
+ * <em>Metadata
  * Format</em>.
  * 
  * @author Jeffrey A. Young
@@ -35,8 +35,8 @@ public class ByValueMetadataXmlImpl implements ByValueMetadataXml {
     /**
      * Constructs a By-Value Metadata descriptor
      * 
-     * @param val_fmt A URI reference to a <em>Metadata Format</em>. will be
-     *        extracted according to the specified prefix.
+     * @param val_fmt A URI reference to a <em>Metadata Format</em>. will be extracted according to the specified
+     *        prefix.
      * @param xmlDoc the Document representation of the record
      */
     public ByValueMetadataXmlImpl(URI val_fmt, Document xmlDoc) {

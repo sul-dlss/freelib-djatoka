@@ -14,8 +14,7 @@ package org.oclc.oomRef.entities;
 import info.openurl.oom.entities.Requester;
 
 /**
- * The resource that requests services pertaining to the Referent; an
- * <em>Entity</em> of the <em>ContextObject</em>.
+ * The resource that requests services pertaining to the Referent; an <em>Entity</em> of the <em>ContextObject</em>.
  * 
  * @author Jeffrey A. Young
  */

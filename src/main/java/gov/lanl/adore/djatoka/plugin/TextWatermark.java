@@ -49,12 +49,10 @@ public class TextWatermark implements ITransformPlugIn {
     public static final String PROP_WATERMARK_COPYRIGHT = "Watermark.statement";
 
     /**
-     * Watermark Allowed Domain Property: "Watermark.allowedDomain". If defined,
-     * only images requested outside the defined domain will have the watermark
-     * applied.
+     * Watermark Allowed Domain Property: "Watermark.allowedDomain". If defined, only images requested outside the
+     * defined domain will have the watermark applied.
      */
-    public static final String PROP_WATERMARK_ALLOWED =
-            "Watermark.allowedDomain";
+    public static final String PROP_WATERMARK_ALLOWED = "Watermark.allowedDomain";
 
     /** Watermark Copyright Font Name Property: "Watermark.fontName" */
     public static final String PROP_WATERMARK_FONTNAME = "Watermark.fontName";
@@ -66,8 +64,7 @@ public class TextWatermark implements ITransformPlugIn {
     public static final String PROP_WATERMARK_FONTCOLOR = "Watermark.fontColor";
 
     /** Watermark Copyright Font Opacity Property: "Watermark.fontOpacity" */
-    public static final String PROP_WATERMARK_FONTOPACITY =
-            "Watermark.fontOpacity";
+    public static final String PROP_WATERMARK_FONTOPACITY = "Watermark.fontOpacity";
 
     /** Default Font Color: 255,255,255,255 */
     public static final Color DEFAULT_COLOR = new Color(255, 255, 255, 255);
@@ -90,8 +87,7 @@ public class TextWatermark implements ITransformPlugIn {
     protected HashMap<String, String> addProps;
 
     /**
-     * Performs the transformation based on the provided global and instance
-     * properties.
+     * Performs the transformation based on the provided global and instance properties.
      * 
      * @param bi the extracted region BufferedImage to be transformed
      * @return the resulting BufferedImage or the same bi if no changes are made
@@ -102,10 +98,8 @@ public class TextWatermark implements ITransformPlugIn {
             return bi;
         }
         Graphics2D graphics = bi.createGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics.setComposite(AlphaComposite.getInstance(
-                AlphaComposite.SRC_OVER, fontOpacity));
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fontOpacity));
         graphics.setColor(color);
         graphics.setFont(new Font(fontName, Font.PLAIN, fontSize));
         graphics.drawString(msg, 10, bi.getHeight() - 10);
@@ -113,8 +107,8 @@ public class TextWatermark implements ITransformPlugIn {
     }
 
     /**
-     * Initializes the implementation, overriding default values. Property keys
-     * are typically of the form ClassName.PropName.
+     * Initializes the implementation, overriding default values. Property keys are typically of the form
+     * ClassName.PropName.
      * 
      * @param props Properties object containing implementation properties
      */
@@ -129,42 +123,33 @@ public class TextWatermark implements ITransformPlugIn {
             fontName = (String) props.get(PROP_WATERMARK_FONTNAME);
         }
         if (props.containsKey(PROP_WATERMARK_FONTSIZE)) {
-            fontSize =
-                    Integer.parseInt((String) props
-                            .get(PROP_WATERMARK_FONTSIZE));
+            fontSize = Integer.parseInt((String) props.get(PROP_WATERMARK_FONTSIZE));
         }
         if (props.containsKey(PROP_WATERMARK_FONTCOLOR)) {
-            String[] c =
-                    ((String) props.get(PROP_WATERMARK_FONTCOLOR)).split(",");
+            String[] c = ((String) props.get(PROP_WATERMARK_FONTCOLOR)).split(",");
             if (c.length > 3) {
                 color =
-                        new Color(Integer.parseInt(c[0]), Integer
-                                .parseInt(c[1]), Integer.parseInt(c[2]),
-                                Integer.parseInt(c[3]));
+                        new Color(Integer.parseInt(c[0]), Integer.parseInt(c[1]), Integer.parseInt(c[2]), Integer
+                                .parseInt(c[3]));
             } else if (c.length == 3) {
-                color =
-                        new Color(Integer.parseInt(c[0]), Integer
-                                .parseInt(c[1]), Integer.parseInt(c[2]), 150);
+                color = new Color(Integer.parseInt(c[0]), Integer.parseInt(c[1]), Integer.parseInt(c[2]), 150);
             }
         }
 
     }
 
     /**
-     * Sets the instance properties, from which per dissemination changes can be
-     * based on.
+     * Sets the instance properties, from which per dissemination changes can be based on.
      * 
-     * @param addProps HashMap object containing image transform instance
-     *        properties
+     * @param addProps HashMap object containing image transform instance properties
      */
     public void setInstanceProps(HashMap<String, String> addProps) {
         this.addProps = addProps;
     }
 
     /**
-     * Returns boolean indicator whether or not an image is transformable based
-     * on the global and instance properties. This is very helpful for cache
-     * logic.
+     * Returns boolean indicator whether or not an image is transformable based on the global and instance properties.
+     * This is very helpful for cache logic.
      * 
      * @return true if transformable
      */
@@ -175,10 +160,8 @@ public class TextWatermark implements ITransformPlugIn {
         if (msg == null) {
             return false;
         }
-        if (allowedReferringEntity == null ||
-                addProps.containsKey(PROPS_REFERRING_ENTITY) &&
-                addProps.get(PROPS_REFERRING_ENTITY).contains(
-                        allowedReferringEntity)) {
+        if (allowedReferringEntity == null || addProps.containsKey(PROPS_REFERRING_ENTITY) &&
+                addProps.get(PROPS_REFERRING_ENTITY).contains(allowedReferringEntity)) {
             return false;
         }
         return true;

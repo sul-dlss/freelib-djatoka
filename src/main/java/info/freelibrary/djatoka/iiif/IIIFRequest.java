@@ -54,15 +54,13 @@ public interface IIIFRequest {
     public boolean hasServicePrefix();
 
     /**
-     * A request builder that builds either a {@link ImageRequest} or a
-     * {@link InfoRequest}.
+     * A request builder that builds either a {@link ImageRequest} or a {@link InfoRequest}.
      * 
      * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
      */
     public static class Builder {
 
-        private static final Logger LOGGER = LoggerFactory
-                .getLogger(Builder.class);
+        private static final Logger LOGGER = LoggerFactory.getLogger(Builder.class);
 
         /**
          * Returns a <code>IIIFRequest</code> for the supplied {@link URL}.
@@ -79,13 +77,11 @@ public interface IIIFRequest {
          * Returns a <code>IIIFRequest</code> for the supplied {@link URL}.
          * 
          * @param aURL A {@link URL} representing the <code>IIIFRequest</code>
-         * @param aServicePrefix A pre-configured prefix to use in parsing the
-         *        request
+         * @param aServicePrefix A pre-configured prefix to use in parsing the request
          * @return An implementation of the {@link IIIFRequest} interface
          * @throws IIIFException If there is a problem creating the request
          */
-        public static IIIFRequest getRequest(URL aURL, String aServicePrefix)
-                throws IIIFException {
+        public static IIIFRequest getRequest(URL aURL, String aServicePrefix) throws IIIFException {
             String path = aURL.getPath();
 
             if (path.endsWith(".xml") || path.endsWith(".json")) {

@@ -57,10 +57,8 @@ public class PNMImage {
      * 
      * @param aInputStream A Netpbm PNM image's input stream
      */
-    public PNMImage(InputStream aInputStream) throws FormatIOException,
-            IOException {
-        DataInputStream stream =
-                new DataInputStream(new BufferedInputStream(aInputStream));
+    public PNMImage(InputStream aInputStream) throws FormatIOException, IOException {
+        DataInputStream stream = new DataInputStream(new BufferedInputStream(aInputStream));
 
         try {
             /*
@@ -80,8 +78,7 @@ public class PNMImage {
                 isBitmap = true;
                 isGreyscale = false;
             } else {
-                throw new FormatIOException("Bad PPM magic number: " + magic1 +
-                        magic2);
+                throw new FormatIOException("Bad PPM magic number: " + magic1 + magic2);
             }
 
             /*
@@ -99,8 +96,7 @@ public class PNMImage {
             /*
              * Read pixel values into image.
              */
-            m_image =
-                    new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            m_image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
             int nextByte = 0;
             for (int y = 0; y < height; y++) {
@@ -187,8 +183,7 @@ public class PNMImage {
      * @param image image to write
      * @param stream output stream to write image to.
      */
-    public static void write(BufferedImage image, OutputStream stream)
-            throws IOException {
+    public static void write(BufferedImage image, OutputStream stream) throws IOException {
         /*
          * Write file header.
          */

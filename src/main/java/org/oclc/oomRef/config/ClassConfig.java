@@ -38,16 +38,14 @@ public class ClassConfig implements info.openurl.oom.config.ClassConfig {
      * Gets the class name.
      */
     public String getClassName() throws TransformerException {
-        return XPathAPI.eval(classNode, "oomRef:className",
-                XMLHelper.getXmlnsEl()).str();
+        return XPathAPI.eval(classNode, "oomRef:className", XMLHelper.getXmlnsEl()).str();
     }
 
     /**
      * Gets the argument.
      */
     public String getArg(String key) throws TransformerException {
-        String xpath =
-                new StringBuffer("oomRef:args/oomRef:").append(key).toString();
+        String xpath = new StringBuffer("oomRef:args/oomRef:").append(key).toString();
         return XPathAPI.eval(classNode, xpath, XMLHelper.getXmlnsEl()).str();
     }
 
@@ -59,11 +57,8 @@ public class ClassConfig implements info.openurl.oom.config.ClassConfig {
     public String[] getArgs(String key) throws TransformerException {
         ArrayList<String> args = new ArrayList<String>();
 
-        String xpath =
-                new StringBuffer("oomRef:args/oomRef:").append(key).toString();
-        NodeIterator iter =
-                XPathAPI.selectNodeIterator(classNode, xpath, XMLHelper
-                        .getXmlnsEl());
+        String xpath = new StringBuffer("oomRef:args/oomRef:").append(key).toString();
+        NodeIterator iter = XPathAPI.selectNodeIterator(classNode, xpath, XMLHelper.getXmlnsEl());
         Node node;
         while ((node = iter.nextNode()) != null) {
             args.add(XPathAPI.eval(node, ".").str());
@@ -78,9 +73,7 @@ public class ClassConfig implements info.openurl.oom.config.ClassConfig {
         Map map = new HashMap();
 
         if (classNode != null) {
-            NodeIterator iter =
-                    XPathAPI.selectNodeIterator(classNode, "oomRef:args/*",
-                            XMLHelper.getXmlnsEl());
+            NodeIterator iter = XPathAPI.selectNodeIterator(classNode, "oomRef:args/*", XMLHelper.getXmlnsEl());
             Node node;
             while ((node = iter.nextNode()) != null) {
                 String key = XPathAPI.eval(node, "name()").str();

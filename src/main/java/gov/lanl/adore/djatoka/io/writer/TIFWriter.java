@@ -43,13 +43,11 @@ import org.slf4j.LoggerFactory;
  * TIF File Writer.
  * 
  * @author Ryan Chute
- * @author Kevin S. Clarke <a
- *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
+ * @author Kevin S. Clarke <a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
  */
 public class TIFWriter implements IWriter {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(TIFWriter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TIFWriter.class);
 
     /**
      * Write a BufferedImage instance to the provided OutputStream.
@@ -58,8 +56,7 @@ public class TIFWriter implements IWriter {
      * @param aOutStream OutputStream to output the image to
      * @throws FormatIOException
      */
-    public void write(BufferedImage aImage, OutputStream aOutStream)
-            throws FormatIOException {
+    public void write(BufferedImage aImage, OutputStream aOutStream) throws FormatIOException {
         ImagePlus imagePlus = new ImagePlus("tempTif", aImage);
         TiffEncoder encoder = new TiffEncoder(imagePlus.getFileInfo());
         BufferedOutputStream bufStream = new BufferedOutputStream(aOutStream);

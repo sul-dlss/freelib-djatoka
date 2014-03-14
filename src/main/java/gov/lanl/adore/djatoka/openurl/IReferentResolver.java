@@ -36,8 +36,8 @@ import info.openurl.oom.entities.Referent;
 public interface IReferentResolver {
 
     /**
-     * Referent Identifier to be resolved from Identifier Resolver. The returned
-     * ImageRecord need only contain the imageId and image file path.
+     * Referent Identifier to be resolved from Identifier Resolver. The returned ImageRecord need only contain the
+     * imageId and image file path.
      * 
      * @param rftId identifier of the image to be resolved
      * @return ImageRecord instance containing resolvable metadata
@@ -46,8 +46,8 @@ public interface IReferentResolver {
     public ImageRecord getImageRecord(String rftId) throws ResolverException;
 
     /**
-     * Referent to be resolved from Identifier Resolver. The returned
-     * ImageRecord need only contain the imageId and image file path.
+     * Referent to be resolved from Identifier Resolver. The returned ImageRecord need only contain the imageId and
+     * image file path.
      * 
      * @param rft an OpenURL OOM Referent instance to be used to resolved image.
      * @return ImageRecord instance containing resolvable metadata

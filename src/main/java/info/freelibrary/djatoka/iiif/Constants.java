@@ -8,8 +8,7 @@ package info.freelibrary.djatoka.iiif;
  */
 public interface Constants {
 
-    public static final String IIIF_URL =
-            "http://library.stanford.edu/iiif/image-api/";
+    public static final String IIIF_URL = "http://library.stanford.edu/iiif/image-api/";
 
     public static final String IIIF_NS = IIIF_URL + "ns/";
 
@@ -19,8 +18,7 @@ public interface Constants {
     public static final String DEFAULT_CHARSET = "UTF-8";
 
     /**
-     * Content-type for XML responses (this is no longer supported by the IIIF
-     * interface, but we still use it).
+     * Content-type for XML responses (this is no longer supported by the IIIF interface, but we still use it).
      */
     public static final String XML_CONTENT_TYPE = "text/xml";
 
@@ -67,8 +65,6 @@ public interface Constants {
     /**
      * The content-types supported via the IIIF interface.
      */
-    public static final String[] CONTENT_TYPES = {
-        PNG_CONTENT_TYPE, JPG_CONTENT_TYPE, GIF_CONTENT_TYPE,
-        PDF_CONTENT_TYPE, JP2_CONTENT_TYPE, TIF_CONTENT_TYPE
-    };
+    public static final String[] CONTENT_TYPES = { PNG_CONTENT_TYPE, JPG_CONTENT_TYPE, GIF_CONTENT_TYPE,
+        PDF_CONTENT_TYPE, JP2_CONTENT_TYPE, TIF_CONTENT_TYPE };
 }

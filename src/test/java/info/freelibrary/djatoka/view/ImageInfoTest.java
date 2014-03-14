@@ -90,14 +90,10 @@ public class ImageInfoTest {
         String imageAPI = "http://library.stanford.edu/iiif/image-api";
         String json =
                 "{\"@context\" : \"" + imageAPI + "/1.1/context.json\", " +
-                        "\"@id\" : \"http://localhost/iiif/id\", " +
-                        "\"width\" : 42, \"height\" : 24, " +
-                        "\"tile_width\" : 256, \"tile_height\" : 256, " +
-                        "\"formats\" : [ ], " +
-                        "\"scale_factors\" : [ 1, 2, 3, 4 ], " +
-                        "\"qualities\" : [ \"native\" ], " +
-                        "\"profile\" : \"" + imageAPI +
-                        "/1.1/compliance.html#level1\"}";
+                        "\"@id\" : \"http://localhost/iiif/id\", " + "\"width\" : 42, \"height\" : 24, " +
+                        "\"tile_width\" : 256, \"tile_height\" : 256, " + "\"formats\" : [ ], " +
+                        "\"scale_factors\" : [ 1, 2, 3, 4 ], " + "\"qualities\" : [ \"native\" ], " +
+                        "\"profile\" : \"" + imageAPI + "/1.1/compliance.html#level1\"}";
         assertEquals(json, imageInfo.toJSON("http://localhost", "iiif"));
     }
 

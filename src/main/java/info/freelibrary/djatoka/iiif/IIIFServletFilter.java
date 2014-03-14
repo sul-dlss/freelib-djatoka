@@ -21,8 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link javax.servlet.ServletFilter} that parsing incoming IIIF requests for
- * FreeLib-Djatoka.
+ * A {@link javax.servlet.ServletFilter} that parsing incoming IIIF requests for FreeLib-Djatoka.
  * 
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
@@ -30,8 +29,7 @@ public class IIIFServletFilter implements Filter, Constants {
 
     private static final String CONTENT_TYPE_KEY = "IIIF_CONTENT_TYPE";
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(IIIFServletFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IIIFServletFilter.class);
 
     private FilterConfig myFilterConfig;
 
@@ -43,14 +41,13 @@ public class IIIFServletFilter implements Filter, Constants {
     }
 
     /**
-     * Performs the check for IIIF requests and parsing of the request's
-     * contents if it's found.
+     * Performs the check for IIIF requests and parsing of the request's contents if it's found.
      * 
      * @param aRequest The servlet request that might contain an IIIF request
      * @param aResponse The servlet response that might contain an IIIF response
      */
-    public void doFilter(ServletRequest aRequest, ServletResponse aResponse,
-            FilterChain aFilterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest aRequest, ServletResponse aResponse, FilterChain aFilterChain)
+            throws IOException, ServletException {
         ServletContext context = myFilterConfig.getServletContext();
         String servicePrefix;
 
@@ -83,39 +80,30 @@ public class IIIFServletFilter implements Filter, Constants {
                     if (extension.equals("xml")) {
                         aResponse.setCharacterEncoding(DEFAULT_CHARSET);
                         aResponse.setContentType(XML_CONTENT_TYPE);
-                        aRequest.setAttribute(CONTENT_TYPE_KEY,
-                                XML_CONTENT_TYPE);
+                        aRequest.setAttribute(CONTENT_TYPE_KEY, XML_CONTENT_TYPE);
                     } else if (extension.equals("json")) {
-                        aRequest.setAttribute(CONTENT_TYPE_KEY,
-                                JSON_CONTENT_TYPE);
+                        aRequest.setAttribute(CONTENT_TYPE_KEY, JSON_CONTENT_TYPE);
                         aResponse.setContentType(JSON_CONTENT_TYPE);
                     } else if (extension.equals("jpg")) {
-                        aRequest.setAttribute(CONTENT_TYPE_KEY,
-                                JPG_CONTENT_TYPE);
+                        aRequest.setAttribute(CONTENT_TYPE_KEY, JPG_CONTENT_TYPE);
                         aResponse.setContentType(JPG_CONTENT_TYPE);
                     } else if (extension.equals("gif")) {
-                        aRequest.setAttribute(CONTENT_TYPE_KEY,
-                                GIF_CONTENT_TYPE);
+                        aRequest.setAttribute(CONTENT_TYPE_KEY, GIF_CONTENT_TYPE);
                         aResponse.setContentType(GIF_CONTENT_TYPE);
                     } else if (extension.equals("jp2")) {
-                        aRequest.setAttribute(CONTENT_TYPE_KEY,
-                                JP2_CONTENT_TYPE);
+                        aRequest.setAttribute(CONTENT_TYPE_KEY, JP2_CONTENT_TYPE);
                         aResponse.setContentType(JP2_CONTENT_TYPE);
                     } else if (extension.equals("pdf")) {
-                        aRequest.setAttribute(CONTENT_TYPE_KEY,
-                                PDF_CONTENT_TYPE);
+                        aRequest.setAttribute(CONTENT_TYPE_KEY, PDF_CONTENT_TYPE);
                         aResponse.setContentType(PDF_CONTENT_TYPE);
                     } else if (extension.equals("tif")) {
-                        aRequest.setAttribute(CONTENT_TYPE_KEY,
-                                TIF_CONTENT_TYPE);
+                        aRequest.setAttribute(CONTENT_TYPE_KEY, TIF_CONTENT_TYPE);
                         aResponse.setContentType(TIF_CONTENT_TYPE);
                     } else if (extension.equals("png")) {
-                        aRequest.setAttribute(CONTENT_TYPE_KEY,
-                                PNG_CONTENT_TYPE);
+                        aRequest.setAttribute(CONTENT_TYPE_KEY, PNG_CONTENT_TYPE);
                         aResponse.setContentType(PNG_CONTENT_TYPE);
                     } else {
-                        throw new RuntimeException(
-                                "Unexpected extension found: " + extension);
+                        throw new RuntimeException("Unexpected extension found: " + extension);
                     }
                 } else {
                     String accept = request.getHeader("Accept");
@@ -147,8 +135,7 @@ public class IIIFServletFilter implements Filter, Constants {
     }
 
     /**
-     * Initializes the <code>IIIFServletFilter</code> with the supplied
-     * {@link javax.servlet.FilterConfig}.
+     * Initializes the <code>IIIFServletFilter</code> with the supplied {@link javax.servlet.FilterConfig}.
      * 
      * @param aFilterConfig A configuration for the servlet filter
      * @throws ServletException If there is trouble initializing the filter
@@ -159,14 +146,12 @@ public class IIIFServletFilter implements Filter, Constants {
     }
 
     private boolean hasServicePrefix(String aContextName) {
-        return aContextName != null && !aContextName.equals("/") &&
-                !aContextName.equals(""); // variations necessary?
+        return aContextName != null && !aContextName.equals("/") && !aContextName.equals(""); // variations necessary?
     }
 
     private String getPreferredContentType(String[] aTypeArray) {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Requested content types: {}", StringUtils.toString(
-                    aTypeArray, ' '));
+            LOGGER.debug("Requested content types: {}", StringUtils.toString(aTypeArray, ' '));
         }
 
         for (int index = 0; index < aTypeArray.length; index++) {

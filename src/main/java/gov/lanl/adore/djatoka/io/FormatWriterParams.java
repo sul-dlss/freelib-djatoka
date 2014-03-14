@@ -26,8 +26,8 @@ package gov.lanl.adore.djatoka.io;
 import java.util.Properties;
 
 /**
- * Format Writer Profile Object. Used to initialize writers with implementation
- * specific properties (e.g. compression level).
+ * Format Writer Profile Object. Used to initialize writers with implementation specific properties (e.g. compression
+ * level).
  * 
  * @author Ryan Chute
  */

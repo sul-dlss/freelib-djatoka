@@ -39,8 +39,7 @@ import org.slf4j.LoggerFactory;
 
 public class LogWatcherThread extends Thread {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(LogWatcherThread.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogWatcherThread.class);
 
     private WatchService myWatchService;
 
@@ -56,16 +55,13 @@ public class LogWatcherThread extends Thread {
      * @param aRemoteClient The remote endpoint
      * @throws IOException If there is a problem reading or writing
      */
-    public LogWatcherThread(String aLogPath, int aSessionHashCode,
-            RemoteEndpoint aRemoteClient) throws IOException {
+    public LogWatcherThread(String aLogPath, int aSessionHashCode, RemoteEndpoint aRemoteClient) throws IOException {
         FileSystem fs = FileSystems.getDefault();
         Path logPath = fs.getPath(aLogPath);
 
         if (LOGGER.isInfoEnabled()) {
-            LOGGER.info(
-                    "[{}] Initializing new {} to monitor file system at {}",
-                    aSessionHashCode, LogWatcherThread.class.getSimpleName(),
-                    aLogPath);
+            LOGGER.info("[{}] Initializing new {} to monitor file system at {}", aSessionHashCode,
+                    LogWatcherThread.class.getSimpleName(), aLogPath);
         }
 
         // Start the new watch service for our log files
@@ -74,8 +70,7 @@ public class LogWatcherThread extends Thread {
         mySessionHashCode = aSessionHashCode;
 
         // Register the path of the log files with our watch service
-        myKeys.put(logPath.register(myWatchService, ENTRY_CREATE, ENTRY_DELETE,
-                ENTRY_MODIFY), logPath);
+        myKeys.put(logPath.register(myWatchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY), logPath);
     }
 
     @Override
@@ -87,8 +82,8 @@ public class LogWatcherThread extends Thread {
             myKeys.clear();
             myWatchService.close();
         } catch (IOException details) {
-            LOGGER.error("[{}] Exception while closing log WatchService: {}",
-                    mySessionHashCode, details.getMessage(), details);
+            LOGGER.error("[{}] Exception while closing log WatchService: {}", mySessionHashCode,
+                    details.getMessage(), details);
         }
     }
 
@@ -97,9 +92,8 @@ public class LogWatcherThread extends Thread {
         super.run();
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("[{}] Starting up a new {} (thread ID: {})",
-                    mySessionHashCode, LogWatcherThread.class.getSimpleName(),
-                    getId());
+            LOGGER.debug("[{}] Starting up a new {} (thread ID: {})", mySessionHashCode, LogWatcherThread.class
+                    .getSimpleName(), getId());
         }
 
         while (Thread.interrupted() == false) {
@@ -124,8 +118,7 @@ public class LogWatcherThread extends Thread {
                     Path child = path.resolve(name);
 
                     if (LOGGER.isInfoEnabled()) {
-                        LOGGER.info("[{}] {}: {} {}", mySessionHashCode, kind
-                                .name(), path, child);
+                        LOGGER.info("[{}] {}: {} {}", mySessionHashCode, kind.name(), path, child);
                     }
 
                     if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
@@ -139,16 +132,14 @@ public class LogWatcherThread extends Thread {
                     }
 
                     if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
-                        LOGGER.info("Last modified: {}", child.toFile()
-                                .lastModified());
+                        LOGGER.info("Last modified: {}", child.toFile().lastModified());
 
                     }
                 }
 
                 if (key.reset() == false) {
                     if (LOGGER.isInfoEnabled()) {
-                        LOGGER.info("[{}] Key '{}' is invalid",
-                                mySessionHashCode, key);
+                        LOGGER.info("[{}] Key '{}' is invalid", mySessionHashCode, key);
                     }
 
                     myKeys.remove(key);
@@ -161,19 +152,16 @@ public class LogWatcherThread extends Thread {
         }
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("[{}] Shutting down running {}; its thread ID is: {}",
-                    mySessionHashCode, LogWatcherThread.class.getSimpleName(),
-                    getId());
+            LOGGER.debug("[{}] Shutting down running {}; its thread ID is: {}", mySessionHashCode,
+                    LogWatcherThread.class.getSimpleName(), getId());
         }
     }
 
     private class LogFileVisitor extends SimpleFileVisitor<Path> {
 
-        public FileVisitResult preVisitDirectory(Path aLogPath,
-                BasicFileAttributes aAttributes) throws IOException {
+        public FileVisitResult preVisitDirectory(Path aLogPath, BasicFileAttributes aAttributes) throws IOException {
 
-            myKeys.put(aLogPath.register(myWatchService, ENTRY_CREATE,
-                    ENTRY_DELETE, ENTRY_MODIFY), aLogPath);
+            myKeys.put(aLogPath.register(myWatchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY), aLogPath);
 
             return super.preVisitDirectory(aLogPath, aAttributes);
         }

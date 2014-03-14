@@ -28,25 +28,21 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 /**
- * Image Writer interface; implementing classes must serialize provided
- * BufferedImage. Writer properties may be provided to the underlying
- * implementation to define compression levels and other format specific
- * parameters.
+ * Image Writer interface; implementing classes must serialize provided BufferedImage. Writer properties may be provided
+ * to the underlying implementation to define compression levels and other format specific parameters.
  * 
  * @author Ryan Chute
  */
 public interface IWriter {
 
     /**
-     * Write a BufferedImage instance using implemenation to the provided
-     * OutputStream.
+     * Write a BufferedImage instance using implemenation to the provided OutputStream.
      * 
      * @param bi a BufferedImage instance to be serialized
      * @param os OutputStream to output the image to
      * @throws FormatIOException
      */
-    public void write(BufferedImage bi, OutputStream os)
-            throws FormatIOException;
+    public void write(BufferedImage bi, OutputStream os) throws FormatIOException;
 
     /**
      * Set the Writer Implementations Serialization properties

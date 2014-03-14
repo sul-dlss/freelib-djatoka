@@ -11,12 +11,12 @@
 
 package org.oclc.oomRef.entities;
 
-import info.openurl.oom.entities.Entity;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import info.openurl.oom.entities.Entity;
 
 /**
  * @author Jeffrey A. Young TODO Describe type
@@ -25,22 +25,20 @@ public class EntityImpl implements Entity {
 
     private List descriptors;
 
-    protected EntityImpl(Object descriptors) {
+    protected EntityImpl(final Object descriptors) {
         if (descriptors == null) {
             this.descriptors = null;
         } else if (descriptors instanceof Object[]) {
-            this.descriptors =
-                    new ArrayList(Arrays.asList((Object[]) descriptors));
+            this.descriptors = new ArrayList(Arrays.asList((Object[]) descriptors));
         } else {
-            this.descriptors = new ArrayList(Arrays.asList(new Object[] {
-                descriptors
-            }));
+            this.descriptors = new ArrayList(Arrays.asList(new Object[] { descriptors }));
         }
     }
 
     /**
      * Gets the descriptors.
      */
+    @Override
     public Object[] getDescriptors() {
         return descriptors.toArray();
     }
@@ -48,10 +46,11 @@ public class EntityImpl implements Entity {
     /**
      * Gets the descriptors for the supplied class.
      */
-    public Object[] getDescriptors(Class c) {
-        ArrayList<Object> list = new ArrayList<Object>();
+    @Override
+    public Object[] getDescriptors(final Class c) {
+        final ArrayList<Object> list = new ArrayList<Object>();
         for (int i = 0; i < descriptors.size(); ++i) {
-            Object descriptor = descriptors.get(i);
+            final Object descriptor = descriptors.get(i);
             if (c.isInstance(descriptor)) {
                 list.add(descriptor);
             }
@@ -62,8 +61,9 @@ public class EntityImpl implements Entity {
     /**
      * Gets a string representation of the entity.
      */
+    @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         for (int i = 0; i < descriptors.size(); ++i) {
             sb.append(descriptors.get(i).toString()).append("\n");
         }
@@ -75,7 +75,8 @@ public class EntityImpl implements Entity {
      * 
      * @param descriptor A descriptor
      */
-    public void addDescriptor(Object descriptor) {
+    @Override
+    public void addDescriptor(final Object descriptor) {
         descriptors.add(descriptor);
     }
 }

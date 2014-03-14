@@ -1,3 +1,4 @@
+
 package gov.lanl.util;
 
 /*
@@ -25,7 +26,7 @@ import java.io.OutputStream;
 //    http://cvs.apache.org/viewcvs.cgi/ant/src/main/org/apache/tools/ant/taskdefs/
 /**
  * Copies all data from an input stream to an output stream.
- *
+ * 
  * @since Ant 1.2
  */
 public class StreamPumper implements Runnable {
@@ -34,23 +35,27 @@ public class StreamPumper implements Runnable {
     // TODO: add a status flag to note if an error occurred in run.
 
     private static final int SIZE = 128;
-    private InputStream is;
-    private OutputStream os;
+
+    private final InputStream is;
+
+    private final OutputStream os;
+
     private volatile boolean finish;
+
     private volatile boolean finished;
-    private boolean closeWhenExhausted;
+
+    private final boolean closeWhenExhausted;
+
     private boolean autoflush = false;
 
     /**
      * Create a new stream pumper.
-     *
+     * 
      * @param is input stream to read data from
      * @param os output stream to write data to.
-     * @param closeWhenExhausted if true, the output stream will be closed when
-     *        the input is exhausted.
+     * @param closeWhenExhausted if true, the output stream will be closed when the input is exhausted.
      */
-    public StreamPumper(InputStream is, OutputStream os,
-                        boolean closeWhenExhausted) {
+    public StreamPumper(final InputStream is, final OutputStream os, final boolean closeWhenExhausted) {
         this.is = is;
         this.os = os;
         this.closeWhenExhausted = closeWhenExhausted;
@@ -58,28 +63,29 @@ public class StreamPumper implements Runnable {
 
     /**
      * Create a new stream pumper.
-     *
+     * 
      * @param is input stream to read data from
      * @param os output stream to write data to.
      */
-    public StreamPumper(InputStream is, OutputStream os) {
+    public StreamPumper(final InputStream is, final OutputStream os) {
         this(is, os, false);
     }
 
     /**
      * Set whether data should be flushed through to the output stream.
+     * 
      * @param autoflush if true, push through data; if false, let it be buffered
      * @since Ant 1.6.3
      */
-    /*package*/ void setAutoflush(boolean autoflush) {
+    /* package */void setAutoflush(final boolean autoflush) {
         this.autoflush = autoflush;
     }
 
     /**
-     * Copies data from the input stream to the output stream.
-     *
-     * Terminates as soon as the input stream is closed or an error occurs.
+     * Copies data from the input stream to the output stream. Terminates as soon as the input stream is closed or an
+     * error occurs.
      */
+    @Override
     public void run() {
         finished = false;
         finish = false;
@@ -95,13 +101,13 @@ public class StreamPumper implements Runnable {
                 }
             }
             os.flush();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // ignore errors
         } finally {
             if (closeWhenExhausted) {
                 try {
                     os.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     // ignore
                 }
             }
@@ -114,6 +120,7 @@ public class StreamPumper implements Runnable {
 
     /**
      * Tells whether the end of the stream has been reached.
+     * 
      * @return true is the stream has been exhausted.
      **/
     public boolean isFinished() {
@@ -122,23 +129,22 @@ public class StreamPumper implements Runnable {
 
     /**
      * This method blocks until the stream pumper finishes.
+     * 
      * @see #isFinished()
      **/
-    public synchronized void waitFor()
-        throws InterruptedException {
+    public synchronized void waitFor() throws InterruptedException {
         while (!isFinished()) {
             wait();
         }
     }
 
     /**
-     * Stop the pumper as soon as possible.
-     * Note that it may continue to block on the input stream
-     * but it will really stop the thread as soon as it gets EOF
-     * or any byte, and it will be marked as finished.
+     * Stop the pumper as soon as possible. Note that it may continue to block on the input stream but it will really
+     * stop the thread as soon as it gets EOF or any byte, and it will be marked as finished.
+     * 
      * @since Ant 1.6.3
      */
-    /*package*/ synchronized void stop() {
+    synchronized void stop() {
         finish = true;
         notifyAll();
     }
