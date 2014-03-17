@@ -23,24 +23,6 @@
 
 package gov.lanl.adore.djatoka.openurl;
 
-import info.freelibrary.djatoka.view.IdentifierResolver;
-
-import gov.lanl.adore.djatoka.DjatokaException;
-import gov.lanl.adore.djatoka.IExtract;
-import gov.lanl.adore.djatoka.io.FormatConstants;
-import gov.lanl.adore.djatoka.kdu.KduExtractExe;
-import gov.lanl.adore.djatoka.util.IOUtils;
-import gov.lanl.adore.djatoka.util.ImageRecord;
-import gov.lanl.util.HttpDate;
-import info.openurl.oom.ContextObject;
-import info.openurl.oom.OpenURLRequest;
-import info.openurl.oom.OpenURLRequestProcessor;
-import info.openurl.oom.OpenURLResponse;
-import info.openurl.oom.Service;
-import info.openurl.oom.config.ClassConfig;
-import info.openurl.oom.config.OpenURLConfig;
-import info.openurl.oom.entities.ServiceType;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -53,6 +35,28 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import gov.lanl.adore.djatoka.DjatokaException;
+import gov.lanl.adore.djatoka.IExtract;
+import gov.lanl.adore.djatoka.io.FormatConstants;
+import gov.lanl.adore.djatoka.kdu.KduExtractExe;
+import gov.lanl.adore.djatoka.util.IOUtils;
+import gov.lanl.adore.djatoka.util.ImageRecord;
+import gov.lanl.util.HttpDate;
+
+import info.freelibrary.djatoka.view.IdentifierResolver;
+
+import info.openurl.oom.ContextObject;
+import info.openurl.oom.OpenURLRequest;
+import info.openurl.oom.OpenURLRequestProcessor;
+import info.openurl.oom.OpenURLResponse;
+import info.openurl.oom.Service;
+import info.openurl.oom.config.ClassConfig;
+import info.openurl.oom.config.OpenURLConfig;
+import info.openurl.oom.entities.ServiceType;
 
 /**
  * The OpenURLJP2KMetadata OpenURL Service
@@ -83,17 +87,18 @@ public class OpenURLJP2KMetadata implements Service, FormatConstants {
      * @param classConfig Implementation Properties forwarded from OpenURLServlet
      * @throws ResolverException
      */
-    public OpenURLJP2KMetadata(OpenURLConfig openURLConfig, ClassConfig classConfig) throws ResolverException {
+    public OpenURLJP2KMetadata(final OpenURLConfig openURLConfig, final ClassConfig classConfig)
+            throws ResolverException {
         try {
             if (!ReferentManager.isInit()) {
                 props = IOUtils.loadConfigByCP(classConfig.getArg("props"));
                 implClass = props.getProperty(PROPS_KEY_IMPL_CLASS, DEFAULT_IMPL_CLASS);
                 ReferentManager.init((IReferentResolver) Class.forName(implClass).newInstance(), props);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new ResolverException("Error attempting to open props file from classpath, disabling " + SVC_ID +
                     " : " + e.getMessage());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ResolverException("Unable to inititalize implementation: " + props.getProperty(implClass) +
                     " - " + e.getMessage());
         }
@@ -102,6 +107,7 @@ public class OpenURLJP2KMetadata implements Service, FormatConstants {
     /**
      * Returns the OpenURL service identifier for this implementation of info.openurl.oom.Service
      */
+    @Override
     public URI getServiceID() throws URISyntaxException {
         return new URI(SVC_ID);
     }
@@ -111,33 +117,37 @@ public class OpenURLJP2KMetadata implements Service, FormatConstants {
      * method is then responsible for transforming it into an OpenURLResponse that acts as a proxy for
      * HttpServletResponse.
      */
-    public OpenURLResponse resolve(ServiceType serviceType, ContextObject contextObject,
-            OpenURLRequest openURLRequest, OpenURLRequestProcessor processor) {
+    @Override
+    public OpenURLResponse resolve(final ServiceType serviceType, final ContextObject contextObject,
+            final OpenURLRequest openURLRequest, final OpenURLRequestProcessor processor) {
 
         String responseFormat = RESPONSE_TYPE;
         int status = HttpServletResponse.SC_OK;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
         try {
-            baos = new ByteArrayOutputStream();
-            IExtract jp2 = new KduExtractExe();
+            final ObjectMapper mapper = new ObjectMapper();
+            final ObjectNode rootNode = mapper.createObjectNode();
+            final IExtract jp2 = new KduExtractExe();
+
             ImageRecord r = ReferentManager.getImageRecord(contextObject.getReferent());
             r = jp2.getMetadata(r);
-            StringBuffer sb = new StringBuffer();
-            sb.append("{");
-            sb.append("\n\"identifier\": \"" + r.getIdentifier() + "\",");
-            sb.append("\n\"imagefile\": \"" + r.getImageFile() + "\",");
-            sb.append("\n\"width\": \"" + r.getWidth() + "\",");
-            sb.append("\n\"height\": \"" + r.getHeight() + "\",");
-            sb.append("\n\"dwtLevels\": \"" + r.getDWTLevels() + "\",");
-            sb.append("\n\"levels\": \"" + r.getLevels() + "\",");
-            sb.append("\n\"compositingLayerCount\": \"" + r.getCompositingLayerCount() + "\"");
-            sb.append("\n}");
-            baos.write(sb.toString().getBytes());
-        } catch (DjatokaException e) {
+
+            rootNode.put("identifier", r.getIdentifier());
+            rootNode.put("imagefile", r.getImageFile());
+            rootNode.put("width", r.getWidth());
+            rootNode.put("height", r.getHeight());
+            rootNode.put("dwtLevels", r.getDWTLevels());
+            rootNode.put("levels", r.getLevels());
+            rootNode.put("compositingLayerCount", r.getCompositingLayerCount());
+
+            mapper.writeValue(baos, rootNode);
+        } catch (final DjatokaException e) {
             responseFormat = "text/plain";
             status = HttpServletResponse.SC_NOT_FOUND;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             baos = new ByteArrayOutputStream();
+
             try {
                 if (e.getMessage() != null) {
                     baos.write(e.getMessage().getBytes("UTF-8"));
@@ -145,15 +155,17 @@ public class OpenURLJP2KMetadata implements Service, FormatConstants {
                     LOGGER.error(e.getMessage(), e);
                     baos.write("Internal Server Error: ".getBytes());
                 }
-            } catch (UnsupportedEncodingException e1) {
+            } catch (final UnsupportedEncodingException e1) {
                 e1.printStackTrace();
-            } catch (IOException e2) {
+            } catch (final IOException e2) {
                 e2.printStackTrace();
             }
+
             responseFormat = "text/plain";
             status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         }
-        HashMap<String, String> header_map = new HashMap<String, String>();
+
+        final HashMap<String, String> header_map = new HashMap<String, String>();
         header_map.put("Content-Length", baos.size() + "");
         header_map.put("Date", HttpDate.getHttpDate());
         return new OpenURLResponse(status, responseFormat, baos.toByteArray(), header_map);

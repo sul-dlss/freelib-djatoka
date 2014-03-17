@@ -1,16 +1,10 @@
 
 package info.freelibrary.djatoka.view;
 
-import java.io.UnsupportedEncodingException;
-
-import java.net.URLEncoder;
-
-import info.freelibrary.djatoka.iiif.Constants;
-
-import java.util.Iterator;
-
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +13,18 @@ import nu.xom.Element;
 import nu.xom.Elements;
 import nu.xom.Serializer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import info.freelibrary.djatoka.iiif.Constants;
+
 public class ImageInfo {
 
-    private Document myInfoDoc;
+    private final Document myInfoDoc;
 
-    private int myLevel;
+    private final int myLevel;
 
     /**
      * Creates an image info object. This was written back when XML was a allowed response... should be rewritten now
@@ -33,11 +34,11 @@ public class ImageInfo {
      * @param aHeight The height of the image represented by the supplied ID
      * @param aWidth The width of the image represented by the supplied ID
      */
-    public ImageInfo(String aID, int aHeight, int aWidth, int aLevel) {
-        Element id = new Element("identifier", Constants.IIIF_NS);
-        Element height = new Element("height", Constants.IIIF_NS);
-        Element width = new Element("width", Constants.IIIF_NS);
-        Element root = new Element("info", Constants.IIIF_NS);
+    public ImageInfo(final String aID, final int aHeight, final int aWidth, final int aLevel) {
+        final Element id = new Element("identifier", Constants.IIIF_NS);
+        final Element height = new Element("height", Constants.IIIF_NS);
+        final Element width = new Element("width", Constants.IIIF_NS);
+        final Element root = new Element("info", Constants.IIIF_NS);
 
         width.appendChild(Integer.toString(aWidth));
         height.appendChild(Integer.toString(aHeight));
@@ -83,10 +84,10 @@ public class ImageInfo {
      * 
      * @param aFormat A format to add to the supported list
      */
-    public void addFormat(String aFormat) {
-        Element root = myInfoDoc.getRootElement();
-        Elements elements = root.getChildElements("formats", Constants.IIIF_NS);
-        Element format = new Element("format", Constants.IIIF_NS);
+    public void addFormat(final String aFormat) {
+        final Element root = myInfoDoc.getRootElement();
+        final Elements elements = root.getChildElements("formats", Constants.IIIF_NS);
+        final Element format = new Element("format", Constants.IIIF_NS);
         Element formats;
 
         if (elements.size() > 0) {
@@ -123,6 +124,7 @@ public class ImageInfo {
      * 
      * @return The string representation of the image's metadata
      */
+    @Override
     public String toString() {
         return myInfoDoc.toXML();
     }
@@ -134,61 +136,44 @@ public class ImageInfo {
      * @param aPrefix The IIIF prefix
      * @return The JSON representation of the image's metadata
      */
-    public String toJSON(String aService, String aPrefix) {
-        StringBuilder sb = new StringBuilder("{");
-        Iterator<String> iterator;
+    public String toJSON(final String aService, final String aPrefix) throws JsonProcessingException {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode rootNode = mapper.createObjectNode();
+        final ArrayNode formats, scaleFactors;
+        final String id;
 
-        // FIXME: Constants.IIIF_URL
-        sb.append("\"@context\" : \"http://library.stanford.edu/");
-        sb.append("iiif/image-api/1.1/context.json\", \"@id\" : \"");
-
-        // FIXME: aService + aPrefix
         try {
-            sb.append(aService).append('/').append(aPrefix).append('/');
-            sb.append(URLEncoder.encode(getIdentifier(), "UTF-8"));
-            sb.append("\", ");
-        } catch (UnsupportedEncodingException details) {
-            throw new RuntimeException(details);
+            id = URLEncoder.encode(getIdentifier(), "UTF-8");
+        } catch (final UnsupportedEncodingException details) {
+            throw new RuntimeException("JVM doesn't support UTF-8!!", details);
         }
 
-        sb.append("\"width\" : ").append(getWidth()).append(", ");
-        sb.append("\"height\" : ").append(getHeight()).append(", ");
+        rootNode.put("@context", "http://library.stanford.edu/iiif/image-api/1.1/context.json");
+        rootNode.put("@id", aService + "/" + aPrefix + "/" + id);
+        rootNode.put("width", getWidth());
+        rootNode.put("height", getHeight());
 
-        // FIXME: Does this ever vary for us?
-        sb.append("\"tile_width\" : ").append(256).append(", ");
-        sb.append("\"tile_height\" : ").append(256).append(", ");
+        scaleFactors = rootNode.arrayNode();
 
-        iterator = getFormats().iterator();
-        sb.append("\"formats\" : [ ");
-
-        while (iterator.hasNext()) {
-            sb.append('"').append(iterator.next()).append('"');
-
-            if (iterator.hasNext()) {
-                sb.append(", ");
-            } else {
-                sb.append(" ");
-            }
-        }
-
-        sb.append("], ");
-
-        sb.append("\"scale_factors\" : [ ");
         for (int index = 0; index < myLevel; index++) {
-            sb.append(index + 1);
-
-            if (index + 1 < myLevel) {
-                sb.append(", ");
-            } else {
-                sb.append(' ');
-            }
+            scaleFactors.add(index + 1);
         }
-        sb.append("], ");
 
-        sb.append("\"qualities\" : [ \"native\" ], \"profile\" : \"");
-        sb.append(Constants.IIIF_URL).append("1.1/compliance.html#level1\"");
+        rootNode.put("scale_factors", scaleFactors);
+        rootNode.put("tile_width", 256); // TODO: provide other tile size options?
+        rootNode.put("tile_height", 256);
 
-        return sb.append("}").toString();
+        formats = rootNode.arrayNode();
+
+        for (final String format : getFormats()) {
+            formats.add(format);
+        }
+
+        rootNode.put("formats", formats);
+        rootNode.put("qualities", rootNode.arrayNode().add("native"));
+        rootNode.put("profile", Constants.IIIF_URL + "1.1/compliance.html#level1");
+
+        return mapper.writeValueAsString(rootNode);
     }
 
     /**
@@ -197,18 +182,18 @@ public class ImageInfo {
      * @param aOutputStream The output stream to which the image info should be serialized
      * @throws IOException If there is a problem reading or writing the image info
      */
-    public void toStream(OutputStream aOutputStream) throws IOException {
+    public void toStream(final OutputStream aOutputStream) throws IOException {
         new Serializer(aOutputStream).write(myInfoDoc);
     }
 
-    private List<String> getValues(String aName) {
-        ArrayList<String> list = new ArrayList<String>();
-        Element root = myInfoDoc.getRootElement();
-        Elements elements = root.getChildElements();
+    private List<String> getValues(final String aName) {
+        final ArrayList<String> list = new ArrayList<String>();
+        final Element root = myInfoDoc.getRootElement();
+        final Elements elements = root.getChildElements();
 
         for (int eIndex = 0; eIndex < elements.size(); eIndex++) {
-            Element element = elements.get(eIndex);
-            Elements children = element.getChildElements(aName, Constants.IIIF_NS);
+            final Element element = elements.get(eIndex);
+            final Elements children = element.getChildElements(aName, Constants.IIIF_NS);
 
             if (children.size() > 0) {
                 for (int cIndex = 0; cIndex < children.size(); cIndex++) {
@@ -222,9 +207,9 @@ public class ImageInfo {
         return list;
     }
 
-    private String getValue(String aName) {
-        Element root = myInfoDoc.getRootElement();
-        Elements elements = root.getChildElements(aName, Constants.IIIF_NS);
+    private String getValue(final String aName) {
+        final Element root = myInfoDoc.getRootElement();
+        final Elements elements = root.getChildElements(aName, Constants.IIIF_NS);
 
         if (elements.size() > 0) {
             return elements.get(0).getValue();

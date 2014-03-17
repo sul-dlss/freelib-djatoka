@@ -2,13 +2,13 @@
 package info.freelibrary.djatoka.view;
 
 import static org.junit.Assert.assertEquals;
-
-import info.freelibrary.djatoka.iiif.Constants;
-
+import static org.junit.Assert.fail;
 import nu.xom.Document;
 import nu.xom.Element;
 
 import org.junit.Test;
+
+import info.freelibrary.djatoka.iiif.Constants;
 
 public class ImageInfoTest {
 
@@ -17,7 +17,7 @@ public class ImageInfoTest {
      */
     @Test
     public void testImageInfo() {
-        ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
+        final ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
 
         assertEquals("id", imageInfo.getIdentifier());
         assertEquals(24, imageInfo.getHeight());
@@ -29,7 +29,7 @@ public class ImageInfoTest {
      */
     @Test
     public void testAddFormat() {
-        ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
+        final ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
         imageInfo.addFormat("jpg");
 
         assertEquals("jpg", imageInfo.getFormats().get(0));
@@ -40,11 +40,11 @@ public class ImageInfoTest {
      */
     @Test
     public void testToXML() {
-        ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
-        Document xml = new Document(new Element("info", Constants.IIIF_NS));
-        Element identifier = new Element("identifier", Constants.IIIF_NS);
-        Element height = new Element("height", Constants.IIIF_NS);
-        Element width = new Element("width", Constants.IIIF_NS);
+        final ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
+        final Document xml = new Document(new Element("info", Constants.IIIF_NS));
+        final Element identifier = new Element("identifier", Constants.IIIF_NS);
+        final Element height = new Element("height", Constants.IIIF_NS);
+        final Element width = new Element("width", Constants.IIIF_NS);
 
         identifier.appendChild("id");
         height.appendChild("24");
@@ -63,11 +63,11 @@ public class ImageInfoTest {
      */
     @Test
     public void testToString() {
-        ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
-        Document xml = new Document(new Element("info", Constants.IIIF_NS));
-        Element identifier = new Element("identifier", Constants.IIIF_NS);
-        Element height = new Element("height", Constants.IIIF_NS);
-        Element width = new Element("width", Constants.IIIF_NS);
+        final ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
+        final Document xml = new Document(new Element("info", Constants.IIIF_NS));
+        final Element identifier = new Element("identifier", Constants.IIIF_NS);
+        final Element height = new Element("height", Constants.IIIF_NS);
+        final Element width = new Element("width", Constants.IIIF_NS);
 
         identifier.appendChild("id");
         height.appendChild("24");
@@ -86,15 +86,18 @@ public class ImageInfoTest {
      */
     @Test
     public void testToJSON() {
-        ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
-        String imageAPI = "http://library.stanford.edu/iiif/image-api";
-        String json =
-                "{\"@context\" : \"" + imageAPI + "/1.1/context.json\", " +
-                        "\"@id\" : \"http://localhost/iiif/id\", " + "\"width\" : 42, \"height\" : 24, " +
-                        "\"tile_width\" : 256, \"tile_height\" : 256, " + "\"formats\" : [ ], " +
-                        "\"scale_factors\" : [ 1, 2, 3, 4 ], " + "\"qualities\" : [ \"native\" ], " +
-                        "\"profile\" : \"" + imageAPI + "/1.1/compliance.html#level1\"}";
-        assertEquals(json, imageInfo.toJSON("http://localhost", "iiif"));
+        final ImageInfo imageInfo = new ImageInfo("id", 24, 42, 4);
+        final String imageAPI = "http://library.stanford.edu/iiif/image-api";
+        final String json =
+                "{\"@context\":\"" + imageAPI + "/1.1/context.json\"," + "\"@id\":\"http://localhost/iiif/id\"," +
+                        "\"width\":42,\"height\":24," + "\"scale_factors\":[1,2,3,4],\"tile_width\":256," +
+                        "\"tile_height\":256," + "\"formats\":[],\"qualities\":[\"native\"]," + "\"profile\":\"" +
+                        imageAPI + "/1.1/compliance.html#level1\"}";
+        try {
+            assertEquals(json, imageInfo.toJSON("http://localhost", "iiif"));
+        } catch (final Exception details) {
+            fail(details.getMessage());
+        }
     }
 
 }
