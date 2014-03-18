@@ -97,7 +97,7 @@
 
     <freelib.build.tools.version>0.0.6</freelib.build.tools.version>
     <maven.checkstyle.version>2.11</maven.checkstyle.version>
-    <freelib.utils.version>0.4.3-SNAPSHOT</freelib.utils.version>
+    <freelib.utils.version>0.4.3</freelib.utils.version>
     <logback.version>1.0.13</logback.version>
     <junit.version>4.11</junit.version>
 
