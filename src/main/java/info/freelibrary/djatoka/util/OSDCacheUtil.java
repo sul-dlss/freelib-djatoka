@@ -14,6 +14,8 @@ public class OSDCacheUtil {
 
     private static final String REGION = "{},{},{},{}";
 
+    private static final String LABEL = "0/native.jpg";
+
     /**
      * Utility used to generate regions for derivatives images prior to the point where they are requested by a user.
      */
@@ -26,20 +28,21 @@ public class OSDCacheUtil {
      * 
      * @return
      */
-    public String[] getPaths(final int aMaxLevel, final int aTileSize, final int aWidth, final int aHeight) {
+    public String[] getPaths(final String aService, final String aID, final int aTileSize, final int aWidth,
+            final int aHeight) {
         final int longDim = Math.max(aWidth, aHeight);
         final ArrayList<String> list = new ArrayList<String>();
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Generating OSD paths [Levels: {}; Tile Size: {}; Width: {}; Height: {} ]", aMaxLevel,
-                    aTileSize, aWidth, aHeight);
+            LOGGER.debug("Generating OSD paths [ID: {}; Tile Size: {}; Width: {}; Height: {} ]", aID, aTileSize,
+                    aWidth, aHeight);
         }
 
         for (int multiplier = 1; multiplier * aTileSize < longDim; multiplier *= 2) {
             final int tileSize = multiplier * aTileSize;
 
             int x = 0, y = 0, xTileSize, yTileSize;
-            String region;
+            String region, path, size;
 
             for (x = 0; x < aWidth + tileSize; x += tileSize) {
                 xTileSize = x + tileSize < aWidth ? tileSize : aWidth - x;
@@ -47,10 +50,13 @@ public class OSDCacheUtil {
 
                 if (xTileSize > 0 && yTileSize > 0) {
                     region = StringUtils.format(REGION, x, y, xTileSize, yTileSize);
-                    list.add(region);
+                    size = getSize(multiplier, xTileSize, yTileSize);
+                    path = StringUtils.toString('/', aService, aID, region, size, LABEL);
 
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("OSD tile path region: {}", region);
+                    if (list.add(path) && LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("OSD tile path added: {}", path);
+                    } else if (LOGGER.isWarnEnabled()) {
+                        LOGGER.warn("Path {} couldn't be added to tile cache", path);
                     }
                 }
 
@@ -60,10 +66,13 @@ public class OSDCacheUtil {
 
                     if (xTileSize > 0 && yTileSize > 0) {
                         region = StringUtils.format(REGION, x, y, xTileSize, yTileSize);
-                        list.add(region);
+                        size = getSize(multiplier, xTileSize, yTileSize);
+                        path = StringUtils.toString('/', aService, aID, region, size, LABEL);
 
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("OSD tile path region: {}", region);
+                        if (list.add(path) && LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("OSD tile path added: {}", path);
+                        } else {
+                            LOGGER.warn("Path {} couldn't be added to tile cache", path);
                         }
                     }
                 }
@@ -79,4 +88,7 @@ public class OSDCacheUtil {
         return list.toArray(new String[list.size()]);
     }
 
+    private String getSize(final double aMultiplier, final int aXTileSize, final int aYTileSize) {
+        return (int) Math.ceil(aXTileSize / aMultiplier) + "," + (int) Math.ceil(aYTileSize / aMultiplier);
+    }
 }

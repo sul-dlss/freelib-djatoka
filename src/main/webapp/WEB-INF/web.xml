@@ -28,10 +28,10 @@
     <filter-name>cross-origin</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  <filter-mapping>
+<!--   <filter-mapping>
     <filter-name>DebugServletFilter</filter-name>
     <url-pattern>/iiif/*</url-pattern>
-  </filter-mapping>
+  </filter-mapping> -->
   <filter-mapping>
     <filter-name>IIIFServletFilter</filter-name>
     <url-pattern>/iiif/*</url-pattern>
