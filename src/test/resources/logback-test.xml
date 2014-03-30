@@ -6,14 +6,12 @@
       <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n</pattern>
     </encoder>
   </appender>
+  
+  <!--
+  <logger name="info.freelibrary.djatoka.util.OSDCacheUtilFunctionalTest" level="DEBUG" />
+  -->
 
-  <!-- these classes have debugging in them; set level to DEBUG to see -->
-  <logger name="info.freelibrary.djatoka.util.CacheUtilsTest"
-    level="INFO" />
-  <logger name="info.freelibrary.djatoka.IdentifierIntegrationTest"
-    level="DEBUG" />
-
-  <root level="ERROR">
+  <root level="INFO">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>

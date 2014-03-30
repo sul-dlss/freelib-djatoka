@@ -3,6 +3,8 @@ package info.freelibrary.djatoka.util;
 
 import static org.junit.Assert.fail;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,7 +15,7 @@ import info.freelibrary.util.StringUtils;
 
 public class OSDCacheUtilTest {
 
-    private static final String ID = "--%2Fwalters%2FW102_000059_950";
+    private static final String ID = "--/walters/W102_000059_950";
 
     private static final String SERVICE = "iiif";
 
@@ -620,9 +622,12 @@ public class OSDCacheUtilTest {
                     "768,8704,256,256/256,256", "768,8960,256,256/256,256", "768,9216,256,256/256,256",
                     "768,9472,256,256/256,256", "768,9728,256,256/256,256", "768,9984,256,256/256,256", };
 
-        // Set the non-variable part of the path
-        for (int index = 0; index < paths.length; index++) {
-            paths[index] = SERVICE + "/" + ID + "/" + paths[index] + LABEL;
+        try {
+            for (int index = 0; index < paths.length; index++) {
+                paths[index] = SERVICE + "/" + URLEncoder.encode(ID, "UTF-8") + "/" + paths[index] + LABEL;
+            }
+        } catch (final UnsupportedEncodingException details) {
+            throw new RuntimeException(details);
         }
 
         return paths;

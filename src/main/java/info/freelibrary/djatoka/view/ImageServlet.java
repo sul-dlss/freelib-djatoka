@@ -1,21 +1,6 @@
 
 package info.freelibrary.djatoka.view;
 
-import info.freelibrary.djatoka.iiif.Region;
-import info.freelibrary.djatoka.iiif.ImageRequest;
-import info.freelibrary.djatoka.iiif.IIIFRequest;
-
-import gov.lanl.adore.djatoka.openurl.OpenURLJP2KService;
-
-import info.freelibrary.djatoka.Constants;
-import info.freelibrary.djatoka.util.CacheUtils;
-
-import info.freelibrary.util.IOUtils;
-import info.freelibrary.util.PairtreeObject;
-import info.freelibrary.util.PairtreeRoot;
-import info.freelibrary.util.PairtreeUtils;
-import info.freelibrary.util.StringUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,7 +14,6 @@ import java.net.URLEncoder;
 import java.util.Properties;
 
 import javax.imageio.IIOException;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -52,6 +36,19 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import gov.lanl.adore.djatoka.openurl.OpenURLJP2KService;
+
+import info.freelibrary.djatoka.Constants;
+import info.freelibrary.djatoka.iiif.IIIFRequest;
+import info.freelibrary.djatoka.iiif.ImageRequest;
+import info.freelibrary.djatoka.iiif.Region;
+import info.freelibrary.djatoka.util.CacheUtils;
+import info.freelibrary.util.IOUtils;
+import info.freelibrary.util.PairtreeObject;
+import info.freelibrary.util.PairtreeRoot;
+import info.freelibrary.util.PairtreeUtils;
+import info.freelibrary.util.StringUtils;
 
 public class ImageServlet extends HttpServlet implements Constants {
 
@@ -84,32 +81,32 @@ public class ImageServlet extends HttpServlet implements Constants {
     private static String myCache;
 
     @Override
-    protected void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse) throws ServletException,
-            IOException {
+    protected void doGet(final HttpServletRequest aRequest, final HttpServletResponse aResponse)
+            throws ServletException, IOException {
         String level = getServletConfig().getInitParameter("level");
-        IIIFRequest iiif = (IIIFRequest) aRequest.getAttribute(IIIFRequest.KEY);
-        String reqURI = aRequest.getRequestURI();
-        String servletPath = aRequest.getServletPath();
-        String path = reqURI.substring(servletPath.length());
-        String id = getID(path);
+        final IIIFRequest iiif = (IIIFRequest) aRequest.getAttribute(IIIFRequest.KEY);
+        final String reqURI = aRequest.getRequestURI();
+        final String servletPath = aRequest.getServletPath();
+        final String path = reqURI.substring(servletPath.length());
+        final String id = getID(path);
 
         if (reqURI.endsWith("/info.xml") || reqURI.endsWith("/info.json")) {
             try {
-                int[] config = getHeightWidthAndLevels(aRequest, aResponse);
-                ImageInfo info = new ImageInfo(id, config[0], config[1], config[2]);
-                ServletOutputStream outStream = aResponse.getOutputStream();
+                final int[] config = getHeightWidthAndLevels(aRequest, aResponse);
+                final ImageInfo info = new ImageInfo(id, config[0], config[1], config[2]);
+                final ServletOutputStream outStream = aResponse.getOutputStream();
 
                 if (reqURI.endsWith("/info.xml")) {
                     info.toStream(outStream);
                 } else {
-                    StringBuilder serviceSb = new StringBuilder();
+                    final StringBuilder serviceSb = new StringBuilder();
 
                     serviceSb.append(aRequest.getScheme()).append("://");
                     serviceSb.append(aRequest.getServerName()).append(":");
                     serviceSb.append(aRequest.getServerPort());
 
-                    String service = serviceSb.toString();
-                    String prefix = iiif.getServicePrefix();
+                    final String service = serviceSb.toString();
+                    final String prefix = iiif.getServicePrefix();
 
                     info.addFormat("jpg"); // FIXME: Configurable options
 
@@ -117,7 +114,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                 }
 
                 outStream.close();
-            } catch (FileNotFoundException details) {
+            } catch (final FileNotFoundException details) {
                 aResponse.sendError(HttpServletResponse.SC_NOT_FOUND, id + " not found");
             }
         } else if (iiif != null) {
@@ -125,10 +122,10 @@ public class ImageServlet extends HttpServlet implements Constants {
                 LOGGER.debug("Request is handled via the IIIFRequest shim");
             }
 
-            ImageRequest imageRequest = (ImageRequest) iiif;
-            String size = imageRequest.getSize().toString();
-            Region iiifRegion = imageRequest.getRegion();
-            float rotation = imageRequest.getRotation();
+            final ImageRequest imageRequest = (ImageRequest) iiif;
+            final String size = imageRequest.getSize().toString();
+            final Region iiifRegion = imageRequest.getRegion();
+            final float rotation = imageRequest.getRotation();
             String region;
 
             // Djatoka expects a different order from what OpenSeadragon sends
@@ -136,7 +133,7 @@ public class ImageServlet extends HttpServlet implements Constants {
             if (iiifRegion.isFullSize()) {
                 region = "";
             } else {
-                StringBuilder rsb = new StringBuilder();
+                final StringBuilder rsb = new StringBuilder();
                 rsb.append(iiifRegion.getY()).append(',');
                 rsb.append(iiifRegion.getX()).append(',');
                 rsb.append(iiifRegion.getHeight()).append(',');
@@ -157,8 +154,8 @@ public class ImageServlet extends HttpServlet implements Constants {
             }
         } else {
             // We are using the now deprecated FreeLib-Djatoka djtilesource.js
-            String[] regionCoords = getRegion(path);
-            String scale = getScale(path);
+            final String[] regionCoords = getRegion(path);
+            final String scale = getScale(path);
             String region;
 
             if (level == null && scale == null) {
@@ -172,7 +169,7 @@ public class ImageServlet extends HttpServlet implements Constants {
             }
 
             if (LOGGER.isDebugEnabled()) {
-                StringBuilder request = new StringBuilder();
+                final StringBuilder request = new StringBuilder();
 
                 request.append("id[").append(id).append("] ");
 
@@ -205,11 +202,11 @@ public class ImageServlet extends HttpServlet implements Constants {
 
     @Override
     public void init() throws ServletException {
-        InputStream is = getClass().getResourceAsStream("/" + PROPERTIES_FILE);
+        final InputStream is = getClass().getResourceAsStream("/" + PROPERTIES_FILE);
 
         if (is != null) {
             try {
-                Properties props = new Properties();
+                final Properties props = new Properties();
                 props.loadFromXML(is);
 
                 if (props.containsKey(VIEW_CACHE_DIR)) {
@@ -232,7 +229,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                         LOGGER.debug("Format extension set to {}", myFormatExt);
                     }
                 }
-            } catch (IOException details) {
+            } catch (final IOException details) {
                 if (LOGGER.isWarnEnabled()) {
                     LOGGER.warn("Unable to load properties file: {}", details.getMessage());
                 }
@@ -243,10 +240,10 @@ public class ImageServlet extends HttpServlet implements Constants {
     }
 
     @Override
-    protected void doHead(HttpServletRequest aRequest, HttpServletResponse aResponse) throws ServletException,
-            IOException {
+    protected void doHead(final HttpServletRequest aRequest, final HttpServletResponse aResponse)
+            throws ServletException, IOException {
         try {
-            int[] dimensions = getHeightWidthAndLevels(aRequest, aResponse);
+            final int[] dimensions = getHeightWidthAndLevels(aRequest, aResponse);
 
             // TODO: add a content length header too
             if (!aResponse.isCommitted()) {
@@ -255,47 +252,47 @@ public class ImageServlet extends HttpServlet implements Constants {
 
                 aResponse.setStatus(HttpServletResponse.SC_OK);
             }
-        } catch (FileNotFoundException details) {
+        } catch (final FileNotFoundException details) {
             aResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
     @Override
-    protected long getLastModified(HttpServletRequest aRequest) {
+    protected long getLastModified(final HttpServletRequest aRequest) {
         // TODO: really implement this using our cached files?
         return super.getLastModified(aRequest);
     }
 
-    private int[] getHeightWidthAndLevels(HttpServletRequest aRequest, HttpServletResponse aResponse)
+    private int[] getHeightWidthAndLevels(final HttpServletRequest aRequest, final HttpServletResponse aResponse)
             throws IOException, ServletException {
-        String reqURI = aRequest.getRequestURI();
-        String servletPath = aRequest.getServletPath();
-        String path = reqURI.substring(servletPath.length());
+        final String reqURI = aRequest.getRequestURI();
+        final String servletPath = aRequest.getServletPath();
+        final String path = reqURI.substring(servletPath.length());
         int width = 0, height = 0, levels = 0;
-        String id = getID(path);
+        final String id = getID(path);
 
         if (myCache != null) {
             OutputStream outStream = null;
             InputStream inStream = null;
 
             try {
-                PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
-                PairtreeObject cacheObject = cacheDir.getObject(id);
-                ServletContext context = getServletContext();
-                String filename = PairtreeUtils.encodeID(id);
-                File xmlFile = new File(cacheObject, filename + ".xml");
+                final PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
+                final PairtreeObject cacheObject = cacheDir.getObject(id);
+                final ServletContext context = getServletContext();
+                final String filename = PairtreeUtils.encodeID(id);
+                final File xmlFile = new File(cacheObject, filename + ".xml");
 
                 if (xmlFile.exists() && xmlFile.length() > 0) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Reading XML metadata file: " + xmlFile.getAbsolutePath());
                     }
 
-                    Document xml = new Builder().build(xmlFile);
-                    Element root = xml.getRootElement();
-                    Element sElement = root.getFirstChildElement("Size");
-                    String wString = sElement.getAttributeValue("Width");
-                    String hString = sElement.getAttributeValue("Height");
-                    Element lElement = root.getFirstChildElement("Levels");
+                    final Document xml = new Builder().build(xmlFile);
+                    final Element root = xml.getRootElement();
+                    final Element sElement = root.getFirstChildElement("Size");
+                    final String wString = sElement.getAttributeValue("Width");
+                    final String hString = sElement.getAttributeValue("Height");
+                    final Element lElement = root.getFirstChildElement("Levels");
 
                     width = wString.equals("") ? 0 : Integer.parseInt(wString);
                     height = hString.equals("") ? 0 : Integer.parseInt(hString);
@@ -303,7 +300,7 @@ public class ImageServlet extends HttpServlet implements Constants {
                     if (lElement != null) {
                         try {
                             levels = Integer.parseInt(lElement.getValue());
-                        } catch (NumberFormatException details) {
+                        } catch (final NumberFormatException details) {
                             if (LOGGER.isErrorEnabled()) {
                                 LOGGER.error("{} doesn't look like an integer level", lElement.getValue());
                             }
@@ -334,31 +331,31 @@ public class ImageServlet extends HttpServlet implements Constants {
                         LOGGER.debug("Creating new xml metadata file: " + xmlFile.getAbsolutePath());
                     }
 
-                    Document xml = new Builder().build(inStream);
-                    Serializer serializer = new Serializer(outStream);
-                    String encodedID = URLEncoder.encode(id, "UTF-8");
+                    final Document xml = new Builder().build(inStream);
+                    final Serializer serializer = new Serializer(outStream);
+                    final String encodedID = URLEncoder.encode(id, "UTF-8");
 
                     try {
-                        String host = aRequest.getLocalName();
-                        String port = Integer.toString(aRequest.getLocalPort());
-                        URL url = new URL(StringUtils.format(METADATA_URL, host, port, encodedID));
+                        final String host = aRequest.getLocalName();
+                        final String port = Integer.toString(aRequest.getLocalPort());
+                        final URL url = new URL(StringUtils.format(METADATA_URL, host, port, encodedID));
 
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Querying image metadata: {}", url);
                         }
 
-                        JsonNode json = MAPPER.readTree(url.openStream());
+                        final JsonNode json = MAPPER.readTree(url.openStream());
 
                         // Pull out relevant info from our metadata service
                         width = json.get("width").asInt();
                         height = json.get("height").asInt();
                         levels = json.get("levels").asInt();
 
-                        Element root = xml.getRootElement();
-                        Element sElement = root.getFirstChildElement("Size");
-                        Attribute wAttribute = sElement.getAttribute("Width");
-                        Attribute hAttribute = sElement.getAttribute("Height");
-                        Element lElement = root.getFirstChildElement("Levels");
+                        final Element root = xml.getRootElement();
+                        final Element sElement = root.getFirstChildElement("Size");
+                        final Attribute wAttribute = sElement.getAttribute("Width");
+                        final Attribute hAttribute = sElement.getAttribute("Height");
+                        final Element lElement = root.getFirstChildElement("Levels");
 
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Width: {}; Height: {}; Level: {}", width, height, levels);
@@ -371,7 +368,7 @@ public class ImageServlet extends HttpServlet implements Constants {
 
                         serializer.write(xml);
                         serializer.flush();
-                    } catch (IIOException details) {
+                    } catch (final IIOException details) {
                         if (details.getCause().getClass().getSimpleName().equals("FileNotFoundException")) {
                             throw new FileNotFoundException(id + " not found");
                         } else {
@@ -383,9 +380,9 @@ public class ImageServlet extends HttpServlet implements Constants {
                         }
                     }
                 }
-            } catch (ValidityException details) {
+            } catch (final ValidityException details) {
                 aResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, details.getMessage());
-            } catch (ParsingException details) {
+            } catch (final ParsingException details) {
                 aResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, details.getMessage());
             } finally {
                 IOUtils.closeQuietly(outStream);
@@ -399,27 +396,21 @@ public class ImageServlet extends HttpServlet implements Constants {
         return new int[] { height, width, levels };
     }
 
-    // private String getFullSizeImageURL(HttpServletRequest aRequest) {
-    // StringBuilder url = new StringBuilder();
-    // url.append(aRequest.getScheme()).append("://");
-    // url.append(aRequest.getServerName()).append(":");
-    // url.append(aRequest.getServerPort()).append("/");
-    // return url.append("view/fullSize/").toString();
-    // }
-
-    private void checkImageCache(String aID, String aLevel, String aScale, String aRegion, float aRotation,
-            HttpServletRequest aRequest, HttpServletResponse aResponse) throws IOException, ServletException {
-        PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
-        PairtreeObject cacheObject = cacheDir.getObject(aID);
-        String fileName = CacheUtils.getFileName(aLevel, aScale, aRegion, aRotation);
-        File imageFile = new File(cacheObject, fileName);
+    private void checkImageCache(final String aID, final String aLevel, final String aScale, final String aRegion,
+            final float aRotation, final HttpServletRequest aRequest, final HttpServletResponse aResponse)
+            throws IOException, ServletException {
+        final PairtreeRoot cacheDir = new PairtreeRoot(new File(myCache));
+        final PairtreeObject cacheObject = cacheDir.getObject(aID);
+        final String fileName = CacheUtils.getFileName(aLevel, aScale, aRegion, aRotation);
+        final File imageFile = new File(cacheObject, fileName);
 
         if (imageFile.exists()) {
+            final ServletOutputStream outStream = aResponse.getOutputStream();
+
             aResponse.setHeader("Content-Length", "" + imageFile.length());
             aResponse.setHeader("Cache-Control", "public, max-age=4838400");
             aResponse.setContentType("image/jpg");
 
-            ServletOutputStream outStream = aResponse.getOutputStream();
             IOUtils.copyStream(imageFile, outStream);
             IOUtils.closeQuietly(outStream);
 
@@ -436,9 +427,10 @@ public class ImageServlet extends HttpServlet implements Constants {
         }
     }
 
-    private void serveNewImage(String aID, String aLevel, String aRegion, String aScale, float aRotation,
-            HttpServletRequest aRequest, HttpServletResponse aResponse) throws IOException, ServletException {
-        String id = URLEncoder.encode(aID, CHARSET);
+    private void serveNewImage(final String aID, final String aLevel, final String aRegion, final String aScale,
+            final float aRotation, final HttpServletRequest aRequest, final HttpServletResponse aResponse)
+            throws IOException, ServletException {
+        final String id = URLEncoder.encode(aID, CHARSET);
         RequestDispatcher dispatcher;
         String[] values;
         String url;
@@ -464,13 +456,13 @@ public class ImageServlet extends HttpServlet implements Constants {
         dispatcher.forward(aRequest, aResponse);
     }
 
-    private void cacheNewImage(HttpServletRequest aRequest, String aKey, File aDestFile) {
-        HttpSession session = aRequest.getSession();
-        String fileName = (String) session.getAttribute(aKey);
+    private void cacheNewImage(final HttpServletRequest aRequest, final String aKey, final File aDestFile) {
+        final HttpSession session = aRequest.getSession();
+        final String fileName = (String) session.getAttribute(aKey);
 
         if (fileName != null) {
-            String cacheName = (String) session.getAttribute(fileName);
-            File cachedFile = new File(fileName);
+            final String cacheName = (String) session.getAttribute(fileName);
+            final File cachedFile = new File(fileName);
 
             // This moves the newly created file from the adore-djatoka cache
             // to the freelib-djatoka cache (which is pure-FS/Pairtree-based)
@@ -501,7 +493,7 @@ public class ImageServlet extends HttpServlet implements Constants {
         }
     }
 
-    private String getID(String aPath) {
+    private String getID(final String aPath) {
         String path;
 
         if (aPath.startsWith("/")) {
@@ -514,7 +506,7 @@ public class ImageServlet extends HttpServlet implements Constants {
             try {
                 path = URLDecoder.decode(path, "UTF-8");
                 path = URLDecoder.decode(path, "UTF-8");
-            } catch (UnsupportedEncodingException details) {
+            } catch (final UnsupportedEncodingException details) {
                 // Never happens, all JVMs are required to support UTF-8
                 if (LOGGER.isWarnEnabled()) {
                     LOGGER.warn("Couldn't decode path; no UTF-8 support");
@@ -525,17 +517,17 @@ public class ImageServlet extends HttpServlet implements Constants {
         return path;
     }
 
-    private String[] getRegion(String aPathInfo) {
+    private String[] getRegion(final String aPathInfo) {
         String[] coordArray = new String[] {};
 
         if (aPathInfo.contains("/")) {
-            String[] pathParts = aPathInfo.split("/");
+            final String[] pathParts = aPathInfo.split("/");
 
             if (pathParts.length > 2) {
-                String coordsString = aPathInfo.split("/")[2];
+                final String coordsString = aPathInfo.split("/")[2];
 
                 if (!coordsString.equals("all") && !coordsString.equals("full")) {
-                    String[] coords = coordsString.split(",");
+                    final String[] coords = coordsString.split(",");
 
                     if (coords.length == 4) {
                         coordArray = coords;
@@ -551,11 +543,11 @@ public class ImageServlet extends HttpServlet implements Constants {
         return coordArray;
     }
 
-    private String getScale(String aPathInfo) {
+    private String getScale(final String aPathInfo) {
         String scale = null;
 
         if (aPathInfo.contains("/")) {
-            String[] pathParts = aPathInfo.split("/");
+            final String[] pathParts = aPathInfo.split("/");
 
             if (pathParts.length > 3) {
                 scale = aPathInfo.split("/")[3];

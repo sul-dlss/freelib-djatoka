@@ -1,53 +1,46 @@
 
 package info.freelibrary.maven;
 
-import org.apache.commons.exec.DefaultExecuteResultHandler;
-import org.apache.commons.exec.environment.EnvironmentUtils;
-import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.commons.exec.ExecuteWatchdog;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.CommandLine;
-
-import gov.lanl.adore.djatoka.DjatokaEncodeParam;
-import gov.lanl.adore.djatoka.kdu.KduCompressExe;
-
-import info.freelibrary.util.FileUtils;
-import info.freelibrary.util.PairtreeUtils;
-import info.freelibrary.util.PairtreeObject;
-import info.freelibrary.util.XMLBundleControl;
-import info.freelibrary.util.XMLResourceBundle;
-import info.freelibrary.util.PairtreeRoot;
-
-import java.util.regex.PatternSyntaxException;
-import java.util.regex.Pattern;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
-import info.freelibrary.djatoka.Constants;
-
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.environment.EnvironmentUtils;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
+import gov.lanl.adore.djatoka.DjatokaEncodeParam;
+import gov.lanl.adore.djatoka.kdu.KduCompressExe;
 
-import java.io.FileReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.File;
-
-import org.apache.maven.project.MavenProject;
-
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Component;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.AbstractMojo;
+import info.freelibrary.djatoka.Constants;
+import info.freelibrary.util.FileUtils;
+import info.freelibrary.util.PairtreeObject;
+import info.freelibrary.util.PairtreeRoot;
+import info.freelibrary.util.PairtreeUtils;
+import info.freelibrary.util.XMLBundleControl;
+import info.freelibrary.util.XMLResourceBundle;
 
 /**
  * Ingests content into FreeLib-Djatoka's Pairtree file system.
@@ -95,10 +88,10 @@ public class DjatokaIngestMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        String ptfs = myProject.getProperties().getProperty(PAIRTREE_FS);
+        final String ptfs = myProject.getProperties().getProperty(PAIRTREE_FS);
 
         try {
-            PairtreeRoot pairtree = new PairtreeRoot(new File(ptfs));
+            final PairtreeRoot pairtree = new PairtreeRoot(new File(ptfs));
 
             if (myCsvFile != null && myCsvFile.exists()) {
                 if (LOGGER.isDebugEnabled()) {
@@ -113,14 +106,14 @@ public class DjatokaIngestMojo extends AbstractMojo {
                     LOGGER.warn(BUNDLE.get("INGEST_EMPTY"));
                 }
             }
-        } catch (FileNotFoundException details) {
+        } catch (final FileNotFoundException details) {
             throw new MojoExecutionException(details.getMessage(), details);
-        } catch (IOException details) {
+        } catch (final IOException details) {
             throw new MojoExecutionException(details.getMessage(), details);
         }
     }
 
-    private void ingestCSVFile(PairtreeRoot aPairtree) throws IOException, MojoExecutionException {
+    private void ingestCSVFile(final PairtreeRoot aPairtree) throws IOException, MojoExecutionException {
         CSVReader csvReader = null;
         Pattern jp2Pattern;
         Pattern tifPattern;
@@ -129,7 +122,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
         try {
             jp2Pattern = Pattern.compile(Constants.JP2_FILE_PATTERN);
             tifPattern = Pattern.compile(Constants.TIFF_FILE_PATTERN);
-        } catch (PatternSyntaxException details) {
+        } catch (final PatternSyntaxException details) {
             throw new MojoExecutionException(details.getMessage(), details);
         }
 
@@ -142,7 +135,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
                 }
 
                 if (jp2Pattern.matcher(csv[myCsvPathCol]).matches()) {
-                    File jp2 = new File(csv[myCsvPathCol]);
+                    final File jp2 = new File(csv[myCsvPathCol]);
 
                     if (jp2.exists() && jp2.canRead()) {
                         storeJP2(csv[myCsvIdCol], jp2, aPairtree);
@@ -150,13 +143,13 @@ public class DjatokaIngestMojo extends AbstractMojo {
                         LOGGER.warn(BUNDLE.get("INGEST_FILE_FAIL", jp2));
                     }
                 } else if (tifPattern.matcher(csv[myCsvPathCol]).matches()) {
-                    File tiff = new File(csv[myCsvPathCol]);
+                    final File tiff = new File(csv[myCsvPathCol]);
 
                     if (tiff.exists() && tiff.canRead()) {
-                        DjatokaEncodeParam params = getEncodingParams();
+                        final DjatokaEncodeParam params = getEncodingParams();
 
                         if (tiff.length() < myMaxSize) {
-                            File jp2 = convert(tiff, params);
+                            final File jp2 = convert(tiff, params);
 
                             if (jp2 != null) {
                                 storeJP2(csv[myCsvIdCol], jp2, aPairtree);
@@ -168,11 +161,11 @@ public class DjatokaIngestMojo extends AbstractMojo {
                         LOGGER.warn(BUNDLE.get("INGEST_FILE_FAIL", tiff));
                     }
                 } else if (LOGGER.isWarnEnabled()) {
-                    String fileName = csv[myCsvPathCol];
+                    final String fileName = csv[myCsvPathCol];
                     LOGGER.warn(BUNDLE.get("INGEST_FORMAT_UNKNOWN", fileName));
                 }
             }
-        } catch (FileNotFoundException details) {
+        } catch (final FileNotFoundException details) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error(details.getMessage(), details);
             }
@@ -180,7 +173,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
             if (csvReader != null) {
                 try {
                     csvReader.close();
-                } catch (IOException details) {
+                } catch (final IOException details) {
                     if (LOGGER.isErrorEnabled()) {
                         LOGGER.error(details.getMessage(), details);
                     }
@@ -189,10 +182,10 @@ public class DjatokaIngestMojo extends AbstractMojo {
         }
     }
 
-    private void storeJP2(String aID, File aJP2File, PairtreeRoot aPairtree) throws IOException {
-        PairtreeObject dir = aPairtree.getObject(aID);
-        String filename = PairtreeUtils.encodeID(aID);
-        File newJP2File = new File(dir, filename);
+    private void storeJP2(final String aID, final File aJP2File, final PairtreeRoot aPairtree) throws IOException {
+        final PairtreeObject dir = aPairtree.getObject(aID);
+        final String filename = PairtreeUtils.encodeID(aID);
+        final File newJP2File = new File(dir, filename);
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(BUNDLE.get("INGEST_COPY", aJP2File, newJP2File));
@@ -201,16 +194,17 @@ public class DjatokaIngestMojo extends AbstractMojo {
         FileUtils.copy(aJP2File, newJP2File);
     }
 
-    private File convert(File aSource, DjatokaEncodeParam aParams) throws IOException, MojoExecutionException {
-        File tmpFile = File.createTempFile("djatoka-", Constants.JP2_EXT);
-        Properties properties = myProject.getProperties();
-        String kakadu = properties.getProperty("LD_LIBRARY_PATH");
+    private File convert(final File aSource, final DjatokaEncodeParam aParams) throws IOException,
+            MojoExecutionException {
+        final File tmpFile = File.createTempFile("djatoka-", Constants.JP2_EXT);
+        final Properties properties = myProject.getProperties();
+        final String kakadu = properties.getProperty("LD_LIBRARY_PATH");
 
         if (kakadu == null) {
             throw new MojoExecutionException(BUNDLE.get("INGEST_KAKADU_CFG"));
         }
 
-        String command =
+        final String command =
                 KduCompressExe.getKduCompressCommand(aSource.getAbsolutePath(), tmpFile.getAbsolutePath(), myParams)
                         .replaceFirst("^null/", kakadu + "/");
 
@@ -218,15 +212,15 @@ public class DjatokaIngestMojo extends AbstractMojo {
             LOGGER.debug(BUNDLE.get("INGEST_CONVERSION_COMMAND"), command);
         }
 
-        DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler();
-        CommandLine cmdLine = CommandLine.parse(command);
-        DefaultExecutor executor = new DefaultExecutor();
-        ExecuteWatchdog watchdog = new ExecuteWatchdog(60000 * 10);
-        ByteArrayOutputStream error = new ByteArrayOutputStream();
-        ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
+        final DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler();
+        final CommandLine cmdLine = CommandLine.parse(command);
+        final DefaultExecutor executor = new DefaultExecutor();
+        final ExecuteWatchdog watchdog = new ExecuteWatchdog(60000 * 10);
+        final ByteArrayOutputStream error = new ByteArrayOutputStream();
+        final ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
 
         @SuppressWarnings("unchecked")
-        Map<String, String> environment = EnvironmentUtils.getProcEnvironment();
+        final Map<String, String> environment = EnvironmentUtils.getProcEnvironment();
 
         // These are set in the pom.xml file's profile configuration
         environment.put("LD_LIBRARY_PATH", kakadu);
@@ -238,7 +232,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
 
         try {
             handler.waitFor();
-        } catch (InterruptedException details) {
+        } catch (final InterruptedException details) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error(BUNDLE.get("INGEST_INTERRUPTED", aSource, error.toString()));
             }
@@ -257,11 +251,11 @@ public class DjatokaIngestMojo extends AbstractMojo {
 
     private DjatokaEncodeParam getEncodingParams() throws IOException {
         if (myParams == null) {
-            String dir = myProject.getBuild().getOutputDirectory();
-            File propFile = new File(dir, Constants.PROPERTIES_FILE);
-            FileInputStream fis = new FileInputStream(propFile);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            Properties properties = new Properties();
+            final String dir = myProject.getBuild().getOutputDirectory();
+            final File propFile = new File(dir, Constants.PROPERTIES_FILE);
+            final FileInputStream fis = new FileInputStream(propFile);
+            final BufferedInputStream bis = new BufferedInputStream(fis);
+            final Properties properties = new Properties();
             String maxSize;
 
             try {

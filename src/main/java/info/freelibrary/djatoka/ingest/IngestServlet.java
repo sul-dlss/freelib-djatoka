@@ -1,19 +1,13 @@
 
 package info.freelibrary.djatoka.ingest;
 
-import javax.servlet.ServletConfig;
-
-import gov.lanl.adore.djatoka.util.IOUtils;
-
-import info.freelibrary.util.StringUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import java.util.Properties;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import gov.lanl.adore.djatoka.util.IOUtils;
+
+import info.freelibrary.util.StringUtils;
 
 /**
  * Allows ingest jobs to be triggered from a Web interface. It can operate in "unattended" or "attended" (the default)
@@ -47,41 +45,42 @@ public class IngestServlet extends HttpServlet {
     private static final String PROPERTIES_FILE = "djatoka-properties.xml";
 
     @Override
-    protected void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse) throws IOException,
+    protected void doGet(final HttpServletRequest aRequest, final HttpServletResponse aResponse) throws IOException,
             ServletException {
-        String runUnattended = aRequest.getParameter("unattended");
-        ServletContext servletContext = getServletContext();
+        final String runUnattended = aRequest.getParameter("unattended");
+        final ServletContext servletContext = getServletContext();
 
         try {
-            PrintWriter toBrowser = aResponse.getWriter();
+            final PrintWriter toBrowser = aResponse.getWriter();
 
             toBrowser.write(ingestFileSystem(runUnattended, servletContext));
             toBrowser.close();
-        } catch (IOException details) {
+        } catch (final IOException details) {
             aResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, details.getMessage());
         }
     }
 
     @Override
-    public void init(ServletConfig aServletConfig) throws ServletException {
+    public void init(final ServletConfig aServletConfig) throws ServletException {
         super.init(aServletConfig);
 
-        ServletContext servletContext = aServletConfig.getServletContext();
+        final ServletContext servletContext = aServletConfig.getServletContext();
 
         try {
             ingestFileSystem("unattended", servletContext);
-        } catch (IOException details) {
+        } catch (final IOException details) {
             throw new ServletException(details);
         } finally { // clean up our unattended ingest
             servletContext.removeAttribute("ingest");
         }
     }
 
-    private String ingestFileSystem(String aUnattendedRun, ServletContext aServletContext) throws IOException {
-        String dir = aServletContext.getRealPath("/WEB-INF/classes") + "/";
-        String propertiesFile = dir + PROPERTIES_FILE;
-        boolean unattended = aUnattendedRun != null ? true : false;
-        ServletContext context = getServletContext();
+    private String ingestFileSystem(final String aUnattendedRun, final ServletContext aServletContext)
+            throws IOException {
+        final String dir = aServletContext.getRealPath("/WEB-INF/classes") + "/";
+        final String propertiesFile = dir + PROPERTIES_FILE;
+        final boolean unattended = aUnattendedRun != null ? true : false;
+        final ServletContext context = getServletContext();
         IngestThread thread = (IngestThread) context.getAttribute("ingest");
 
         if (LOGGER.isDebugEnabled()) {
@@ -89,17 +88,17 @@ public class IngestServlet extends HttpServlet {
         }
 
         try {
-            Properties p = IOUtils.loadConfigByPath(propertiesFile);
-            String dataDir = p.getProperty("djatoka.ingest.data.dir");
-            String jp2Dir = p.getProperty("djatoka.ingest.jp2.dir");
-            String extString = p.getProperty("djatoka.ingest.data.exts");
-            File src = new File(dataDir);
-            File dest = new File(jp2Dir);
-            String[] exts = extString.split(","); // TODO: support ; etc?
+            final Properties p = IOUtils.loadConfigByPath(propertiesFile);
+            final String dataDir = p.getProperty("djatoka.ingest.data.dir");
+            final String jp2Dir = p.getProperty("djatoka.ingest.jp2.dir");
+            final String extString = p.getProperty("djatoka.ingest.data.exts");
+            final File src = new File(dataDir);
+            final File dest = new File(jp2Dir);
+            final String[] exts = extString.split(","); // TODO: support ; etc?
 
             if (thread != null) {
-                int count = thread.getCount();
-                StringBuilder data = new StringBuilder(" (");
+                final int count = thread.getCount();
+                final StringBuilder data = new StringBuilder(" (");
 
                 data.append(dest.getUsableSpace() / 1024 / 1024);
                 data.append(" MB available on the disk)");
@@ -142,7 +141,7 @@ public class IngestServlet extends HttpServlet {
                 throw new FileNotFoundException(StringUtils.format("Supplied source directory didn't exist: {}", src
                         .getAbsolutePath()));
             }
-        } catch (Exception details) {
+        } catch (final Exception details) {
             throw new IOException(details.getMessage(), details);
         }
     }

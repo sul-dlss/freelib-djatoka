@@ -160,7 +160,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                 if (props.getProperty(SCALE_CACHE_EXCEPTIONS) != null) {
                     scaleCacheExceptions = new HashSet<Double>();
 
-                    for (final String exception : props.getProperty(SCALE_CACHE_EXCEPTIONS).split(" ")) {
+                    for (final String exception : props.getProperty(SCALE_CACHE_EXCEPTIONS).split("\\s+")) {
                         try {
                             scaleCacheExceptions.add(new Double(exception));
 
@@ -284,11 +284,11 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                 final Referent referent = contextObject.getReferent();
                 final ImageRecord r = ReferentManager.getImageRecord(referent);
 
-                if (LOGGER.isDebugEnabled() && r != null) {
-                    LOGGER.debug("Retrieving ImageRecord for: {}", r.getIdentifier());
-                }
-
                 if (r != null) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Retrieving ImageRecord for: {}", r.getIdentifier());
+                    }
+
                     if (transformCheck && transform != null) {
                         final HashMap<String, String> instProps = new HashMap<String, String>();
                         if (r.getInstProps() != null) {

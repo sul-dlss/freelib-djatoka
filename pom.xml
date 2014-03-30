@@ -566,6 +566,30 @@
           <target>1.7</target>
         </configuration>
       </plugin>
+      <!-- Failsafe plugin for functional tests -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.16</version>
+        <configuration>
+          <systemPropertyVariables>
+            <jetty.port>${jetty.port}</jetty.port>
+            <pairtree.root>${djatoka.jp2.data}/pairtree_root</pairtree.root>
+            <pairtree.cache>${djatoka.jp2.data}</pairtree.cache>
+          </systemPropertyVariables>
+          <includes>
+            <include>**/*FunctionalTest.java</include>
+          </includes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <!-- The jetty plugin is how we run djatoka from within Maven -->
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
@@ -616,6 +640,22 @@
             <logTimeZone>GMT</logTimeZone>
           </requestLog>
         </configuration>
+        <executions>
+          <execution>
+            <id>start-jetty</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>run-forked</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop-jetty</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <!-- Plugin that enables running the command line tilecache utility -->
       <plugin>
@@ -646,6 +686,7 @@
           <!-- Our integration tests shouldn't be run as unit tests -->
           <excludes>
             <exclude>**/*IntegrationTest.java</exclude>
+            <exclude>**/*FunctionalTest.java</exclude>
           </excludes>
           <argLine>-XX:-UseSplitVerifier</argLine>
         </configuration>
@@ -746,6 +787,14 @@
         <LD_LIBRARY_PATH>${project.basedir}/lib/Solaris-Sparcv9</LD_LIBRARY_PATH>
       </properties>
     </profile>
+    <!-- <profile> <id>functional-tests</id> <activation> <property> <name>!skipTests</name> 
+      </property> </activation> <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+      <artifactId>maven-failsafe-plugin</artifactId> <version>2.16</version> <configuration> 
+      <systemPropertyVariables> <jetty.port>${jetty.port}</jetty.port> <pairtree.root>${djatoka.jp2.data}/pairtree_root</pairtree.root> 
+      </systemPropertyVariables> <includes> <include>**/*FunctionalTest.java</include> 
+      </includes> </configuration> <executions> <execution> <goals> <goal>integration-test</goal> 
+      <goal>verify</goal> </goals> </execution> </executions> </plugin> </plugins> </build> 
+      </profile> -->
     <!-- Build profile just used on Travis-CI VM to run the integration tests -->
     <profile>
       <id>travis</id>

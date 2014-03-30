@@ -1,6 +1,8 @@
 
 package info.freelibrary.djatoka.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -30,8 +32,15 @@ public class OSDCacheUtil {
      */
     public String[] getPaths(final String aService, final String aID, final int aTileSize, final int aWidth,
             final int aHeight) {
-        final int longDim = Math.max(aWidth, aHeight);
         final ArrayList<String> list = new ArrayList<String>();
+        final int longDim = Math.max(aWidth, aHeight);
+        final String id;
+
+        try {
+            id = URLEncoder.encode(aID, "UTF-8"); // Encode for IIIF Web service API
+        } catch (final UnsupportedEncodingException details) {
+            throw new RuntimeException(details); // All JVMs required to support UTF-8
+        }
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Generating OSD paths [ID: {}; Tile Size: {}; Width: {}; Height: {} ]", aID, aTileSize,
@@ -51,10 +60,12 @@ public class OSDCacheUtil {
                 if (xTileSize > 0 && yTileSize > 0) {
                     region = StringUtils.format(REGION, x, y, xTileSize, yTileSize);
                     size = getSize(multiplier, xTileSize, yTileSize);
-                    path = StringUtils.toString('/', aService, aID, region, size, LABEL);
+                    path = StringUtils.toString('/', aService, id, region, size, LABEL);
 
-                    if (list.add(path) && LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("OSD tile path added: {}", path);
+                    if (list.add(path)) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("OSD tile path added: {}", path);
+                        }
                     } else if (LOGGER.isWarnEnabled()) {
                         LOGGER.warn("Path {} couldn't be added to tile cache", path);
                     }
@@ -67,10 +78,12 @@ public class OSDCacheUtil {
                     if (xTileSize > 0 && yTileSize > 0) {
                         region = StringUtils.format(REGION, x, y, xTileSize, yTileSize);
                         size = getSize(multiplier, xTileSize, yTileSize);
-                        path = StringUtils.toString('/', aService, aID, region, size, LABEL);
+                        path = StringUtils.toString('/', aService, id, region, size, LABEL);
 
-                        if (list.add(path) && LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("OSD tile path added: {}", path);
+                        if (list.add(path)) {
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("OSD tile path added: {}", path);
+                            }
                         } else {
                             LOGGER.warn("Path {} couldn't be added to tile cache", path);
                         }

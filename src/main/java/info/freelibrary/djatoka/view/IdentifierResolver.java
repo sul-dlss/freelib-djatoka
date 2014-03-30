@@ -118,6 +118,11 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     @Override
     public ImageRecord getImageRecord(final Referent aReferent) throws ResolverException {
         final String id = ((URI) aReferent.getDescriptors()[0]).toASCIIString();
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Translating Referent descriptor into String ID: {}", id);
+        }
+
         return getImageRecord(id);
     }
 
@@ -194,7 +199,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                     LOGGER.debug("JP2 found in Pairtree cache: {}", file.getAbsolutePath());
                 }
             } else if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Failed to find a JP2 in Pairtree cache");
+                LOGGER.debug("Failed to find a JP2 in Pairtree cache: {}", pairtree.getAbsolutePath());
             }
         } catch (final IOException details) {
             LOGGER.error("Failed to load file from cache", details);
@@ -242,7 +247,9 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                 throw new ResolverException("An error occurred processing file: " + uri.toURL());
             }
         } catch (final Exception details) {
-            LOGGER.error(StringUtils.format("Unable to access {} ({})", aReferent, details.getMessage()));
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Unable to access {} ({})", aReferent, details.getMessage());
+            }
 
             return null;
         }

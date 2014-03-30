@@ -14,16 +14,15 @@
   <filter>
     <filter-name>IIIFServletFilter</filter-name>
     <filter-class>info.freelibrary.djatoka.iiif.IIIFServletFilter</filter-class>
-    <!-- We're only having this filter active for /iiif/* (our service prefix) -->
     <init-param>
       <param-name>prefix</param-name>
       <param-value>iiif</param-value>
     </init-param>
   </filter>
-  <filter>
+<!--   <filter>
     <filter-name>DebugServletFilter</filter-name>
     <filter-class>info.freelibrary.djatoka.util.DebugServletFilter</filter-class>
-  </filter>
+  </filter> -->
   <filter-mapping>
     <filter-name>cross-origin</filter-name>
     <url-pattern>/*</url-pattern>
