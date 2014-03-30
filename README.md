@@ -1,6 +1,6 @@
 # FreeLib-Djatoka [![Build Status](https://travis-ci.org/ksclarke/freelib-djatoka.png?branch=master)](https://travis-ci.org/ksclarke/freelib-djatoka)
 
-This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page).  It was originally created to simplify the image server's use. Over time, additional features were added.  Most recently, support for the [IIIF Image API](http://iiif.io) was added.  For more detailed information about the project, please visit its [project page](http://projects.freelibrary.info/freelib-djatoka).  This README contains just the basic [TL;DR](http://en.wiktionary.org/wiki/TLDR) project information.  A sample server (running on a small AWS instance) is available at [djatoka.freelibrary.info](http://djatoka.freelibrary.info)
+This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page).  It was originally created to simplify the image server's use. Over time, additional features were added.  Most recently, support for the [IIIF Image API](http://iiif.io) was added.  For more detailed information about the project, please visit its [project page](http://projects.freelibrary.info/freelib-djatoka).  This README contains just the basic [TL;DR](http://en.wiktionary.org/wiki/TLDR) project information.
 
 ### Getting Started
 
