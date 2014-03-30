@@ -36,21 +36,18 @@ import java.util.Properties;
 import javax.imageio.ImageIO;
 
 /**
- * Extends TextWatermark to provide an overlaid image watermark in additional to
- * the text watermark. Simply, set the statement value to "" to prevent the
- * textual watermark.
+ * Extends TextWatermark to provide an overlaid image watermark in additional to the text watermark. Simply, set the
+ * statement value to "" to prevent the textual watermark.
  * 
  * @author Ryan Chute
  */
 public class ImageWatermark extends TextWatermark {
 
     /** Overlay Image Property: "ImageWatermark.imagePath" */
-    public static final String PROP_WATERMARK_OVERLAYIMAGE =
-            "ImageWatermark.imagePath";
+    public static final String PROP_WATERMARK_OVERLAYIMAGE = "ImageWatermark.imagePath";
 
     /** Overlaid Image Opacity Property: "ImageWatermark.imageOpacity" */
-    public static final String PROP_WATERMARK_IMAGEOPACITY =
-            "ImageWatermark.imageOpacity";
+    public static final String PROP_WATERMARK_IMAGEOPACITY = "ImageWatermark.imageOpacity";
 
     /** Default Image Opacity: 0.25f */
     public static final float DEFAULT_IMAGEOPACITY = 0.25f;
@@ -60,8 +57,7 @@ public class ImageWatermark extends TextWatermark {
     private float imageOpacity = DEFAULT_IMAGEOPACITY;
 
     /**
-     * Performs the transformation based on the provided global and instance
-     * properties.
+     * Performs the transformation based on the provided global and instance properties.
      * 
      * @param bi the extracted region BufferedImage to be transformed
      * @return the resulting BufferedImage or the same bi if no changes are made
@@ -72,16 +68,12 @@ public class ImageWatermark extends TextWatermark {
             return bi;
         }
         Graphics2D graphics = bi.createGraphics();
-        graphics.setComposite(AlphaComposite.getInstance(
-                AlphaComposite.SRC_OVER, imageOpacity));
-        graphics.drawImage(overlayImage, bi.getWidth() -
-                overlayImage.getWidth(), bi.getHeight() -
+        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, imageOpacity));
+        graphics.drawImage(overlayImage, bi.getWidth() - overlayImage.getWidth(), bi.getHeight() -
                 overlayImage.getHeight(), null);
         if (msg != null) {
-            graphics.setComposite(AlphaComposite.getInstance(
-                    AlphaComposite.SRC_OVER, fontOpacity));
-            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fontOpacity));
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             graphics.setColor(color);
             graphics.setFont(new Font(fontName, Font.PLAIN, fontSize));
             graphics.drawString(msg, 10, bi.getHeight() - 10);
@@ -91,9 +83,8 @@ public class ImageWatermark extends TextWatermark {
     }
 
     /**
-     * Initializes the implementation, overriding default values. Property keys
-     * are typically of the form ClassName.PropName. These are global instance
-     * fields.
+     * Initializes the implementation, overriding default values. Property keys are typically of the form
+     * ClassName.PropName. These are global instance fields.
      * 
      * @param props Properties object containing implementation properties
      */
@@ -103,9 +94,7 @@ public class ImageWatermark extends TextWatermark {
             allowedReferringEntity = (String) props.get(PROP_WATERMARK_ALLOWED);
         }
         if (props.containsKey(PROP_WATERMARK_IMAGEOPACITY)) {
-            imageOpacity =
-                    Float.parseFloat((String) props
-                            .get(PROP_WATERMARK_IMAGEOPACITY));
+            imageOpacity = Float.parseFloat((String) props.get(PROP_WATERMARK_IMAGEOPACITY));
         }
         String imagePath = null;
         if (props.containsKey(PROP_WATERMARK_OVERLAYIMAGE)) {
@@ -121,9 +110,8 @@ public class ImageWatermark extends TextWatermark {
     }
 
     /**
-     * Returns boolean indicator whether or not an image is transformable based
-     * on the global and instance properties. This is very helpful for cache
-     * logic.
+     * Returns boolean indicator whether or not an image is transformable based on the global and instance properties.
+     * This is very helpful for cache logic.
      * 
      * @return true if transformable
      */
@@ -137,21 +125,17 @@ public class ImageWatermark extends TextWatermark {
         if (addProps == null) {
             return false;
         }
-        if (allowedReferringEntity == null ||
-                addProps.containsKey(PROPS_REFERRING_ENTITY) &&
-                addProps.get(PROPS_REFERRING_ENTITY).contains(
-                        allowedReferringEntity)) {
+        if (allowedReferringEntity == null || addProps.containsKey(PROPS_REFERRING_ENTITY) &&
+                addProps.get(PROPS_REFERRING_ENTITY).contains(allowedReferringEntity)) {
             return false;
         }
         return true;
     }
 
     /**
-     * Sets the instance properties, from which per dissemination changes can be
-     * based on.
+     * Sets the instance properties, from which per dissemination changes can be based on.
      * 
-     * @param addProps HashMap object containing image transform instance
-     *        properties
+     * @param addProps HashMap object containing image transform instance properties
      */
     public void setInstanceProps(HashMap<String, String> addProps) {
         super.addProps = addProps;

@@ -12,8 +12,7 @@ import java.util.Map;
 public interface IReferentMigrator {
 
     /**
-     * Sets the Pairtree root for images that can be migrated into the Pairtree
-     * structure.
+     * Sets the Pairtree root for images that can be migrated into the Pairtree structure.
      * 
      * @param aPtRootDir The root directory to the Pairtree file system
      */
@@ -41,8 +40,7 @@ public interface IReferentMigrator {
      * @return File object of JP2 compressed image
      * @throws DjatokaException
      */
-    public abstract File convert(String aReferent, URI aURI)
-            throws DjatokaException;
+    public abstract File convert(String aReferent, URI aURI) throws DjatokaException;
 
     /**
      * Returns a local File object for a provide URI
@@ -52,28 +50,24 @@ public interface IReferentMigrator {
      * @return File object of JP2 compressed image
      * @throws DjatokaException
      */
-    public abstract File processImage(File aImgFile, URI aURI)
-            throws DjatokaException;
+    public abstract File processImage(File aImgFile, URI aURI) throws DjatokaException;
 
     /**
-     * Return list of images currently being processed. Images are removed once
-     * complete.
+     * Return list of images currently being processed. Images are removed once complete.
      * 
      * @return list of images being processed
      */
     public abstract List<?> getProcessingList();
 
     /**
-     * Returns map of format extension (e.g. jpg) to mime-type mappings (e.g.
-     * image/jpeg)
+     * Returns map of format extension (e.g. jpg) to mime-type mappings (e.g. image/jpeg)
      * 
      * @return format extension to mime-type mappings
      */
     public abstract Map<?, ?> getFormatMap();
 
     /**
-     * Sets map of format extension (e.g. jpg) to mime-type mappings (e.g.
-     * image/jpeg)
+     * Sets map of format extension (e.g. jpg) to mime-type mappings (e.g. image/jpeg)
      * 
      * @param formatMap extension to mime-type mappings
      */

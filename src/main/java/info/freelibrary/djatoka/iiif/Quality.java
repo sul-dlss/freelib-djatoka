@@ -1,17 +1,12 @@
 
 package info.freelibrary.djatoka.iiif;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A representation of the request's image quality.
  * 
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class Quality {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Quality.class);
 
     private String myQuality;
 
@@ -21,22 +16,18 @@ public class Quality {
      * @param aQuality
      * @throws IIIFException
      */
-    public Quality(String aQuality) throws IIIFException {
-        int end = aQuality.indexOf(".");
+    public Quality(final String aQuality) throws IIIFException {
+        final int end = aQuality.indexOf(".");
 
         if (end != -1) {
-            throw new IIIFException("Unexpected image format: " +
-                    aQuality.substring(end));
+            throw new IIIFException("Unexpected image format: " + aQuality.substring(end));
         } else {
             myQuality = aQuality;
         }
 
-        if (!myQuality.equalsIgnoreCase("native") &&
-                !aQuality.equalsIgnoreCase("color") &&
-                !aQuality.equalsIgnoreCase("grey") &&
-                !aQuality.equalsIgnoreCase("bitonal")) {
-            throw new IIIFException("Unsupported request quality value: " +
-                    aQuality);
+        if (!myQuality.equalsIgnoreCase("native") && !aQuality.equalsIgnoreCase("color") &&
+                !aQuality.equalsIgnoreCase("grey") && !aQuality.equalsIgnoreCase("bitonal")) {
+            throw new IIIFException("Unsupported request quality value: " + aQuality);
         }
     }
 
@@ -81,6 +72,7 @@ public class Quality {
      * 
      * @return A string representation of the image request's quality
      */
+    @Override
     public String toString() {
         return myQuality.toLowerCase();
     }

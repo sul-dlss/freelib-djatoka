@@ -42,17 +42,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extraction Processor - Intermediate processor between DjatokaExtract and
- * IExtract implementation. Works with the format factory to convert the
- * extracted region to desired output directory. Handles I/O and post extraction
+ * Extraction Processor - Intermediate processor between DjatokaExtract and IExtract implementation. Works with the
+ * format factory to convert the extracted region to desired output directory. Handles I/O and post extraction
  * transform.
  * 
  * @author Ryan Chute
  */
 public class DjatokaExtractProcessor {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(DjatokaExtractProcessor.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(DjatokaExtractProcessor.class);
 
     private static String STDIN = "/dev/stdin";
 
@@ -84,14 +82,12 @@ public class DjatokaExtractProcessor {
      * 
      * @param input absolute file path for input file.
      * @param output absolute file path for output file.
-     * @param params DjatokaDecodeParam instance containing region and transform
-     *        settings.
-     * @param fmtId mimetype identifier of output file format (e.g.
-     *        "image/jpeg")
+     * @param params DjatokaDecodeParam instance containing region and transform settings.
+     * @param fmtId mimetype identifier of output file format (e.g. "image/jpeg")
      * @throws DjatokaException
      */
-    public void extractImage(String input, String output,
-            DjatokaDecodeParam params, String fmtId) throws DjatokaException {
+    public void extractImage(String input, String output, DjatokaDecodeParam params, String fmtId)
+            throws DjatokaException {
         IWriter w = fmtFactory.getWriter(fmtId);
         extractImage(input, output, params, w);
     }
@@ -101,17 +97,13 @@ public class DjatokaExtractProcessor {
      * 
      * @param input absolute file path for input file.
      * @param output absolute file path for output file.
-     * @param params DjatokaDecodeParam instance containing region and transform
-     *        settings.
+     * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @param outputParams
      * @throws DjatokaException
      */
-    public void extractImage(String input, String output,
-            DjatokaDecodeParam params, FormatWriterParams outputParams)
+    public void extractImage(String input, String output, DjatokaDecodeParam params, FormatWriterParams outputParams)
             throws DjatokaException {
-        IWriter w =
-                fmtFactory.getWriter(outputParams.getFormatId(), outputParams
-                        .getFormatProps());
+        IWriter w = fmtFactory.getWriter(outputParams.getFormatId(), outputParams.getFormatProps());
         extractImage(input, output, params, w);
     }
 
@@ -120,14 +112,12 @@ public class DjatokaExtractProcessor {
      * 
      * @param input InputStream containing a JPEG 2000 image bitstream.
      * @param output absolute file path for output file.
-     * @param params DjatokaDecodeParam instance containing region and transform
-     *        settings.
-     * @param fmtId mimetype identifier of output file format (e.g.
-     *        "image/jpeg")
+     * @param params DjatokaDecodeParam instance containing region and transform settings.
+     * @param fmtId mimetype identifier of output file format (e.g. "image/jpeg")
      * @throws DjatokaException
      */
-    public void extractImage(InputStream input, OutputStream output,
-            DjatokaDecodeParam params, String fmtId) throws DjatokaException {
+    public void extractImage(InputStream input, OutputStream output, DjatokaDecodeParam params, String fmtId)
+            throws DjatokaException {
         IWriter w = fmtFactory.getWriter(fmtId);
         extractImage(input, output, params, w);
     }
@@ -137,14 +127,12 @@ public class DjatokaExtractProcessor {
      * 
      * @param input absolute file path for input file.
      * @param os OutputStream to serialize formatted output image to.
-     * @param params DjatokaDecodeParam instance containing region and transform
-     *        settings.
-     * @param fmtId mime-type identifier of output file format (e.g.
-     *        "image/jpeg")
+     * @param params DjatokaDecodeParam instance containing region and transform settings.
+     * @param fmtId mime-type identifier of output file format (e.g. "image/jpeg")
      * @throws DjatokaException
      */
-    public void extractImage(String input, OutputStream os,
-            DjatokaDecodeParam params, String fmtId) throws DjatokaException {
+    public void extractImage(String input, OutputStream os, DjatokaDecodeParam params, String fmtId)
+            throws DjatokaException {
         IWriter w = fmtFactory.getWriter(fmtId);
         extractImage(input, os, params, w);
     }
@@ -154,13 +142,12 @@ public class DjatokaExtractProcessor {
      * 
      * @param input absolute file path for input file.
      * @param output absolute file path for output file.
-     * @param params DjatokaDecodeParam instance containing region and transform
-     *        settings.
+     * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @param w format writer to be used to serialize extracted region.
      * @throws DjatokaException
      */
-    public void extractImage(String input, String output,
-            DjatokaDecodeParam params, IWriter w) throws DjatokaException {
+    public void extractImage(String input, String output, DjatokaDecodeParam params, IWriter w)
+            throws DjatokaException {
         File in = null;
         String dest = output;
 
@@ -172,8 +159,7 @@ public class DjatokaExtractProcessor {
                 IOUtils.copyFile(new File(STDIN), in);
             } catch (IOException e) {
                 if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Unable to process image from " + STDIN +
-                            ": " + e.getMessage());
+                    LOGGER.error("Unable to process image from " + STDIN + ": " + e.getMessage());
                 }
 
                 throw new DjatokaException(e.getMessage(), e);
@@ -182,8 +168,7 @@ public class DjatokaExtractProcessor {
 
         BufferedImage bi = extractImpl.process(input, params);
         if (bi != null) {
-            if (params.getScalingFactor() != 1.0 ||
-                    params.getScalingDimensions() != null) {
+            if (params.getScalingFactor() != 1.0 || params.getScalingDimensions() != null) {
                 bi = applyScaling(bi, params);
             }
 
@@ -192,9 +177,7 @@ public class DjatokaExtractProcessor {
             }
 
             try {
-                BufferedOutputStream os =
-                        new BufferedOutputStream(new FileOutputStream(new File(
-                                dest)));
+                BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(new File(dest)));
                 w.write(bi, os);
                 os.close();
             } catch (FileNotFoundException e) {
@@ -224,13 +207,12 @@ public class DjatokaExtractProcessor {
      * 
      * @param input input absolute file path for input file.
      * @param os OutputStream to serialize formatted output image to.
-     * @param params DjatokaDecodeParam instance containing region and transform
-     *        settings.
+     * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @param w format writer to be used to serialize extracted region.
      * @throws DjatokaException
      */
-    public void extractImage(String input, OutputStream os,
-            DjatokaDecodeParam params, IWriter w) throws DjatokaException {
+    public void extractImage(String input, OutputStream os, DjatokaDecodeParam params, IWriter w)
+            throws DjatokaException {
         File in = null;
 
         // If coming in from stdin, copy to tmp file
@@ -242,8 +224,7 @@ public class DjatokaExtractProcessor {
                 IOUtils.copyFile(new File(STDIN), in);
             } catch (IOException e) {
                 if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Unable to process image from " + STDIN +
-                            ": " + e.getMessage());
+                    LOGGER.error("Unable to process image from " + STDIN + ": " + e.getMessage());
                 }
 
                 throw new DjatokaException(e.getMessage(), e);
@@ -253,8 +234,7 @@ public class DjatokaExtractProcessor {
         BufferedImage bi = extractImpl.process(input, params);
 
         if (bi != null) {
-            if (params.getScalingFactor() != 1.0 ||
-                    params.getScalingDimensions() != null) {
+            if (params.getScalingFactor() != 1.0 || params.getScalingDimensions() != null) {
                 bi = applyScaling(bi, params);
             }
 
@@ -277,17 +257,15 @@ public class DjatokaExtractProcessor {
      * 
      * @param input input absolute file path for input file.
      * @param os OutputStream to serialize formatted output image to.
-     * @param params DjatokaDecodeParam instance containing region and transform
-     *        settings.
+     * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @param w format writer to be used to serialize extracted region.
      * @throws DjatokaException
      */
-    public void extractImage(InputStream input, OutputStream os,
-            DjatokaDecodeParam params, IWriter w) throws DjatokaException {
+    public void extractImage(InputStream input, OutputStream os, DjatokaDecodeParam params, IWriter w)
+            throws DjatokaException {
         BufferedImage bi = extractImpl.process(input, params);
         if (bi != null) {
-            if (params.getScalingFactor() != 1.0 ||
-                    params.getScalingDimensions() != null) {
+            if (params.getScalingFactor() != 1.0 || params.getScalingDimensions() != null) {
                 bi = applyScaling(bi, params);
             }
             if (params.getTransform() != null) {
@@ -298,22 +276,17 @@ public class DjatokaExtractProcessor {
     }
 
     /**
-     * Apply scaling, if Scaling Factor != to 1.0 then check ScalingDimensions
-     * for w,h vars. A scaling factor value must be greater than 0 and less than
-     * 2. Note that ScalingFactor overrides ScalingDimensions.
+     * Apply scaling, if Scaling Factor != to 1.0 then check ScalingDimensions for w,h vars. A scaling factor value must
+     * be greater than 0 and less than 2. Note that ScalingFactor overrides ScalingDimensions.
      * 
      * @param bi BufferedImage to be scaled.
-     * @param params DjatokaDecodeParam containing ScalingFactor or
-     *        ScalingDimensions vars
+     * @param params DjatokaDecodeParam containing ScalingFactor or ScalingDimensions vars
      * @return scaled instance of provided BufferedImage
      */
-    private static BufferedImage applyScaling(BufferedImage bi,
-            DjatokaDecodeParam params) {
-        if (params.getScalingFactor() != 1.0 && params.getScalingFactor() > 0 &&
-                params.getScalingFactor() < 3) {
+    private static BufferedImage applyScaling(BufferedImage bi, DjatokaDecodeParam params) {
+        if (params.getScalingFactor() != 1.0 && params.getScalingFactor() > 0 && params.getScalingFactor() < 3) {
             bi = ImageProcessingUtils.scale(bi, params.getScalingFactor());
-        } else if (params.getScalingDimensions() != null &&
-                params.getScalingDimensions().length == 2) {
+        } else if (params.getScalingDimensions() != null && params.getScalingDimensions().length == 2) {
             int width = params.getScalingDimensions()[0];
             if (width >= 3 * bi.getWidth()) {
                 return bi;

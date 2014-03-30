@@ -1,6 +1,6 @@
 ## Introduction
 
-This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page). It was created to simplify the server's use. Over time, additional features (e.g., support for the [OpenSeadragon](http://openseadragon.github.io/) user interface and for the [International Image Interoperability Framework's Image API](http://iiif.io)) were added.
+This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page). It was created to simplify the server's use. Over time, additional features (like support for [OpenSeadragon](http://openseadragon.github.io/) and the [International Image Interoperability Framework (IIIF)'s Image API](http://iiif.io) were added.  A sample server (running on a small AWS instance) is available at [djatoka.freelibrary.info](http://djatoka.freelibrary.info).
 
 While FreeLib-Djatoka is a fork, it is not 100% backwards-compatible with aDORe-djatoka.  The main difference is the [identifier resolver](identifier-resolver.md); it's no longer a pluggable class, but one whose behavior is defined. It's also worth noting that support for the OpenURL API has been deprecated. It will be removed in a future version. 
 
@@ -21,11 +21,11 @@ To run FreeLib-Djatoka, just [download](https://github.com/ksclarke/freelib-djat
 Change into the project's base directory and install FreeLib-Djatoka:
 
     cd freelib-djatoka
-    mvn install
+    mvn -q install
 
 Then start the server by typing:
 
-    mvn jetty:run-forked
+    mvn -q jetty:run-forked
 
 That's it. You should then be able to go to the FreeLib-Djatoka test page to confirm that the server is up:
 
@@ -33,7 +33,7 @@ That's it. You should then be able to go to the FreeLib-Djatoka test page to con
 
 When you want to stop the server, type the following from within the project's base directory:
 
-    mvn jetty:stop
+    mvn -q jetty:stop
 <br/>
 **Putting Djatoka into Production**
 
@@ -45,11 +45,11 @@ There are a few configuration options available to users of FreeLib-Djatoka.
 
 Setting available system memory can be done via the [init.d script](as-a-service.html) or directly on the command line:
 
-    MAVEN_OPTS=-Xmx2048m mvn jetty:run-forked
+    MAVEN_OPTS="-Xmx2048m" mvn -q jetty:run-forked
 
 Changing the port Djatoka runs at can be done by changing the `jetty.port` property in the [pom.xml](https://github.com/ksclarke/freelib-djatoka/blob/master/pom.xml) file; it can also be set on the command line:
 
-    mvn -Djetty.port=9999 jetty:run-forked
+    mvn -Djetty.port=9999 -q jetty:run-forked
 
 There are also some important file system paths that may be reconfigured.  These are found in the [pom.xml](https://github.com/ksclarke/freelib-djatoka/blob/master/pom.xml) file's `properties` element:
 
@@ -110,7 +110,7 @@ For example, you might put the following in your system's settings.xml file:
 
 This will override the default values _unless_ you pass `ignoreDjatokaSettings` in on the command line (which you probably won't do); for instance:
 
-    mvn -DignoreDjatokaSettings=true jetty:run-forked
+    mvn -DignoreDjatokaSettings=true -q jetty:run-forked
 
 For what it's worth, you might also want to include a `jetty.stop.key` property in your external settings.xml file; for instance:
 
@@ -144,13 +144,13 @@ Perhaps the easiest method, at the moment, is to use the Djatoka Ingest script. 
 
 Once you've done that (and started Djatoka), you can load images using a spreadsheet.  To do this, from within the project directory, type:
 
-    mvn djatoka:ingest -Dcsv.file=src/test/resources/id_map.csv
+    mvn -q djatoka:ingest -Dcsv.file=src/test/resources/id_map.csv
 
 The path to the CSV file can be absolute or relative to the project directory.  By default, the plugin expects the file system path to the image to be in the first column and the identifier of the image to be in the second.
 
 This can be reconfigured if you have a spreadsheet with different column assignments; for instance, the opposite of the default assumption would be:
 
-    mvn djatoka:ingest -Dcsv.file=src/test/resources/id_map.csv -Dcsv.id=0 -Dcsv.path=1
+    mvn -q djatoka:ingest -Dcsv.file=src/test/resources/id_map.csv -Dcsv.id=0 -Dcsv.path=1
 
 The column-count is zero-based rather than one-based.  So the "first" column is actually column 0.  The "second" column would be column 1.
 
@@ -195,7 +195,7 @@ The original aDORe-djatoka identifier resolver has a method of loading JP2 image
 
 Normally, when Djatoka gets a URL as the identifier, it tries to resolve the URL.  In the case where that URL references a JP2 file, FreeLib-Djatoka will check whether the supplied URL conforms to a known regular expression pattern.  Using that pattern, FreeLib-Djatoka can discern the true ID of the JP2 and use that to load it into the local Pairtree file system.
 
-So, for instance, take the Islandora URL above.  The ID of the JP2 is captured by the regular expression: `([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)`.  It can then be used as the key to store the image in the local JP2 cache.
+So, for instance, take the Islandora URL above.  The ID of the JP2 is captured by the regular expression: `([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)`.  It can then be used as the key to store the image in the local JP2 cache.  _Note that you may need to tweak the regular expression used if your IDs have non-alphanumeric characters._
 
 Likewise, if an image ID is received that FreeLib-Djatoka can't locally resolve, it'll be checked against `djatoka.ingest.guesses` to see whether its image can be retrieved using one of the known URL patterns (the "{}" in the pattern is replaced with the ID).  Most sites will probably not need a space delimited list of patterns, but that option is available if needed.
 

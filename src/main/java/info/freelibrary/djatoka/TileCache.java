@@ -32,12 +32,10 @@ import au.com.bytecode.opencsv.CSVReader;
 
 public class TileCache {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(TileCache.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TileCache.class);
 
-    private static final XMLResourceBundle BUNDLE =
-            (XMLResourceBundle) ResourceBundle.getBundle(
-                    "FreeLib-Djatoka_Messages", new XMLBundleControl());
+    private static final XMLResourceBundle BUNDLE = (XMLResourceBundle) ResourceBundle.getBundle(
+            "FreeLib-Djatoka_Messages", new XMLBundleControl());
 
     /**
      * @param args
@@ -142,8 +140,7 @@ public class TileCache {
                     LOGGER.error(BUNDLE.get("TC_INVALID_DIMS"), aID);
                 }
             } else {
-                LOGGER.error(BUNDLE.get("TC_SERVER_STATUS_CODE"), status,
-                        urlString);
+                LOGGER.error(BUNDLE.get("TC_SERVER_STATUS_CODE"), status, urlString);
             }
         } catch (IOException | ParsingException details) {
             LOGGER.error(details.getMessage());
@@ -163,8 +160,7 @@ public class TileCache {
                     // LOGGER.debug("Tile '{}' content length: -1", aURL);
                 }
             } else if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Problem caching '{}' tile (status: {})", aURL,
-                        status);
+                LOGGER.error("Problem caching '{}' tile (status: {})", aURL, status);
             }
         } catch (Exception details) {
             LOGGER.error(details.getMessage(), details);

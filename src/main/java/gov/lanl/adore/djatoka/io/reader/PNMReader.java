@@ -23,29 +23,22 @@
 
 package gov.lanl.adore.djatoka.io.reader;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+
 import gov.lanl.adore.djatoka.io.FormatIOException;
 import gov.lanl.adore.djatoka.io.IReader;
 
 import info.freelibrary.djatoka.io.PNMImage;
 
-import java.awt.image.BufferedImage;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Returns BufferedImage give a PNM image InputStream or file path.
  * 
  * @author Ryan Chute
- * @author Kevin S. Clarke &lt;<a
- *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>&gt;
+ * @author Kevin S. Clarke &lt;<a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>&gt;
  */
 public class PNMReader implements IReader {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(PNMReader.class);
 
     /**
      * Returns a BufferedImage instance for provided image file path.
@@ -54,10 +47,11 @@ public class PNMReader implements IReader {
      * @return a <code>BufferedImage</code> instance for source image file
      * @throws FormatIOException
      */
-    public BufferedImage open(String aFileName) throws FormatIOException {
+    @Override
+    public BufferedImage open(final String aFileName) throws FormatIOException {
         try {
             return new PNMImage(aFileName).getBufferedImage();
-        } catch (IOException details) {
+        } catch (final IOException details) {
             throw new FormatIOException(details);
         }
     }
@@ -66,15 +60,14 @@ public class PNMReader implements IReader {
      * Returns a BufferedImage instance for provided InputStream
      * 
      * @param aInputStream an InputStream consisting of an image bitstream
-     * @return a <code>BufferedImage</code> instance for source image
-     *         InputStream
+     * @return a <code>BufferedImage</code> instance for source image InputStream
      * @throws FormatIOException
      */
-    public BufferedImage open(InputStream aInputStream)
-            throws FormatIOException {
+    @Override
+    public BufferedImage open(final InputStream aInputStream) throws FormatIOException {
         try {
             return new PNMImage(aInputStream).getBufferedImage();
-        } catch (IOException details) {
+        } catch (final IOException details) {
             throw new FormatIOException(details);
         }
     }

@@ -36,8 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TileCacheManager<K, V> {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(TileCacheManager.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TileCacheManager.class);
 
     private LinkedHashMap<K, V> cacheMap; // For fast search/remove
 
@@ -50,35 +49,33 @@ public class TileCacheManager<K, V> {
     /** The class constructor */
     public TileCacheManager(int max_cache) {
         this.max_cache = max_cache;
-        this.cacheMap =
-                new LinkedHashMap<K, V>(max_cache, loadFactor, accessOrder) {
+        this.cacheMap = new LinkedHashMap<K, V>(max_cache, loadFactor, accessOrder) {
 
-                    private static final long serialVersionUID = 1;
+            private static final long serialVersionUID = 1;
 
-                    protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("cacheSize: " + size());
-                        }
+            protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("cacheSize: " + size());
+                }
 
-                        boolean d = size() > TileCacheManager.this.max_cache;
-                        if (d) {
-                            File f = new File((String) eldest.getValue());
+                boolean d = size() > TileCacheManager.this.max_cache;
+                if (d) {
+                    File f = new File((String) eldest.getValue());
 
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("deletingTile: " +
-                                        eldest.getValue());
-                            }
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("deletingTile: " + eldest.getValue());
+                    }
 
-                            if (f.exists()) {
-                                f.delete();
-                            }
+                    if (f.exists()) {
+                        f.delete();
+                    }
 
-                            remove(eldest.getKey());
-                        }
+                    remove(eldest.getKey());
+                }
 
-                        return false;
-                    };
-                };
+                return false;
+            };
+        };
     }
 
     /**

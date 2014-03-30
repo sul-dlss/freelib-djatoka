@@ -49,15 +49,13 @@ public interface OpenURLConfig {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    public Transport[] getTransports() throws TransformerException,
-            ClassNotFoundException, SecurityException, NoSuchMethodException,
-            IllegalArgumentException, InstantiationException,
-            IllegalAccessException, InvocationTargetException;
+    public Transport[] getTransports() throws TransformerException, ClassNotFoundException, SecurityException,
+            NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,
+            InvocationTargetException;
 
     /**
-     * Get an instance of an OpenURLRequestProcessor. Different processors may
-     * interpret OpenURLRequests differently, so OOM uses the configuration file
-     * to identify the one to be used by this application.
+     * Get an instance of an OpenURLRequestProcessor. Different processors may interpret OpenURLRequests differently, so
+     * OOM uses the configuration file to identify the one to be used by this application.
      * 
      * @throws TransformerException
      * @throws ClassNotFoundException
@@ -65,9 +63,8 @@ public interface OpenURLConfig {
      * @throws IllegalAccessException
      * @return The configured OpenURLRequestProcessor
      */
-    public OpenURLRequestProcessor getProcessor() throws TransformerException,
-            ClassNotFoundException, InstantiationException,
-            IllegalAccessException;
+    public OpenURLRequestProcessor getProcessor() throws TransformerException, ClassNotFoundException,
+            InstantiationException, IllegalAccessException;
 
     /**
      * Get an instance of a URI-identified service from the configuration file.
@@ -83,16 +80,14 @@ public interface OpenURLConfig {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    public Service getService(URI uri) throws TransformerException,
-            ClassNotFoundException, SecurityException, NoSuchMethodException,
-            IllegalArgumentException, InstantiationException,
-            IllegalAccessException, InvocationTargetException;
+    public Service getService(URI uri) throws TransformerException, ClassNotFoundException, SecurityException,
+            NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,
+            InvocationTargetException;
 
     /**
-     * Get an instance of a Service class identified by a class name from the
-     * configuration file. Use this method to construct Service classes because
-     * it will automatically include any class-specific information it finds in
-     * the configuration file.
+     * Get an instance of a Service class identified by a class name from the configuration file. Use this method to
+     * construct Service classes because it will automatically include any class-specific information it finds in the
+     * configuration file.
      * 
      * @param className the name of a Service class
      * @return a Service.
@@ -105,15 +100,13 @@ public interface OpenURLConfig {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    public Service getService(String className) throws TransformerException,
-            ClassNotFoundException, SecurityException, NoSuchMethodException,
-            IllegalArgumentException, InstantiationException,
+    public Service getService(String className) throws TransformerException, ClassNotFoundException,
+            SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException;
 
     /**
-     * Get a class configuration property from the OOM configuration file for
-     * the specified key. Only use this method if you know there is only one
-     * value for the key.
+     * Get a class configuration property from the OOM configuration file for the specified key. Only use this method if
+     * you know there is only one value for the key.
      * 
      * @param key
      * @return the value for a key in the OOM configuration file
@@ -122,12 +115,10 @@ public interface OpenURLConfig {
     public String getArg(String key) throws TransformerException;
 
     /**
-     * Get an array of class configuration properties from the OOM configuration
-     * file for the specified key.
+     * Get an array of class configuration properties from the OOM configuration file for the specified key.
      * 
      * @param key
-     * @return an array of values assigned to this key in the OOM configuration
-     *         file.
+     * @return an array of values assigned to this key in the OOM configuration file.
      * @throws TransformerException
      */
     public String[] getArgs(String key) throws TransformerException;

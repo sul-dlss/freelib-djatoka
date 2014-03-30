@@ -41,23 +41,20 @@ import org.slf4j.LoggerFactory;
  * PNG File Writer. Uses Image I/O to write BufferedImage as PNG
  * 
  * @author Ryan Chute
- * @author Kevin S. Clarke &lt;<a
- *         href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>&gt;
+ * @author Kevin S. Clarke &lt;<a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>&gt;
  */
 public class PNGWriter implements IWriter {
 
     private static Logger LOGGER = LoggerFactory.getLogger(PNGWriter.class);
 
     /**
-     * Write a BufferedImage instance using implementation to the provided
-     * OutputStream.
+     * Write a BufferedImage instance using implementation to the provided OutputStream.
      * 
      * @param bi a BufferedImage instance to be serialized
      * @param os OutputStream to output the image to
      * @throws FormatIOException
      */
-    public void write(BufferedImage bi, OutputStream os)
-            throws FormatIOException {
+    public void write(BufferedImage bi, OutputStream os) throws FormatIOException {
         if (bi != null) {
             BufferedOutputStream bos = null;
             try {

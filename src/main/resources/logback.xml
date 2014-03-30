@@ -55,59 +55,50 @@
     </encoder>
   </appender>
 
-  <!-- class level logging -->
-  <logger name="info.freelibrary.djatoka.iiif" level="DEBUG" />
+  <!-- Individual class level logging; then each off or on as needed -->
+  <!--
+  <logger name="info.freelibrary.djatoka.iiif" level="DEBUG"/>
+  <logger name="info.freelibrary.djatoka.view.ImageServlet" level="DEBUG"/>
+  <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="DEBUG"/>
+  <logger name="info.freelibrary.djatoka.util.DebugServletFilter" level="DEBUG"/>
+  <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="DEBUG"/>
+  -->
 
-  <logger name="info.freelibrary.djatoka.view.ImageServlet"
-    level="DEBUG" />
-  <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService"
-    level="DEBUG" />
-
-  <!-- <logger name="info.freelibrary.djatoka.view.ImageInfo" level="DEBUG"/> 
-    <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="DEBUG"/> 
-    <logger name="gov.lanl.adore.djatoka.openurl.DjatokaImageMigrator" level="DEBUG"/> 
-    <logger name="gov.lanl.adore.djatoka.openurl.OpenURLServlet" level="DEBUG"/> 
-    <logger name="gov.lanl.adore.djatoka.util.IOUtils" level="DEBUG"/> <logger 
-    name="info.freelibrary.util.PairtreeObject" level="DEBUG"/> <logger name="info.freelibrary.util.PairtreeRoot" 
-    level="DEBUG"/> -->
-  <!-- Log files for log viewer; addivity is false so the log watcher ignores -->
-
-  <logger name="info.freelibrary.djatoka.util.LogSocketServlet"
-    level="DEBUG" additivity="false">
-    <appender-ref ref="LOGVIEWER" />
+  <!-- Some stuff still in early development -->
+  <logger name="info.freelibrary.djatoka.util.LogSocketServlet" level="DEBUG"
+    additivity="false">
+    <appender-ref ref="LOGVIEWER"/>
   </logger>
   <logger name="info.freelibrary.djatoka.util.LogSocket" level="DEBUG"
     additivity="false">
-    <appender-ref ref="LOGVIEWER" />
+    <appender-ref ref="LOGVIEWER"/>
   </logger>
-  <logger name="info.freelibrary.djatoka.util.LogWatcherThread"
-    level="DEBUG" additivity="false">
-    <appender-ref ref="LOGVIEWER" />
+  <logger name="info.freelibrary.djatoka.util.LogWatcherThread" level="DEBUG"
+    additivity="false">
+    <appender-ref ref="LOGVIEWER"/>
   </logger>
+  <!-- End of early development stuff -->
 
   <!-- Log file for the file system ingest process -->
-
   <logger name="info.freelibrary.djatoka.ingest" level="DEBUG"
     additivity="false">
-    <appender-ref ref="INGEST" />
+    <appender-ref ref="INGEST"/>
   </logger>
 
   <logger name="info.freelibrary.maven" level="DEBUG" additivity="false">
-    <appender-ref ref="INGEST" />
-    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="INGEST"/>
+    <appender-ref ref="CONSOLE"/>
   </logger>
 
   <!-- Log file for the pre-generating tile cache utility -->
-
   <logger name="info.freelibrary.djatoka.TileCache" level="DEBUG"
     additivity="false">
-    <appender-ref ref="CACHER" />
+    <appender-ref ref="CACHER"/>
   </logger>
 
   <!-- Log file for everything else -->
-
-  <root level="ERROR">
-    <appender-ref ref="DJATOKA" />
+  <root level="INFO">
+    <appender-ref ref="DJATOKA"/>
   </root>
 
 </configuration>

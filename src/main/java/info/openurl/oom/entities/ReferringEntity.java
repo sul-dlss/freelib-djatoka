@@ -8,13 +8,12 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package info.openurl.oom.entities;
 
 /**
- * ReferringEntity is a fancy word meaning "where". In other
- * words, <em>where</em> did the client issue the request?
- * Most Transports will want to pull this out the HTTP "Referer"
- * header.
+ * ReferringEntity is a fancy word meaning "where". In other words, <em>where</em> did the client issue the request?
+ * Most Transports will want to pull this out the HTTP "Referer" header.
  * 
  * @author Jeffrey A. Young
  */

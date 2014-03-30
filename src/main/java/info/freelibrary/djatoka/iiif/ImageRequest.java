@@ -17,8 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ImageRequest implements IIIFRequest {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ImageRequest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageRequest.class);
 
     private String myPrefix;
 
@@ -65,8 +64,7 @@ public class ImageRequest implements IIIFRequest {
         }
 
         // Check for valid image extensions
-        if ((path.endsWith(".jpg") || path.endsWith(".gif") ||
-                path.endsWith(".jp2") || path.endsWith(".pdf") ||
+        if ((path.endsWith(".jpg") || path.endsWith(".gif") || path.endsWith(".jp2") || path.endsWith(".pdf") ||
                 path.endsWith(".tif") || path.endsWith(".png")) &&
                 path.length() > 4) {
             String extension = path.substring(path.length() - 3);
@@ -85,13 +83,11 @@ public class ImageRequest implements IIIFRequest {
 
         if (parts.length != 5) {
             if (LOGGER.isErrorEnabled()) {
-                LOGGER.error(
-                        "Request path '{}' contains '{}' parts instead of 5",
-                        StringUtils.toString(parts, ' '), parts.length);
+                LOGGER.error("Request path '{}' contains '{}' parts instead of 5", StringUtils.toString(parts, ' '),
+                        parts.length);
             }
 
-            throw new IIIFException(
-                    "Request doesn't contain correct number of parts: " + path);
+            throw new IIIFException("Request doesn't contain correct number of parts: " + path);
         }
 
         myIdentifier = decode(parts[0]);
@@ -116,8 +112,7 @@ public class ImageRequest implements IIIFRequest {
             myRotation = Float.parseFloat(decode(parts[3]));
 
             if (LOGGER.isWarnEnabled()) {
-                if (myRotation != 0 && myRotation != 90 && myRotation != 180 &&
-                        myRotation != 270) {
+                if (myRotation != 0 && myRotation != 90 && myRotation != 180 && myRotation != 270) {
                     LOGGER.warn("{}° rotation not supported", myRotation);
                 }
             }

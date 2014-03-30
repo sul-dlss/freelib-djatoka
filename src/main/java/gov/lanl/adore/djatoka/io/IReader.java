@@ -27,8 +27,7 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
 /**
- * Image Reader Interface; implementing classes must return a BufferedImage
- * given a file path or InputStream as input.
+ * Image Reader Interface; implementing classes must return a BufferedImage given a file path or InputStream as input.
  * 
  * @author Ryan Chute
  */

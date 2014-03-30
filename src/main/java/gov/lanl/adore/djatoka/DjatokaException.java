@@ -42,8 +42,7 @@ public class DjatokaException extends Exception {
     }
 
     /**
-     * Creates an exception from the supplied Throwable with the supplied
-     * message.
+     * Creates an exception from the supplied Throwable with the supplied message.
      * 
      * @param message The exception message
      * @param cause The underlying exception

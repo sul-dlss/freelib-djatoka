@@ -26,9 +26,8 @@ package gov.lanl.adore.djatoka;
 import gov.lanl.adore.djatoka.plugin.ITransformPlugIn;
 
 /**
- * Decode Parameters for djatoka extraction. Defines extraction parameters (i.e.
- * region, rotate, level, transform plug-in) to be performed during extraction
- * of JP2.
+ * Decode Parameters for djatoka extraction. Defines extraction parameters (i.e. region, rotate, level, transform
+ * plug-in) to be performed during extraction of JP2.
  * 
  * @author Ryan Chute
  */
@@ -97,8 +96,7 @@ public class DjatokaDecodeParam implements DjatokaConstants {
     }
 
     /**
-     * Returns the discrete positive degrees the extracted image is to be
-     * rotated (e.g. 90, 180, 270)
+     * Returns the discrete positive degrees the extracted image is to be rotated (e.g. 90, 180, 270)
      * 
      * @return degrees to rotate image
      */
@@ -107,8 +105,7 @@ public class DjatokaDecodeParam implements DjatokaConstants {
     }
 
     /**
-     * Sets the discrete positive degrees the extracted image is to be rotated
-     * (e.g. 90, 180, 270)
+     * Sets the discrete positive degrees the extracted image is to be rotated (e.g. 90, 180, 270)
      * 
      * @param rotate degrees to rotate image
      */
@@ -120,8 +117,7 @@ public class DjatokaDecodeParam implements DjatokaConstants {
     }
 
     /**
-     * Returns the parameter for the region to be extracted. The region
-     * parameter format is: Y,X,H,W
+     * Returns the parameter for the region to be extracted. The region parameter format is: Y,X,H,W
      * 
      * @return the region parameter
      */
@@ -130,8 +126,7 @@ public class DjatokaDecodeParam implements DjatokaConstants {
     }
 
     /**
-     * Sets the parameter for the region to be extracted. The region parameter
-     * format is: Y,X,H,W
+     * Sets the parameter for the region to be extracted. The region parameter format is: Y,X,H,W
      * 
      * @param region the region parameter
      */
@@ -176,8 +171,8 @@ public class DjatokaDecodeParam implements DjatokaConstants {
     }
 
     /**
-     * Gets a positive scaling factor (e.g. 0.85643), where 1.0 is the current
-     * size. Value must be greater than 0 and less than 2.
+     * Gets a positive scaling factor (e.g. 0.85643), where 1.0 is the current size. Value must be greater than 0 and
+     * less than 2.
      * 
      * @return a positive scaling factor
      */
@@ -186,8 +181,8 @@ public class DjatokaDecodeParam implements DjatokaConstants {
     }
 
     /**
-     * Sets a positive scaling factor (e.g. 0.85643), where 1.0 is the current
-     * size. Value must be greater than 0 and less than 2.
+     * Sets a positive scaling factor (e.g. 0.85643), where 1.0 is the current size. Value must be greater than 0 and
+     * less than 2.
      * 
      * @param scalingFactor a positive scaling factor to be applied
      */
@@ -198,8 +193,7 @@ public class DjatokaDecodeParam implements DjatokaConstants {
     /**
      * Gets the ScalingDimensions to be applied; w,h.
      * 
-     * @return null if no scaling is to be performed or an int[] with length of
-     *         2 containing w,h values
+     * @return null if no scaling is to be performed or an int[] with length of 2 containing w,h values
      */
     public int[] getScalingDimensions() {
         return scalingDims;
@@ -208,8 +202,8 @@ public class DjatokaDecodeParam implements DjatokaConstants {
     /**
      * Sets the ScalingDimensions to be applied; w,h.
      * 
-     * @param scalingDims int[] with length of 2 containing w,h values. Use
-     *        value of 0 to maintain aspect ratio and calculate second value.
+     * @param scalingDims int[] with length of 2 containing w,h values. Use value of 0 to maintain aspect ratio and
+     *        calculate second value.
      */
     public void setScalingDimensions(int[] scalingDims) {
         this.scalingDims = scalingDims;
@@ -231,8 +225,7 @@ public class DjatokaDecodeParam implements DjatokaConstants {
         } else if (scalingDims.length == 1) {
             sb.append("\"scalingDims\": \"" + scalingDims[0] + "\", ");
         } else if (scalingDims.length == 2) {
-            sb.append("\"scalingDims\": \"" + scalingDims[0] + "," +
-                    scalingDims[1] + "\", ");
+            sb.append("\"scalingDims\": \"" + scalingDims[0] + "," + scalingDims[1] + "\", ");
         }
         sb.append("\"compLayer\": \"" + compLayer + "\" ");
         sb.append("}");

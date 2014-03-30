@@ -14,11 +14,9 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 
 /**
- * Service classes are expected to return an instance of this class. It is
- * basically a holding area for the HttpServletResponse assignments. In theory,
- * this model could be designed to pass the HttpServletResponse directly into
- * the Service classes, but that would make those Services harder to call from
- * within Java.
+ * Service classes are expected to return an instance of this class. It is basically a holding area for the
+ * HttpServletResponse assignments. In theory, this model could be designed to pass the HttpServletResponse directly
+ * into the Service classes, but that would make those Services harder to call from within Java.
  * 
  * @author Jeffrey A. Young
  * @see info.openurl.oom.Service
@@ -48,8 +46,7 @@ public class OpenURLResponse {
      * @param bytes HTTP response message
      * @deprecated
      */
-    public OpenURLResponse(int status, String redirectURL, String contentType,
-            byte[] bytes) {
+    public OpenURLResponse(int status, String redirectURL, String contentType, byte[] bytes) {
         this(status, redirectURL, contentType, new ByteArrayInputStream(bytes));
     }
 
@@ -62,10 +59,9 @@ public class OpenURLResponse {
      * @param bytes HTTP response message
      * @deprecated
      */
-    public OpenURLResponse(int status, URL redirectURL, String contentType,
-            byte[] bytes) {
-        this(status, (redirectURL != null) ? redirectURL.toString() : null,
-                contentType, new ByteArrayInputStream(bytes));
+    public OpenURLResponse(int status, URL redirectURL, String contentType, byte[] bytes) {
+        this(status, (redirectURL != null) ? redirectURL.toString() : null, contentType, new ByteArrayInputStream(
+                bytes));
     }
 
     /**
@@ -77,10 +73,8 @@ public class OpenURLResponse {
      * @param is
      * @deprecated
      */
-    public OpenURLResponse(int status, URL redirectURL, String contentType,
-            InputStream is) {
-        this(status, (redirectURL != null) ? redirectURL.toString() : null,
-                contentType, is);
+    public OpenURLResponse(int status, URL redirectURL, String contentType, InputStream is) {
+        this(status, (redirectURL != null) ? redirectURL.toString() : null, contentType, is);
     }
 
     /**
@@ -119,8 +113,7 @@ public class OpenURLResponse {
      * @param sessionMap
      * @param headerMap
      */
-    public OpenURLResponse(int status, String redirectURL, Map sessionMap,
-            Map headerMap) {
+    public OpenURLResponse(int status, String redirectURL, Map sessionMap, Map headerMap) {
         this.status = status;
         this.redirectURL = redirectURL;
         this.sessionMap = sessionMap;
@@ -144,8 +137,7 @@ public class OpenURLResponse {
      * @param is
      * @param sessionMap
      */
-    public OpenURLResponse(int status, String contentType, InputStream is,
-            Map sessionMap) {
+    public OpenURLResponse(int status, String contentType, InputStream is, Map sessionMap) {
         this.status = status;
         this.contentType = contentType;
         this.is = is;
@@ -159,8 +151,7 @@ public class OpenURLResponse {
      * @param sessionMap
      * @param headerMap
      */
-    public OpenURLResponse(int status, String contentType, byte[] bytes,
-            Map sessionMap, Map headerMap) {
+    public OpenURLResponse(int status, String contentType, byte[] bytes, Map sessionMap, Map headerMap) {
         this.status = status;
         this.contentType = contentType;
         this.is = new ByteArrayInputStream(bytes);
@@ -185,8 +176,7 @@ public class OpenURLResponse {
      * @param bytes
      * @param sessionMap
      */
-    public OpenURLResponse(int status, String contentType, byte[] bytes,
-            Map sessionMap) {
+    public OpenURLResponse(int status, String contentType, byte[] bytes, Map sessionMap) {
         this(status, contentType, new ByteArrayInputStream(bytes), sessionMap);
     }
 
@@ -199,8 +189,7 @@ public class OpenURLResponse {
      * @param is
      * @deprecated
      */
-    public OpenURLResponse(int status, String redirectURL, String contentType,
-            InputStream is) {
+    public OpenURLResponse(int status, String redirectURL, String contentType, InputStream is) {
         this.status = status;
         this.redirectURL = redirectURL;
         this.contentType = contentType;
@@ -249,8 +238,7 @@ public class OpenURLResponse {
      * @return a Cookie[] to be returned to the user
      */
     public Cookie[] getCookies() {
-        return (Cookie[]) cookies.toArray((Cookie[]) Array.newInstance(
-                Cookie.class, cookies.size()));
+        return (Cookie[]) cookies.toArray((Cookie[]) Array.newInstance(Cookie.class, cookies.size()));
     }
 
     /**

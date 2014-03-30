@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public class InfoRequest implements IIIFRequest {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(InfoRequest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InfoRequest.class);
 
     private String myIdentifier;
 
@@ -38,8 +37,7 @@ public class InfoRequest implements IIIFRequest {
      * Returns a <code>InfoRequest</code> for the supplied {@link URL}.
      * 
      * @param aURL A {@link URL} representing the <code>InfoRequest</code>
-     * @param aServicePrefix A pre-configured prefix to use in parsing the
-     *        request
+     * @param aServicePrefix A pre-configured prefix to use in parsing the request
      */
     public InfoRequest(URL aURL, String aServicePrefix) {
         myServicePrefix = Builder.checkServicePrefix(aServicePrefix);

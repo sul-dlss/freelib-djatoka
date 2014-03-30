@@ -26,8 +26,7 @@ public class Region {
      * Constructs a representation of an IIIF request's region.
      * 
      * @param aRegion An IIIF string representation of a region
-     * @throws IIIFException If there is something wrong with the string
-     *         representation of a IIIF region
+     * @throws IIIFException If there is something wrong with the string representation of a IIIF region
      */
     public Region(String aRegion) throws IIIFException {
         if (aRegion.equalsIgnoreCase("full")) {
@@ -46,8 +45,7 @@ public class Region {
             parts = region.split(",");
 
             if (parts.length != 4) {
-                throw new IIIFException(StringUtils.format(
-                        "Incorrect number of region coords: {} (expected 4)",
+                throw new IIIFException(StringUtils.format("Incorrect number of region coords: {} (expected 4)",
                         Integer.toString(parts.length)));
             }
 
@@ -55,63 +53,49 @@ public class Region {
                 myX = Integer.parseInt(parts[0]);
 
                 if (myX < 0) {
-                    throw new IIIFException(
-                            "Region's X parameter isn't a positive number: " +
-                                    myX);
+                    throw new IIIFException("Region's X parameter isn't a positive number: " + myX);
                 }
             } catch (NumberFormatException details) {
-                throw new IIIFException(StringUtils.format(
-                        "Region's X parameter ({}) isn't an integer", parts[0]));
+                throw new IIIFException(StringUtils.format("Region's X parameter ({}) isn't an integer", parts[0]));
             }
 
             try {
                 myY = Integer.parseInt(parts[1]);
 
                 if (myY < 0) {
-                    throw new IIIFException(
-                            "Region's Y parameter isn't a positive number: " +
-                                    myY);
+                    throw new IIIFException("Region's Y parameter isn't a positive number: " + myY);
                 }
             } catch (NumberFormatException details) {
-                throw new IIIFException(StringUtils.format(
-                        "Region's Y parameter ({}) isn't an integer", parts[1]));
+                throw new IIIFException(StringUtils.format("Region's Y parameter ({}) isn't an integer", parts[1]));
             }
 
             try {
                 myWidth = Integer.parseInt(parts[2]);
 
                 if (myWidth <= 0) {
-                    throw new IIIFException(
-                            "Region's width parameter isn't greater than 0: " +
-                                    myWidth);
+                    throw new IIIFException("Region's width parameter isn't greater than 0: " + myWidth);
                 }
 
                 if (myRegionUsesPercents && myWidth > 100) {
-                    throw new IIIFException(
-                            "Region's width percent can't be more than 100%");
+                    throw new IIIFException("Region's width percent can't be more than 100%");
                 }
             } catch (NumberFormatException details) {
-                throw new IIIFException(StringUtils.format(
-                        "Region's width parameter ({}) isn't an integer",
-                        parts[2]));
+                throw new IIIFException(StringUtils
+                        .format("Region's width parameter ({}) isn't an integer", parts[2]));
             }
 
             try {
                 myHeight = Integer.parseInt(parts[3]);
 
                 if (myHeight <= 0) {
-                    throw new IIIFException(
-                            "Region's height parameter isn't greater than 0: " +
-                                    myHeight);
+                    throw new IIIFException("Region's height parameter isn't greater than 0: " + myHeight);
                 }
 
                 if (myRegionUsesPercents && myHeight > 100) {
-                    throw new IIIFException(
-                            "Region's height percent can't be more than 100%");
+                    throw new IIIFException("Region's height percent can't be more than 100%");
                 }
             } catch (NumberFormatException details) {
-                throw new IIIFException(StringUtils.format(
-                        "Region's height parameter ({}) isn't an integer",
+                throw new IIIFException(StringUtils.format("Region's height parameter ({}) isn't an integer",
                         parts[3]));
             }
         }

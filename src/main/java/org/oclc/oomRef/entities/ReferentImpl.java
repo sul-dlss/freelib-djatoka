@@ -14,8 +14,8 @@ package org.oclc.oomRef.entities;
 import info.openurl.oom.entities.Referent;
 
 /**
- * Referent is a resource that is referenced on a network, and about which the
- * ContextObject is created; an <em>Entity</em> of the <em>ContextObject</em>.
+ * Referent is a resource that is referenced on a network, and about which the ContextObject is created; an
+ * <em>Entity</em> of the <em>ContextObject</em>.
  * 
  * @author Jeffrey A. Young
  */

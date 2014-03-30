@@ -50,8 +50,7 @@ import com.martiansoftware.jsap.CommandLineTokenizer;
  */
 public class KduCompressExe implements ICompress {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(KduCompressExe.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(KduCompressExe.class);
 
     private static boolean isWindows = false;
 
@@ -67,37 +66,27 @@ public class KduCompressExe implements ICompress {
     public static final String STDOUT = "/dev/stdout";
 
     static {
-        env =
-                System.getProperty("kakadu.home") +
-                        System.getProperty("file.separator");
+        env = System.getProperty("kakadu.home") + System.getProperty("file.separator");
         exe =
                 env +
-                        ((System.getProperty("os.name").startsWith("Win"))
-                                ? KDU_COMPRESS_EXE + ".exe" : KDU_COMPRESS_EXE);
+                        ((System.getProperty("os.name").startsWith("Win")) ? KDU_COMPRESS_EXE + ".exe"
+                                : KDU_COMPRESS_EXE);
 
         if (System.getProperty("os.name").startsWith("Mac")) {
-            envParams = new String[] {
-                "DYLD_LIBRARY_PATH=" + System.getProperty("DYLD_LIBRARY_PATH")
-            };
+            envParams = new String[] { "DYLD_LIBRARY_PATH=" + System.getProperty("DYLD_LIBRARY_PATH") };
         } else if (System.getProperty("os.name").startsWith("Win")) {
             isWindows = true;
         } else if (System.getProperty("os.name").startsWith("Linux")) {
-            envParams = new String[] {
-                "LD_LIBRARY_PATH=" + System.getProperty("LD_LIBRARY_PATH")
-            };
+            envParams = new String[] { "LD_LIBRARY_PATH=" + System.getProperty("LD_LIBRARY_PATH") };
         } else if (System.getProperty("os.name").startsWith("Solaris")) {
-            envParams = new String[] {
-                "LD_LIBRARY_PATH=" + System.getProperty("LD_LIBRARY_PATH")
-            };
+            envParams = new String[] { "LD_LIBRARY_PATH=" + System.getProperty("LD_LIBRARY_PATH") };
         }
 
-        LOGGER.debug("envParams: " +
-                ((envParams != null) ? envParams[0] + " | " : "") + exe);
+        LOGGER.debug("envParams: " + ((envParams != null) ? envParams[0] + " | " : "") + exe);
     }
 
     /**
-     * Constructor which expects the following system properties to be defined
-     * and exported.
+     * Constructor which expects the following system properties to be defined and exported.
      * <p/>
      * (Win/Linux/UNIX) LD_LIBRARY_PATH=$DJATOKA_HOME/lib/$DJATOKA_OS
      * <p/>
@@ -115,22 +104,19 @@ public class KduCompressExe implements ICompress {
     }
 
     /**
-     * Compress input BufferedImage using provided DjatokaEncodeParam
-     * parameters.
+     * Compress input BufferedImage using provided DjatokaEncodeParam parameters.
      * 
      * @param bi in-memory image to be compressed
      * @param output absolute file path for output file.
      * @param params DjatokaEncodeParam containing compression parameters.
      * @throws DjatokaException
      */
-    public void compressImage(BufferedImage bi, String output,
-            DjatokaEncodeParam params) throws DjatokaException {
+    public void compressImage(BufferedImage bi, String output, DjatokaEncodeParam params) throws DjatokaException {
         if (params == null) {
             params = new DjatokaEncodeParam();
         }
         if (params.getLevels() == 0) {
-            params.setLevels(ImageProcessingUtils.getLevelCount(bi.getWidth(),
-                    bi.getHeight()));
+            params.setLevels(ImageProcessingUtils.getLevelCount(bi.getWidth(), bi.getHeight()));
         }
         File in = null;
         try {
@@ -152,22 +138,20 @@ public class KduCompressExe implements ICompress {
     }
 
     /**
-     * Compress input BufferedImage using provided DjatokaEncodeParam
-     * parameters.
+     * Compress input BufferedImage using provided DjatokaEncodeParam parameters.
      * 
      * @param bi in-memory image to be compressed
      * @param output OutputStream to serialize compressed image.
      * @param params DjatokaEncodeParam containing compression parameters.
      * @throws DjatokaException
      */
-    public void compressImage(BufferedImage bi, OutputStream output,
-            DjatokaEncodeParam params) throws DjatokaException {
+    public void compressImage(BufferedImage bi, OutputStream output, DjatokaEncodeParam params)
+            throws DjatokaException {
         if (params == null) {
             params = new DjatokaEncodeParam();
         }
         if (params.getLevels() == 0) {
-            params.setLevels(ImageProcessingUtils.getLevelCount(bi.getWidth(),
-                    bi.getHeight()));
+            params.setLevels(ImageProcessingUtils.getLevelCount(bi.getWidth(), bi.getHeight()));
         }
         File in = null;
         File out = null;
@@ -204,8 +188,7 @@ public class KduCompressExe implements ICompress {
      * @param params DjatokaEncodeParam containing compression parameters.
      * @throws DjatokaException
      */
-    public void compressImage(InputStream input, String output,
-            DjatokaEncodeParam params) throws DjatokaException {
+    public void compressImage(InputStream input, String output, DjatokaEncodeParam params) throws DjatokaException {
         if (params == null) {
             params = new DjatokaEncodeParam();
         }
@@ -215,11 +198,8 @@ public class KduCompressExe implements ICompress {
             inputFile.deleteOnExit();
             IOUtils.copyStream(input, new FileOutputStream(inputFile));
             if (params.getLevels() == 0) {
-                ImageRecord dim =
-                        ImageRecordUtils.getImageDimensions(inputFile
-                                .getAbsolutePath());
-                params.setLevels(ImageProcessingUtils.getLevelCount(dim
-                        .getWidth(), dim.getHeight()));
+                ImageRecord dim = ImageRecordUtils.getImageDimensions(inputFile.getAbsolutePath());
+                params.setLevels(ImageProcessingUtils.getLevelCount(dim.getWidth(), dim.getHeight()));
                 dim = null;
             }
         } catch (IOException e) {
@@ -242,8 +222,8 @@ public class KduCompressExe implements ICompress {
      * @param params DjatokaEncodeParam containing compression parameters.
      * @throws DjatokaException
      */
-    public void compressImage(InputStream input, OutputStream output,
-            DjatokaEncodeParam params) throws DjatokaException {
+    public void compressImage(InputStream input, OutputStream output, DjatokaEncodeParam params)
+            throws DjatokaException {
         if (params == null) {
             params = new DjatokaEncodeParam();
         }
@@ -252,18 +232,13 @@ public class KduCompressExe implements ICompress {
             inputFile = File.createTempFile("tmp", ".tif");
             IOUtils.copyStream(input, new FileOutputStream(inputFile));
             if (params.getLevels() == 0) {
-                ImageRecord dim =
-                        ImageRecordUtils.getImageDimensions(inputFile
-                                .getAbsolutePath());
-                params.setLevels(ImageProcessingUtils.getLevelCount(dim
-                        .getWidth(), dim.getHeight()));
+                ImageRecord dim = ImageRecordUtils.getImageDimensions(inputFile.getAbsolutePath());
+                params.setLevels(ImageProcessingUtils.getLevelCount(dim.getWidth(), dim.getHeight()));
                 dim = null;
             }
         } catch (IOException e1) {
-            LOGGER.error("Unexpected file format; expecting uncompressed TIFF",
-                    e1);
-            throw new DjatokaException(
-                    "Unexpected file format; expecting uncompressed TIFF");
+            LOGGER.error("Unexpected file format; expecting uncompressed TIFF", e1);
+            throw new DjatokaException("Unexpected file format; expecting uncompressed TIFF");
         }
 
         String out = STDOUT;
@@ -278,8 +253,7 @@ public class KduCompressExe implements ICompress {
             out = winOut.getAbsolutePath();
         }
 
-        String command =
-                getKduCompressCommand(inputFile.getAbsolutePath(), out, params);
+        String command = getKduCompressCommand(inputFile.getAbsolutePath(), out, params);
         String[] cmdParts = CommandLineTokenizer.tokenize(command);
         Runtime rt = Runtime.getRuntime();
         try {
@@ -295,9 +269,7 @@ public class KduCompressExe implements ICompress {
             if (process != null) {
                 String errorCheck = null;
                 try {
-                    errorCheck =
-                            new String(IOUtils.getByteArray(process
-                                    .getErrorStream()));
+                    errorCheck = new String(IOUtils.getByteArray(process.getErrorStream()));
                 } catch (Exception e1) {
                     LOGGER.error(e1.getMessage(), e1);
                 }
@@ -337,25 +309,21 @@ public class KduCompressExe implements ICompress {
      * @param params DjatokaEncodeParam containing compression parameters.
      * @throws DjatokaException
      */
-    public void compressImage(String input, String output,
-            DjatokaEncodeParam params) throws DjatokaException {
+    public void compressImage(String input, String output, DjatokaEncodeParam params) throws DjatokaException {
         if (params == null) {
             params = new DjatokaEncodeParam();
         }
         boolean tmp = false;
         File inputFile = null;
-        if ((input.toLowerCase().endsWith(".tif") ||
-                input.toLowerCase().endsWith(".tiff") || ImageProcessingUtils
-                    .checkIfTiff(input)) &&
+        if ((input.toLowerCase().endsWith(".tif") || input.toLowerCase().endsWith(".tiff") || ImageProcessingUtils
+                .checkIfTiff(input)) &&
                 ImageProcessingUtils.isUncompressedTiff(input)) {
             LOGGER.debug("Processing TIFF: " + input);
             inputFile = new File(input);
         } else {
             if (LOGGER.isDebugEnabled() &&
-                    (input.toLowerCase().endsWith(".tif") || input
-                            .toLowerCase().endsWith(".tiff"))) {
-                LOGGER.debug(input + " : Is tiff? {} | Is uncompressed? {}",
-                        ImageProcessingUtils.checkIfTiff(input),
+                    (input.toLowerCase().endsWith(".tif") || input.toLowerCase().endsWith(".tiff"))) {
+                LOGGER.debug(input + " : Is tiff? {} | Is uncompressed? {}", ImageProcessingUtils.checkIfTiff(input),
                         ImageProcessingUtils.isUncompressedTiff(input));
             }
 
@@ -364,24 +332,18 @@ public class KduCompressExe implements ICompress {
                 tmp = true;
                 input = inputFile.getAbsolutePath();
             } catch (Exception e) {
-                throw new DjatokaException("Unrecognized file format: " +
-                        e.getMessage());
+                throw new DjatokaException("Unrecognized file format: " + e.getMessage());
             }
         }
 
         if (params.getLevels() == 0) {
-            ImageRecord dim =
-                    ImageRecordUtils.getImageDimensions(inputFile
-                            .getAbsolutePath());
-            params.setLevels(ImageProcessingUtils.getLevelCount(dim.getWidth(),
-                    dim.getHeight()));
+            ImageRecord dim = ImageRecordUtils.getImageDimensions(inputFile.getAbsolutePath());
+            params.setLevels(ImageProcessingUtils.getLevelCount(dim.getWidth(), dim.getHeight()));
             dim = null;
         }
 
         File outFile = new File(output);
-        String command =
-                getKduCompressCommand(new File(input).getAbsolutePath(),
-                        outFile.getAbsolutePath(), params);
+        String command = getKduCompressCommand(new File(input).getAbsolutePath(), outFile.getAbsolutePath(), params);
         String[] cmdParts = CommandLineTokenizer.tokenize(command);
         Runtime rt = Runtime.getRuntime();
 
@@ -421,8 +383,7 @@ public class KduCompressExe implements ICompress {
         }
 
         if (!outFile.getAbsolutePath().equals(STDOUT) && !outFile.exists()) {
-            throw new DjatokaException(
-                    "Unknown error occurred during processing.");
+            throw new DjatokaException("Unknown error occurred during processing.");
         }
     }
 
@@ -434,13 +395,10 @@ public class KduCompressExe implements ICompress {
      * @param params DjatokaEncodeParam containing compression parameters.
      * @return kdu_compress command line for specified input, output, params
      */
-    public static final String getKduCompressCommand(String input,
-            String output, DjatokaEncodeParam params) {
+    public static final String getKduCompressCommand(String input, String output, DjatokaEncodeParam params) {
         StringBuffer command = new StringBuffer(exe);
-        command.append(" -quiet -i ").append(
-                escape(new File(input).getAbsolutePath()));
-        command.append(" -o ").append(
-                escape(new File(output).getAbsolutePath()));
+        command.append(" -quiet -i ").append(escape(new File(input).getAbsolutePath()));
+        command.append(" -o ").append(escape(new File(output).getAbsolutePath()));
         command.append(" ").append(toKduCompressArgs(params));
 
         if (LOGGER.isDebugEnabled()) {
@@ -476,23 +434,17 @@ public class KduCompressExe implements ICompress {
             sb.append("Clayers=").append(params.getLayers()).append(" ");
         }
         if (params.getProgressionOrder() != null) {
-            sb.append("Corder=").append(params.getProgressionOrder()).append(
-                    " ");
+            sb.append("Corder=").append(params.getProgressionOrder()).append(" ");
         }
         if (params.getPacketDivision() != null) {
-            sb.append("ORGtparts=").append(params.getPacketDivision()).append(
-                    " ");
+            sb.append("ORGtparts=").append(params.getPacketDivision()).append(" ");
         }
         if (params.getCodeBlockSize() != null) {
-            sb.append("Cblk=").append(escape(params.getCodeBlockSize()))
-                    .append(" ");
+            sb.append("Cblk=").append(escape(params.getCodeBlockSize())).append(" ");
         }
-        sb.append("ORGgen_plt=").append((params.getInsertPLT()) ? "yes" : "no")
-                .append(" ");
-        sb.append("Creversible=").append(
-                (params.getUseReversible()) ? "yes" : "no").append(" ");
-        if (params.getJP2ColorSpace() != null &&
-                !params.getJP2ColorSpace().isEmpty()) {
+        sb.append("ORGgen_plt=").append((params.getInsertPLT()) ? "yes" : "no").append(" ");
+        sb.append("Creversible=").append((params.getUseReversible()) ? "yes" : "no").append(" ");
+        if (params.getJP2ColorSpace() != null && !params.getJP2ColorSpace().isEmpty()) {
             sb.append("-jp2_space ").append(params.getJP2ColorSpace());
             sb.append(' ');
         }

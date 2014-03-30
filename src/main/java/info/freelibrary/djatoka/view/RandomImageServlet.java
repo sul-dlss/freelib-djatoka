@@ -33,15 +33,14 @@ public class RandomImageServlet extends HttpServlet implements Constants {
 
     private static final long serialVersionUID = -7221546341356013641L;
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(RandomImageServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RandomImageServlet.class);
 
     private Properties myProps;
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void doGet(HttpServletRequest aRequest,
-            HttpServletResponse aResponse) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse) throws ServletException,
+            IOException {
         String pt = myProps.getProperty(JP2_DATA_DIR) + "/pairtree_root/--";
         RegexFileFilter filter = new RegexFileFilter(".*");
         ServletContext context = getServletContext();
@@ -56,8 +55,7 @@ public class RandomImageServlet extends HttpServlet implements Constants {
             files = new ArrayList<String>();
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Building list of files for {} from {}",
-                        getClass().getSimpleName(), pt);
+                LOGGER.debug("Building list of files for {} from {}", getClass().getSimpleName(), pt);
             }
 
             for (int index = 0; index < jp2Files.length; index++) {

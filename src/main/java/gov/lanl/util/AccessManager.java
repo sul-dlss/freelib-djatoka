@@ -25,8 +25,7 @@ import org.slf4j.LoggerFactory;
  * Handler to filter remote content by Apache .htaccess format
  * 
  * @author Ryan Chute Parts of code from HTAccessHandler in Jetty 6:
- *         http://www.mortbay.org/jetty/jetty-6/xref/org/mortbay/jetty/security/
- *         HTAccessHandler.html
+ *         http://www.mortbay.org/jetty/jetty-6/xref/org/mortbay/jetty/security/ HTAccessHandler.html
  */
 public class AccessManager {
 
@@ -56,9 +55,7 @@ public class AccessManager {
         BufferedReader htin = null;
 
         try {
-            htin =
-                    new BufferedReader(new InputStreamReader(
-                            new FileInputStream(resource)));
+            htin = new BufferedReader(new InputStreamReader(new FileInputStream(resource)));
             parse(htin);
         } catch (IOException e) {
             LOGGER.warn(e.getMessage(), e);
@@ -182,8 +179,7 @@ public class AccessManager {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("allow from:" + line.substring(pos1));
                 }
-                StringTokenizer tkns =
-                        new StringTokenizer(line.substring(pos1));
+                StringTokenizer tkns = new StringTokenizer(line.substring(pos1));
                 while (tkns.hasMoreTokens()) {
                     _allowList.add(tkns.nextToken());
                 }
@@ -197,8 +193,7 @@ public class AccessManager {
                     LOGGER.debug("deny from:" + line.substring(pos1));
                 }
 
-                StringTokenizer tkns =
-                        new StringTokenizer(line.substring(pos1));
+                StringTokenizer tkns = new StringTokenizer(line.substring(pos1));
                 while (tkns.hasMoreTokens()) {
                     _denyList.add(tkns.nextToken());
                 }

@@ -17,11 +17,10 @@ import java.net.URI;
 import java.net.URL;
 
 /**
- * A <em>Descriptor</em> that details properties of an <em>Entity</em> by the
- * combination of: (1) a URI reference to a <em>Metadata
- * Format</em> and (2) the network location of a particular instance of metadata
- * about the <em>Entity</em>, the metadata being expressed according to the
- * indicated <em>Metadata Format</em>.
+ * A <em>Descriptor</em> that details properties of an <em>Entity</em> by the combination of: (1) a URI reference to a
+ * <em>Metadata
+ * Format</em> and (2) the network location of a particular instance of metadata about the <em>Entity</em>, the metadata
+ * being expressed according to the indicated <em>Metadata Format</em>.
  * 
  * @author Jeffrey A. Young
  */
@@ -35,9 +34,8 @@ public class ByReferenceMetadataImpl implements ByReferenceMetadata {
      * Constructs a By-Reference Metadata descriptor
      * 
      * @param ref_fmt A URI reference to a <em>Metadata Format</em>.
-     * @param ref The network location of a particular instance of metadata
-     *        about the <em>Entity</em>, the metadata being expressed according
-     *        to the indicated <em>Metadata Format</em>.
+     * @param ref The network location of a particular instance of metadata about the <em>Entity</em>, the metadata
+     *        being expressed according to the indicated <em>Metadata Format</em>.
      */
     public ByReferenceMetadataImpl(URI ref_fmt, URL ref) {
         this.ref_fmt = ref_fmt;

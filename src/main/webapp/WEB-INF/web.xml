@@ -14,16 +14,23 @@
   <filter>
     <filter-name>IIIFServletFilter</filter-name>
     <filter-class>info.freelibrary.djatoka.iiif.IIIFServletFilter</filter-class>
-    <!-- We're only having this filter active for /iiif/* (our service prefix) -->
     <init-param>
       <param-name>prefix</param-name>
       <param-value>iiif</param-value>
     </init-param>
   </filter>
+<!--   <filter>
+    <filter-name>DebugServletFilter</filter-name>
+    <filter-class>info.freelibrary.djatoka.util.DebugServletFilter</filter-class>
+  </filter> -->
   <filter-mapping>
     <filter-name>cross-origin</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+<!--   <filter-mapping>
+    <filter-name>DebugServletFilter</filter-name>
+    <url-pattern>/iiif/*</url-pattern>
+  </filter-mapping> -->
   <filter-mapping>
     <filter-name>IIIFServletFilter</filter-name>
     <url-pattern>/iiif/*</url-pattern>
@@ -48,10 +55,6 @@
   <servlet>
     <servlet-name>randomImageViewer</servlet-name>
     <servlet-class>info.freelibrary.djatoka.view.RandomImageServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>reporter</servlet-name>
-    <servlet-class>info.freelibrary.djatoka.view.ReportServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>thumbnailViewer</servlet-name>
@@ -107,10 +110,6 @@
   <servlet-mapping>
     <servlet-name>healthCheck</servlet-name>
     <url-pattern>/health</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>reporter</servlet-name>
-    <url-pattern>/reports/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>ingester</servlet-name>

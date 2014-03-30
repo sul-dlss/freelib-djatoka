@@ -14,8 +14,7 @@ package org.oclc.oomRef.entities;
 import info.openurl.oom.entities.Referrer;
 
 /**
- * The resource that generates the ContextObject; an <em>Entity</em> of the
- * <em>ContextObject</em>.
+ * The resource that generates the ContextObject; an <em>Entity</em> of the <em>ContextObject</em>.
  * 
  * @author Jeffrey A. Young
  */

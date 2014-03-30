@@ -23,20 +23,6 @@
 
 package gov.lanl.adore.djatoka.openurl;
 
-import info.freelibrary.djatoka.view.IdentifierResolver;
-
-import gov.lanl.adore.djatoka.io.FormatConstants;
-import gov.lanl.adore.djatoka.util.IOUtils;
-import gov.lanl.util.HttpDate;
-import info.openurl.oom.ContextObject;
-import info.openurl.oom.OpenURLRequest;
-import info.openurl.oom.OpenURLRequestProcessor;
-import info.openurl.oom.OpenURLResponse;
-import info.openurl.oom.Service;
-import info.openurl.oom.config.ClassConfig;
-import info.openurl.oom.config.OpenURLConfig;
-import info.openurl.oom.entities.ServiceType;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -48,6 +34,24 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import gov.lanl.adore.djatoka.io.FormatConstants;
+import gov.lanl.adore.djatoka.util.IOUtils;
+import gov.lanl.util.HttpDate;
+
+import info.freelibrary.djatoka.view.IdentifierResolver;
+
+import info.openurl.oom.ContextObject;
+import info.openurl.oom.OpenURLRequest;
+import info.openurl.oom.OpenURLRequestProcessor;
+import info.openurl.oom.OpenURLResponse;
+import info.openurl.oom.Service;
+import info.openurl.oom.config.ClassConfig;
+import info.openurl.oom.config.OpenURLConfig;
+import info.openurl.oom.entities.ServiceType;
+
 /**
  * The OpenURLJP2Ping OpenURL Service
  * 
@@ -55,14 +59,11 @@ import org.slf4j.LoggerFactory;
  */
 public class OpenURLJP2Ping implements Service, FormatConstants {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(OpenURLJP2Ping.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(OpenURLJP2Ping.class);
 
-    private static final String DEFAULT_IMPL_CLASS = IdentifierResolver.class
-            .getCanonicalName();
+    private static final String DEFAULT_IMPL_CLASS = IdentifierResolver.class.getCanonicalName();
 
-    private static final String PROPS_KEY_IMPL_CLASS =
-            "OpenURLJP2KService.referentResolverImpl";
+    private static final String PROPS_KEY_IMPL_CLASS = "OpenURLJP2KService.referentResolverImpl";
 
     private static final String SVC_ID = "info:lanl-repo/svc/ping";
 
@@ -77,81 +78,75 @@ public class OpenURLJP2Ping implements Service, FormatConstants {
     private static Properties props = new Properties();
 
     /**
-     * Construct an info:lanl-repo/svc/ping web service class. Initializes
-     * Referent Resolver instance using OpenURLJP2KService.referentResolverImpl
-     * property.
+     * Construct an info:lanl-repo/svc/ping web service class. Initializes Referent Resolver instance using
+     * OpenURLJP2KService.referentResolverImpl property.
      * 
      * @param openURLConfig OOM Properties forwarded from OpenURLServlet
-     * @param classConfig Implementation Properties forwarded from
-     *        OpenURLServlet
+     * @param classConfig Implementation Properties forwarded from OpenURLServlet
      * @throws ResolverException
      */
-    public OpenURLJP2Ping(OpenURLConfig openURLConfig, ClassConfig classConfig)
-            throws ResolverException {
+    public OpenURLJP2Ping(final OpenURLConfig openURLConfig, final ClassConfig classConfig) throws ResolverException {
         try {
             if (!ReferentManager.isInit()) {
                 props = IOUtils.loadConfigByCP(classConfig.getArg("props"));
-                implClass =
-                        props.getProperty(PROPS_KEY_IMPL_CLASS,
-                                DEFAULT_IMPL_CLASS);
-                ReferentManager.init((IReferentResolver) Class.forName(
-                        implClass).newInstance(), props);
+                implClass = props.getProperty(PROPS_KEY_IMPL_CLASS, DEFAULT_IMPL_CLASS);
+                ReferentManager.init((IReferentResolver) Class.forName(implClass).newInstance(), props);
             }
-        } catch (IOException e) {
-            throw new ResolverException(
-                    "Error attempting to open props file from classpath, disabling " +
-                            SVC_ID + " : " + e.getMessage());
-        } catch (Exception e) {
-            throw new ResolverException(
-                    "Unable to inititalize implementation: " +
-                            props.getProperty(implClass) + " - " +
-                            e.getMessage());
+        } catch (final IOException e) {
+            throw new ResolverException("Error attempting to open props file from classpath, disabling " + SVC_ID +
+                    " : " + e.getMessage());
+        } catch (final Exception e) {
+            throw new ResolverException("Unable to inititalize implementation: " + props.getProperty(implClass) +
+                    " - " + e.getMessage());
         }
     }
 
     /**
-     * Returns the OpenURL service identifier for this implementation of
-     * info.openurl.oom.Service
+     * Returns the OpenURL service identifier for this implementation of info.openurl.oom.Service
      */
+    @Override
     public URI getServiceID() throws URISyntaxException {
         return new URI(SVC_ID);
     }
 
     /**
-     * Returns the OpenURLResponse of a JSON object defining image status.
-     * Status Codes:
+     * Returns the OpenURLResponse of a JSON object defining image status. Status Codes:
      */
-    public OpenURLResponse resolve(ServiceType serviceType,
-            ContextObject contextObject, OpenURLRequest openURLRequest,
-            OpenURLRequestProcessor processor) {
-        String responseFormat = RESPONSE_TYPE;
+    @Override
+    public OpenURLResponse resolve(final ServiceType serviceType, final ContextObject contextObject,
+            final OpenURLRequest openURLRequest, final OpenURLRequestProcessor processor) {
+        final String responseFormat = RESPONSE_TYPE;
         int status = HttpServletResponse.SC_NOT_FOUND;
-        StringBuffer sb = new StringBuffer();
+        byte[] bytes = new byte[] {};
+
         try {
-            String id =
-                    ((URI) contextObject.getReferent().getDescriptors()[0])
-                            .toASCIIString();
+            final String id = ((URI) contextObject.getReferent().getDescriptors()[0]).toASCIIString();
             status = ReferentManager.getResolver().getStatus(id);
+
             if (status != HttpServletResponse.SC_NOT_FOUND) {
+                final ObjectMapper mapper = new ObjectMapper();
+                final ObjectNode rootNode = mapper.createObjectNode();
+
                 String res_status = null;
+
                 if (status == HttpServletResponse.SC_OK) {
                     res_status = STATUS_OK;
                 } else if (status == HttpServletResponse.SC_ACCEPTED) {
                     res_status = STATUS_ACCEPTED;
                 }
-                sb.append("{");
-                sb.append("\n\"identifier\": \"" + id + "\",");
-                sb.append("\n\"status\": \"" + res_status + "\"");
-                sb.append("\n}");
+
+                rootNode.put("identifier", id);
+                rootNode.put("status", res_status);
+                bytes = mapper.writeValueAsBytes(rootNode);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         }
-        HashMap<String, String> header_map = new HashMap<String, String>();
-        header_map.put("Content-Length", sb.toString().getBytes() + "");
+
+        final HashMap<String, String> header_map = new HashMap<String, String>();
+        header_map.put("Content-Length", Integer.toString(bytes.length));
         header_map.put("Date", HttpDate.getHttpDate());
-        return new OpenURLResponse(status, responseFormat, sb.toString()
-                .getBytes(), header_map);
+        return new OpenURLResponse(status, responseFormat, bytes, header_map);
     }
 }

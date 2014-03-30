@@ -47,12 +47,10 @@ import gov.lanl.adore.djatoka.util.SourceImageFileFilter;
  */
 public class DjatokaCompress {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(DjatokaCompress.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(DjatokaCompress.class);
 
     /**
-     * Uses apache commons cli to parse input args. Passes parsed parameters to
-     * ICompress implementation.
+     * Uses apache commons cli to parse input args. Passes parsed parameters to ICompress implementation.
      * 
      * @param args command line parameters to defined input,output,etc.
      */
@@ -62,35 +60,27 @@ public class DjatokaCompress {
 
         // create the Options
         Options options = new Options();
-        options.addOption("i", "input", true,
-                "Filepath of the input file or dir.");
-        options.addOption("o", "output", true,
-                "Filepath of the output file or dir.");
+        options.addOption("i", "input", true, "Filepath of the input file or dir.");
+        options.addOption("o", "output", true, "Filepath of the output file or dir.");
         options.addOption("r", "rate", true, "Absolute Compression Ratio");
         options.addOption("s", "slope", true,
                 "Used to generate relative compression ratio based on content characteristics.");
         options.addOption("y", "Clayers", true, "Number of quality levels.");
-        options.addOption("l", "Clevels", true,
-                "Number of DWT levels (reolution levels).");
+        options.addOption("l", "Clevels", true, "Number of DWT levels (reolution levels).");
         options.addOption("v", "Creversible", true, "Use Reversible Wavelet");
         options.addOption("c", "Cprecincts", true, "Precinct dimensions");
         options.addOption("p", "props", true, "Compression Properties File");
         options.addOption("d", "Corder", true, "Progression order");
-        options.addOption("g", "ORGgen_plt", true,
-                "Enables insertion of packet length information in the header");
-        options.addOption("t", "ORGtparts", true,
-                "Division of each tile's packets into tile-parts");
+        options.addOption("g", "ORGgen_plt", true, "Enables insertion of packet length information in the header");
+        options.addOption("t", "ORGtparts", true, "Division of each tile's packets into tile-parts");
         options.addOption("b", "Cblk", true, "Codeblock Size");
-        options.addOption("a", "AltImpl", true,
-                "Alternate ICompress Implemenation");
-        options.addOption("j", "jp2_profile", true,
-                "Supported JP2 Color Space Profile");
+        options.addOption("a", "AltImpl", true, "Alternate ICompress Implemenation");
+        options.addOption("j", "jp2_profile", true, "Supported JP2 Color Space Profile");
 
         try {
             if (args.length == 0) {
                 HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("gov.lanl.adore.djatoka.DjatokaCompress",
-                        options);
+                formatter.printHelp("gov.lanl.adore.djatoka.DjatokaCompress", options);
                 System.exit(0);
             }
 
@@ -154,32 +144,21 @@ public class DjatokaCompress {
                 jp2 = (ICompress) Class.forName(alt).newInstance();
             }
             if (new File(input).isDirectory() && new File(output).isDirectory()) {
-                ArrayList<File> files =
-                        IOUtils.getFileList(input, new SourceImageFileFilter(),
-                                false);
+                ArrayList<File> files = IOUtils.getFileList(input, new SourceImageFileFilter(), false);
                 for (File f : files) {
                     long x = System.currentTimeMillis();
-                    File outFile =
-                            new File(output, f.getName().substring(0,
-                                    f.getName().indexOf(".")) +
-                                    ".jp2");
-                    compress(jp2, f.getAbsolutePath(), outFile
-                            .getAbsolutePath(), p);
+                    File outFile = new File(output, f.getName().substring(0, f.getName().indexOf(".")) + ".jp2");
+                    compress(jp2, f.getAbsolutePath(), outFile.getAbsolutePath(), p);
                     report(f.getAbsolutePath(), x);
                 }
             } else {
                 long x = System.currentTimeMillis();
                 File f = new File(input);
                 if (output == null) {
-                    output =
-                            f.getName().substring(0, f.getName().indexOf(".")) +
-                                    ".jp2";
+                    output = f.getName().substring(0, f.getName().indexOf(".")) + ".jp2";
                 }
                 if (new File(output).isDirectory()) {
-                    output =
-                            output +
-                                    f.getName().substring(0,
-                                            f.getName().indexOf(".")) + ".jp2";
+                    output = output + f.getName().substring(0, f.getName().indexOf(".")) + ".jp2";
                 }
                 compress(jp2, input, output, p);
                 report(input, x);
@@ -189,8 +168,7 @@ public class DjatokaCompress {
         } catch (DjatokaException e) {
             LOGGER.error("djatoka Compression exception:" + e.getMessage(), e);
         } catch (InstantiationException e) {
-            LOGGER.error("Unable to initialize alternate implemenation:" +
-                    e.getMessage(), e);
+            LOGGER.error("Unable to initialize alternate implemenation:" + e.getMessage(), e);
         } catch (Exception e) {
             LOGGER.error("An exception occured:" + e.getMessage(), e);
         }
@@ -203,9 +181,7 @@ public class DjatokaCompress {
      * @param x System time in milliseconds when resource processing started
      */
     public static void report(String id, long x) {
-        LOGGER.info("Compression Time: " +
-                ((double) (System.currentTimeMillis() - x) / 1000) +
-                " seconds for " + id);
+        LOGGER.info("Compression Time: " + ((double) (System.currentTimeMillis() - x) / 1000) + " seconds for " + id);
     }
 
     /**
@@ -216,8 +192,8 @@ public class DjatokaCompress {
      * @param output
      * @param p
      */
-    public static void compress(ICompress jp2, String input, String output,
-            DjatokaEncodeParam p) throws DjatokaException {
+    public static void compress(ICompress jp2, String input, String output, DjatokaEncodeParam p)
+            throws DjatokaException {
         jp2.compressImage(input, output, p);
     }
 }

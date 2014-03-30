@@ -23,12 +23,11 @@ public class HealthServlet extends HttpServlet {
 
     private static final long serialVersionUID = -1456866062313365312L;
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(HealthServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HealthServlet.class);
 
     @Override
-    protected void doGet(HttpServletRequest aRequest,
-            HttpServletResponse aResponse) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse) throws ServletException,
+            IOException {
         boolean detailedOutput = aRequest.getParameter("detailed") != null;
         ServletOutputStream out = aResponse.getOutputStream();
         Element root = new Element("response");

@@ -33,9 +33,8 @@ class ContextObjectImpl implements ContextObject {
 
     private Referrer[] referrers;
 
-    ContextObjectImpl(Referent referent, ReferringEntity[] referringEntities,
-            Requester[] requesters, ServiceType[] serviceTypes,
-            Resolver[] resolvers, Referrer[] referrers) {
+    ContextObjectImpl(Referent referent, ReferringEntity[] referringEntities, Requester[] requesters,
+            ServiceType[] serviceTypes, Resolver[] resolvers, Referrer[] referrers) {
         this.referent = referent;
         this.referringEntities = referringEntities;
         this.requesters = requesters;
@@ -69,9 +68,8 @@ class ContextObjectImpl implements ContextObject {
     }
 
     public String toString() {
-        return new StringBuffer(referent.toString()).append("\n").append(
-                referringEntities).append("\n").append(requesters).append("\n")
-                .append(serviceTypes).append("\n").append(resolvers).append(
-                        "\n").append(referrers).append("\n").toString();
+        return new StringBuffer(referent.toString()).append("\n").append(referringEntities).append("\n").append(
+                requesters).append("\n").append(serviceTypes).append("\n").append(resolvers).append("\n").append(
+                referrers).append("\n").toString();
     }
 }

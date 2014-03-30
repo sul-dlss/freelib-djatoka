@@ -52,11 +52,10 @@ import kdu_jni.Kdu_region_decompressor;
 import kdu_jni.Kdu_simple_file_source;
 
 /**
- * Uses Kakadu Java Native Interface to extract regions. This implementation is
- * provided for reference purposes only. There are serious issues related to
- * multi-threading and byte buffers when pushing this implementation. This
- * implementation should be used for experimental purposes only. The kdu_expand
- * bridge method is far more scalable and memory efficient.
+ * Uses Kakadu Java Native Interface to extract regions. This implementation is provided for reference purposes only.
+ * There are serious issues related to multi-threading and byte buffers when pushing this implementation. This
+ * implementation should be used for experimental purposes only. The kdu_expand bridge method is far more scalable and
+ * memory efficient.
  * 
  * @author Ryan Chute
  */
@@ -128,8 +127,7 @@ public class KduExtractProcessorJNI {
      * @throws IOException If there is a trouble reading or writing the image
      * @throws DjatokaException If there is another sort of exception
      */
-    public BufferedImage extractUsingCompositor() throws IOException,
-            DjatokaException {
+    public BufferedImage extractUsingCompositor() throws IOException, DjatokaException {
         boolean useRegion = false;
         int left = 0;
         int top = 0;
@@ -215,15 +213,10 @@ public class KduExtractProcessorJNI {
             Kdu_coords imagePosition = imageDimensions.Access_pos();
 
             if (useleftDouble) {
-                left =
-                        imagePosition.Get_x() +
-                                (int) Math
-                                        .round(leftDouble * imageSize.Get_x());
+                left = imagePosition.Get_x() + (int) Math.round(leftDouble * imageSize.Get_x());
             }
             if (usetopDouble) {
-                top =
-                        imagePosition.Get_y() +
-                                (int) Math.round(topDouble * imageSize.Get_y());
+                top = imagePosition.Get_y() + (int) Math.round(topDouble * imageSize.Get_y());
             }
             if (useheightDouble) {
                 height = (int) Math.round(heightDouble * imageSize.Get_y());
@@ -242,10 +235,8 @@ public class KduExtractProcessorJNI {
             int reduce = 1 << params.getLevelReductionFactor();
             imageSize.Set_x(imageSize.Get_x());
             imageSize.Set_y(imageSize.Get_y());
-            imagePosition.Set_x(imagePosition.Get_x() / reduce -
-                    (1 / reduce - 1) / 2);
-            imagePosition.Set_y(imagePosition.Get_y() / reduce -
-                    (1 / reduce - 1) / 2);
+            imagePosition.Set_x(imagePosition.Get_x() / reduce - (1 / reduce - 1) / 2);
+            imagePosition.Set_y(imagePosition.Get_y() / reduce - (1 / reduce - 1) / 2);
 
             Kdu_dims viewDims = new Kdu_dims();
             viewDims.Assign(imageDimensions);
@@ -268,8 +259,7 @@ public class KduExtractProcessorJNI {
             compositor.Set_buffer_surface(viewDims);
 
             int[] imgBuffer = new int[viewSize.Get_x() * viewSize.Get_y()];
-            Kdu_compositor_buf compositorBuffer =
-                    compositor.Get_composition_buffer(viewDims);
+            Kdu_compositor_buf compositorBuffer = compositor.Get_composition_buffer(viewDims);
             int regionBufferSize = 0;
             int[] kduBuffer = null;
             Kdu_dims newRegion = new Kdu_dims();
@@ -288,30 +278,21 @@ public class KduExtractProcessorJNI {
                 }
 
                 compositorBuffer.Get_region(newRegion, kduBuffer);
-                int imgBuffereIdx =
-                        newOffset.Get_x() + newOffset.Get_y() *
-                                viewSize.Get_x();
+                int imgBuffereIdx = newOffset.Get_x() + newOffset.Get_y() * viewSize.Get_x();
                 int kduBufferIdx = 0;
                 int xDiff = viewSize.Get_x() - newSize.Get_x();
-                for (int j = 0; j < newSize.Get_y(); j++, imgBuffereIdx +=
-                        xDiff) {
+                for (int j = 0; j < newSize.Get_y(); j++, imgBuffereIdx += xDiff) {
                     for (int i = 0; i < newSize.Get_x(); i++) {
                         imgBuffer[imgBuffereIdx++] = kduBuffer[kduBufferIdx++];
                     }
                 }
             }
-            if (params.getRotationDegree() == 90 ||
-                    params.getRotationDegree() == 270) {
-                image =
-                        new BufferedImage(imageSize.Get_y(), imageSize.Get_x(),
-                                BufferedImage.TYPE_INT_RGB);
+            if (params.getRotationDegree() == 90 || params.getRotationDegree() == 270) {
+                image = new BufferedImage(imageSize.Get_y(), imageSize.Get_x(), BufferedImage.TYPE_INT_RGB);
             } else {
-                image =
-                        new BufferedImage(imageSize.Get_x(), imageSize.Get_y(),
-                                BufferedImage.TYPE_INT_RGB);
+                image = new BufferedImage(imageSize.Get_x(), imageSize.Get_y(), BufferedImage.TYPE_INT_RGB);
             }
-            image.setRGB(0, 0, viewSize.Get_x(), viewSize.Get_y(), imgBuffer,
-                    0, viewSize.Get_x());
+            image.setRGB(0, 0, viewSize.Get_x(), viewSize.Get_y(), imgBuffer, 0, viewSize.Get_x());
 
             if (compositor != null) {
                 compositor.Native_destroy();
@@ -422,23 +403,17 @@ public class KduExtractProcessorJNI {
                 channels.Configure(codestream);
             }
             int ref_component = channels.Get_source_component(0);
-            Kdu_coords ref_expansion =
-                    getReferenceExpansion(ref_component, channels, codestream);
+            Kdu_coords ref_expansion = getReferenceExpansion(ref_component, channels, codestream);
             Kdu_dims image_dims = new Kdu_dims();
             codestream.Get_dims(ref_component, image_dims);
             Kdu_coords imageSize = image_dims.Access_size();
             Kdu_coords imagePosition = image_dims.Access_pos();
 
             if (useleftDouble) {
-                left =
-                        imagePosition.Get_x() +
-                                (int) Math
-                                        .round(leftDouble * imageSize.Get_x());
+                left = imagePosition.Get_x() + (int) Math.round(leftDouble * imageSize.Get_x());
             }
             if (usetopDouble) {
-                top =
-                        imagePosition.Get_y() +
-                                (int) Math.round(topDouble * imageSize.Get_y());
+                top = imagePosition.Get_y() + (int) Math.round(topDouble * imageSize.Get_y());
             }
             if (useheightDouble) {
                 height = (int) Math.round(heightDouble * imageSize.Get_y());
@@ -457,10 +432,10 @@ public class KduExtractProcessorJNI {
             int reduce = 1 << params.getLevelReductionFactor();
             imageSize.Set_x(imageSize.Get_x() * ref_expansion.Get_x());
             imageSize.Set_y(imageSize.Get_y() * ref_expansion.Get_y());
-            imagePosition.Set_x(imagePosition.Get_x() * ref_expansion.Get_x() /
-                    reduce - ((ref_expansion.Get_x() / reduce - 1) / 2));
-            imagePosition.Set_y(imagePosition.Get_y() * ref_expansion.Get_y() /
-                    reduce - ((ref_expansion.Get_y() / reduce - 1) / 2));
+            imagePosition.Set_x(imagePosition.Get_x() * ref_expansion.Get_x() / reduce -
+                    ((ref_expansion.Get_x() / reduce - 1) / 2));
+            imagePosition.Set_y(imagePosition.Get_y() * ref_expansion.Get_y() / reduce -
+                    ((ref_expansion.Get_y() / reduce - 1) / 2));
 
             Kdu_dims view_dims = new Kdu_dims();
             view_dims.Assign(image_dims);
@@ -469,12 +444,9 @@ public class KduExtractProcessorJNI {
 
             int region_buf_size = imageSize.Get_x() * imageSize.Get_y();
             int[] region_buf = new int[region_buf_size];
-            Kdu_region_decompressor decompressor =
-                    new Kdu_region_decompressor();
-            decompressor.Start(codestream, channels, -1, params
-                    .getLevelReductionFactor(), 16384, image_dims,
-                    ref_expansion, new Kdu_coords(1, 1), false,
-                    Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);
+            Kdu_region_decompressor decompressor = new Kdu_region_decompressor();
+            decompressor.Start(codestream, channels, -1, params.getLevelReductionFactor(), 16384, image_dims,
+                    ref_expansion, new Kdu_coords(1, 1), false, Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);
 
             Kdu_dims new_region = new Kdu_dims();
             Kdu_dims incomplete_region = new Kdu_dims();
@@ -483,36 +455,28 @@ public class KduExtractProcessorJNI {
 
             int[] imgBuffer = new int[viewSize.Get_x() * viewSize.Get_y()];
             int[] kduBuffer = null;
-            while (decompressor.Process(region_buf, image_dims.Access_pos(), 0,
-                    0, region_buf_size, incomplete_region, new_region)) {
+            while (decompressor.Process(region_buf, image_dims.Access_pos(), 0, 0, region_buf_size,
+                    incomplete_region, new_region)) {
                 Kdu_coords newOffset = new_region.Access_pos();
                 Kdu_coords newSize = new_region.Access_size();
                 newOffset.Subtract(view_dims.Access_pos());
 
                 kduBuffer = region_buf;
-                int imgBuffereIdx =
-                        newOffset.Get_x() + newOffset.Get_y() *
-                                viewSize.Get_x();
+                int imgBuffereIdx = newOffset.Get_x() + newOffset.Get_y() * viewSize.Get_x();
                 int kduBufferIdx = 0;
                 int xDiff = viewSize.Get_x() - newSize.Get_x();
-                for (int j = 0; j < newSize.Get_y(); j++, imgBuffereIdx +=
-                        xDiff) {
+                for (int j = 0; j < newSize.Get_y(); j++, imgBuffereIdx += xDiff) {
                     for (int i = 0; i < newSize.Get_x(); i++) {
                         imgBuffer[imgBuffereIdx++] = kduBuffer[kduBufferIdx++];
                     }
                 }
             }
 
-            BufferedImage image =
-                    new BufferedImage(imageSize.Get_x(), imageSize.Get_y(),
-                            BufferedImage.TYPE_INT_RGB);
-            image.setRGB(0, 0, viewSize.Get_x(), viewSize.Get_y(), imgBuffer,
-                    0, viewSize.Get_x());
+            BufferedImage image = new BufferedImage(imageSize.Get_x(), imageSize.Get_y(), BufferedImage.TYPE_INT_RGB);
+            image.setRGB(0, 0, viewSize.Get_x(), viewSize.Get_y(), imgBuffer, 0, viewSize.Get_x());
 
             if (params.getRotationDegree() > 0) {
-                image =
-                        ImageProcessingUtils.rotate(image, params
-                                .getRotationDegree());
+                image = ImageProcessingUtils.rotate(image, params.getRotationDegree());
             }
 
             decompressor.Native_destroy();
@@ -534,9 +498,8 @@ public class KduExtractProcessorJNI {
         }
     }
 
-    private static Kdu_coords getReferenceExpansion(int reference_component,
-            Kdu_channel_mapping channels, Kdu_codestream codestream)
-            throws KduException {
+    private static Kdu_coords getReferenceExpansion(int reference_component, Kdu_channel_mapping channels,
+            Kdu_codestream codestream) throws KduException {
 
         int c;
         Kdu_coords ref_subs = new Kdu_coords();
@@ -563,12 +526,9 @@ public class KduExtractProcessorJNI {
             codestream.Get_subsampling(channels.Get_source_component(c), subs);
             if ((((subs.Get_x() * expansion.Get_x()) % ref_subs.Get_x()) != 0) ||
                     (((subs.Get_y() * expansion.Get_y()) % ref_subs.Get_y()) != 0)) {
-                Kdu_global
-                        .Kdu_print_error("The supplied JP2 file contains color channels "
-                                + "whose sub-sampling factors are not integer "
-                                + "multiples of one another.");
-                codestream.Apply_input_restrictions(0, 1, 0, 0, null,
-                        Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);
+                Kdu_global.Kdu_print_error("The supplied JP2 file contains color channels "
+                        + "whose sub-sampling factors are not integer " + "multiples of one another.");
+                codestream.Apply_input_restrictions(0, 1, 0, 0, null, Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);
                 channels.Configure(codestream);
                 expansion = new Kdu_coords(1, 1);
             }

@@ -46,9 +46,8 @@ import org.oclc.oomRef.entities.ServiceTypeImpl;
 import org.w3c.dom.Document;
 
 /**
- * For the sake of simplicity, this resolver assumes that multiple ServiceType
- * Identifiers should be processed in sequence until one of them returns a
- * Response instead of null. For example, the ContextObject could specify two
+ * For the sake of simplicity, this resolver assumes that multiple ServiceType Identifiers should be processed in
+ * sequence until one of them returns a Response instead of null. For example, the ContextObject could specify two
  * services: 1) The desired service 2) A failover service
  * 
  * @author Jeffrey A. Young
@@ -65,8 +64,7 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
     /**
      * Resolves the OpenURLResponse.
      */
-    public OpenURLResponse resolve(OpenURLRequest openURLRequest)
-            throws OpenURLException {
+    public OpenURLResponse resolve(OpenURLRequest openURLRequest) throws OpenURLException {
         OpenURLResponse response = null;
 
         // Try each ContentObject until someone responds
@@ -86,11 +84,9 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
                     if (descriptor instanceof Service) {
                         Service service = (Service) descriptor;
                         try {
-                            response =
-                                    service.resolve(
-                                            // this,
-                                            serviceType, contextObject,
-                                            openURLRequest, this);
+                            response = service.resolve(
+                            // this,
+                                    serviceType, contextObject, openURLRequest, this);
                         } catch (Exception e) {
                             throw new OpenURLException(e.getMessage(), e);
                         }
@@ -104,9 +100,8 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
     /**
      * Creates a context object.
      */
-    public ContextObject contextObjectFactory(Referent referent,
-            ReferringEntity referringEntity, Requester requester,
-            ServiceType serviceType, Resolver resolver, Referrer referrer) {
+    public ContextObject contextObjectFactory(Referent referent, ReferringEntity referringEntity,
+            Requester requester, ServiceType serviceType, Resolver resolver, Referrer referrer) {
         ReferringEntity[] referringEntities = null;
         Requester[] requesters = null;
         ServiceType[] serviceTypes = null;
@@ -114,33 +109,22 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
         Referrer[] referrers = null;
 
         if (referringEntity != null) {
-            referringEntities = new ReferringEntity[] {
-                referringEntity
-            };
+            referringEntities = new ReferringEntity[] { referringEntity };
         }
         if (requester != null) {
-            requesters = new Requester[] {
-                requester
-            };
+            requesters = new Requester[] { requester };
         }
         if (serviceType != null) {
-            serviceTypes = new ServiceType[] {
-                serviceType
-            };
+            serviceTypes = new ServiceType[] { serviceType };
         }
         if (resolver != null) {
-            resolvers = new Resolver[] {
-                resolver
-            };
+            resolvers = new Resolver[] { resolver };
         }
         if (referrer != null) {
-            referrers = new Referrer[] {
-                referrer
-            };
+            referrers = new Referrer[] { referrer };
         }
 
-        return contextObjectFactory(referent, referringEntities, requesters,
-                serviceTypes, resolvers, referrers);
+        return contextObjectFactory(referent, referringEntities, requesters, serviceTypes, resolvers, referrers);
     }
 
     /**
@@ -149,12 +133,9 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
      * @param referent A referent
      * @param referringEntities Referring entities
      */
-    public ContextObject contextObjectFactory(Referent referent,
-            ReferringEntity[] referringEntities, Requester[] requesters,
-            ServiceType[] serviceTypes, Resolver[] resolvers,
-            Referrer[] referrers) {
-        return new ContextObjectImpl(referent, referringEntities, requesters,
-                serviceTypes, resolvers, referrers);
+    public ContextObject contextObjectFactory(Referent referent, ReferringEntity[] referringEntities,
+            Requester[] requesters, ServiceType[] serviceTypes, Resolver[] resolvers, Referrer[] referrers) {
+        return new ContextObjectImpl(referent, referringEntities, requesters, serviceTypes, resolvers, referrers);
     }
 
     /**
@@ -209,24 +190,21 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
     /**
      * Creates a ByValueMetadata object.
      */
-    public ByValueMetadata byValueMetadataFactory(URI val_fmt, String prefix,
-            Set entrySet) {
+    public ByValueMetadata byValueMetadataFactory(URI val_fmt, String prefix, Set entrySet) {
         return new ByValueMetadataImpl(val_fmt, prefix, entrySet);
     }
 
     /**
      * Creates a ByValueMetadataKev.
      */
-    public ByValueMetadataKev byValueMetadataKevFactory(URI val_fmt,
-            String prefix, Set entrySet) {
+    public ByValueMetadataKev byValueMetadataKevFactory(URI val_fmt, String prefix, Set entrySet) {
         return new ByValueMetadataKevImpl(val_fmt, prefix, entrySet);
     }
 
     /**
      * Creates a ByValueMetadataXml.
      */
-    public ByValueMetadataXml byValueMetadataXmlFactory(URI val_fmt,
-            Document xmlDoc) {
+    public ByValueMetadataXml byValueMetadataXmlFactory(URI val_fmt, Document xmlDoc) {
         return new ByValueMetadataXmlImpl(val_fmt, xmlDoc);
     }
 
@@ -240,8 +218,7 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
     /**
      * Creates an OpenURLResponse.
      */
-    public OpenURLResponse openURLResponseFactory(int status,
-            String redirectURL, String contentType, byte[] bytes) {
+    public OpenURLResponse openURLResponseFactory(int status, String redirectURL, String contentType, byte[] bytes) {
         return new OpenURLResponse(status, redirectURL, contentType, bytes);
     }
 }

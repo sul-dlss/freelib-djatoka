@@ -46,6 +46,8 @@
 					href="http://projects.freelibrary.info/freelib-djatoka">FreeLib-Djatoka</a>
 				<div class="nav-collapse">
 					<ul class="nav pull-right">
+						<li><a href="index.html" title="IIIF API Tests">Test
+								Pages</a></li>
 						<li><a href="iiif-tests.html" title="IIIF API Tests">IIIF
 								API Tests</a></li>
 						<li><a href="https://github.com/ksclarke/freelib-djatoka"
@@ -86,7 +88,7 @@
             debug = false;
           }
 
-          /* Test if we're in an IE < 10 browser and handle differently */
+          /* Handle IE < 10 browsers differently than modern browsers (below) */
           if (typeof XDomainRequest != 'undefined' && !window.atob) {
             OpenSeadragon({
               id : "freelib-djatoka-demo",
@@ -94,19 +96,33 @@
               preserveViewport : true,
               debugMode : debug,
               debugGridColor : "#00ff00",
-              tileSources : [ {
-                "@context" : "http://library.stanford.edu/iiif/image-api/1.1/context.json",
-                "@id" : protocol + "://" + host + ":" + port
-                    + "/iiif/--%2Fms0332_gra_21503",
-                "width" : 1684,
-                "height" : 2338,
-                "tile_width" : 256,
-                "tile_height" : 256,
-                "formats" : [ "jpg" ],
-                "scale_factors" : [ 1, 2, 3, 4 ],
-                "qualities" : [ "native" ],
-                "profile" : "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level1"
-              } ]
+              tileSources : [
+                  {
+                    "@context" : "http://library.stanford.edu/iiif/image-api/1.1/context.json",
+                    "@id" : protocol + "://" + host + ":" + port
+                        + "/iiif/--%2Fwalters%2FW102_000059_950",
+                    "width" : 7613,
+                    "height" : 10557,
+                    "tile_width" : 256,
+                    "tile_height" : 256,
+                    "formats" : [ "jpg" ],
+                    "scale_factors" : [ 1, 2, 3, 4 ],
+                    "qualities" : [ "native" ],
+                    "profile" : "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level1"
+                  },
+                  {
+                    "@context" : "http://library.stanford.edu/iiif/image-api/1.1/context.json",
+                    "@id" : protocol + "://" + host + ":" + port
+                        + "/iiif/--%2Fwalters%2FW102_000061_950",
+                    "width" : 7475,
+                    "height" : 10419,
+                    "tile_width" : 256,
+                    "tile_height" : 256,
+                    "formats" : [ "jpg" ],
+                    "scale_factors" : [ 1, 2, 3, 4 ],
+                    "qualities" : [ "native" ],
+                    "profile" : "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level1"
+                  } ]
             });
           } else {
             OpenSeadragon({
@@ -117,13 +133,24 @@
               //panVertical: false, /* false freezes panning */
               debugMode : debug,
               debugGridColor : "#00ff00",
-              tileSources : [ protocol + "://" + host + ":" + port
-                  + "/iiif/--%2Fms0332_gra_21503/info.json" ]
+              tileSources : [
+                  protocol + "://" + host + ":" + port
+                      + "/iiif/--%2Fwalters%2FW102_000059_950/info.json",
+                  protocol + "://" + host + ":" + port
+                      + "/iiif/--%2Fwalters%2FW102_000061_950/info.json" ]
             });
           }
         </script>
 			</div>
+			<div style="text-align: center;">
+				Images used are published by the <a target="_new"
+					href="http://www.thedigitalwalters.org/">Walter's Art Museum</a>
+				under the <a target="_new"
+					href="http://creativecommons.org/licenses/by-sa/3.0/deed.en">Creative
+					Commons Attribution-ShareAlike 3.0 Unported</a> license.
+			</div>
 		</div>
+
 	</div>
 
 	<!-- ========================================================== -->

@@ -46,37 +46,31 @@ import org.slf4j.LoggerFactory;
  */
 public class DBCPUtils {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(DBCPUtils.class
-            .getName());
+    private static Logger LOGGER = LoggerFactory.getLogger(DBCPUtils.class.getName());
 
     /**
-     * Set-up a DBCP DataSource from a properties object. Uses a properties key
-     * prefix to identify the properties associated with profile. If a database
-     * profile has a prefix of djatoka, the props object would contain the
-     * following pairs: djatoka.url=jdbc:mysql://localhost/djatoka
-     * djatoka.driver=com.mysql.jdbc.Driver djatoka.login=root djatoka.pwd=
-     * djatoka.maxActive=50 djatoka.maxIdle=10
+     * Set-up a DBCP DataSource from a properties object. Uses a properties key prefix to identify the properties
+     * associated with profile. If a database profile has a prefix of djatoka, the props object would contain the
+     * following pairs: djatoka.url=jdbc:mysql://localhost/djatoka djatoka.driver=com.mysql.jdbc.Driver
+     * djatoka.login=root djatoka.pwd= djatoka.maxActive=50 djatoka.maxIdle=10
      * 
      * @param dbid database profile properties file prefix
      * @param props properties object containing relevant pairs
      */
-    public static DataSource setupDataSource(String dbid, Properties props)
-            throws Exception {
+    public static DataSource setupDataSource(String dbid, Properties props) throws Exception {
         String url = props.getProperty(dbid + ".url");
         String driver = props.getProperty(dbid + ".driver");
         String login = props.getProperty(dbid + ".login");
         String pwd = props.getProperty(dbid + ".pwd");
         int maxActive = 50;
         if (props.containsKey(dbid + ".maxActive")) {
-            maxActive =
-                    Integer.parseInt(props.getProperty(dbid + ".maxActive"));
+            maxActive = Integer.parseInt(props.getProperty(dbid + ".maxActive"));
         }
         int maxIdle = 10;
         if (props.containsKey(dbid + ".maxIdle")) {
             maxIdle = Integer.parseInt(props.getProperty(dbid + ".maxIdle"));
         }
-        LOGGER.debug(url + ";" + driver + ";" + login + ";" + pwd + ";" +
-                maxActive + ";" + maxIdle);
+        LOGGER.debug(url + ";" + driver + ";" + login + ";" + pwd + ";" + maxActive + ";" + maxIdle);
         return setupDataSource(url, driver, login, pwd, maxActive, maxIdle);
     }
 
@@ -90,14 +84,13 @@ public class DBCPUtils {
      * @param maxActive max simultaneous db connections (default: 50)
      * @param maxIdle max idle db connections (default: 10)
      */
-    public static DataSource setupDataSource(String connectURI,
-            String jdbcDriverName, String username, String password,
-            int maxActive, int maxIdle) throws Exception {
+    public static DataSource setupDataSource(String connectURI, String jdbcDriverName, String username,
+            String password, int maxActive, int maxIdle) throws Exception {
         try {
             java.lang.Class.forName(jdbcDriverName).newInstance();
         } catch (Exception e) {
-            LOGGER.error("Error when attempting to obtain DB Driver: " +
-                    jdbcDriverName + " on " + new Date().toString(), e);
+            LOGGER.error("Error when attempting to obtain DB Driver: " + jdbcDriverName + " on " +
+                    new Date().toString(), e);
             throw new ResolverException(e.getMessage(), e);
         }
 
@@ -109,17 +102,13 @@ public class DBCPUtils {
         }
 
         GenericObjectPool connectionPool =
-                new GenericObjectPool(null, maxActive,
-                        GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 3000, maxIdle,
-                        false, false, 60000, 5, 30000, true);
+                new GenericObjectPool(null, maxActive, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 3000, maxIdle, false,
+                        false, 60000, 5, 30000, true);
 
-        ConnectionFactory connectionFactory =
-                new DriverManagerConnectionFactory(connectURI, username,
-                        password);
+        ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(connectURI, username, password);
 
         PoolableConnectionFactory poolableConnectionFactory =
-                new PoolableConnectionFactory(connectionFactory,
-                        connectionPool, null, null, false, true);
+                new PoolableConnectionFactory(connectionFactory, connectionPool, null, null, false, true);
 
         PoolingDataSource dataSource = new PoolingDataSource(connectionPool);
 

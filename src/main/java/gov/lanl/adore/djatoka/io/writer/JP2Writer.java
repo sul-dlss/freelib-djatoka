@@ -51,20 +51,17 @@ public class JP2Writer implements IWriter {
     private DjatokaEncodeParam params = new DjatokaEncodeParam();
 
     /**
-     * Write a BufferedImage instance using implementation to the provided
-     * OutputStream.
+     * Write a BufferedImage instance using implementation to the provided OutputStream.
      * 
      * @param bi a BufferedImage instance to be serialized
      * @param os OutputStream to output the image to
      * @throws FormatIOException
      */
-    public void write(BufferedImage bi, OutputStream os)
-            throws FormatIOException {
+    public void write(BufferedImage bi, OutputStream os) throws FormatIOException {
         if (bi != null) {
             BufferedOutputStream bos = null;
             try {
-                params.setLevels(ImageProcessingUtils.getLevelCount(bi
-                        .getWidth(), bi.getHeight()));
+                params.setLevels(ImageProcessingUtils.getLevelCount(bi.getWidth(), bi.getHeight()));
                 KduCompressExe encoder = new KduCompressExe();
                 bos = new BufferedOutputStream(os);
                 encoder.compressImage(bi, bos, params);

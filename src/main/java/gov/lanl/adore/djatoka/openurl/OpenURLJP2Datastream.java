@@ -58,14 +58,11 @@ import org.slf4j.LoggerFactory;
  */
 public class OpenURLJP2Datastream implements Service, FormatConstants {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(OpenURLJP2Datastream.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(OpenURLJP2Datastream.class);
 
-    private static final String DEFAULT_IMPL_CLASS = IdentifierResolver.class
-            .getCanonicalName();
+    private static final String DEFAULT_IMPL_CLASS = IdentifierResolver.class.getCanonicalName();
 
-    private static final String PROPS_KEY_IMPL_CLASS =
-            "OpenURLJP2KService.referentResolverImpl";
+    private static final String PROPS_KEY_IMPL_CLASS = "OpenURLJP2KService.referentResolverImpl";
 
     private static final String SVC_ID = "info:lanl-repo/svc/getDatastream";
 
@@ -74,41 +71,31 @@ public class OpenURLJP2Datastream implements Service, FormatConstants {
     private static Properties props = new Properties();
 
     /**
-     * Construct an info:lanl-repo/svc/getXML web service class. Initializes
-     * Referent Resolver instance using OpenURLJP2KService.referentResolverImpl
-     * property.
+     * Construct an info:lanl-repo/svc/getXML web service class. Initializes Referent Resolver instance using
+     * OpenURLJP2KService.referentResolverImpl property.
      * 
      * @param openURLConfig OOM Properties forwarded from OpenURLServlet
-     * @param classConfig Implementation Properties forwarded from
-     *        OpenURLServlet
+     * @param classConfig Implementation Properties forwarded from OpenURLServlet
      * @throws ResolverException
      */
-    public OpenURLJP2Datastream(OpenURLConfig openURLConfig,
-            ClassConfig classConfig) throws ResolverException {
+    public OpenURLJP2Datastream(OpenURLConfig openURLConfig, ClassConfig classConfig) throws ResolverException {
         try {
             if (!ReferentManager.isInit()) {
                 props = IOUtils.loadConfigByCP(classConfig.getArg("props"));
-                implClass =
-                        props.getProperty(PROPS_KEY_IMPL_CLASS,
-                                DEFAULT_IMPL_CLASS);
-                ReferentManager.init((IReferentResolver) Class.forName(
-                        implClass).newInstance(), props);
+                implClass = props.getProperty(PROPS_KEY_IMPL_CLASS, DEFAULT_IMPL_CLASS);
+                ReferentManager.init((IReferentResolver) Class.forName(implClass).newInstance(), props);
             }
         } catch (IOException e) {
-            throw new ResolverException(
-                    "Error attempting to open props file from classpath, disabling " +
-                            SVC_ID + " : " + e.getMessage());
+            throw new ResolverException("Error attempting to open props file from classpath, disabling " + SVC_ID +
+                    " : " + e.getMessage());
         } catch (Exception e) {
-            throw new ResolverException(
-                    "Unable to inititalize implementation: " +
-                            props.getProperty(implClass) + " - " +
-                            e.getMessage());
+            throw new ResolverException("Unable to inititalize implementation: " + props.getProperty(implClass) +
+                    " - " + e.getMessage());
         }
     }
 
     /**
-     * Returns the OpenURL service identifier for this implementation of
-     * info.openurl.oom.Service
+     * Returns the OpenURL service identifier for this implementation of info.openurl.oom.Service
      */
     public URI getServiceID() throws URISyntaxException {
         return new URI(SVC_ID);
@@ -117,16 +104,14 @@ public class OpenURLJP2Datastream implements Service, FormatConstants {
     /**
      * Returns the OpenURLResponse of an XML object
      */
-    public OpenURLResponse resolve(ServiceType serviceType,
-            ContextObject contextObject, OpenURLRequest openURLRequest,
-            OpenURLRequestProcessor processor) {
+    public OpenURLResponse resolve(ServiceType serviceType, ContextObject contextObject,
+            OpenURLRequest openURLRequest, OpenURLRequestProcessor processor) {
 
         String responseFormat = "application/jp2";;
         int status = HttpServletResponse.SC_OK;
         byte[] b = null;
         try {
-            ImageRecord r =
-                    ReferentManager.getImageRecord(contextObject.getReferent());
+            ImageRecord r = ReferentManager.getImageRecord(contextObject.getReferent());
             if (r != null && r.getImageFile() != null) {
                 b = IOUtils.getBytesFromFile(new File(r.getImageFile()));
             } else if (r != null && r.getObject() != null) {

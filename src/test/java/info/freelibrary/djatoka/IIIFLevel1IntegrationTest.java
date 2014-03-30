@@ -19,8 +19,7 @@ import org.slf4j.Logger;
 
 public class IIIFLevel1IntegrationTest {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(IIIFLevel1IntegrationTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IIIFLevel1IntegrationTest.class);
 
     private static final String ID = "67352ccc-d1b0-11e1-89ae-279075081939";
 
@@ -129,7 +128,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * 404 by Random ID test.
      */
@@ -185,7 +184,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * 404 by ID with Forward Slash test.
      */
@@ -213,7 +212,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * Check error is 400 on invalid region test.
      */
@@ -240,7 +239,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * Check error is 400 on invalid quality test.
      */
@@ -267,7 +266,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * Check error is 400 on invalid format test.
      */
@@ -294,7 +293,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * Check size with percent test.
      */
@@ -321,7 +320,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * Check size with only width test.
      */
@@ -348,7 +347,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * Check size with only height test.
      */
@@ -375,7 +374,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * Check error is 400 on invalid size test.
      */
@@ -402,7 +401,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * Check 90o rotations of full image test.
      */
@@ -429,7 +428,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * Check 90o rotations of region test.
      */
@@ -456,7 +455,7 @@ public class IIIFLevel1IntegrationTest {
             fail(details.getMessage());
         }
     }
-    
+
     /**
      * Check error is 400 on invalid rotation test.
      */

@@ -46,8 +46,7 @@ public class DjatokaExtract {
     static Logger LOGGER = LoggerFactory.getLogger(DjatokaExtract.class);
 
     /**
-     * Uses apache commons cli to parse input args. Passes parsed parameters to
-     * IExtract implementation.
+     * Uses apache commons cli to parse input args. Passes parsed parameters to IExtract implementation.
      * 
      * @param args command line parameters to defined input,output,etc.
      */
@@ -60,31 +59,22 @@ public class DjatokaExtract {
         options.addOption("i", "input", true, "Filepath of the input file.");
         options.addOption("o", "output", true, "Filepath of the output file.");
         options.addOption("l", "level", true, "Resolution level to extract.");
-        options.addOption("d", "reduce", true,
-                "Resolution levels to subtract from max resolution.");
+        options.addOption("d", "reduce", true, "Resolution levels to subtract from max resolution.");
         options.addOption("r", "region", true, "Format: Y,X,H,W. ");
         options.addOption("c", "cLayer", true, "Compositing Layer Index.");
-        options.addOption(
-                "s",
-                "scale",
-                true,
-                "Format: Option 1. Define a long-side dimension (e.g. 96); "
-                        + "Option 2. Define absolute w,h values (e.g. 1024,768); "
-                        + "Option 3. Define a single dimension (e.g. 1024,0) with "
-                        + "or without Level Parameter; "
-                        + "Option 4. Use a single decimal scaling factor (e.g. 0.854)");
-        options.addOption("t", "rotate", true,
-                "Number of degrees to rotate image (i.e. 90, 180, 270).");
+        options.addOption("s", "scale", true, "Format: Option 1. Define a long-side dimension (e.g. 96); "
+                + "Option 2. Define absolute w,h values (e.g. 1024,768); "
+                + "Option 3. Define a single dimension (e.g. 1024,0) with " + "or without Level Parameter; "
+                + "Option 4. Use a single decimal scaling factor (e.g. 0.854)");
+        options.addOption("t", "rotate", true, "Number of degrees to rotate image (i.e. 90, 180, 270).");
         options.addOption("f", "format", true,
                 "Mimetype of the image format to be provided as response. Default: image/jpeg");
-        options.addOption("a", "AltImpl", true,
-                "Alternate IExtract Implemenation");
+        options.addOption("a", "AltImpl", true, "Alternate IExtract Implemenation");
 
         try {
             if (args.length == 0) {
                 HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("gov.lanl.adore.djatoka.DjatokaExtract",
-                        options);
+                formatter.printHelp("gov.lanl.adore.djatoka.DjatokaExtract", options);
                 System.exit(0);
             }
 
@@ -120,15 +110,11 @@ public class DjatokaExtract {
                     if (v[0].contains(".")) {
                         p.setScalingFactor(Double.parseDouble(v[0]));
                     } else {
-                        int[] dims = new int[] {
-                            -1, Integer.parseInt(v[0])
-                        };
+                        int[] dims = new int[] { -1, Integer.parseInt(v[0]) };
                         p.setScalingDimensions(dims);
                     }
                 } else if (v.length == 2) {
-                    int[] dims = new int[] {
-                        Integer.parseInt(v[0]), Integer.parseInt(v[1])
-                    };
+                    int[] dims = new int[] { Integer.parseInt(v[0]), Integer.parseInt(v[1]) };
                     p.setScalingDimensions(dims);
                 }
             }
@@ -154,21 +140,16 @@ public class DjatokaExtract {
             e.extractImage(input, output, p, format);
 
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Extraction Time: " +
-                        ((double) (System.currentTimeMillis() - x) / 1000) +
-                        " seconds");
+                LOGGER.info("Extraction Time: " + ((double) (System.currentTimeMillis() - x) / 1000) + " seconds");
             }
         } catch (ParseException details) {
             LOGGER.error("Parse exception: {}", details.getMessage(), details);
         } catch (DjatokaException details) {
-            LOGGER.error("djatoka Extraction exception: {}", details
-                    .getMessage(), details);
+            LOGGER.error("djatoka Extraction exception: {}", details.getMessage(), details);
         } catch (InstantiationException details) {
-            LOGGER.error("Unable to initialize alternate implemenation: {}",
-                    details.getMessage(), details);
+            LOGGER.error("Unable to initialize alternate implemenation: {}", details.getMessage(), details);
         } catch (Exception details) {
-            LOGGER.error("Unexpected exception: {}", details.getMessage(),
-                    details);
+            LOGGER.error("Unexpected exception: {}", details.getMessage(), details);
         }
     }
 }

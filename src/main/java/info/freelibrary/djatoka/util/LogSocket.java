@@ -22,11 +22,9 @@ import org.eclipse.jetty.websocket.api.Session;
 @WebSocket
 public class LogSocket {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(LogSocket.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogSocket.class);
 
-    private static final String LOG_DIR = new File("target/logs")
-            .getAbsolutePath();
+    private static final String LOG_DIR = new File("target/logs").getAbsolutePath();
 
     private final CountDownLatch myCloseLatch;
 
@@ -35,8 +33,7 @@ public class LogSocket {
     private LogWatcherThread myLogThread;
 
     /**
-     * Creates a <code>LogSocket</code> for use with the
-     * <code>LogSocketServlet</code>.
+     * Creates a <code>LogSocket</code> for use with the <code>LogSocketServlet</code>.
      */
     public LogSocket() {
         myCloseLatch = new CountDownLatch(1);
@@ -51,8 +48,7 @@ public class LogSocket {
     @OnWebSocketClose
     public void onClose(int aStatusCode, String aReason) {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("[{}] Session closed: {}", mySession.hashCode(),
-                    aReason);
+            LOGGER.debug("[{}] Session closed: {}", mySession.hashCode(), aReason);
         }
 
         if (myLogThread != null) {
@@ -65,8 +61,7 @@ public class LogSocket {
     }
 
     /**
-     * On the connection of a new <code>LogSocket</code>, set the
-     * <code>Session</code> information.
+     * On the connection of a new <code>LogSocket</code>, set the <code>Session</code> information.
      * 
      * @param aSession The session associated with this <code>LogSocket</code>
      */
@@ -74,8 +69,7 @@ public class LogSocket {
     public void onConnect(Session aSession) {
         if (LOGGER.isDebugEnabled()) {
             int hashCode = aSession.hashCode();
-            LOGGER.debug("[{}] New log viewer session connected: {}", hashCode,
-                    hashCode);
+            LOGGER.debug("[{}] New log viewer session connected: {}", hashCode, hashCode);
         }
 
         // Set our new session
@@ -90,8 +84,7 @@ public class LogSocket {
      */
     @OnWebSocketError
     public void onError(Session aSession, Throwable aThrowable) {
-        LOGGER.error("[{}] Error: {}", aSession.hashCode(), aThrowable
-                .getMessage());
+        LOGGER.error("[{}] Error: {}", aSession.hashCode(), aThrowable.getMessage());
     }
 
     /**
@@ -102,8 +95,7 @@ public class LogSocket {
     @OnWebSocketMessage
     public void onMessage(String aMessage) {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("[{}] Message received from browser: {}", mySession
-                    .hashCode(), aMessage);
+            LOGGER.debug("[{}] Message received from browser: {}", mySession.hashCode(), aMessage);
         }
 
         try {
@@ -115,13 +107,11 @@ public class LogSocket {
                 if (instructions[0].equals("log") && instructions.length > 1) {
                     openNewLog(instructions[1], remote);
                 } else if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("[{}] Requested viewer missing log name",
-                            mySession.hashCode());
+                    LOGGER.warn("[{}] Requested viewer missing log name", mySession.hashCode());
                 }
             } else {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("[{}] Unrecognized request from remote",
-                            mySession.hashCode());
+                    LOGGER.debug("[{}] Unrecognized request from remote", mySession.hashCode());
                 }
 
                 mySession.close(StatusCode.BAD_DATA, "Unrecognized request");
@@ -134,8 +124,7 @@ public class LogSocket {
     }
 
     /**
-     * When opening a new log, start reading from it to send its log events to
-     * the remote client.
+     * When opening a new log, start reading from it to send its log events to the remote client.
      * 
      * @param aLog A log we want to read
      * @param aRemote A remote client to which we want to send the log events
@@ -144,9 +133,7 @@ public class LogSocket {
         int hashID = mySession.hashCode();
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(
-                    "[{}] Handling request for the contents of the {}.log",
-                    hashID, aLog);
+            LOGGER.debug("[{}] Handling request for the contents of the {}.log", hashID, aLog);
         }
 
         try {

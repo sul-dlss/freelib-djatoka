@@ -20,14 +20,11 @@ import org.slf4j.LoggerFactory;
 
 public class IdentifierIntegrationTest {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(IdentifierIntegrationTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdentifierIntegrationTest.class);
 
-    private static final String QUERY =
-            "http://localhost:{}/resolve?url_ver=Z39.88-2004&rft_id={}&"
-                    + "svc_id=info:lanl-repo/svc/getRegion"
-                    + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
-                    + "&svc.format=image/jpeg&svc.level=1";
+    private static final String QUERY = "http://localhost:{}/resolve?url_ver=Z39.88-2004&rft_id={}&"
+            + "svc_id=info:lanl-repo/svc/getRegion" + "&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000"
+            + "&svc.format=image/jpeg&svc.level=1";
 
     private static String myJettyPort;
 
@@ -82,8 +79,7 @@ public class IdentifierIntegrationTest {
     }
 
     /**
-     * Queries the supplied ID and checks that the length of the response is
-     * equal to the length of the image.
+     * Queries the supplied ID and checks that the length of the response is equal to the length of the image.
      * 
      * @param aID A referent to check
      * @param aImageLength The length of the image returned

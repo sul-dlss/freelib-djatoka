@@ -14,8 +14,7 @@ package org.oclc.oomRef.entities;
 import info.openurl.oom.entities.ReferringEntity;
 
 /**
- * The resource that references the Referent; an <em>Entity</em> of the
- * <em>ContextObject</em>.
+ * The resource that references the Referent; an <em>Entity</em> of the <em>ContextObject</em>.
  * 
  * @author Jeffrey A. Young
  */

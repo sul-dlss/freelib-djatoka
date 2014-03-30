@@ -13,11 +13,11 @@ To install and run freelib-djatoka, [download](https://github.com/ksclarke/freel
 Change into the project’s base directory and install FreeLib-Djatoka:
 
     cd freelib-djatoka
-    mvn install
+    mvn -q install
 
 Then start the server by typing:
 
-    mvn jetty:run-forked
+    mvn -q jetty:run-forked
 
 That's it.  You should then be able to go to the freelib-djatoka test page to confirm that the server is up:
 
@@ -25,7 +25,7 @@ That's it.  You should then be able to go to the freelib-djatoka test page to co
 
 When you want to stop the server, type the following from within the project's base directory:
 
-    mvn jetty:stop
+    mvn -q jetty:stop
 
 ### Using FreeLib-Djatoka with Islandora
 

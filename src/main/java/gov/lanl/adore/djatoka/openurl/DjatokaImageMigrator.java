@@ -23,12 +23,17 @@
 
 package gov.lanl.adore.djatoka.openurl;
 
-import info.freelibrary.util.PairtreeObject;
-import info.freelibrary.util.PairtreeRoot;
-import info.freelibrary.util.PairtreeUtils;
-
-import java.net.URL;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import gov.lanl.adore.djatoka.DjatokaEncodeParam;
 import gov.lanl.adore.djatoka.DjatokaException;
@@ -41,16 +46,9 @@ import gov.lanl.adore.djatoka.util.IOUtils;
 import gov.lanl.adore.djatoka.util.ImageProcessingUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import info.freelibrary.util.PairtreeObject;
+import info.freelibrary.util.PairtreeRoot;
+import info.freelibrary.util.PairtreeUtils;
 
 /**
  * Utility class used to harvest URIs and compress files into JP2.
@@ -60,11 +58,9 @@ import org.slf4j.LoggerFactory;
  */
 public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(DjatokaImageMigrator.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(DjatokaImageMigrator.class);
 
-    private List<String> processing = java.util.Collections
-            .synchronizedList(new LinkedList<String>());
+    private final List<String> processing = java.util.Collections.synchronizedList(new LinkedList<String>());
 
     private HashMap<String, String> formatMap;
 
@@ -80,7 +76,6 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
         formatMap.put(FORMAT_ID_PNG, FORMAT_MIMEYPE_PNG);
         formatMap.put(FORMAT_ID_PNM, FORMAT_MIMEYPE_PNM);
         formatMap.put(FORMAT_ID_TIFF, FORMAT_MIMEYPE_TIFF);
-        formatMap.put(FORMAT_ID_GIF, FORMAT_MIMEYPE_GIF);
         // Additional Extensions
         formatMap.put(FORMAT_ID_JPG, FORMAT_MIMEYPE_JPEG);
         formatMap.put(FORMAT_ID_TIF, FORMAT_MIMEYPE_TIFF);
@@ -98,7 +93,8 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
      * 
      * @param aPtRootDir The Pairtree root directory
      */
-    public void setPairtreeRoot(File aPtRootDir) {
+    @Override
+    public void setPairtreeRoot(final File aPtRootDir) {
         myPtRootDir = aPtRootDir;
     }
 
@@ -107,6 +103,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
      * 
      * @return The Pairtree root directory
      */
+    @Override
     public File getPairtreeRoot() {
         return myPtRootDir;
     }
@@ -116,6 +113,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
      * 
      * @return True if the migrator has a Pairtree root directory; else, false
      */
+    @Override
     public boolean hasPairtreeRoot() {
         return myPtRootDir != null;
     }
@@ -128,7 +126,8 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
      * @return File object of JP2 compressed image
      * @throws DjatokaException
      */
-    public File convert(String aReferent, URI aURI) throws DjatokaException {
+    @Override
+    public File convert(final String aReferent, final URI aURI) throws DjatokaException {
         File file = null;
 
         processing.add(aReferent);
@@ -136,12 +135,11 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
         try {
             // If the referent is not the URL, we've been able to parse an ID
             // out from the URL; if we did that, we assume it's already a JP2
-            URL url = aURI.toURL();
+            final URL url = aURI.toURL();
             boolean isJp2 = aReferent.equals(url.toString()) ? false : true;
 
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Processing remote {}: {}", isJp2 ? "JP2 file"
-                        : "URI", url);
+                LOGGER.info("Processing remote {}: {}", isJp2 ? "JP2 file" : "URI", url);
             }
 
             if (LOGGER.isDebugEnabled() && !isJp2) {
@@ -154,9 +152,9 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
             // If we know it's JP2 at this point, it's because it's been passed
             // in as one of our parsable URLs.
             if (isJp2 && myPtRootDir != null) {
-                PairtreeRoot pairtree = new PairtreeRoot(myPtRootDir);
-                PairtreeObject dir = pairtree.getObject(aReferent);
-                String filename = PairtreeUtils.encodeID(aReferent);
+                final PairtreeRoot pairtree = new PairtreeRoot(myPtRootDir);
+                final PairtreeObject dir = pairtree.getObject(aReferent);
+                final String filename = PairtreeUtils.encodeID(aReferent);
                 FileOutputStream destination;
                 boolean result;
 
@@ -164,8 +162,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                 destination = new FileOutputStream(file);
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Remote stream is{}accessible: {}", source
-                            .available() > 0 ? " " : " not ", url);
+                    LOGGER.debug("Remote stream is{}accessible: {}", source.available() > 0 ? " " : " not ", url);
                 }
 
                 // FIXME: For some reason, it's taking two requests sometimes
@@ -180,8 +177,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                 result = IOUtils.copyStream(source, destination);
 
                 if (LOGGER.isDebugEnabled() && source.available() > 0 && result) {
-                    LOGGER.debug("Stored retrieved JP2 into Pairtree FS: {}",
-                            file.getAbsolutePath());
+                    LOGGER.debug("Stored retrieved JP2 into Pairtree FS: {}", file.getAbsolutePath());
                 }
 
                 source.close();
@@ -194,16 +190,16 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                     }
                 }
             } else {
-                int extIndex = url.toString().lastIndexOf(".") + 1;
+                final int extIndex = url.toString().lastIndexOf(".") + 1;
                 String ext = url.toString().substring(extIndex).toLowerCase();
-                int hash = aURI.hashCode();
+                final int hash = aURI.hashCode();
 
                 if (ext.equals(FORMAT_ID_TIF) || ext.equals(FORMAT_ID_TIFF)) {
                     ext = "." + FORMAT_ID_TIF;
                     file = File.createTempFile("convert" + hash, ext);
                 } else if (formatMap.containsKey(ext) &&
-                        (formatMap.get(ext).equals(FORMAT_MIMEYPE_JP2) || formatMap
-                                .get(ext).equals(FORMAT_MIMEYPE_JPX))) {
+                        (formatMap.get(ext).equals(FORMAT_MIMEYPE_JP2) || formatMap.get(ext).equals(
+                                FORMAT_MIMEYPE_JPX))) {
                     file = File.createTempFile("cache" + hash, "." + ext);
                     isJp2 = true;
                 } else {
@@ -230,7 +226,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
                 file.deleteOnExit();
 
-                FileOutputStream destination = new FileOutputStream(file);
+                final FileOutputStream destination = new FileOutputStream(file);
                 IOUtils.copyStream(source, destination);
 
                 // Process Image
@@ -244,7 +240,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
             }
 
             return file;
-        } catch (Exception details) {
+        } catch (final Exception details) {
             throw new DjatokaException(details.getMessage(), details);
         } finally {
             if (processing.contains(aReferent)) {
@@ -261,68 +257,63 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
      * @return File object of JP2 compressed image
      * @throws DjatokaException
      */
-    public File processImage(File img, URI uri) throws DjatokaException {
-        String imgPath = img.getAbsolutePath();
-        String fmt =
-                formatMap.get(imgPath.substring(imgPath.lastIndexOf('.') + 1)
-                        .toLowerCase());
+    @Override
+    public File processImage(File img, final URI uri) throws DjatokaException {
+        final String imgPath = img.getAbsolutePath();
+        final String fmt = formatMap.get(imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase());
         try {
             if (fmt == null || !ImageProcessingUtils.isJp2Type(fmt)) {
-                ICompress jp2 = new KduCompressExe();
-                File jp2Local =
-                        File.createTempFile("cache" + uri.hashCode() + "-",
-                                ".jp2");
+                final ICompress jp2 = new KduCompressExe();
+                final File jp2Local = File.createTempFile("cache" + uri.hashCode() + "-", ".jp2");
                 if (!jp2Local.delete() && LOGGER.isWarnEnabled()) {
                     LOGGER.warn("File not deleted: {}", jp2Local);
                 }
-                jp2.compressImage(img.getAbsolutePath(), jp2Local
-                        .getAbsolutePath(), new DjatokaEncodeParam());
+                jp2.compressImage(img.getAbsolutePath(), jp2Local.getAbsolutePath(), new DjatokaEncodeParam());
                 if (!img.delete() && LOGGER.isWarnEnabled()) {
                     LOGGER.warn("File not deleted: {}", img);
                 }
                 img = jp2Local;
             } else {
                 try {
-                    IExtract ex = new KduExtractExe();
-                    ex.getMetadata(new ImageRecord(uri.toString(), img
-                            .getAbsolutePath()));
-                } catch (DjatokaException e) {
+                    final IExtract ex = new KduExtractExe();
+                    ex.getMetadata(new ImageRecord(uri.toString(), img.getAbsolutePath()));
+                } catch (final DjatokaException e) {
                     throw new DjatokaException("Unknown JP2/JPX file format");
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new DjatokaException(e.getMessage(), e);
         }
         return img;
     }
 
     /**
-     * Return a unmodifiable list of images currently being processed. Images
-     * are removed once complete.
+     * Return a unmodifiable list of images currently being processed. Images are removed once complete.
      * 
      * @return list of images being processed
      */
+    @Override
     public List<String> getProcessingList() {
         return processing;
     }
 
     /**
-     * Returns map of format extension (e.g. jpg) to mime-type mappings (e.g.
-     * image/jpeg)
+     * Returns map of format extension (e.g. jpg) to mime-type mappings (e.g. image/jpeg)
      * 
      * @return format extension to mime-type mappings
      */
+    @Override
     public HashMap<String, String> getFormatMap() {
         return formatMap;
     }
 
     /**
-     * Sets map of format extension (e.g. jpg) to mime-type mappings (e.g.
-     * image/jpeg)
+     * Sets map of format extension (e.g. jpg) to mime-type mappings (e.g. image/jpeg)
      * 
      * @param formatMap extension to mime-type mappings
      */
-    public void setFormatMap(HashMap<String, String> formatMap) {
+    @Override
+    public void setFormatMap(final HashMap<String, String> formatMap) {
         this.formatMap = formatMap;
     }
 

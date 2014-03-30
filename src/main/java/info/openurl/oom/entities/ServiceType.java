@@ -8,11 +8,11 @@
  * or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package info.openurl.oom.entities;
 
 /**
- * ServiceType is a fancy word meaning "why". In other words,
- * <em>why</em> is the client interested in the resource? For
+ * ServiceType is a fancy word meaning "why". In other words, <em>why</em> is the client interested in the resource? For
  * example, they want to display, edit, delete, or search it.
  * 
  * @author Jeffrey A. Young

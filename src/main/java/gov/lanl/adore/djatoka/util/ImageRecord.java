@@ -191,8 +191,8 @@ public class ImageRecord {
     }
 
     /**
-     * Returns a map of properties associated with the image. The properties may
-     * be used transformation processes down the line.
+     * Returns a map of properties associated with the image. The properties may be used transformation processes down
+     * the line.
      * 
      * @return a map of properties associated with the image.
      */
@@ -201,8 +201,8 @@ public class ImageRecord {
     }
 
     /**
-     * Sets a map of properties associated with the image. The properties may be
-     * used transformation processes down the line.
+     * Sets a map of properties associated with the image. The properties may be used transformation processes down the
+     * line.
      * 
      * @param instProps a map of properties associated with the image.
      */
@@ -308,9 +308,8 @@ public class ImageRecord {
         sb.append("{");
         sb.append("\n\"identifier\": \"" + identifier + "\",");
         sb.append("\n\"imageFile\": \"" + imageFile + "\",");
-        sb.append("\n\"object\": \"" +
-                ((object != null) ? "type= " +
-                        object.getClass().getCanonicalName() : null) + "\",");
+        sb.append("\n\"object\": \"" + ((object != null) ? "type= " + object.getClass().getCanonicalName() : null) +
+                "\",");
         sb.append("\n\"width\": \"" + width + "\",");
         sb.append("\n\"height\": \"" + height + "\",");
         sb.append("\n\"dwtLevels\": \"" + dwtLevels + "\",");
@@ -319,9 +318,7 @@ public class ImageRecord {
         sb.append("\n\"compositingLayers\": \"" + compositingLayers + "\",");
         sb.append("\n\"bitDepth\": \"" + bitDepth + "\",");
         sb.append("\n\"numChannels\": \"" + numChannels + "\",");
-        sb.append("\n\"instProps\": \"" +
-                ((instProps != null) ? "size= " + instProps.size() : null) +
-                "\"");
+        sb.append("\n\"instProps\": \"" + ((instProps != null) ? "size= " + instProps.size() : null) + "\"");
         sb.append("\n}");
         return sb.toString();
     }

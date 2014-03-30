@@ -50,8 +50,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ImageJReader implements IReader {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(ImageJReader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageJReader.class);
 
     /**
      * Returns a BufferedImage instance for provided InputStream
@@ -110,8 +109,7 @@ public class ImageJReader implements IReader {
     }
 
     /**
-     * Internal ImagePlus processing to populate BufferedIMage using Graphics
-     * objects
+     * Internal ImagePlus processing to populate BufferedIMage using Graphics objects
      * 
      * @param imp an ImageJ ImagePlus object
      * @return a BufferedImage of type BufferedImage.TYPE_3BYTE_BGR
@@ -131,8 +129,7 @@ public class ImageJReader implements IReader {
         imp = null;
         ip = null;
 
-        BufferedImage bImg =
-                new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+        BufferedImage bImg = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
         Graphics g = bImg.getGraphics();
         g.drawImage(img, 0, 0, null);
         img.flush();

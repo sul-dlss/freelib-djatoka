@@ -9,8 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class CacheUtils {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(CacheUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CacheUtils.class);
 
     /**
      * Return a file name for the cached file based on its characteristics.
@@ -21,14 +20,14 @@ public class CacheUtils {
      * @param aRotation A rotation to be cached
      * @return The file name for the cached file
      */
-    public static final String getFileName(String aLevel, String aScale,
-            String aRegion, float aRotation) {
-        StringBuilder cfName = new StringBuilder("image_");
-        String region = isEmpty(aRegion) ? "full" : aRegion.replace(',', '-');
+    public static final String getFileName(final String aLevel, final String aScale, final String aRegion,
+            final float aRotation) {
+        final StringBuilder cfName = new StringBuilder("image_");
+        final String region = isEmpty(aRegion) ? "full" : aRegion.replace(',', '-');
 
         /*
-         * TODO: Right now this assumes if it gets passed a level that it's not
-         * doing a region... what possibilities do we exclude by doing this?
+         * TODO: Right now this assumes if it gets passed a level that it's not doing a region... what possibilities do
+         * we exclude by doing this?
          */
         if (aLevel != null && !aLevel.equals("") && !aLevel.equals("-1")) {
             if (LOGGER.isDebugEnabled()) {
@@ -41,7 +40,7 @@ public class CacheUtils {
                 LOGGER.debug("Checking cache for scale-oriented tile");
             }
 
-            String scale = aScale.equals("") ? "full" : aScale;
+            final String scale = aScale.equals("") ? "full" : aScale.replace(",", "-");
             cfName.append(scale).append('_').append(region);
         }
 
@@ -59,9 +58,8 @@ public class CacheUtils {
      * @param aWidth A width of the image
      * @return The maximum level using the supplied height and width
      */
-    public static final int getMaxLevel(int aHeight, int aWidth) {
-        return (int) Math.ceil(Math.log(Math.max(aHeight, aWidth)) /
-                Math.log(2));
+    public static final int getMaxLevel(final int aHeight, final int aWidth) {
+        return (int) Math.ceil(Math.log(Math.max(aHeight, aWidth)) / Math.log(2));
     }
 
     /**
@@ -70,7 +68,7 @@ public class CacheUtils {
      * @param aLevel A supplied image level
      * @return The scale for the supplied level
      */
-    public static final int getScale(int aLevel) {
+    public static final int getScale(final int aLevel) {
         return (int) Math.pow(2, aLevel);
     }
 
@@ -81,19 +79,19 @@ public class CacheUtils {
      * @param aWidth A supplied image width
      * @return The list of tile queries based on the supplied height and width
      */
-    public static final List<String> getCachingQueries(int aHeight, int aWidth) {
-        int maxLevel = getMaxLevel(aHeight, aWidth);
-        List<String> list = new ArrayList<String>();
+    public static final List<String> getCachingQueries(final int aHeight, final int aWidth) {
+        final int maxLevel = getMaxLevel(aHeight, aWidth);
+        final List<String> list = new ArrayList<String>();
 
         for (int level = 0; level <= maxLevel; level++) {
-            String scale = Integer.toString(getScale(level));
+            final String scale = Integer.toString(getScale(level));
 
             if (level <= 8) {
                 list.add("/all/" + scale);
                 continue; // We don't need to get regions for these
             }
 
-            int tileSize = getTileSize(level, maxLevel);
+            final int tileSize = getTileSize(level, maxLevel);
             int x = 0;
 
             /* x is left point and y is top point */
@@ -103,7 +101,7 @@ public class CacheUtils {
                 }
 
                 for (int ySize = 0; ySize <= aHeight; ySize += tileSize) {
-                    String region = getRegion(level, aWidth, aHeight, x, y++);
+                    final String region = getRegion(level, aWidth, aHeight, x, y++);
 
                     if (y * tileSize > (aHeight + tileSize)) {
                         break;
@@ -120,8 +118,7 @@ public class CacheUtils {
     }
 
     /**
-     * Gets a string representation of the region for the supplied
-     * characteristics.
+     * Gets a string representation of the region for the supplied characteristics.
      * 
      * @param aLevel A image level
      * @param aWidth An image width
@@ -129,13 +126,13 @@ public class CacheUtils {
      * @param aX An X coordinate
      * @param aY A Y coordinate
      */
-    public static final String getRegion(int aLevel, int aWidth, int aHeight,
-            int aX, int aY) {
+    public static final String getRegion(final int aLevel, final int aWidth, final int aHeight, final int aX,
+            final int aY) {
         // All the other code uses width, height (rather than height, width); I
         // should probably change to match their use pattern/order for
         // consistency
 
-        int tileSize = getTileSize(aLevel, getMaxLevel(aHeight, aWidth));
+        final int tileSize = getTileSize(aLevel, getMaxLevel(aHeight, aWidth));
         int startX, startY, tileSizeX, tileSizeY;
 
         /* startX is left point and startY is top point */
@@ -161,11 +158,11 @@ public class CacheUtils {
         return "full";
     }
 
-    private static boolean isEmpty(String aString) {
+    private static boolean isEmpty(final String aString) {
         return aString == null || aString.equals("");
     }
 
-    private static int getTileSize(int aLevel, int aMaxLevel) {
+    private static int getTileSize(final int aLevel, final int aMaxLevel) {
         return (int) (Math.pow(2, aMaxLevel) / Math.pow(2, aLevel)) * 256;
     }
 }

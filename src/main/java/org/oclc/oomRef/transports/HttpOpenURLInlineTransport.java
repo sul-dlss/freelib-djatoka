@@ -43,11 +43,9 @@ import org.oclc.oomRef.descriptors.ByReferenceMetadataImpl;
 import org.oclc.oomRef.descriptors.ByValueMetadataImpl;
 
 /**
- * @author Jeffrey A. Young This class transforms HTTP requests into OpenURL
- *         ContextObjects. Override this class to change the request pattern.
- *         Configure the Servlet to use your new class by adding/changing the
- *         following property to the Servlet.props file:
- *         Servlet.transportClassname={packageName.className}
+ * @author Jeffrey A. Young This class transforms HTTP requests into OpenURL ContextObjects. Override this class to
+ *         change the request pattern. Configure the Servlet to use your new class by adding/changing the following
+ *         property to the Servlet.props file: Servlet.transportClassname={packageName.className}
  */
 
 public class HttpOpenURLInlineTransport implements Transport {
@@ -62,18 +60,16 @@ public class HttpOpenURLInlineTransport implements Transport {
      * @param openURLConfig
      * @param classConfig
      */
-    public HttpOpenURLInlineTransport(OpenURLConfig openURLConfig,
-            ClassConfig classConfig) {
+    public HttpOpenURLInlineTransport(OpenURLConfig openURLConfig, ClassConfig classConfig) {
         this.openURLConfig = openURLConfig;
         // this.classConfig = classConfig;
     }
 
     /**
-     * Gets an OpenURLRequest from the supplied HttpServletRequest and
-     * processor.
+     * Gets an OpenURLRequest from the supplied HttpServletRequest and processor.
      */
-    public OpenURLRequest toOpenURLRequest(OpenURLRequestProcessor processor,
-            HttpServletRequest req) throws OpenURLException {
+    public OpenURLRequest toOpenURLRequest(OpenURLRequestProcessor processor, HttpServletRequest req)
+            throws OpenURLException {
         try {
             String url_ver = null;
 
@@ -89,23 +85,20 @@ public class HttpOpenURLInlineTransport implements Transport {
             }
 
             /*
-             * url_ctx_fmt=null or info:ofi/fmt:kev:mtx:ctx are the only
-             * acceptable values
+             * url_ctx_fmt=null or info:ofi/fmt:kev:mtx:ctx are the only acceptable values
              */
 
             String url_ctx_fmt = "info:ofi/fmt:kev:mtx:ctx";
             String[] url_ctx_fmts = req.getParameterValues("url_ctx_fmt");
             if (url_ctx_fmts != null) {
                 for (int i = 0; "info:ofi/fmt:kev:mtx:ctx".equals(url_ctx_fmt); ++i) {
-                    if (url_ctx_fmts[i].length() > 0 &&
-                            !url_ctx_fmts[i].equals(url_ctx_fmt)) {
+                    if (url_ctx_fmts[i].length() > 0 && !url_ctx_fmts[i].equals(url_ctx_fmt)) {
                         url_ctx_fmt = url_ctx_fmts[i];
                     }
                 }
             }
 
-            if (!("Z39.88-2004".equals(url_ver) && url_ctx_fmt
-                    .equals("info:ofi/fmt:kev:mtx:ctx"))) {
+            if (!("Z39.88-2004".equals(url_ver) && url_ctx_fmt.equals("info:ofi/fmt:kev:mtx:ctx"))) {
                 // sorry, this isn't our type of request
                 return null;
             }
@@ -143,9 +136,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                     }
                 } else if ("rft_val_fmt".equals(key)) {
                     for (int i = 0; i < values.length; ++i) {
-                        ByValueMetadataImpl bvm =
-                                new ByValueMetadataImpl(new URI(values[i]),
-                                        "rft.", entrySet);
+                        ByValueMetadataImpl bvm = new ByValueMetadataImpl(new URI(values[i]), "rft.", entrySet);
                         referentDescriptors.add(bvm);
                     }
                 } else if ("rft_ref_fmt".equals(key)) {
@@ -153,8 +144,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                         String[] rft_refs = req.getParameterValues("rft_ref");
                         for (int j = 0; j < rft_refs.length; ++j) {
                             ByReferenceMetadataImpl brm =
-                                    new ByReferenceMetadataImpl(new URI(
-                                            values[i]), new URL(rft_refs[j]));
+                                    new ByReferenceMetadataImpl(new URI(values[i]), new URL(rft_refs[j]));
                             referentDescriptors.add(brm);
                         }
                     }
@@ -168,9 +158,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                     }
                 } else if ("req_val_fmt".equals(key)) {
                     for (int i = 0; i < values.length; ++i) {
-                        ByValueMetadataImpl bvm =
-                                new ByValueMetadataImpl(new URI(values[i]),
-                                        "req.", entrySet);
+                        ByValueMetadataImpl bvm = new ByValueMetadataImpl(new URI(values[i]), "req.", entrySet);
                         requesterDescriptors.add(bvm);
                     }
                 } else if ("req_ref_fmt".equals(key)) {
@@ -178,8 +166,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                         String[] req_refs = req.getParameterValues("req_ref");
                         for (int j = 0; j < req_refs.length; ++j) {
                             ByReferenceMetadataImpl brm =
-                                    new ByReferenceMetadataImpl(new URI(
-                                            values[i]), new URL(req_refs[j]));
+                                    new ByReferenceMetadataImpl(new URI(values[i]), new URL(req_refs[j]));
                             requesterDescriptors.add(brm);
                         }
                     }
@@ -193,9 +180,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                     }
                 } else if ("rfe_val_fmt".equals(key)) {
                     for (int i = 0; i < values.length; ++i) {
-                        ByValueMetadataImpl bvm =
-                                new ByValueMetadataImpl(new URI(values[i]),
-                                        "rfe.", entrySet);
+                        ByValueMetadataImpl bvm = new ByValueMetadataImpl(new URI(values[i]), "rfe.", entrySet);
                         referringEntityDescriptors.add(bvm);
                     }
                 } else if ("rfe_ref_fmt".equals(key)) {
@@ -203,8 +188,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                         String[] rfe_refs = req.getParameterValues("rfe_ref");
                         for (int j = 0; j < rfe_refs.length; ++j) {
                             ByReferenceMetadataImpl brm =
-                                    new ByReferenceMetadataImpl(new URI(
-                                            values[i]), new URL(rfe_refs[j]));
+                                    new ByReferenceMetadataImpl(new URI(values[i]), new URL(rfe_refs[j]));
                             referringEntityDescriptors.add(brm);
                         }
                     }
@@ -218,9 +202,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                     }
                 } else if ("rfr_val_fmt".equals(key)) {
                     for (int i = 0; i < values.length; ++i) {
-                        ByValueMetadataImpl bvm =
-                                new ByValueMetadataImpl(new URI(values[i]),
-                                        "rfr.", entrySet);
+                        ByValueMetadataImpl bvm = new ByValueMetadataImpl(new URI(values[i]), "rfr.", entrySet);
                         referrerDescriptors.add(bvm);
                     }
                 } else if ("rfr_ref_fmt".equals(key)) {
@@ -228,8 +210,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                         String[] rfr_refs = req.getParameterValues("rfr_ref");
                         for (int j = 0; j < rfr_refs.length; ++j) {
                             ByReferenceMetadataImpl brm =
-                                    new ByReferenceMetadataImpl(new URI(
-                                            values[i]), new URL(rfr_refs[j]));
+                                    new ByReferenceMetadataImpl(new URI(values[i]), new URL(rfr_refs[j]));
                             referrerDescriptors.add(brm);
                         }
                     }
@@ -243,9 +224,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                     }
                 } else if ("res_val_fmt".equals(key)) {
                     for (int i = 0; i < values.length; ++i) {
-                        ByValueMetadataImpl bvm =
-                                new ByValueMetadataImpl(new URI(values[i]),
-                                        "res.", entrySet);
+                        ByValueMetadataImpl bvm = new ByValueMetadataImpl(new URI(values[i]), "res.", entrySet);
                         resolverDescriptors.add(bvm);
                     }
                 } else if ("res_ref_fmt".equals(key)) {
@@ -253,8 +232,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                         String[] res_refs = req.getParameterValues("res_ref");
                         for (int j = 0; j < res_refs.length; ++j) {
                             ByReferenceMetadataImpl brm =
-                                    new ByReferenceMetadataImpl(new URI(
-                                            values[i]), new URL(res_refs[j]));
+                                    new ByReferenceMetadataImpl(new URI(values[i]), new URL(res_refs[j]));
                             resolverDescriptors.add(brm);
                         }
                     }
@@ -266,8 +244,7 @@ public class HttpOpenURLInlineTransport implements Transport {
 
                         // Throw in the corresponding Java class while we're
                         // here
-                        Service service =
-                                (Service) openURLConfig.getService(uri);
+                        Service service = (Service) openURLConfig.getService(uri);
                         serviceTypeDescriptors.add(service);
                     }
                 } else if ("svc_dat".equals(key)) {
@@ -276,9 +253,7 @@ public class HttpOpenURLInlineTransport implements Transport {
                     }
                 } else if ("svc_val_fmt".equals(key)) {
                     for (int i = 0; i < values.length; ++i) {
-                        ByValueMetadataImpl bvm =
-                                new ByValueMetadataImpl(new URI(values[i]),
-                                        "svc.", entrySet);
+                        ByValueMetadataImpl bvm = new ByValueMetadataImpl(new URI(values[i]), "svc.", entrySet);
                         serviceTypeDescriptors.add(bvm);
                     }
                 } else if ("svc_ref_fmt".equals(key)) {
@@ -286,49 +261,30 @@ public class HttpOpenURLInlineTransport implements Transport {
                         String[] svc_refs = req.getParameterValues("svc_ref");
                         for (int j = 0; j < svc_refs.length; ++j) {
                             ByReferenceMetadataImpl brm =
-                                    new ByReferenceMetadataImpl(new URI(
-                                            values[i]), new URL(svc_refs[j]));
+                                    new ByReferenceMetadataImpl(new URI(values[i]), new URL(svc_refs[j]));
                             serviceTypeDescriptors.add(brm);
                         }
                     }
-                } else if (key.startsWith("rft.") || key.startsWith("rfe.") ||
-                        key.startsWith("req.") || key.startsWith("rfr.") ||
-                        key.startsWith("res.") || key.startsWith("svc.")) {
+                } else if (key.startsWith("rft.") || key.startsWith("rfe.") || key.startsWith("req.") ||
+                        key.startsWith("rfr.") || key.startsWith("res.") || key.startsWith("svc.")) {
                     // do nothing
                 } else {
                     foreignKeys.put(key, values);
                 }
             }
 
-            Referent referent =
-                    processor.referentFactory(referentDescriptors.toArray());
-            Requester requester =
-                    processor.requesterFactory(requesterDescriptors.toArray());
-            ReferringEntity referringEntity =
-                    processor.referringEntityFactory(referringEntityDescriptors
-                            .toArray());
-            Referrer referrer =
-                    processor.referrerFactory(referrerDescriptors.toArray());
-            Resolver resolver =
-                    processor.resolverFactory(resolverDescriptors.toArray());
-            ServiceType serviceType =
-                    processor.serviceTypeFactory(serviceTypeDescriptors
-                            .toArray());
+            Referent referent = processor.referentFactory(referentDescriptors.toArray());
+            Requester requester = processor.requesterFactory(requesterDescriptors.toArray());
+            ReferringEntity referringEntity = processor.referringEntityFactory(referringEntityDescriptors.toArray());
+            Referrer referrer = processor.referrerFactory(referrerDescriptors.toArray());
+            Resolver resolver = processor.resolverFactory(resolverDescriptors.toArray());
+            ServiceType serviceType = processor.serviceTypeFactory(serviceTypeDescriptors.toArray());
 
             // Construct the ContextObject
             ContextObject contextObject =
-                    processor.contextObjectFactory(referent,
-                            new ReferringEntity[] {
-                                referringEntity
-                            }, new Requester[] {
-                                requester
-                            }, new ServiceType[] {
-                                serviceType
-                            }, new Resolver[] {
-                                resolver
-                            }, new Referrer[] {
-                                referrer
-                            });
+                    processor.contextObjectFactory(referent, new ReferringEntity[] { referringEntity },
+                            new Requester[] { requester }, new ServiceType[] { serviceType },
+                            new Resolver[] { resolver }, new Referrer[] { referrer });
             return processor.openURLRequestFactory(contextObject);
         } catch (Exception e) {
             throw new OpenURLException(e.getMessage(), e);

@@ -46,11 +46,9 @@ import org.xml.sax.SAXException;
 public class XMLHelper {
 
     // private static HashMap builderMap = new HashMap();
-    private static DocumentBuilderFactory dbFactory = DocumentBuilderFactory
-            .newInstance();
+    private static DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 
-    private static TransformerFactory tFactory = TransformerFactory
-            .newInstance();
+    private static TransformerFactory tFactory = TransformerFactory.newInstance();
     // private static HashMap transformerMap = new HashMap();
     static {
         dbFactory.setNamespaceAware(true);
@@ -59,59 +57,45 @@ public class XMLHelper {
     private static Element xmlnsEl;
     static {
         try {
-            DOMImplementation impl =
-                    getThreadedDocumentBuilder().getDOMImplementation();
-            Document xmlnsDoc =
-                    impl.createDocument("uri:foo", "foo:xmlnsDoc", null);
+            final DOMImplementation impl = getThreadedDocumentBuilder().getDOMImplementation();
+            final Document xmlnsDoc = impl.createDocument("uri:foo", "foo:xmlnsDoc", null);
             xmlnsEl = xmlnsDoc.getDocumentElement();
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:foo", "uri:foo");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:ctx", "info:ofi/fmt:xml:xsd:ctx");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:oai", "http://www.openarchives.org/OAI/2.0/");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:oai_dc",
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:foo", "uri:foo");
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:ctx", "info:ofi/fmt:xml:xsd:ctx");
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:oai",
+                    "http://www.openarchives.org/OAI/2.0/");
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:oai_dc",
                     "http://www.openarchives.org/OAI/2.0/oai_dc/");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:dc",
-                    "http://purl.org/dc/elements/1.1/");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:srw", "http://www.loc.gov/zing/srw/");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:mets", "http://www.loc.gov/METS/");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:xlink", "http://www.w3.org/TR/xlink");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:config",
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:dc", "http://purl.org/dc/elements/1.1/");
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:srw", "http://www.loc.gov/zing/srw/");
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xsi",
+                    "http://www.w3.org/2001/XMLSchema-instance");
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:mets", "http://www.loc.gov/METS/");
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/TR/xlink");
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:config",
                     "info:sid/localhost:CollectionSimpleSchemas:config");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:purl",
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:purl",
                     "info:sid/localhost:CollectionSimpleSchemas:purl");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:reg", "http://info-uri.info/registry");
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:reg", "http://info-uri.info/registry");
             xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:wr",
                     "http://errol.oclc.org/oai:xmlregistry.oclc.org:errol/WikiRepository");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:pearsIdx", "http://www.oclc.org/pears/");
-            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:oomRef", "info:collections/oomImpls/oomRef");
-        } catch (ParserConfigurationException e) {
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:pearsIdx", "http://www.oclc.org/pears/");
+            xmlnsEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:oomRef",
+                    "info:collections/oomImpls/oomRef");
+        } catch (final ParserConfigurationException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Get a thread-safe Transformer without an assigned transform. This is
-     * useful for transforming a DOM Document into XML text.
+     * Get a thread-safe Transformer without an assigned transform. This is useful for transforming a DOM Document into
+     * XML text.
      * 
      * @param omitXmlDeclaration
      * @return an "identity" Transformer assigned to the current thread
      * @throws TransformerConfigurationException
      */
-    public static Transformer getThreadedIdentityTransformer(
-            boolean omitXmlDeclaration)
+    public static Transformer getThreadedIdentityTransformer(final boolean omitXmlDeclaration)
             throws TransformerConfigurationException {
         return getThreadedTransformer(omitXmlDeclaration,
         // transformerMap,
@@ -119,26 +103,24 @@ public class XMLHelper {
     }
 
     /**
-     * Get a thread-safe Transformer without an assigned transform. This is
-     * useful for transforming a DOM Document into XML text.
+     * Get a thread-safe Transformer without an assigned transform. This is useful for transforming a DOM Document into
+     * XML text.
      * 
      * @param omitXmlDeclaration
      * @param standalone
      * @return an Identity Transformer
      * @throws TransformerConfigurationException
      */
-    public static Transformer getThreadedIdentityTransformer(
-            boolean omitXmlDeclaration, boolean standalone)
-            throws TransformerConfigurationException {
+    public static Transformer getThreadedIdentityTransformer(final boolean omitXmlDeclaration,
+            final boolean standalone) throws TransformerConfigurationException {
         return getThreadedTransformer(omitXmlDeclaration, standalone,
         // transformerMap,
                 null, (String) null);
     }
 
-    private static Transformer getThreadedTransformer(
-            boolean omitXmlDeclaration, boolean standalone, Map threadMap,
-            String xslURL) throws TransformerConfigurationException {
-        Thread currentThread = Thread.currentThread();
+    private static Transformer getThreadedTransformer(final boolean omitXmlDeclaration, final boolean standalone,
+            final Map threadMap, final String xslURL) throws TransformerConfigurationException {
+        final Thread currentThread = Thread.currentThread();
         Transformer transformer = null;
         if (threadMap != null) {
             transformer = (Transformer) threadMap.get(currentThread);
@@ -154,10 +136,8 @@ public class XMLHelper {
                 threadMap.put(currentThread, transformer);
             }
         }
-        transformer.setOutputProperty(OutputKeys.STANDALONE, standalone ? "yes"
-                : "no");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-                omitXmlDeclaration ? "yes" : "no");
+        transformer.setOutputProperty(OutputKeys.STANDALONE, standalone ? "yes" : "no");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, omitXmlDeclaration ? "yes" : "no");
         return transformer;
     }
 
@@ -170,16 +150,13 @@ public class XMLHelper {
      * @return a thread-safe Transformer
      * @throws TransformerConfigurationException
      */
-    public static Transformer getThreadedTransformer(
-            boolean omitXmlDeclaration, Map threadMap, String xslURL)
-            throws TransformerConfigurationException {
-        return getThreadedTransformer(omitXmlDeclaration, true, threadMap,
-                xslURL);
+    public static Transformer getThreadedTransformer(final boolean omitXmlDeclaration, final Map threadMap,
+            final String xslURL) throws TransformerConfigurationException {
+        return getThreadedTransformer(omitXmlDeclaration, true, threadMap, xslURL);
     }
 
     /**
-     * Get an Element with some handy xmlns attributes defined. This comes in
-     * handy for calling XPathAPI methods.
+     * Get an Element with some handy xmlns attributes defined. This comes in handy for calling XPathAPI methods.
      * 
      * @return an Element containing various xmlns attributes.
      */
@@ -196,9 +173,8 @@ public class XMLHelper {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    public static Document parse(String ref) throws SAXException, IOException,
-            ParserConfigurationException {
-        String protocol = ref.split(":", 2)[0];
+    public static Document parse(final String ref) throws SAXException, IOException, ParserConfigurationException {
+        final String protocol = ref.split(":", 2)[0];
         return parse(protocol, new InputSource(ref));
     }
 
@@ -212,13 +188,12 @@ public class XMLHelper {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    public static Document parse(String protocol, InputSource is)
-            throws SAXException, IOException, ParserConfigurationException {
+    public static Document parse(final String protocol, final InputSource is) throws SAXException, IOException,
+            ParserConfigurationException {
         if ("http".equals(protocol)) {
             return getThreadedDocumentBuilder().parse(is);
         }
-        throw new IOException("Protocol handler not implemented yet: " +
-                protocol);
+        throw new IOException("Protocol handler not implemented yet: " + protocol);
     }
 
     /**
@@ -230,8 +205,7 @@ public class XMLHelper {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    public static Document parse(InputSource is) throws SAXException,
-            IOException, ParserConfigurationException {
+    public static Document parse(final InputSource is) throws SAXException, IOException, ParserConfigurationException {
         return getThreadedDocumentBuilder().parse(is);
     }
 
@@ -244,8 +218,7 @@ public class XMLHelper {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    public static Document parse(InputStream is) throws SAXException,
-            IOException, ParserConfigurationException {
+    public static Document parse(final InputStream is) throws SAXException, IOException, ParserConfigurationException {
         return getThreadedDocumentBuilder().parse(is);
     }
 
@@ -255,8 +228,7 @@ public class XMLHelper {
      * @return a namespaceAware DocumentBuilder assigned to the current thread
      * @throws ParserConfigurationException
      */
-    public static DocumentBuilder getThreadedDocumentBuilder()
-            throws ParserConfigurationException {
+    public static DocumentBuilder getThreadedDocumentBuilder() throws ParserConfigurationException {
         // Thread currentThread = Thread.currentThread();
         // DocumentBuilder builder =
         // (DocumentBuilder) builderMap.get(currentThread);
@@ -264,7 +236,7 @@ public class XMLHelper {
         // builder = dbFactory.newDocumentBuilder();
         // builderMap.put(currentThread, builder);
         // }
-        DocumentBuilder builder = dbFactory.newDocumentBuilder();
+        final DocumentBuilder builder = dbFactory.newDocumentBuilder();
         return builder;
     }
 
@@ -274,10 +246,10 @@ public class XMLHelper {
      * @param value the String to be XML-encoded
      * @return the XML-encoded String
      */
-    public static String encode(String value) {
-        StringBuffer sb = new StringBuffer();
+    public static String encode(final String value) {
+        final StringBuffer sb = new StringBuffer();
         for (int i = 0; i < value.length(); ++i) {
-            char c = value.charAt(i);
+            final char c = value.charAt(i);
             switch (c) {
                 case '&':
                     sb.append("&amp;");
@@ -308,7 +280,7 @@ public class XMLHelper {
      * @return an XML String representation of the specified Node
      * @throws TransformerException
      */
-    public static String toString(Node node) throws TransformerException {
+    public static String toString(final Node node) throws TransformerException {
         return toString(node, true);
     }
 
@@ -320,13 +292,11 @@ public class XMLHelper {
      * @return an XML String representation of the specified Node
      * @throws TransformerException
      */
-    public static String toString(Node node, boolean omitXMLDeclaration)
-            throws TransformerException {
-        StringWriter writer = new StringWriter();
-        Transformer transformer =
-                getThreadedIdentityTransformer(omitXMLDeclaration);
-        Source source = new DOMSource(node);
-        Result result = new StreamResult(writer);
+    public static String toString(final Node node, final boolean omitXMLDeclaration) throws TransformerException {
+        final StringWriter writer = new StringWriter();
+        final Transformer transformer = getThreadedIdentityTransformer(omitXMLDeclaration);
+        final Source source = new DOMSource(node);
+        final Result result = new StreamResult(writer);
         transformer.transform(source, result);
         return writer.toString();
     }
@@ -338,13 +308,12 @@ public class XMLHelper {
      * @param nodeType the type of nodes to be removed.
      * @param name the name of nodes to be removed.
      */
-    public static void removeAll(Node node, short nodeType, String name) {
-        if (node.getNodeType() == nodeType &&
-                (name == null || node.getNodeName().equals(name))) {
+    public static void removeAll(final Node node, final short nodeType, final String name) {
+        if (node.getNodeType() == nodeType && (name == null || node.getNodeName().equals(name))) {
             node.getParentNode().removeChild(node);
         } else {
             // Visit the children
-            NodeList list = node.getChildNodes();
+            final NodeList list = node.getChildNodes();
             for (int i = 0; i < list.getLength(); i++) {
                 removeAll(list.item(i), nodeType, name);
             }
