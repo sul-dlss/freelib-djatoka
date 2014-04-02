@@ -205,7 +205,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>3.0.5</version>
+      <version>3.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
@@ -215,7 +215,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>3.0.5</version>
+      <version>3.2.1</version>
     </dependency>
   </dependencies>
   <build>
@@ -472,12 +472,11 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-pmd-plugin</artifactId>
-              <version>3.0.1</version>
+              <version>3.1</version>
               <configuration>
                 <aggregate>true</aggregate>
                 <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                 <minimumTokens>100</minimumTokens>
-                <!--<linkXRef>true</linkXRef> -->
                 <verbose>true</verbose>
                 <targetJdk>1.7</targetJdk>
               </configuration>
