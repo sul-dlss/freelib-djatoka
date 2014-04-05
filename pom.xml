@@ -97,7 +97,7 @@
 
     <freelib.build.tools.version>0.0.6</freelib.build.tools.version>
     <maven.checkstyle.version>2.11</maven.checkstyle.version>
-    <freelib.utils.version>0.4.3</freelib.utils.version>
+    <freelib.utils.version>0.4.4</freelib.utils.version>
     <logback.version>1.0.13</logback.version>
     <junit.version>4.11</junit.version>
 
@@ -177,6 +177,11 @@
       <systemPath>${project.basedir}/lib/ij-ImageIO.jar</systemPath>
     </dependency>
     <dependency>
+      <groupId>org.imgscalr</groupId>
+      <artifactId>imgscalr-lib</artifactId>
+      <version>4.2</version>
+    </dependency>
+    <dependency>
       <groupId>net.imagej</groupId>
       <artifactId>ij</artifactId>
       <version>1.48r</version>
@@ -200,7 +205,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>3.0.5</version>
+      <version>3.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
@@ -210,7 +215,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>3.0.5</version>
+      <version>3.2.1</version>
     </dependency>
   </dependencies>
   <build>
@@ -467,12 +472,11 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-pmd-plugin</artifactId>
-              <version>3.0.1</version>
+              <version>3.1</version>
               <configuration>
                 <aggregate>true</aggregate>
                 <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                 <minimumTokens>100</minimumTokens>
-                <!--<linkXRef>true</linkXRef> -->
                 <verbose>true</verbose>
                 <targetJdk>1.7</targetJdk>
               </configuration>
@@ -538,7 +542,6 @@
           </dependency>
         </dependencies>
       </plugin>
-      <!-- Plugin plugin allows us to be able to run our Solr mojos -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
