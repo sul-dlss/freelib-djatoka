@@ -39,6 +39,7 @@ import info.freelibrary.util.FileUtils;
 import info.freelibrary.util.PairtreeObject;
 import info.freelibrary.util.PairtreeRoot;
 import info.freelibrary.util.PairtreeUtils;
+import info.freelibrary.util.StringUtils;
 import info.freelibrary.util.XMLBundleControl;
 import info.freelibrary.util.XMLResourceBundle;
 
@@ -130,6 +131,10 @@ public class DjatokaIngestMojo extends AbstractMojo {
             csvReader = new CSVReader(new FileReader(myCsvFile));
 
             while ((csv = csvReader.readNext()) != null) {
+                if (csv.length == 1 && StringUtils.trimToNull(csv[0]) == null) {
+                    continue;
+                }
+
                 if (myCsvIdCol >= csv.length || myCsvPathCol >= csv.length || (myCsvIdCol == myCsvPathCol)) {
                     throw new MojoExecutionException(BUNDLE.get("INGEST_INDEX", myCsvPathCol, myCsvIdCol, csv.length));
                 }
