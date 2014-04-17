@@ -56,8 +56,8 @@ public class DjatokaIngestMojo extends AbstractMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DjatokaIngestMojo.class);
 
-    private final XMLResourceBundle BUNDLE = (XMLResourceBundle) ResourceBundle.getBundle("freelib-djatoka_messages",
-            new XMLBundleControl());
+    protected final XMLResourceBundle BUNDLE = (XMLResourceBundle) ResourceBundle.getBundle(
+            "freelib-djatoka_messages", new XMLBundleControl());
 
     private long myMaxSize;
 
@@ -67,7 +67,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
      * The Maven project directory.
      */
     @Component
-    private MavenProject myProject;
+    protected MavenProject myProject;
 
     /**
      * The name of a CSV file with images to ingest.
@@ -199,19 +199,22 @@ public class DjatokaIngestMojo extends AbstractMojo {
         FileUtils.copy(aJP2File, newJP2File);
     }
 
-    private File convert(final File aSource, final DjatokaEncodeParam aParams) throws IOException,
+    protected File convert(final File aSource, final DjatokaEncodeParam aParams) throws IOException,
             MojoExecutionException {
         final File tmpFile = File.createTempFile("djatoka-", Constants.JP2_EXT);
         final Properties properties = myProject.getProperties();
         final String kakadu = properties.getProperty("LD_LIBRARY_PATH");
+        final DjatokaEncodeParam params = getEncodingParams();
+        final String source = aSource.getAbsolutePath();
+        final String target = tmpFile.getAbsolutePath();
+        final String command;
 
         if (kakadu == null) {
             throw new MojoExecutionException(BUNDLE.get("INGEST_KAKADU_CFG"));
         }
 
-        final String command =
-                KduCompressExe.getKduCompressCommand(aSource.getAbsolutePath(), tmpFile.getAbsolutePath(), myParams)
-                        .replaceFirst("^null/", kakadu + "/");
+        // Build the console command we use to do the conversion
+        command = KduCompressExe.getKduCompressCommand(source, target, params).replaceFirst("^null/", kakadu + "/");
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(BUNDLE.get("INGEST_CONVERSION_COMMAND"), command);
@@ -223,8 +226,6 @@ public class DjatokaIngestMojo extends AbstractMojo {
         final ExecuteWatchdog watchdog = new ExecuteWatchdog(60000 * 10);
         final ByteArrayOutputStream error = new ByteArrayOutputStream();
         final ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
-
-        @SuppressWarnings("unchecked")
         final Map<String, String> environment = EnvironmentUtils.getProcEnvironment();
 
         // These are set in the pom.xml file's profile configuration
@@ -254,7 +255,7 @@ public class DjatokaIngestMojo extends AbstractMojo {
         }
     }
 
-    private DjatokaEncodeParam getEncodingParams() throws IOException {
+    protected DjatokaEncodeParam getEncodingParams() throws IOException {
         if (myParams == null) {
             final String dir = myProject.getBuild().getOutputDirectory();
             final File propFile = new File(dir, Constants.PROPERTIES_FILE);
