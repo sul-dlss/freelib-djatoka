@@ -56,24 +56,18 @@ public class IdentifierResolver implements IReferentResolver, Constants {
      */
     @Override
     public ImageRecord getImageRecord(final String aRequest) throws ResolverException {
-        String decodedRequest;
+        final String decodedRequest = decode(aRequest);
         ImageRecord image;
 
-        try {
-            decodedRequest = URLDecoder.decode(aRequest, "UTF-8");
-            decodedRequest = URLDecoder.decode(decodedRequest, "UTF-8");
-        } catch (final UnsupportedEncodingException details) {
-            throw new RuntimeException("JVM doesn't support UTF-8!!", details);
-        }
-
         // Check to see if the image is resolvable from a remote source
-        if (isResolvableURI(aRequest)) {
+        if (isResolvableURI(decodedRequest)) {
             String referent;
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Found a remotely resolvable ID: {}", aRequest);
+                LOGGER.debug("Found a remotely resolvable ID: {}", decodedRequest);
             }
 
+            // See if we can find a cacheable id from a URL pattern
             try {
                 referent = parseReferent(decodedRequest);
             } catch (final UnsupportedEncodingException details) {
@@ -85,7 +79,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
             // Otherwise, we retrieve the image from the remote source
             if (image == null) {
-                image = getRemoteImage(referent, aRequest);
+                image = getRemoteImage(referent, decodedRequest);
             }
         } else {
             image = getCachedImage(decodedRequest);
@@ -101,7 +95,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                         LOGGER.debug("Trying to resolve using URL pattern: {}", url);
                     }
 
-                    image = getRemoteImage(aRequest, url);
+                    image = getRemoteImage(decodedRequest, url);
                 }
             }
         }
@@ -120,7 +114,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
         final String id = ((URI) aReferent.getDescriptors()[0]).toASCIIString();
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Translating Referent descriptor into String ID: {}", id);
+            LOGGER.debug("Translating Referent descriptor into String ID: {}", decode(id));
         }
 
         return getImageRecord(id);
@@ -174,11 +168,15 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     }
 
     private boolean isResolvableURI(final String aReferentID) {
-        return aReferentID.startsWith("http"); // keeping it simple
+        return aReferentID.startsWith("http://") || aReferentID.startsWith("file://");
     }
 
     private ImageRecord getCachedImage(final String aReferentID) {
         ImageRecord image = null;
+
+        if (isResolvableURI(aReferentID)) {
+            return image;
+        }
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Checking in Pairtree file system for: {}", aReferentID);
@@ -262,26 +260,33 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     }
 
     private String parseReferent(final String aReferent) throws UnsupportedEncodingException {
-        String referent = aReferent;
-
         for (int index = 0; index < myIngestSources.size(); index++) {
             final Pattern pattern = Pattern.compile(myIngestSources.get(index));
-            final Matcher matcher = pattern.matcher(referent);
+            final Matcher matcher = pattern.matcher(aReferent);
 
             // If we have a parsable ID, let's use that instead of URI
             if (matcher.matches() && matcher.groupCount() > 0) {
-                referent = URLDecoder.decode(matcher.group(1), "UTF-8");
+                final String referent = URLDecoder.decode(matcher.group(1), "UTF-8");
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("ID '{}' extracted from a known pattern", referent);
                 }
 
-                break; // We don't need to keep checking at this point
+                return referent;
             } else if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("No Match in {} for {}", referent, pattern.toString());
+                LOGGER.debug("No Match in {} for {}", pattern.toString(), aReferent);
             }
         }
 
-        return referent;
+        return aReferent;
+    }
+
+    private String decode(final String aRequest) {
+        try {
+            final String request = URLDecoder.decode(aRequest, "UTF-8");
+            return URLDecoder.decode(request, "UTF-8");
+        } catch (final UnsupportedEncodingException details) {
+            throw new RuntimeException("JVM doesn't support UTF-8!!", details);
+        }
     }
 }

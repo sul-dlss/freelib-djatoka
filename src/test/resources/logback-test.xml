@@ -6,9 +6,10 @@
       <pattern>[%level] %d{HH:mm:ss.SSS} [ %C{5} , %M , %L ] %m %n</pattern>
     </encoder>
   </appender>
-  
+
   <!--
-  <logger name="info.freelibrary.djatoka.util.OSDCacheUtilFunctionalTest" level="DEBUG" />
+  <logger name="info.freelibrary.djatoka.IdentifierIntegrationTest" level="DEBUG"/>
+  <logger name="info.freelibrary.util.FileUtils" level="DEBUG"/>
   -->
 
   <root level="INFO">

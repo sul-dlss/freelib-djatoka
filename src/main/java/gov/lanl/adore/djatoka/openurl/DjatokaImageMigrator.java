@@ -130,23 +130,20 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
     public File convert(final String aReferent, final URI aURI) throws DjatokaException {
         File file = null;
 
+        // Add the request to the list of in-process requests
         processing.add(aReferent);
 
         try {
             // If the referent is not the URL, we've been able to parse an ID
             // out from the URL; if we did that, we assume it's already a JP2
-            final URL url = aURI.toURL();
-            boolean isJp2 = aReferent.equals(url.toString()) ? false : true;
+            boolean isJp2 = aReferent.equals(aURI.toString()) ? false : true;
 
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Processing remote {}: {}", isJp2 ? "JP2 file" : "URI", url);
-            }
-
-            if (LOGGER.isDebugEnabled() && !isJp2) {
-                LOGGER.debug("{} != {}", aReferent, aURI.toURL().toString());
+                LOGGER.info("Processing remote {}: {}", isJp2 ? "JP2 file" : "URI", aURI);
             }
 
             // Obtain remote resource
+            final URL url = aURI.toURL();
             InputStream source = IOUtils.getInputStream(url);
 
             // If we know it's JP2 at this point, it's because it's been passed

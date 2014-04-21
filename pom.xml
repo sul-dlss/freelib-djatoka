@@ -79,10 +79,10 @@
 
     <!-- List of image sources (used when a URL is passed in) -->
     <djatoka.ingest.sources>^http://localhost/islandora/object/([a-zA-Z]*(%3A|:)[0-9a-zA-Z]*)/datastream/JP2/view.*$
-      ^http://memory.loc.gov/gmd/gmd433/g4330/g4330/([a-z0-9A-Z]*).jp2$</djatoka.ingest.sources>
+      ^http://localhost:${jetty.port}/images/([a-z0-9A-Z\-]*).jp2$</djatoka.ingest.sources>
     <!-- List of image source guesses (used when ID can't be otherwise resolved) -->
     <djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view
-      http://memory.loc.gov/gmd/gmd433/g4330/g4330/{}.jp2</djatoka.ingest.guesses>
+      http://localhost:${jetty.port}/images/{}.jp2</djatoka.ingest.guesses>
 
     <!-- The reasonable default is to not cache scale requests that aren't 1.0. Since 
       pct:XX is so easy, though, we might want exceptions for specific ones (for full images 
@@ -97,7 +97,7 @@
 
     <freelib.build.tools.version>0.0.6</freelib.build.tools.version>
     <maven.checkstyle.version>2.11</maven.checkstyle.version>
-    <freelib.utils.version>0.4.4</freelib.utils.version>
+    <freelib.utils.version>0.4.5</freelib.utils.version>
     <logback.version>1.0.13</logback.version>
     <junit.version>4.11</junit.version>
 
@@ -790,14 +790,6 @@
         <LD_LIBRARY_PATH>${project.basedir}/lib/Solaris-Sparcv9</LD_LIBRARY_PATH>
       </properties>
     </profile>
-    <!-- <profile> <id>functional-tests</id> <activation> <property> <name>!skipTests</name> 
-      </property> </activation> <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
-      <artifactId>maven-failsafe-plugin</artifactId> <version>2.16</version> <configuration> 
-      <systemPropertyVariables> <jetty.port>${jetty.port}</jetty.port> <pairtree.root>${djatoka.jp2.data}/pairtree_root</pairtree.root> 
-      </systemPropertyVariables> <includes> <include>**/*FunctionalTest.java</include> 
-      </includes> </configuration> <executions> <execution> <goals> <goal>integration-test</goal> 
-      <goal>verify</goal> </goals> </execution> </executions> </plugin> </plugins> </build> 
-      </profile> -->
     <!-- Build profile just used on Travis-CI VM to run the integration tests -->
     <profile>
       <id>travis</id>
@@ -811,6 +803,7 @@
               <systemPropertyVariables>
                 <jetty.port>${jetty.port}</jetty.port>
                 <pairtree.root>${djatoka.jp2.data}/pairtree_root</pairtree.root>
+                <pairtree.cache>${djatoka.jp2.data}</pairtree.cache>
               </systemPropertyVariables>
               <includes>
                 <include>**/*IntegrationTest.java</include>
