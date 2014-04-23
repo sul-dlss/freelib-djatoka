@@ -97,10 +97,7 @@ public class TileCacheManager<K, V> {
      */
     public synchronized V remove(K key) {
         if (get(key) instanceof String) {
-            File f = new File((String) get(key));
-            if (!f.delete() && LOGGER.isWarnEnabled()) {
-                LOGGER.warn("Failed to delete file: {}", f);
-            }
+            new File((String) get(key)).delete();
         }
         return cacheMap.remove(key);
     }
