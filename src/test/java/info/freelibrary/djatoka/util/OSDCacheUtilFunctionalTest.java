@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -25,9 +26,11 @@ public class OSDCacheUtilFunctionalTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OSDCacheUtilFunctionalTest.class);
 
-    private static final String ID = "--/walters/W102_000059_950";
+    private static final String[] ID = new String[] { "--/walters/W102_000059_950", "--/walters/W102_000061_950" };
 
-    private static final File SOURCE_FILE = new File("src/test/resources/images/walters/W102_000059_950.jp2");
+    private static final File[] SOURCE_FILES = new File[] {
+        new File("src/test/resources/images/walters/W102_000059_950.jp2"),
+        new File("src/test/resources/images/walters/W102_000061_950.jp2") };
 
     private static final File PAIRTREE_ROOT = new File(System.getProperty("pairtree.cache"));
 
@@ -39,6 +42,8 @@ public class OSDCacheUtilFunctionalTest {
 
     private static int PORT = Integer.parseInt(System.getProperty("jetty.port"));
 
+    private HttpURLConnection myHTTPConx;
+
     /**
      * This project requires that the Jetty Web server be run in forked mode; this means we need to confirm that it's
      * actually up and ready to respond before any of our functional tests will work.
@@ -47,39 +52,47 @@ public class OSDCacheUtilFunctionalTest {
     public void setUp() {
         try {
             final PairtreeRoot ptRoot = new PairtreeRoot(PAIRTREE_ROOT);
-            final PairtreeObject ptObj = ptRoot.getObject(ID);
-            final File jp2 = new File(ptObj, PairtreeUtils.encodeID(ID));
-            final HttpURLConnection http = (HttpURLConnection) new URL(LOCALHOST + PORT + "/health").openConnection();
-
-            if (ptObj.exists()) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Removing pre-existing tile cache for test image");
-                }
-
-                if (!FileUtils.delete(ptObj)) {
-                    fail("Unable to delete test image's tile cache: " + ptObj);
-                } else if (!ptObj.mkdirs()) {
-                    fail("Unable to create test image's pairtree directory: " + ptObj);
-                }
-            }
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Checking to see if Jetty is ready for functional tests");
             }
 
+            myHTTPConx = (HttpURLConnection) new URL(LOCALHOST + PORT + "/health").openConnection();
+
             // Check that the Jetty server is responsive
-            if (http.getResponseCode() != 200) {
+            if (myHTTPConx.getResponseCode() != 200) {
                 fail("Jetty is not accepting requests");
             }
 
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Copying test file from '{}' to '{}'", SOURCE_FILE, jp2);
-            }
+            for (int index = 0; index < SOURCE_FILES.length; index++) {
+                final PairtreeObject ptObj = ptRoot.getObject(ID[index]);
+                final File jp2 = new File(ptObj, PairtreeUtils.encodeID(ID[index]));
 
-            // Copy our test JP2 file into the Pairtree structure
-            FileUtils.copy(SOURCE_FILE, jp2);
+                if (ptObj.exists()) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Removing pre-existing tile cache for test image");
+                    }
+
+                    if (!FileUtils.delete(ptObj)) {
+                        fail("Unable to delete test image's tile cache: " + ptObj);
+                    } else if (!ptObj.mkdirs()) {
+                        fail("Unable to create test image's pairtree directory: " + ptObj);
+                    }
+                }
+
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Copying test file from '{}' to '{}'", SOURCE_FILES[index], jp2);
+                }
+
+                // Copy our test JP2 file into the Pairtree structure
+                FileUtils.copy(SOURCE_FILES[index], jp2);
+            }
         } catch (final IOException details) {
             fail(details.getMessage());
+        } finally {
+            if (myHTTPConx != null) {
+                myHTTPConx.disconnect();
+            }
         }
     }
 
@@ -87,40 +100,46 @@ public class OSDCacheUtilFunctionalTest {
      * Test the region path generation of the OpenSeadragon tiler.
      */
     @Test
-    public void testGetPaths() {
-        final String[] tilePaths = new OSDCacheUtil().getPaths(SERVICE, ID, 256, 7613, 10557);
-        HttpURLConnection http = null;
+    public void testCachingTilePaths() {
+        final String[] firstImagePaths = new OSDCacheUtil().getPaths(SERVICE, ID[0], 256, 7613, 10557);
+        final String[] secondImagePaths = new OSDCacheUtil().getPaths(SERVICE, ID[1], 256, 7475, 10419);
+        final ArrayList<String> filePaths = new ArrayList<String>();
+
         int processed = 0;
 
-        // TODO: clear cache so it's run each time
+        // Collect all the paths we want to test
+        filePaths.addAll(Arrays.asList(firstImagePaths));
+        filePaths.addAll(Arrays.asList(secondImagePaths));
+
+        // TODO: clear cache so it's run each time?
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Testing OpenSeadragon tile generation");
         }
 
         try {
-            for (final String path : tilePaths) {
-                http = (HttpURLConnection) new URL(LOCALHOST + PORT + "/" + path).openConnection();
+            for (final String path : filePaths) {
+                myHTTPConx = (HttpURLConnection) new URL(LOCALHOST + PORT + "/" + path).openConnection();
 
                 // Output something so folks know it's not stalled
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Creating tile for: " + http.getURL());
+                    LOGGER.debug("Creating tile for: {}", myHTTPConx.getURL());
                 } else if (LOGGER.isInfoEnabled() && ++processed % 500 == 0) {
                     LOGGER.info("{} tiles generated", processed);
                 }
 
-                if (http.getResponseCode() != 200 ||
-                        Arrays.binarySearch(JPEG_CONTENT_TYPE, http.getContentType()) < 0) {
+                if (myHTTPConx.getResponseCode() != 200 ||
+                        Arrays.binarySearch(JPEG_CONTENT_TYPE, myHTTPConx.getContentType()) < 0) {
                     fail(StringUtils.format("Couldn't create a tile for: {} [response code: {} | content type: {}]",
-                            http.getURL(), http.getResponseCode(), http.getContentType()));
+                            myHTTPConx.getURL(), myHTTPConx.getResponseCode(), myHTTPConx.getContentType()));
                 }
             }
         } catch (final MalformedURLException details) {
-            fail("Bad URL syntax: " + (http != null ? http.getURL() : "[Unknown URL]"));
+            fail("Bad URL syntax: " + (myHTTPConx != null ? myHTTPConx.getURL() : "[Unknown URL]"));
         } catch (final IOException details) {
-            fail("Unable to access: " + (http != null ? http.getURL() : "[Unknown URL]"));
+            fail("Unable to access: " + (myHTTPConx != null ? myHTTPConx.getURL() : "[Unknown URL]"));
         } finally {
-            if (http != null) {
-                http.disconnect();
+            if (myHTTPConx != null) {
+                myHTTPConx.disconnect();
             }
         }
 

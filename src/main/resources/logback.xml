@@ -66,6 +66,7 @@
   <logger name="gov.lanl.adore.djatoka.openurl.DjatokaImageMigrator" level="DEBUG" />
   <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="DEBUG"/>
   -->
+  <logger name="info.freelibrary.maven.DjatokaResampleMojo" level="DEBUG"/>
 
   <!-- Some stuff still in early development -->
   <logger name="info.freelibrary.djatoka.util.LogSocketServlet" level="DEBUG"
