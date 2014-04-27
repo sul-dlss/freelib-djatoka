@@ -117,7 +117,7 @@ start)
 	# Then, the process is running as long as command below returns a 1
 	while [ `ps -p$PID -o pid | sed "1 d" | wc -l` != 0 ];
 	do
-		if grep -q "BUILD SUCCESS" $DJATOKA_LOGFILE; then
+		if grep -q "Forked process started" $DJATOKA_LOGFILE; then
 			echo $PID > $DJATOKA_PIDFILE
 			STARTED=true
 			break
