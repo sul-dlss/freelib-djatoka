@@ -48,12 +48,10 @@
       <timezone>America/New_York</timezone>
     </developer>
   </developers>
-  <!-- Project properties: These are the things you'll probably want to adjust. It's 
-    best practice not to change this file but to use a Maven settings.xml file (which 
-    can be at ${MAVEN_HOME}/conf/settings.xml or ${USER_HOME}/.m2/settings.xml). Change 
-    the property value in there and you'll override the values that are configured below... 
-    A sample skeleton settings.xml file is provided in src/main/resources if you want 
-    to copy it into a place where it will be read. -->
+  <!-- Project properties: These are the things you'll probably want to adjust. It's best practice not to change this file 
+    but to use a Maven settings.xml file (which can be at ${MAVEN_HOME}/conf/settings.xml or ${USER_HOME}/.m2/settings.xml). 
+    Change the property value in there and you'll override the values that are configured below... A sample skeleton settings.xml 
+    file is provided in src/main/resources if you want to copy it into a place where it will be read. -->
   <properties>
     <!-- The port Jetty should run at -->
     <jetty.port>8888</jetty.port>
@@ -84,9 +82,8 @@
     <djatoka.ingest.guesses>http://localhost/islandora/object/{}/datastream/JP2/view
       http://localhost:${jetty.port}/images/{}.jp2</djatoka.ingest.guesses>
 
-    <!-- The reasonable default is to not cache scale requests that aren't 1.0. Since 
-      pct:XX is so easy, though, we might want exceptions for specific ones (for full images 
-      only); one possible use case is thumbnail creation. -->
+    <!-- The reasonable default is to not cache scale requests that aren't 1.0. Since pct:XX is so easy, though, we might 
+      want exceptions for specific ones (for full images only); one possible use case is thumbnail creation. -->
     <djatoka.scale.cache.exceptions>0.15 0.10
       0.05</djatoka.scale.cache.exceptions>
 
@@ -877,6 +874,19 @@
       </snapshots>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>snapshots-repo</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
   <!-- enables pushing the project documentation up to an S3 bucket -->
   <distributionManagement>
     <site>
