@@ -56,6 +56,7 @@
   <entry key="INGEST_TO_CACHE">Adding image {} to local cache: {}</entry>
   <entry key="INGEST_THREAD_STARTING">Starting up ingest thread: #{}</entry>
   <entry key="INGEST_PARSING_EXCEPTION">Exception while parsing XML info file for {}</entry>
+  <entry key="INGEST_SUCCESS">Successfully ingested {} images</entry>
   <entry key="FILE_NOT_DELETED">File not deleted: {}</entry>
   <entry key="PT_TREE_DELETE">Unable to delete requested pairtree directory: {}</entry>
   <entry key="PT_CACHE_DELETE">Unable to delete requested cache directory: {}</entry>

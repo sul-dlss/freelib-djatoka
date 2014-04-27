@@ -36,7 +36,7 @@ import info.freelibrary.util.XMLResourceBundle;
 /**
  * An abstract class for ingesting content into FreeLib-Djatoka's Pairtree file system.
  * <p/>
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public abstract class AbstractIngestMojo extends AbstractMojo {
@@ -80,6 +80,9 @@ public abstract class AbstractIngestMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         final String ptfs = myProject.getProperties().getProperty(PAIRTREE_FS);
 
+        // Sets the Maven loggers' levels (not the levels of loggers used by this plugin)
+        MavenUtils.setLogLevels(MavenUtils.ERROR_LOG_LEVEL, MavenUtils.getMavenLoggers());
+
         try {
             final PairtreeRoot pairtree = new PairtreeRoot(new File(ptfs));
 
@@ -88,13 +91,13 @@ public abstract class AbstractIngestMojo extends AbstractMojo {
                     LOGGER.debug(BUNDLE.get("INGEST_CSV", myCsvFile, myCsvPathCol, myCsvIdCol));
                 }
 
-                ingestCSVFile(pairtree);
-            }
+                final int ingestCount = ingestCSVFile(pairtree);
 
-            if (myCsvFile == null) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn(BUNDLE.get("INGEST_EMPTY"));
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info(BUNDLE.get("INGEST_SUCCESS", ingestCount));
                 }
+            } else if (myCsvFile == null && LOGGER.isWarnEnabled()) {
+                LOGGER.warn(BUNDLE.get("INGEST_EMPTY"));
             }
         } catch (final FileNotFoundException details) {
             throw new MojoExecutionException(details.getMessage(), details);
@@ -135,8 +138,9 @@ public abstract class AbstractIngestMojo extends AbstractMojo {
         return myParams;
     }
 
-    private void ingestCSVFile(final PairtreeRoot aPairtree) throws IOException, MojoExecutionException {
+    private int ingestCSVFile(final PairtreeRoot aPairtree) throws IOException, MojoExecutionException {
         CSVReader csvReader = null;
+        int imageCounter = 0;
         Pattern jp2Pattern;
         Pattern tifPattern;
         String[] csv;
@@ -165,6 +169,7 @@ public abstract class AbstractIngestMojo extends AbstractMojo {
 
                     if (jp2.exists() && jp2.canRead()) {
                         storeJP2(csv[myCsvIdCol], jp2, aPairtree);
+                        imageCounter++;
                     } else if (LOGGER.isWarnEnabled()) {
                         LOGGER.warn(BUNDLE.get("INGEST_FILE_FAIL", jp2));
                     }
@@ -179,6 +184,7 @@ public abstract class AbstractIngestMojo extends AbstractMojo {
 
                             if (jp2 != null) {
                                 storeJP2(csv[myCsvIdCol], jp2, aPairtree);
+                                imageCounter++;
                             }
                         } else if (LOGGER.isErrorEnabled()) {
                             LOGGER.error(BUNDLE.get("INGEST_MAXSIZE", tiff.length(), myMaxSize));
@@ -205,6 +211,8 @@ public abstract class AbstractIngestMojo extends AbstractMojo {
                 }
             }
         }
+
+        return imageCounter++;
     }
 
     private void storeJP2(final String aID, final File aJP2File, final PairtreeRoot aPairtree) throws IOException {
