@@ -802,6 +802,7 @@
               </systemPropertyVariables>
               <includes>
                 <include>**/*IntegrationTest.java</include>
+                <include>**/*FunctionalTest.java</include>
               </includes>
             </configuration>
             <executions>
