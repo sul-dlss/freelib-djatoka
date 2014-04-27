@@ -110,7 +110,6 @@
       <groupId>info.freelibrary</groupId>
       <artifactId>freelib-utils</artifactId>
       <version>${freelib.utils.version}</version>
-      <type>maven-plugin</type>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
