@@ -243,7 +243,15 @@
         <version>${freelib.utils.version}</version>
         <executions>
           <execution>
+            <id>validate-logging</id>
             <phase>validate</phase>
+            <goals>
+              <goal>configure-logging</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>clean-logging</id>
+            <phase>pre-clean</phase>
             <goals>
               <goal>configure-logging</goal>
             </goals>
@@ -564,6 +572,9 @@
             <pairtree.root>${djatoka.jp2.data}/pairtree_root</pairtree.root>
             <pairtree.cache>${djatoka.jp2.data}</pairtree.cache>
           </systemPropertyVariables>
+          <excludes>
+            <exclude>**/ConfigurationFunctionalTest.java</exclude>
+          </excludes>
           <includes>
             <include>**/*FunctionalTest.java</include>
           </includes>
