@@ -1,4 +1,4 @@
-# FreeLib-Djatoka [![Build Status](https://travis-ci.org/ksclarke/freelib-djatoka.png?branch=master)](https://travis-ci.org/ksclarke/freelib-djatoka)
+#  ![FreeLib-Djatoka logo](http://projects.freelibrary.info/freelib-djatoka/images/djatoka-elephant-small.png)<br/>FreeLib-Djatoka [![Build Status](https://travis-ci.org/ksclarke/freelib-djatoka.png?branch=master)](https://travis-ci.org/ksclarke/freelib-djatoka)
 
 This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page).  It was originally created to simplify the image server's use. Over time, additional features were added.  Most recently, support for the [IIIF Image API](http://iiif.io) was added.  For more detailed information about the project, please visit its [project page](http://projects.freelibrary.info/freelib-djatoka).  This README file contains just the basic [TL;DR](http://en.wiktionary.org/wiki/TLDR) information.
 
@@ -13,11 +13,11 @@ To install and run freelib-djatoka, [download](https://github.com/ksclarke/freel
 Change into the project’s base directory and install FreeLib-Djatoka:
 
     cd freelib-djatoka
-    mvn -q install
+    mvn install
 
 Then start the server by typing:
 
-    mvn -q jetty:run-forked
+    mvn jetty:run-forked
 
 That's it.  You should then be able to go to the freelib-djatoka test page to confirm that the server is up:
 

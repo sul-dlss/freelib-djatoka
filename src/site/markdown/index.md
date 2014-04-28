@@ -1,12 +1,10 @@
 ## Introduction
 
-This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page). It was created to simplify the server's use. Over time, additional features (like support for [OpenSeadragon](http://openseadragon.github.io/) and the [International Image Interoperability Framework's Image API](http://iiif.io) were added.
+This project is a fork of the [aDORe-djatoka JPEG 2000 image server](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page). It was created to simplify the server's use. Over time additional features (like support for [OpenSeadragon](http://openseadragon.github.io/ "OpenSeadragon User Interface") and the International Image Interoperability Framework's [Image API](http://iiif.io "IIIF's Image API")) were added.
 
-FreeLib-Djatoka can be used on its own or it can be integrated into an external digital asset management system.
+FreeLib-Djatoka can be used on its own or it can be integrated into a third party digital asset management system.
 
-[OpenJDK](http://openjdk.java.net/) or [OracleJDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (version 1.7 or later) and [Maven](http://maven.apache.org/) (version 3.x or later) are required to run Freelib-Djatoka. These should be installed prior to running FreeLib-Djatoka.  All the other dependencies are automatically resolved by the project's Maven configuration.
-
-The original [aDORe-djatoka docs](http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page) are still available at that project's Sourceforge site.  Where there is duplication or a difference, the documentation on this site supersedes the original project's documentation.  Please feel free to [open an issue](https://github.com/ksclarke/freelib-djatoka/issues?state=open) if you find an area of this site's documentation that needs improvement.
+[OpenJDK](http://openjdk.java.net/) or [OracleJDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (version 1.7 or later) and [Maven](http://maven.apache.org/) (version 3.x or later) are required to run Freelib-Djatoka. These should be installed prior to running FreeLib-Djatoka.  All the other dependencies are automatically resolved by the project's Maven configuration.<br/><img style="padding-left: 15px; padding-top: 15px;" src="images/djatoka-elephant-normal.png" />
 
 ## Getting Started
 
@@ -17,11 +15,11 @@ To run FreeLib-Djatoka, just [download](https://github.com/ksclarke/freelib-djat
 Change into the project's base directory and install FreeLib-Djatoka:
 
     cd freelib-djatoka
-    mvn -q install
+    mvn install
 
 Then start the server by typing:
 
-    mvn -q jetty:run-forked
+    mvn jetty:run-forked
 
 That's it. You should then be able to go to the FreeLib-Djatoka test page to confirm that the server is up:
 
@@ -41,11 +39,11 @@ There are a few configuration options available to users of FreeLib-Djatoka.
 
 Setting available system memory can be done via the [init.d script](as-a-service.html) or directly on the command line:
 
-    MAVEN_OPTS="-Xmx2048m" mvn -q jetty:run-forked
+    MAVEN_OPTS="-Xmx2048m" mvn jetty:run-forked
 
 Changing the port Djatoka runs at can be done by changing the `jetty.port` property in the [pom.xml](https://github.com/ksclarke/freelib-djatoka/blob/master/pom.xml) file; it can also be set on the command line:
 
-    mvn -Djetty.port=9999 -q jetty:run-forked
+    mvn -Djetty.port=9999 jetty:run-forked
 
 There are also some important file system paths that may be reconfigured.  These are found in the [pom.xml](https://github.com/ksclarke/freelib-djatoka/blob/master/pom.xml) file's `properties` element:
 
@@ -106,7 +104,7 @@ For example, you might put the following in your system's settings.xml file:
 
 This will override the default values _unless_ you pass `ignoreDjatokaSettings` in on the command line (which you probably won't do); for instance:
 
-    mvn -DignoreDjatokaSettings=true -q jetty:run-forked
+    mvn -DignoreDjatokaSettings=true jetty:run-forked
 
 For what it's worth, you might also want to include a `jetty.stop.key` property in your external settings.xml file; for instance:
 
@@ -137,13 +135,13 @@ Perhaps the easiest method, at the moment, is to use the Djatoka CSV ingest scri
 
 Once you've done that (and started Djatoka), you can load images using a spreadsheet.  To do this, from within the project directory, type:
 
-    mvn -q djatoka:ingest -Dcsv.file=src/test/resources/id_map.csv
+    mvn djatoka:ingest -Dcsv.file=src/test/resources/id_map.csv
 
 The path to the CSV file can be absolute or relative to the project directory.  By default, the plugin expects the file system path to the image to be in the first column and the identifier of the image to be in the second.
 
 This can be reconfigured if you have a spreadsheet with different column assignments; for instance, the opposite of the default assumption would be:
 
-    mvn -q djatoka:ingest -Dcsv.file=src/test/resources/id_map.csv -Dcsv.id=0 -Dcsv.path=1
+    mvn djatoka:ingest -Dcsv.file=src/test/resources/id_map.csv -Dcsv.id=0 -Dcsv.path=1
 
 The column-count is zero-based rather than one-based.  So the "first" column is actually column 0.  The "second" column would be column 1.
 
@@ -196,16 +194,16 @@ The intended user interface for FreeLib-Djatoka is [OpenSeadragon](http://opense
 
 After that, running the plugin is as easy as starting FreeLib-Djatoka and running the below:
 
-    mvn -q djatoka:cache-tiles
+    mvn djatoka:cache-tiles
     
 The plugin will scan all the JP2 files in the server's pairtree directory structure and generate tiles for each one.  The number of tiles generated depends on the height and width of the JP2 image being tiled.  Note that Djatoka needs to be running for the tiles to be generated (unlike with the CSV import plugin).  There is also a plugin that can clean the cache of the tiles for a particular image or for all the cached images.
 
 To run this plugin, type:
 
-    mvn -q djatoka:clean-cache
+    mvn djatoka:clean-cache
 
 or
 
-    mvn -q djatoka:clean-cache -Did=SOME_ID
+    mvn djatoka:clean-cache -Did=SOME_ID
     
 The first will clean all tiles from the cache and the second will clean just the tiles associated with the supplied ID.  Rerunning the tile cacher will not overwrite previously generated tiles.  To create new tiles, the old ones must first be removed.
