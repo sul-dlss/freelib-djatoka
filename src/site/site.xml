@@ -66,6 +66,7 @@
     <!-- top navbar -->
     <menu name="Read the Docs">
       <item name="Introduction" href="index.html#" />
+      <item name="FAQs" href="faqs.html" />
       <item name="Javadocs" href="apidocs/index.html" target="_new" />
       <item name="Issues Queue" target="_new" href="https://github.com/ksclarke/freelib-djatoka/issues" />
       <item name="License" href="license.html" />

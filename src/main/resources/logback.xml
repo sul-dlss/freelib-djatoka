@@ -99,6 +99,7 @@
   <logger name="info.freelibrary.djatoka.TileCache" level="DEBUG"
     additivity="false">
     <appender-ref ref="CACHER"/>
+    <appender-ref ref="CONSOLE"/>
   </logger>
 
   <!-- Log file for everything else -->

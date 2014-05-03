@@ -1,4 +1,4 @@
-### Running as a System Service on Linux
+## Running as a System Service on Linux
 
 Included with freelib-djatoka is an init.d script that will allow the image server to be started and stopped in the standard Linux way.
 

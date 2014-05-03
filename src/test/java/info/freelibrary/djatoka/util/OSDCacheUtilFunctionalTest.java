@@ -124,7 +124,7 @@ public class OSDCacheUtilFunctionalTest {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Creating tile for: {}", myHTTPConx.getURL());
                 } else if (LOGGER.isInfoEnabled() && ++processed % 500 == 0) {
-                    LOGGER.info("{} tiles generated", processed);
+                    LOGGER.info("{} tiles cached", processed);
                 }
 
                 if (myHTTPConx.getResponseCode() != 200 ||

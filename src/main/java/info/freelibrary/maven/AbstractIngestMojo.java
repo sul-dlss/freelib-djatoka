@@ -8,16 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +26,6 @@ import info.freelibrary.util.PairtreeObject;
 import info.freelibrary.util.PairtreeRoot;
 import info.freelibrary.util.PairtreeUtils;
 import info.freelibrary.util.StringUtils;
-import info.freelibrary.util.XMLBundleControl;
-import info.freelibrary.util.XMLResourceBundle;
 
 /**
  * An abstract class for ingesting content into FreeLib-Djatoka's Pairtree file system.
@@ -39,24 +33,13 @@ import info.freelibrary.util.XMLResourceBundle;
  *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
-public abstract class AbstractIngestMojo extends AbstractMojo {
+public abstract class AbstractIngestMojo extends AbstractPairtreeMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractIngestMojo.class);
-
-    private static final String PAIRTREE_FS = "djatoka.jp2.data";
-
-    protected final XMLResourceBundle BUNDLE = (XMLResourceBundle) ResourceBundle.getBundle(
-            "freelib-djatoka_messages", new XMLBundleControl());
 
     private long myMaxSize;
 
     private DjatokaEncodeParam myParams;
-
-    /**
-     * The Maven project directory.
-     */
-    @Component
-    protected MavenProject myProject;
 
     /**
      * The name of a CSV file with images to ingest.
@@ -224,6 +207,7 @@ public abstract class AbstractIngestMojo extends AbstractMojo {
             LOGGER.debug(BUNDLE.get("INGEST_COPY", aJP2File, newJP2File));
         }
 
+        // We overwrite the JP2 file if it already exists
         FileUtils.copy(aJP2File, newJP2File);
     }
 }
