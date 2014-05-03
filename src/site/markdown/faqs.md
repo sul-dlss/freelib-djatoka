@@ -1,6 +1,7 @@
 ## Frequently Asked Questions about FreeLib-Djatoka
 
 * [I get a NoPluginFoundForPrefixException.  What can I do about it?](faqs.html#NoPluginFoundForPrefixException)
+* [What does the warning "Ingest image's size is larger than allowed" mean?](faqs.html#ingest-max-size)
 * [My images have linear artifacts in them.  What can I do about it?](faqs.html#moire-pattern)
 * [I have a question not covered by the FAQs.  Where can I get help?](faqs.html#mailing-list)
 
@@ -13,6 +14,10 @@
     </pluginGroups>
 
 An [example settings.xml](https://github.com/ksclarke/freelib-djatoka/blob/master/src/main/resources/sample-settings.xml) file is available in FreeLib-Djatoka's GitHub repository. To copy it into your Maven conf directory, first rename the file from sample-settings.xml to settings.xml.  To learn more about Maven's settings.xml file, [consult the settings.xml documentation](https://maven.apache.org/settings.html).
+
+### What does the warning "Ingest image's size is larger than allowed" mean?
+
+<a name="ingest-max-size" />There is a configuration option that allows you to set a maximum file size for images to be ingested.  This is to prevent the program from running out of memory while trying to convert a large TIFF file into a JP2.  The value is configurable in the pom.xml file (via the djatoka.ingest.maxSize element).  The default value is 900 MB.  It can be adjusted up or down, depending on the system's available RAM.  The value should be an integer representing the maximum number of megabytes for a file to be ingested.  Like all values in the pom.xml file, it's suggested that the value be overridden in a profile in Maven's [settings.xml](https://maven.apache.org/settings.html) file.
 
 ### My images have linear artifacts in them.  What can I do about it?
 

@@ -30,8 +30,8 @@
     extension: {}</entry>
   <entry key="INGEST_COPY">Copying JP2 file ({}) into Pairtree directory
     structure: {}</entry>
-  <entry key="INGEST_MAXSIZE">Ingest image's max size ({}) was larger than allowed
-    max size: {}</entry>
+  <entry key="INGEST_MAXSIZE">Ingest image's size ({}) is larger than allowed
+    [max size: {}]</entry>
   <entry key="INGEST_CONFIG_MAXSIZE">The configured maximum size for source images is: {}</entry>
   <entry key="INGEST_INTERRUPTED">Image conversion of {} interrupted => {}</entry>
   <entry key="INGEST_CONVERSION_FAILED">Image conversion of {} failed => {}</entry>
