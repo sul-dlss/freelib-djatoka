@@ -1,6 +1,7 @@
 
 package info.freelibrary.djatoka.util;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
@@ -18,14 +19,18 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import info.freelibrary.util.IOUtils;
+
 /**
  * A {@link javax.servlet.ServletFilter} that records requests received.
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class DebugServletFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DebugServletFilter.class);
+
+    private static final String EOL = System.getProperty("line.separator");
 
     private FilterConfig myFilterConfig;
 
@@ -34,6 +39,7 @@ public class DebugServletFilter implements Filter {
     /**
      * Destroys the {@link javax.servlet.ServletFilter}.
      */
+    @Override
     public void destroy() {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Shutting down ServletFilter: {}", myFilterConfig.getFilterName());
@@ -44,21 +50,22 @@ public class DebugServletFilter implements Filter {
 
     /**
      * Records a new URI in the request log or provides a list of all the requested URIs.
-     * 
+     *
      * @param aRequest The servlet request
      * @param aResponse The servlet response
      */
-    public void doFilter(ServletRequest aRequest, ServletResponse aResponse, FilterChain aFilterChain)
+    @Override
+    public void doFilter(final ServletRequest aRequest, final ServletResponse aResponse, final FilterChain aFilterChain)
             throws IOException, ServletException {
         if (LOGGER.isDebugEnabled() && aRequest instanceof HttpServletRequest) {
-            HttpServletRequest httpRequest = (HttpServletRequest) aRequest;
-            String peek = aRequest.getParameter("peek");
-            String uri = httpRequest.getRequestURI();
+            final HttpServletRequest httpRequest = (HttpServletRequest) aRequest;
+            final String peek = aRequest.getParameter("peek");
+            final String uri = httpRequest.getRequestURI();
 
             // If we have a peek parameter, we want to see requested URIs
             if (peek != null && peek.equalsIgnoreCase("true")) {
-                PrintWriter toBrowser = aResponse.getWriter();
-                Iterator<String> iterator = myRequests.iterator();
+                final PrintWriter toBrowser = aResponse.getWriter();
+                final Iterator<String> iterator = myRequests.iterator();
 
                 while (iterator.hasNext()) {
                     toBrowser.print(iterator.next());
@@ -67,6 +74,11 @@ public class DebugServletFilter implements Filter {
 
                 toBrowser.close();
             } else {
+                final FileWriter durations = new FileWriter("jetty-memory.log", true);
+
+                durations.write((Runtime.getRuntime().totalMemory() / 1048576) + EOL);
+                IOUtils.closeQuietly(durations);
+
                 if (myRequests.add(uri)) {
                     LOGGER.debug("Added new request URI to log: {}", uri);
                 }
@@ -79,7 +91,7 @@ public class DebugServletFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig aFilterConfig) throws ServletException {
+    public void init(final FilterConfig aFilterConfig) throws ServletException {
         myRequests = new ConcurrentSkipListSet<String>();
         myFilterConfig = aFilterConfig;
     }
