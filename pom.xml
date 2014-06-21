@@ -626,7 +626,7 @@
           <jvmArgs><![CDATA[-Djetty.port=${jetty.port} -Dkakadu.home=${LD_LIBRARY_PATH} -Djava.library.path=${LD_LIBRARY_PATH} -DDJATOKA_HOME=${basedir} -DLD_LIBRARY_PATH=${LD_LIBRARY_PATH} -DDYLD_LIBRARY_PATH=${basedir}/${DYLD_LIBRARY_PATH}]]></jvmArgs>
           <stopKey>${jetty.stop.key}</stopKey>
           <stopPort>8993</stopPort>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <scanIntervalSeconds>0</scanIntervalSeconds>
           <!-- Tells Maven process not to wait on the forked Jetty server -->
           <waitForChild>${console.log}</waitForChild>
           <!-- Access log -->

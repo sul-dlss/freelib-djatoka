@@ -3,6 +3,7 @@
 * [I get a NoPluginFoundForPrefixException.  What can I do about it?](faqs.html#NoPluginFoundForPrefixException)
 * [What does the warning "Ingest image's size is larger than allowed" mean?](faqs.html#ingest-max-size)
 * [My images have linear artifacts in them.  What can I do about it?](faqs.html#moire-pattern)
+* [Installation fails with "Jetty is not accepting requests" What should I do?](faqs.html#not-accepting-requests)
 * [I have a question not covered by the FAQs.  Where can I get help?](faqs.html#mailing-list)
 
 ### I get a NoPluginFoundForPrefixException.  What can I do about it?
@@ -34,6 +35,10 @@ The default is to resample by 10 pixels.  There is a parameter that can be passe
     mvn djatoka:resampled-ingest -Dpixels=5 -Dcsv.file=src/test/resources/id_map.csv
 
 This will degrade the quality of the image slightly, but it should provide a semi-automated way to deal with moiré patterns for places without an in-house image specialist.
+
+### Installation fails with "Jetty is not accepting requests" What should I do?
+
+<a name="not-accepting-requests" /> When FreeLib-Djatoka is installed, there are tests that are run to confirm that the server is working.  If the tests can't connect to the server that is started during the testing, an error message of "Jetty is not accepting requests" is output.  This usually means that the Jetty server could not be started or that it is running at a port that cannot be accessed due to a local firewall.  If the server could not be started, it may be that the user running the installation does not have permission to write to the project's directories. If neither the port issue or the permissions issue seems to be the cause, the next step would be to look in the 'target/logs/djatoka.log' file for additional clues.
 
 ### I have a question not covered by the FAQs.  Where can I get help?
 
