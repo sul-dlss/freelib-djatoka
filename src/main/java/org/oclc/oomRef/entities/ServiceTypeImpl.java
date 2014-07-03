@@ -16,17 +16,17 @@ import info.openurl.oom.entities.ServiceType;
 /**
  * The resource that defines the type of service (pertaining to the <em>Referent</em>) that is requested; an
  * <em>Entity</em> of the <em>ContextObject</em>.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public class ServiceTypeImpl extends EntityImpl implements ServiceType {
 
     /**
      * Construct a ServiceType.
-     * 
+     *
      * @param descriptors Descriptor(s) for the ServiceType
      */
-    public ServiceTypeImpl(Object descriptors) {
+    public ServiceTypeImpl(final Object descriptors) {
         super(descriptors);
     }
 }

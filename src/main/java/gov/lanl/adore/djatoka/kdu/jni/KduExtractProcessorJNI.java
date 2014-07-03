@@ -18,15 +18,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.kdu.jni;
-
-import gov.lanl.adore.djatoka.DjatokaDecodeParam;
-import gov.lanl.adore.djatoka.DjatokaException;
-import gov.lanl.adore.djatoka.util.IOUtils;
-import gov.lanl.adore.djatoka.util.ImageProcessingUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -50,13 +45,17 @@ import kdu_jni.Kdu_global;
 import kdu_jni.Kdu_region_compositor;
 import kdu_jni.Kdu_region_decompressor;
 import kdu_jni.Kdu_simple_file_source;
+import gov.lanl.adore.djatoka.DjatokaDecodeParam;
+import gov.lanl.adore.djatoka.DjatokaException;
+import gov.lanl.adore.djatoka.util.IOUtils;
+import gov.lanl.adore.djatoka.util.ImageProcessingUtils;
 
 /**
  * Uses Kakadu Java Native Interface to extract regions. This implementation is provided for reference purposes only.
  * There are serious issues related to multi-threading and byte buffers when pushing this implementation. This
  * implementation should be used for experimental purposes only. The kdu_expand bridge method is far more scalable and
  * memory efficient.
- * 
+ *
  * @author Ryan Chute
  */
 public class KduExtractProcessorJNI {
@@ -73,38 +72,38 @@ public class KduExtractProcessorJNI {
 
     /**
      * Constructs a JNI extract processor from the supplied source file.
-     * 
+     *
      * @param sourceFile The source file for the extractor
      */
-    public KduExtractProcessorJNI(String sourceFile) {
+    public KduExtractProcessorJNI(final String sourceFile) {
         this.sourceFile = sourceFile;
     }
 
     /**
      * Constructs a JNI extract processor from the supplied source file.
-     * 
+     *
      * @param sourceFile The source file for the extractor
      * @param params The decoding configuration
      */
-    public KduExtractProcessorJNI(String sourceFile, DjatokaDecodeParam params) {
+    public KduExtractProcessorJNI(final String sourceFile, final DjatokaDecodeParam params) {
         this(sourceFile);
         this.params = params;
     }
 
     /**
      * Constructs a JNI extract processor from the supplied input stream.
-     * 
+     *
      * @param is The input stream for the extractor
      * @param params The configuration for the extractor
      */
-    public KduExtractProcessorJNI(InputStream is, DjatokaDecodeParam params) {
+    public KduExtractProcessorJNI(final InputStream is, final DjatokaDecodeParam params) {
         this.is = is;
         this.params = params;
     }
 
     /**
      * Gets the extractor configuration.
-     * 
+     *
      * @return The extractor configuration
      */
     public DjatokaDecodeParam getDjatokaDecodeParam() {
@@ -113,16 +112,16 @@ public class KduExtractProcessorJNI {
 
     /**
      * Sets the extractor configuration.
-     * 
+     *
      * @param params The extractor configuration
      */
-    public void setDjatokaDecodeParam(DjatokaDecodeParam params) {
+    public void setDjatokaDecodeParam(final DjatokaDecodeParam params) {
         this.params = params;
     }
 
     /**
      * Extracts using a compositor.
-     * 
+     *
      * @return The buffered image
      * @throws IOException If there is a trouble reading or writing the image
      * @throws DjatokaException If there is another sort of exception
@@ -143,7 +142,7 @@ public class KduExtractProcessorJNI {
         Double heightDouble = 0.0;
 
         if (params.getRegion() != null) {
-            StringTokenizer st = new StringTokenizer(params.getRegion(), "{},");
+            final StringTokenizer st = new StringTokenizer(params.getRegion(), "{},");
             String token;
             // top
             if ((token = st.nextToken()).contains(".")) {
@@ -178,22 +177,22 @@ public class KduExtractProcessorJNI {
         }
 
         if (is != null) {
-            File f = File.createTempFile("tmp", ".jp2");
+            final File f = File.createTempFile("tmp", ".jp2");
             f.deleteOnExit();
-            FileOutputStream fos = new FileOutputStream(f);
+            final FileOutputStream fos = new FileOutputStream(f);
             sourceFile = f.getAbsolutePath();
             IOUtils.copyStream(is, fos);
         }
 
         Kdu_simple_file_source raw_src = null; // Must be disposed last
-        Jp2_family_src family_src = new Jp2_family_src(); // Dispose last
-        Jpx_source wrapped_src = new Jpx_source(); // Dispose in the middle
+        final Jp2_family_src family_src = new Jp2_family_src(); // Dispose last
+        final Jpx_source wrapped_src = new Jpx_source(); // Dispose in the middle
         Kdu_region_compositor compositor = null; // Must be disposed first
         BufferedImage image = null;
 
         try {
             family_src.Open(sourceFile);
-            int success = wrapped_src.Open(family_src, true);
+            final int success = wrapped_src.Open(family_src, true);
             if (success < 0) {
                 family_src.Close();
                 wrapped_src.Close();
@@ -207,10 +206,10 @@ public class KduExtractProcessorJNI {
                 compositor.Create(wrapped_src);
             }
 
-            Kdu_dims imageDimensions = new Kdu_dims();
+            final Kdu_dims imageDimensions = new Kdu_dims();
             compositor.Get_total_composition_dims(imageDimensions);
-            Kdu_coords imageSize = imageDimensions.Access_size();
-            Kdu_coords imagePosition = imageDimensions.Access_pos();
+            final Kdu_coords imageSize = imageDimensions.Access_size();
+            final Kdu_coords imagePosition = imageDimensions.Access_pos();
 
             if (useleftDouble) {
                 left = imagePosition.Get_x() + (int) Math.round(leftDouble * imageSize.Get_x());
@@ -232,13 +231,13 @@ public class KduExtractProcessorJNI {
                 imagePosition.Set_y(top);
             }
 
-            int reduce = 1 << params.getLevelReductionFactor();
+            final int reduce = 1 << params.getLevelReductionFactor();
             imageSize.Set_x(imageSize.Get_x());
             imageSize.Set_y(imageSize.Get_y());
             imagePosition.Set_x(imagePosition.Get_x() / reduce - (1 / reduce - 1) / 2);
             imagePosition.Set_y(imagePosition.Get_y() / reduce - (1 / reduce - 1) / 2);
 
-            Kdu_dims viewDims = new Kdu_dims();
+            final Kdu_dims viewDims = new Kdu_dims();
             viewDims.Assign(imageDimensions);
             viewDims.Access_size().Set_x(imageSize.Get_x());
             viewDims.Access_size().Set_y(imageSize.Get_y());
@@ -255,20 +254,20 @@ public class KduExtractProcessorJNI {
             }
 
             compositor.Get_total_composition_dims(viewDims);
-            Kdu_coords viewSize = viewDims.Access_size();
+            final Kdu_coords viewSize = viewDims.Access_size();
             compositor.Set_buffer_surface(viewDims);
 
-            int[] imgBuffer = new int[viewSize.Get_x() * viewSize.Get_y()];
-            Kdu_compositor_buf compositorBuffer = compositor.Get_composition_buffer(viewDims);
+            final int[] imgBuffer = new int[viewSize.Get_x() * viewSize.Get_y()];
+            final Kdu_compositor_buf compositorBuffer = compositor.Get_composition_buffer(viewDims);
             int regionBufferSize = 0;
             int[] kduBuffer = null;
-            Kdu_dims newRegion = new Kdu_dims();
+            final Kdu_dims newRegion = new Kdu_dims();
             while (compositor.Process(100000, newRegion)) {
-                Kdu_coords newOffset = newRegion.Access_pos();
-                Kdu_coords newSize = newRegion.Access_size();
+                final Kdu_coords newOffset = newRegion.Access_pos();
+                final Kdu_coords newSize = newRegion.Access_size();
                 newOffset.Subtract(viewDims.Access_pos());
 
-                int newPixels = newSize.Get_x() * newSize.Get_y();
+                final int newPixels = newSize.Get_x() * newSize.Get_y();
                 if (newPixels == 0) {
                     continue;
                 }
@@ -280,7 +279,7 @@ public class KduExtractProcessorJNI {
                 compositorBuffer.Get_region(newRegion, kduBuffer);
                 int imgBuffereIdx = newOffset.Get_x() + newOffset.Get_y() * viewSize.Get_x();
                 int kduBufferIdx = 0;
-                int xDiff = viewSize.Get_x() - newSize.Get_x();
+                final int xDiff = viewSize.Get_x() - newSize.Get_x();
                 for (int j = 0; j < newSize.Get_y(); j++, imgBuffereIdx += xDiff) {
                     for (int i = 0; i < newSize.Get_x(); i++) {
                         imgBuffer[imgBuffereIdx++] = kduBuffer[kduBufferIdx++];
@@ -304,10 +303,10 @@ public class KduExtractProcessorJNI {
             }
 
             return image;
-        } catch (KduException e) {
+        } catch (final KduException e) {
             e.printStackTrace();
             throw new DjatokaException(e.getMessage(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new DjatokaException(e.getMessage(), e);
         }
@@ -315,7 +314,7 @@ public class KduExtractProcessorJNI {
 
     /**
      * Extracts the buffered image.
-     * 
+     *
      * @return The buffered image
      * @throws DjatokaException If there is a problem with the extraction
      */
@@ -335,7 +334,7 @@ public class KduExtractProcessorJNI {
         Double heightDouble = 0.0;
 
         if (params.getRegion() != null) {
-            StringTokenizer st = new StringTokenizer(params.getRegion(), "{},");
+            final StringTokenizer st = new StringTokenizer(params.getRegion(), "{},");
             String token;
             // top
             if ((token = st.nextToken()).contains(".")) {
@@ -371,43 +370,43 @@ public class KduExtractProcessorJNI {
 
         try {
             if (is != null) {
-                File f = File.createTempFile("tmp", ".jp2");
+                final File f = File.createTempFile("tmp", ".jp2");
                 f.deleteOnExit();
-                FileOutputStream fos = new FileOutputStream(f);
+                final FileOutputStream fos = new FileOutputStream(f);
                 sourceFile = f.getAbsolutePath();
                 IOUtils.copyStream(is, fos);
                 is.close();
                 fos.close();
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new DjatokaException(e.getMessage(), e);
         }
 
         try {
-            Jp2_source inputSource = new Jp2_source();
+            final Jp2_source inputSource = new Jp2_source();
             Kdu_compressed_source input = null;
-            Jp2_family_src jp2_family_in = new Jp2_family_src();
-            Jp2_locator loc = new Jp2_locator();
+            final Jp2_family_src jp2_family_in = new Jp2_family_src();
+            final Jp2_locator loc = new Jp2_locator();
             jp2_family_in.Open(sourceFile, true);
             inputSource.Open(jp2_family_in, loc);
             inputSource.Read_header();
             input = inputSource;
 
-            Kdu_codestream codestream = new Kdu_codestream();
+            final Kdu_codestream codestream = new Kdu_codestream();
             codestream.Create(input);
-            Kdu_channel_mapping channels = new Kdu_channel_mapping();
+            final Kdu_channel_mapping channels = new Kdu_channel_mapping();
 
             if (inputSource.Exists()) {
                 channels.Configure(inputSource, false);
             } else {
                 channels.Configure(codestream);
             }
-            int ref_component = channels.Get_source_component(0);
-            Kdu_coords ref_expansion = getReferenceExpansion(ref_component, channels, codestream);
-            Kdu_dims image_dims = new Kdu_dims();
+            final int ref_component = channels.Get_source_component(0);
+            final Kdu_coords ref_expansion = getReferenceExpansion(ref_component, channels, codestream);
+            final Kdu_dims image_dims = new Kdu_dims();
             codestream.Get_dims(ref_component, image_dims);
-            Kdu_coords imageSize = image_dims.Access_size();
-            Kdu_coords imagePosition = image_dims.Access_pos();
+            final Kdu_coords imageSize = image_dims.Access_size();
+            final Kdu_coords imagePosition = image_dims.Access_pos();
 
             if (useleftDouble) {
                 left = imagePosition.Get_x() + (int) Math.round(leftDouble * imageSize.Get_x());
@@ -429,42 +428,42 @@ public class KduExtractProcessorJNI {
                 imagePosition.Set_y(top);
             }
 
-            int reduce = 1 << params.getLevelReductionFactor();
+            final int reduce = 1 << params.getLevelReductionFactor();
             imageSize.Set_x(imageSize.Get_x() * ref_expansion.Get_x());
             imageSize.Set_y(imageSize.Get_y() * ref_expansion.Get_y());
             imagePosition.Set_x(imagePosition.Get_x() * ref_expansion.Get_x() / reduce -
-                    ((ref_expansion.Get_x() / reduce - 1) / 2));
+                    (ref_expansion.Get_x() / reduce - 1) / 2);
             imagePosition.Set_y(imagePosition.Get_y() * ref_expansion.Get_y() / reduce -
-                    ((ref_expansion.Get_y() / reduce - 1) / 2));
+                    (ref_expansion.Get_y() / reduce - 1) / 2);
 
-            Kdu_dims view_dims = new Kdu_dims();
+            final Kdu_dims view_dims = new Kdu_dims();
             view_dims.Assign(image_dims);
             view_dims.Access_size().Set_x(imageSize.Get_x());
             view_dims.Access_size().Set_y(imageSize.Get_y());
 
-            int region_buf_size = imageSize.Get_x() * imageSize.Get_y();
-            int[] region_buf = new int[region_buf_size];
-            Kdu_region_decompressor decompressor = new Kdu_region_decompressor();
+            final int region_buf_size = imageSize.Get_x() * imageSize.Get_y();
+            final int[] region_buf = new int[region_buf_size];
+            final Kdu_region_decompressor decompressor = new Kdu_region_decompressor();
             decompressor.Start(codestream, channels, -1, params.getLevelReductionFactor(), 16384, image_dims,
                     ref_expansion, new Kdu_coords(1, 1), false, Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);
 
-            Kdu_dims new_region = new Kdu_dims();
-            Kdu_dims incomplete_region = new Kdu_dims();
-            Kdu_coords viewSize = view_dims.Access_size();
+            final Kdu_dims new_region = new Kdu_dims();
+            final Kdu_dims incomplete_region = new Kdu_dims();
+            final Kdu_coords viewSize = view_dims.Access_size();
             incomplete_region.Assign(image_dims);
 
-            int[] imgBuffer = new int[viewSize.Get_x() * viewSize.Get_y()];
+            final int[] imgBuffer = new int[viewSize.Get_x() * viewSize.Get_y()];
             int[] kduBuffer = null;
             while (decompressor.Process(region_buf, image_dims.Access_pos(), 0, 0, region_buf_size,
                     incomplete_region, new_region)) {
-                Kdu_coords newOffset = new_region.Access_pos();
-                Kdu_coords newSize = new_region.Access_size();
+                final Kdu_coords newOffset = new_region.Access_pos();
+                final Kdu_coords newSize = new_region.Access_size();
                 newOffset.Subtract(view_dims.Access_pos());
 
                 kduBuffer = region_buf;
                 int imgBuffereIdx = newOffset.Get_x() + newOffset.Get_y() * viewSize.Get_x();
                 int kduBufferIdx = 0;
-                int xDiff = viewSize.Get_x() - newSize.Get_x();
+                final int xDiff = viewSize.Get_x() - newSize.Get_x();
                 for (int j = 0; j < newSize.Get_y(); j++, imgBuffereIdx += xDiff) {
                     for (int i = 0; i < newSize.Get_x(); i++) {
                         imgBuffer[imgBuffereIdx++] = kduBuffer[kduBufferIdx++];
@@ -489,23 +488,23 @@ public class KduExtractProcessorJNI {
             jp2_family_in.Native_destroy();
 
             return image;
-        } catch (KduException e) {
+        } catch (final KduException e) {
             e.printStackTrace();
             throw new DjatokaException(e.getMessage(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new DjatokaException(e.getMessage(), e);
         }
     }
 
-    private static Kdu_coords getReferenceExpansion(int reference_component, Kdu_channel_mapping channels,
-            Kdu_codestream codestream) throws KduException {
+    private static Kdu_coords getReferenceExpansion(final int reference_component,
+            final Kdu_channel_mapping channels, final Kdu_codestream codestream) throws KduException {
 
         int c;
-        Kdu_coords ref_subs = new Kdu_coords();
-        Kdu_coords subs = new Kdu_coords();
+        final Kdu_coords ref_subs = new Kdu_coords();
+        final Kdu_coords subs = new Kdu_coords();
         codestream.Get_subsampling(reference_component, ref_subs);
-        Kdu_coords min_subs = new Kdu_coords();
+        final Kdu_coords min_subs = new Kdu_coords();
         min_subs.Assign(ref_subs);
 
         for (c = 0; c < channels.Get_num_channels(); c++) {
@@ -524,8 +523,8 @@ public class KduExtractProcessorJNI {
 
         for (c = 0; c < channels.Get_num_channels(); c++) {
             codestream.Get_subsampling(channels.Get_source_component(c), subs);
-            if ((((subs.Get_x() * expansion.Get_x()) % ref_subs.Get_x()) != 0) ||
-                    (((subs.Get_y() * expansion.Get_y()) % ref_subs.Get_y()) != 0)) {
+            if (subs.Get_x() * expansion.Get_x() % ref_subs.Get_x() != 0 ||
+                    subs.Get_y() * expansion.Get_y() % ref_subs.Get_y() != 0) {
                 Kdu_global.Kdu_print_error("The supplied JP2 file contains color channels "
                         + "whose sub-sampling factors are not integer " + "multiples of one another.");
                 codestream.Apply_input_restrictions(0, 1, 0, 0, null, Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);

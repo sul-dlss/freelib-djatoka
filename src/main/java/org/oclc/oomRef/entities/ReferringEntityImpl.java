@@ -15,17 +15,17 @@ import info.openurl.oom.entities.ReferringEntity;
 
 /**
  * The resource that references the Referent; an <em>Entity</em> of the <em>ContextObject</em>.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public class ReferringEntityImpl extends EntityImpl implements ReferringEntity {
 
     /**
      * Constructs a ReferringEntity.
-     * 
+     *
      * @param descriptors Descriptor(s) for the ReferringEntity
      */
-    public ReferringEntityImpl(Object descriptors) {
+    public ReferringEntityImpl(final Object descriptors) {
         super(descriptors);
     }
 }

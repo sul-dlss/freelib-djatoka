@@ -3,7 +3,7 @@ package info.freelibrary.djatoka.iiif;
 
 /**
  * Constants used by FreeLib-Djatoka's IIIF interface.
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public interface Constants {

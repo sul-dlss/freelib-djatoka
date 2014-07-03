@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 package info.openurl.oom;
@@ -17,13 +17,13 @@ import javax.servlet.http.Cookie;
  * Service classes are expected to return an instance of this class. It is basically a holding area for the
  * HttpServletResponse assignments. In theory, this model could be designed to pass the HttpServletResponse directly
  * into the Service classes, but that would make those Services harder to call from within Java.
- * 
+ *
  * @author Jeffrey A. Young
  * @see info.openurl.oom.Service
  */
 public class OpenURLResponse {
 
-    private int status;
+    private final int status;
 
     private String redirectURL;
 
@@ -31,7 +31,7 @@ public class OpenURLResponse {
 
     private InputStream is;
 
-    private ArrayList cookies = new ArrayList();
+    private final ArrayList cookies = new ArrayList();
 
     private Map sessionMap;
 
@@ -39,60 +39,63 @@ public class OpenURLResponse {
 
     /**
      * Construct an HTTP response proxy.
-     * 
+     *
      * @param status HTTP status code
      * @param redirectURL HTTP redirect URL
      * @param contentType HTTP contentType
      * @param bytes HTTP response message
      * @deprecated
      */
-    public OpenURLResponse(int status, String redirectURL, String contentType, byte[] bytes) {
+    @Deprecated
+    public OpenURLResponse(final int status, final String redirectURL, final String contentType, final byte[] bytes) {
         this(status, redirectURL, contentType, new ByteArrayInputStream(bytes));
     }
 
     /**
      * Construct an HTTP response proxy.
-     * 
+     *
      * @param status HTTP status code
      * @param redirectURL HTTP redirect URL
      * @param contentType HTTP contentType
      * @param bytes HTTP response message
      * @deprecated
      */
-    public OpenURLResponse(int status, URL redirectURL, String contentType, byte[] bytes) {
-        this(status, (redirectURL != null) ? redirectURL.toString() : null, contentType, new ByteArrayInputStream(
-                bytes));
+    @Deprecated
+    public OpenURLResponse(final int status, final URL redirectURL, final String contentType, final byte[] bytes) {
+        this(status, redirectURL != null ? redirectURL.toString() : null, contentType,
+                new ByteArrayInputStream(bytes));
     }
 
     /**
      * Construct an HTTP response proxy.
-     * 
+     *
      * @param status HTTP status code
      * @param redirectURL HTTP redirect URL
      * @param contentType HTTP contentType
      * @param is
      * @deprecated
      */
-    public OpenURLResponse(int status, URL redirectURL, String contentType, InputStream is) {
-        this(status, (redirectURL != null) ? redirectURL.toString() : null, contentType, is);
+    @Deprecated
+    public OpenURLResponse(final int status, final URL redirectURL, final String contentType, final InputStream is) {
+        this(status, redirectURL != null ? redirectURL.toString() : null, contentType, is);
     }
 
     /**
      * Constructs a proxy for an HTTP response
-     * 
+     *
      * @param status
      */
-    public OpenURLResponse(int status) {
+    public OpenURLResponse(final int status) {
         this(status, null, (Map) null);
     }
 
     /**
      * Constructs a proxy for an HTTP redirect response
-     * 
+     *
      * @param status
      * @param redirectURL
      */
-    public OpenURLResponse(int status, String redirectURL) {
+    public OpenURLResponse(final int status, final String redirectURL) {
         this(status, redirectURL, (Map) null);
     }
 
@@ -101,7 +104,7 @@ public class OpenURLResponse {
      * @param redirectURL
      * @param sessionMap
      */
-    public OpenURLResponse(int status, String redirectURL, Map sessionMap) {
+    public OpenURLResponse(final int status, final String redirectURL, final Map sessionMap) {
         this.status = status;
         this.redirectURL = redirectURL;
         this.sessionMap = sessionMap;
@@ -113,7 +116,7 @@ public class OpenURLResponse {
      * @param sessionMap
      * @param headerMap
      */
-    public OpenURLResponse(int status, String redirectURL, Map sessionMap, Map headerMap) {
+    public OpenURLResponse(final int status, final String redirectURL, final Map sessionMap, final Map headerMap) {
         this.status = status;
         this.redirectURL = redirectURL;
         this.sessionMap = sessionMap;
@@ -122,12 +125,12 @@ public class OpenURLResponse {
 
     /**
      * Constructs a proxy for an HTTP OutputStream response
-     * 
+     *
      * @param status
      * @param contentType
      * @param is
      */
-    public OpenURLResponse(int status, String contentType, InputStream is) {
+    public OpenURLResponse(final int status, final String contentType, final InputStream is) {
         this(status, contentType, is, null);
     }
 
@@ -137,7 +140,7 @@ public class OpenURLResponse {
      * @param is
      * @param sessionMap
      */
-    public OpenURLResponse(int status, String contentType, InputStream is, Map sessionMap) {
+    public OpenURLResponse(final int status, final String contentType, final InputStream is, final Map sessionMap) {
         this.status = status;
         this.contentType = contentType;
         this.is = is;
@@ -151,22 +154,23 @@ public class OpenURLResponse {
      * @param sessionMap
      * @param headerMap
      */
-    public OpenURLResponse(int status, String contentType, byte[] bytes, Map sessionMap, Map headerMap) {
+    public OpenURLResponse(final int status, final String contentType, final byte[] bytes, final Map sessionMap,
+            final Map headerMap) {
         this.status = status;
         this.contentType = contentType;
-        this.is = new ByteArrayInputStream(bytes);
+        is = new ByteArrayInputStream(bytes);
         this.sessionMap = sessionMap;
         this.headerMap = headerMap;
     }
 
     /**
      * Constructs a proxy for an HTTP OutputStream response
-     * 
+     *
      * @param status
      * @param contentType
      * @param bytes
      */
-    public OpenURLResponse(int status, String contentType, byte[] bytes) {
+    public OpenURLResponse(final int status, final String contentType, final byte[] bytes) {
         this(status, contentType, new ByteArrayInputStream(bytes));
     }
 
@@ -176,20 +180,21 @@ public class OpenURLResponse {
      * @param bytes
      * @param sessionMap
      */
-    public OpenURLResponse(int status, String contentType, byte[] bytes, Map sessionMap) {
+    public OpenURLResponse(final int status, final String contentType, final byte[] bytes, final Map sessionMap) {
         this(status, contentType, new ByteArrayInputStream(bytes), sessionMap);
     }
 
     /**
      * Construct an HTTP response proxy.
-     * 
+     *
      * @param status HTTP status code
      * @param redirectURL HTTP redirect URL
      * @param contentType HTTP contentType
      * @param is
      * @deprecated
      */
-    public OpenURLResponse(int status, String redirectURL, String contentType, InputStream is) {
+    @Deprecated
+    public OpenURLResponse(final int status, final String redirectURL, final String contentType, final InputStream is) {
         this.status = status;
         this.redirectURL = redirectURL;
         this.contentType = contentType;
@@ -198,7 +203,7 @@ public class OpenURLResponse {
 
     /**
      * Proxy for HttpServletResponse.setStatus()
-     * 
+     *
      * @return HttpServletResponse.SC_* codes
      */
     public int getStatus() {
@@ -207,7 +212,7 @@ public class OpenURLResponse {
 
     /**
      * Proxy for HttpServletResponse.sendRedirect()
-     * 
+     *
      * @return the target URL
      */
     public String getRedirectURL() {
@@ -216,7 +221,7 @@ public class OpenURLResponse {
 
     /**
      * Proxy for HttpServletResponse.setContentType()
-     * 
+     *
      * @return a String specifying the MIME type of the content
      */
     public String getContentType() {
@@ -225,16 +230,16 @@ public class OpenURLResponse {
 
     /**
      * Add a cookie to the response
-     * 
+     *
      * @param cookie to be returned to the user
      */
-    public void addCookie(Cookie cookie) {
+    public void addCookie(final Cookie cookie) {
         cookies.add(cookie);
     }
 
     /**
      * Proxy for HttpServletResponse.addCookie()
-     * 
+     *
      * @return a Cookie[] to be returned to the user
      */
     public Cookie[] getCookies() {
@@ -243,7 +248,7 @@ public class OpenURLResponse {
 
     /**
      * Gets a map of session information.
-     * 
+     *
      * @return Map of session information
      */
     public Map getSessionMap() {
@@ -252,7 +257,7 @@ public class OpenURLResponse {
 
     /**
      * Gets a map of header information.
-     * 
+     *
      * @return Map of header information
      */
     public Map getHeaderMap() {
@@ -261,7 +266,7 @@ public class OpenURLResponse {
 
     /**
      * Proxy for HttpServletResponse.write()
-     * 
+     *
      * @return the InputStream to write()
      */
     public InputStream getInputStream() {

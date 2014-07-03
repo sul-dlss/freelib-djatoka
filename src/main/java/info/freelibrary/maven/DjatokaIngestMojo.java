@@ -26,7 +26,7 @@ import info.freelibrary.djatoka.Constants;
 /**
  * Ingests content into FreeLib-Djatoka's Pairtree file system.
  * <p/>
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 @Mojo(name = "ingest")

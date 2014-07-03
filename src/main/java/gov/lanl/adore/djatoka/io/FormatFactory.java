@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Format Factory. Uses format writer/reader implementations.
- * 
+ *
  * @author Ryan Chute
  */
 public class FormatFactory implements FormatConstants {
@@ -51,7 +51,7 @@ public class FormatFactory implements FormatConstants {
     /**
      * Create a new FormatFactory using provided format map. Format maps must be key/value pair of syntax
      * $formatId_writer=$impl (e.g. jpeg_writer=gov.lanl.adore.djatoka.io.writer.JPGWriter)
-     * 
+     *
      * @param formatMap
      */
     public FormatFactory(final Properties formatMap) {
@@ -74,7 +74,7 @@ public class FormatFactory implements FormatConstants {
 
     /**
      * Returns format writer implementation for provided format identifier
-     * 
+     *
      * @param format identifier of requested identifier
      * @return format writer for provided format identifier
      */
@@ -84,7 +84,7 @@ public class FormatFactory implements FormatConstants {
 
     /**
      * Returns format writer implementation for provided format identifier
-     * 
+     *
      * @param format identifier of requested identifier
      * @param props Properties defining alternate Writer instances
      * @return format writer for provided format identifier
@@ -95,7 +95,7 @@ public class FormatFactory implements FormatConstants {
 
     /**
      * Returns format reader implementation for provided format identifier
-     * 
+     *
      * @param format identifier of requested identifier
      * @return format reader for provided format identifier
      * @throws Exception
@@ -106,7 +106,7 @@ public class FormatFactory implements FormatConstants {
 
     /**
      * Returns Format Identifier Suffix from mimetype
-     * 
+     *
      * @param fmtId full mimetype string
      * @return String format identifier matching FormatConstants
      */
@@ -123,7 +123,7 @@ public class FormatFactory implements FormatConstants {
     /**
      * Create a new FormatFactory using provided format map. Format maps must be key/value pair of syntax
      * $formatId_writer=$impl (e.g. jpeg_writer=gov.lanl.adore.djatoka.io.writer.JPGWriter)
-     * 
+     *
      * @return Properties object containing writer implementation instance key/value pairs
      */
     public static final Properties getDefaultFormatMap() {
@@ -137,11 +137,12 @@ public class FormatFactory implements FormatConstants {
         return formatMap;
     }
 
-    private IWriter getFormatWriterInstance(String format, final Properties props) {
-        format = getFormatSuffix(format);
+    private IWriter getFormatWriterInstance(final String format, final Properties props) {
         IWriter w = null;
+
         try {
-            w = (IWriter) fmtImpl.get(format + FORMAT_WRITER_SUFFIX).newInstance();
+            w = (IWriter) fmtImpl.get(getFormatSuffix(format) + FORMAT_WRITER_SUFFIX).newInstance();
+
             if (props != null) {
                 w.setWriterProperties(props);
             }
@@ -150,19 +151,21 @@ public class FormatFactory implements FormatConstants {
         } catch (final IllegalAccessException e) {
             LOGGER.error(e.getMessage(), e);
         }
+
         return w;
     }
 
-    private IReader getFormatReaderInstance(String format) {
-        format = getFormatSuffix(format);
+    private IReader getFormatReaderInstance(final String format) {
         IReader r = null;
+
         try {
-            r = (IReader) fmtImpl.get(format + FORMAT_READER_SUFFIX).newInstance();
+            r = (IReader) fmtImpl.get(getFormatSuffix(format) + FORMAT_READER_SUFFIX).newInstance();
         } catch (final InstantiationException e) {
             LOGGER.error(e.getMessage(), e);
         } catch (final IllegalAccessException e) {
             LOGGER.error(e.getMessage(), e);
         }
+
         return r;
     }
 }

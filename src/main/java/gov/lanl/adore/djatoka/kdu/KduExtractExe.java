@@ -1,36 +1,25 @@
 /*
  * Copyright (c) 2008 Los Alamos National Security, LLC.
- * 
+ *
  * Los Alamos National Laboratory Research Library Digital Library Research &
  * Prototyping Team
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package gov.lanl.adore.djatoka.kdu;
-
-import gov.lanl.adore.djatoka.DjatokaDecodeParam;
-import gov.lanl.adore.djatoka.DjatokaException;
-import gov.lanl.adore.djatoka.IExtract;
-import gov.lanl.adore.djatoka.io.reader.PNMReader;
-import gov.lanl.adore.djatoka.util.IOUtils;
-import gov.lanl.adore.djatoka.util.ImageProcessingUtils;
-import gov.lanl.adore.djatoka.util.ImageRecord;
-import gov.lanl.adore.djatoka.util.JP2ImageInfo;
-import gov.lanl.util.ExecuteStreamHandler;
-import gov.lanl.util.PumpStreamHandler;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
@@ -45,11 +34,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.martiansoftware.jsap.CommandLineTokenizer;
-
 import kdu_jni.Jp2_family_src;
 import kdu_jni.Jpx_source;
 import kdu_jni.KduException;
@@ -59,9 +43,25 @@ import kdu_jni.Kdu_dims;
 import kdu_jni.Kdu_global;
 import kdu_jni.Kdu_params;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.martiansoftware.jsap.CommandLineTokenizer;
+
+import gov.lanl.adore.djatoka.DjatokaDecodeParam;
+import gov.lanl.adore.djatoka.DjatokaException;
+import gov.lanl.adore.djatoka.IExtract;
+import gov.lanl.adore.djatoka.io.reader.PNMReader;
+import gov.lanl.adore.djatoka.util.IOUtils;
+import gov.lanl.adore.djatoka.util.ImageProcessingUtils;
+import gov.lanl.adore.djatoka.util.ImageRecord;
+import gov.lanl.adore.djatoka.util.JP2ImageInfo;
+import gov.lanl.util.ExecuteStreamHandler;
+import gov.lanl.util.PumpStreamHandler;
+
 /**
  * Java bridge for kdu_expand application
- * 
+ *
  * @author Ryan Chute
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
@@ -88,7 +88,7 @@ public class KduExtractExe implements IExtract {
 
     static {
         env = System.getProperty("kakadu.home") + System.getProperty("file.separator");
-        exe = env + ((System.getProperty("os.name").contains("Win")) ? KDU_EXPAND_EXE + ".exe" : KDU_EXPAND_EXE);
+        exe = env + (System.getProperty("os.name").contains("Win") ? KDU_EXPAND_EXE + ".exe" : KDU_EXPAND_EXE);
 
         if (System.getProperty("os.name").startsWith("Mac")) {
             envParams = new String[] { "DYLD_LIBRARY_PATH=" + System.getProperty("DYLD_LIBRARY_PATH") };
@@ -100,32 +100,33 @@ public class KduExtractExe implements IExtract {
             envParams = new String[] { "LD_LIBRARY_PATH=" + System.getProperty("LD_LIBRARY_PATH") };
         }
 
-        LOGGER.debug("envParams: " + ((envParams != null) ? envParams[0] + " | " : "") + exe);
+        LOGGER.debug("envParams: " + (envParams != null ? envParams[0] + " | " : "") + exe);
     }
 
     /**
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     * 
+     *
      * @param input InputStream containing a JPEG 2000 image bitstream.
      * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
      * @throws DjatokaException
      */
-    public BufferedImage processUsingTemp(InputStream input, DjatokaDecodeParam params) throws DjatokaException {
+    public BufferedImage processUsingTemp(final InputStream input, final DjatokaDecodeParam params)
+            throws DjatokaException {
         File in;
 
         // Copy to tmp file
         try {
             in = File.createTempFile("tmp", ".jp2");
-            FileOutputStream fos = new FileOutputStream(in);
+            final FileOutputStream fos = new FileOutputStream(in);
             in.deleteOnExit();
             IOUtils.copyStream(input, fos);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new DjatokaException(e.getMessage(), e);
         }
 
-        BufferedImage bi = process(in.getAbsolutePath(), params);
+        final BufferedImage bi = process(in.getAbsolutePath(), params);
 
         if (in != null) {
             if (!in.delete() && LOGGER.isWarnEnabled()) {
@@ -138,13 +139,14 @@ public class KduExtractExe implements IExtract {
 
     /**
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     * 
+     *
      * @param is InputStream containing a JPEG 2000 image bitstream.
      * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
      * @throws DjatokaException
      */
-    public BufferedImage process(InputStream is, DjatokaDecodeParam params) throws DjatokaException {
+    @Override
+    public BufferedImage process(final InputStream is, final DjatokaDecodeParam params) throws DjatokaException {
         if (isWindows) {
             return processUsingTemp(is, params);
         }
@@ -152,9 +154,9 @@ public class KduExtractExe implements IExtract {
         ArrayList<Double> dims = null;
 
         if (params.getRegion() != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             IOUtils.copyStream(is, baos);
-            byte[] bytes = baos.toByteArray();
+            final byte[] bytes = baos.toByteArray();
             dims = getRegionMetadata(new ByteArrayInputStream(bytes), params);
 
             return process(new ByteArrayInputStream(baos.toByteArray()), dims, params);
@@ -165,32 +167,32 @@ public class KduExtractExe implements IExtract {
 
     /**
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     * 
+     *
      * @param is InputStream containing a JPEG 2000 image bitstream.
      * @param dims region extraction dimensions
      * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
      * @throws DjatokaException
      */
-    public BufferedImage process(final InputStream is, ArrayList<Double> dims, DjatokaDecodeParam params)
+    public BufferedImage process(final InputStream is, final ArrayList<Double> dims, final DjatokaDecodeParam params)
             throws DjatokaException {
-        String input = STDIN;
-        String output = STDOUT;
+        final String input = STDIN;
+        final String output = STDOUT;
         BufferedImage bi = null;
 
         try {
-            String command = getKduExtractCommand(input, output, dims, params);
-            String[] cmdParts = CommandLineTokenizer.tokenize(command);
-            Process process = Runtime.getRuntime().exec(cmdParts, envParams, new File(env));
-            ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-            ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-            ExecuteStreamHandler streamHandler = new PumpStreamHandler(stdout, stderr, is);
+            final String command = getKduExtractCommand(input, output, dims, params);
+            final String[] cmdParts = CommandLineTokenizer.tokenize(command);
+            final Process process = Runtime.getRuntime().exec(cmdParts, envParams, new File(env));
+            final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+            final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+            final ExecuteStreamHandler streamHandler = new PumpStreamHandler(stdout, stderr, is);
 
             try {
                 streamHandler.setProcessInputStream(process.getOutputStream());
                 streamHandler.setProcessOutputStream(process.getInputStream());
                 streamHandler.setProcessErrorStream(process.getErrorStream());
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOGGER.error(e.getMessage(), e);
 
                 if (process != null) {
@@ -207,7 +209,7 @@ public class KduExtractExe implements IExtract {
                 final ByteArrayInputStream bais = new ByteArrayInputStream(stdout.toByteArray());
                 bi = new PNMReader().open(bais);
                 streamHandler.stop();
-            } catch (ThreadDeath t) {
+            } catch (final ThreadDeath t) {
                 LOGGER.error(t.getMessage(), t);
                 process.destroy();
                 throw t;
@@ -216,7 +218,7 @@ public class KduExtractExe implements IExtract {
                     closeStreams(process);
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new DjatokaException(e.getMessage(), e);
         }
@@ -226,13 +228,14 @@ public class KduExtractExe implements IExtract {
 
     /**
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     * 
+     *
      * @param input absolute file path of JPEG 2000 image file.
      * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
      * @throws DjatokaException
      */
-    public BufferedImage process(String input, DjatokaDecodeParam params) throws DjatokaException {
+    @Override
+    public BufferedImage process(final String input, final DjatokaDecodeParam params) throws DjatokaException {
         String output = STDOUT;
         File winOut = null;
         BufferedImage bi = null;
@@ -241,7 +244,7 @@ public class KduExtractExe implements IExtract {
             try {
                 winOut = File.createTempFile("pipe_", ".ppm");
                 winOut.deleteOnExit();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOGGER.error(e.getMessage(), e);
                 throw new DjatokaException(e.getMessage(), e);
             }
@@ -249,12 +252,12 @@ public class KduExtractExe implements IExtract {
             output = winOut.getAbsolutePath();
         }
 
-        Runtime rt = Runtime.getRuntime();
+        final Runtime rt = Runtime.getRuntime();
 
         try {
-            ArrayList<Double> dims = getRegionMetadata(input, params);
-            String command = getKduExtractCommand(input, output, dims, params);
-            String[] cmdParts = CommandLineTokenizer.tokenize(command);
+            final ArrayList<Double> dims = getRegionMetadata(input, params);
+            final String command = getKduExtractCommand(input, output, dims, params);
+            final String[] cmdParts = CommandLineTokenizer.tokenize(command);
             final Process process = rt.exec(cmdParts, envParams, new File(env));
 
             if (output != null) {
@@ -266,7 +269,7 @@ public class KduExtractExe implements IExtract {
 
                         try {
                             bi = new PNMReader().open(new BufferedInputStream(new FileInputStream(new File(output))));
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             LOGGER.error(e.getMessage(), e);
 
                             if (winOut != null) {
@@ -282,16 +285,16 @@ public class KduExtractExe implements IExtract {
                             winOut.delete();
                         }
                     }
-                } catch (RuntimeException details) {
+                } catch (final RuntimeException details) {
                     LOGGER.debug("Request out of bounds: {}", details.getMessage());
 
                     bi = OOB;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     String error = null;
 
                     try {
                         error = new String(IOUtils.getByteArray(process.getErrorStream()));
-                    } catch (Exception e1) {
+                    } catch (final Exception e1) {
                         e1.printStackTrace();
                     }
 
@@ -308,7 +311,7 @@ public class KduExtractExe implements IExtract {
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -317,13 +320,14 @@ public class KduExtractExe implements IExtract {
 
     /**
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     * 
+     *
      * @param input ImageRecord wrapper containing file reference, inputstream, etc.
      * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
      * @throws DjatokaException
      */
-    public BufferedImage process(ImageRecord input, DjatokaDecodeParam params) throws DjatokaException {
+    @Override
+    public BufferedImage process(final ImageRecord input, final DjatokaDecodeParam params) throws DjatokaException {
         if (input.getImageFile() != null) {
             return process(input, params);
         } else if (input.getObject() != null) {
@@ -336,16 +340,16 @@ public class KduExtractExe implements IExtract {
 
     /**
      * Gets Kdu Extract Command-line based on dims and params
-     * 
+     *
      * @param input absolute file path of JPEG 2000 image file.
      * @param output absolute file path of PGM output image
      * @param dims array of region parameters (i.e. y,x,h,w)
      * @param params contains rotate and level extraction information
      * @return command line string to extract region using kdu_extract
      */
-    public final String getKduExtractCommand(String input, String output, ArrayList<Double> dims,
-            DjatokaDecodeParam params) {
-        StringBuffer command = new StringBuffer(exe);
+    public final String getKduExtractCommand(final String input, final String output, final ArrayList<Double> dims,
+            final DjatokaDecodeParam params) {
+        final StringBuffer command = new StringBuffer(exe);
 
         if (input.equals(STDIN)) {
             command.append(" -no_seek");
@@ -358,7 +362,7 @@ public class KduExtractExe implements IExtract {
         command.append(" ").append(toKduExtractArgs(params));
 
         if (dims != null && dims.size() == 4) {
-            StringBuffer region = new StringBuffer();
+            final StringBuffer region = new StringBuffer();
 
             region.append("{").append(dims.get(0)).append(",");
             region.append(dims.get(1)).append("}").append(",");
@@ -377,23 +381,24 @@ public class KduExtractExe implements IExtract {
 
     /**
      * Returns populated JPEG 2000 ImageRecord instance
-     * 
+     *
      * @param r ImageRecord containing file path the JPEG 2000 image
      * @return a populated JPEG 2000 ImageRecord instance
      * @throws DjatokaException
      */
-    public final ImageRecord getMetadata(ImageRecord r) throws DjatokaException {
+    @Override
+    public final ImageRecord getMetadata(final ImageRecord r) throws DjatokaException {
         if (r == null) {
             throw new DjatokaException("ImageRecord is null");
         }
 
         if (r.getImageFile() == null && r.getObject() != null) {
-            ImageRecord ir = getMetadata(getStreamFromObject(r.getObject()));
+            final ImageRecord ir = getMetadata(getStreamFromObject(r.getObject()));
             ir.setObject(r.getObject());
             return ir;
         }
 
-        File f = new File(r.getImageFile());
+        final File f = new File(r.getImageFile());
 
         if (!f.exists()) {
             throw new DjatokaException("Image Does Not Exist");
@@ -411,7 +416,7 @@ public class KduExtractExe implements IExtract {
             try {
                 fis = new FileInputStream(f);
                 return getMetadata(fis);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new DjatokaException("Invalid file.");
             } finally {
                 info.freelibrary.util.IOUtils.closeQuietly(fis);
@@ -422,39 +427,39 @@ public class KduExtractExe implements IExtract {
             LOGGER.debug("Checking: java.library.path = {}", System.getProperty("java.library.path"));
         }
 
-        Jpx_source inputSource = new Jpx_source();
-        Jp2_family_src jp2_family_in = new Jp2_family_src();
+        final Jpx_source inputSource = new Jpx_source();
+        final Jp2_family_src jp2_family_in = new Jp2_family_src();
 
-        int ref_component = 0;
+        final int ref_component = 0;
 
         try {
             jp2_family_in.Open(r.getImageFile(), true);
             inputSource.Open(jp2_family_in, true);
-            Kdu_codestream codestream = new Kdu_codestream();
+            final Kdu_codestream codestream = new Kdu_codestream();
             codestream.Create(inputSource.Access_codestream(ref_component).Open_stream());
 
-            int minLevels = codestream.Get_min_dwt_levels();
-            int depth = codestream.Get_bit_depth(ref_component);
-            int colors = codestream.Get_num_components();
-            int[] frames = new int[1];
+            final int minLevels = codestream.Get_min_dwt_levels();
+            final int depth = codestream.Get_bit_depth(ref_component);
+            final int colors = codestream.Get_num_components();
+            final int[] frames = new int[1];
             inputSource.Count_compositing_layers(frames);
-            Kdu_dims image_dims = new Kdu_dims();
+            final Kdu_dims image_dims = new Kdu_dims();
             codestream.Get_dims(ref_component, image_dims);
-            Kdu_coords imageSize = image_dims.Access_size();
+            final Kdu_coords imageSize = image_dims.Access_size();
 
             r.setWidth(imageSize.Get_x());
             r.setHeight(imageSize.Get_y());
             r.setDWTLevels(minLevels);
 
-            int djatokaLevels = ImageProcessingUtils.getLevelCount(r.getWidth(), r.getHeight());
+            final int djatokaLevels = ImageProcessingUtils.getLevelCount(r.getWidth(), r.getHeight());
 
-            r.setLevels((djatokaLevels > minLevels) ? minLevels : djatokaLevels);
+            r.setLevels(djatokaLevels > minLevels ? minLevels : djatokaLevels);
             r.setBitDepth(depth);
             r.setNumChannels(colors);
             r.setCompositingLayerCount(frames[0]);
 
-            int[] v = new int[1];
-            Kdu_params p = codestream.Access_siz().Access_cluster("COD");
+            final int[] v = new int[1];
+            final Kdu_params p = codestream.Access_siz().Access_cluster("COD");
 
             if (p != null) {
                 p.Get(Kdu_global.Clayers, 0, 0, v, true, true, true);
@@ -470,7 +475,7 @@ public class KduExtractExe implements IExtract {
 
             inputSource.Native_destroy();
             jp2_family_in.Native_destroy();
-        } catch (KduException e) {
+        } catch (final KduException e) {
             LOGGER.error(e.getMessage(), e);
             throw new DjatokaException(e.getMessage(), e);
         }
@@ -480,7 +485,7 @@ public class KduExtractExe implements IExtract {
 
     /**
      * Returns populated JPEG 2000 ImageRecord instance
-     * 
+     *
      * @param is an InputStream containing the JPEG 2000 codestream
      * @return a populated JPEG 2000 ImageRecord instance
      * @throws DjatokaException
@@ -490,7 +495,7 @@ public class KduExtractExe implements IExtract {
 
         try {
             info = new JP2ImageInfo(is);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new DjatokaException(e.getMessage(), e);
         }
@@ -500,11 +505,12 @@ public class KduExtractExe implements IExtract {
 
     /**
      * Returns array of XMLBox records contained in JP2 resource.
-     * 
+     *
      * @param r an ImageRecord containing a file path to resource or has object defined
      * @return an array of XML records contained in JP2 XMLboxes
      */
-    public final String[] getXMLBox(ImageRecord r) throws DjatokaException {
+    @Override
+    public final String[] getXMLBox(final ImageRecord r) throws DjatokaException {
         String[] xml = null;
 
         try {
@@ -513,7 +519,7 @@ public class KduExtractExe implements IExtract {
             } else {
                 xml = new JP2ImageInfo(new File(r.getImageFile())).getXmlDocs();
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -522,11 +528,11 @@ public class KduExtractExe implements IExtract {
 
     /**
      * Utility method to determine type of object stored in ImageRecord and to return it as an InputStream
-     * 
+     *
      * @param o
      * @return an InputStream for the resource contained in ImageRecord object
      */
-    public static InputStream getStreamFromObject(Object o) {
+    public static InputStream getStreamFromObject(final Object o) {
         if (o instanceof BufferedInputStream) {
             return (InputStream) o;
         }
@@ -544,47 +550,47 @@ public class KduExtractExe implements IExtract {
         return null;
     }
 
-    private final ArrayList<Double> getRegionMetadata(InputStream input, DjatokaDecodeParam params)
+    private final ArrayList<Double> getRegionMetadata(final InputStream input, final DjatokaDecodeParam params)
             throws DjatokaException {
-        ImageRecord r = getMetadata(input);
+        final ImageRecord r = getMetadata(input);
         return getRegionMetadata(r, params);
     }
 
-    private final ArrayList<Double> getRegionMetadata(String input, DjatokaDecodeParam params)
+    private final ArrayList<Double> getRegionMetadata(final String input, final DjatokaDecodeParam params)
             throws DjatokaException {
-        ImageRecord r = getMetadata(new ImageRecord(input));
+        final ImageRecord r = getMetadata(new ImageRecord(input));
         return getRegionMetadata(r, params);
     }
 
-    private final ArrayList<Double> getRegionMetadata(ImageRecord r, DjatokaDecodeParam params)
+    private final ArrayList<Double> getRegionMetadata(final ImageRecord r, final DjatokaDecodeParam params)
             throws DjatokaException {
         if (params.getLevel() >= 0) {
             int levels = ImageProcessingUtils.getLevelCount(r.getWidth(), r.getHeight());
-            levels = (r.getDWTLevels() < levels) ? r.getDWTLevels() : levels;
-            int reduce = levels - params.getLevel();
-            params.setLevelReductionFactor((reduce >= 0) ? reduce : 0);
+            levels = r.getDWTLevels() < levels ? r.getDWTLevels() : levels;
+            final int reduce = levels - params.getLevel();
+            params.setLevelReductionFactor(reduce >= 0 ? reduce : 0);
         } else if (params.getLevel() == -1 && params.getRegion() == null && params.getScalingDimensions() != null) {
-            int width = params.getScalingDimensions()[0];
-            int height = params.getScalingDimensions()[1];
+            final int width = params.getScalingDimensions()[0];
+            final int height = params.getScalingDimensions()[1];
             int levels = ImageProcessingUtils.getLevelCount(r.getWidth(), r.getHeight());
-            int scale_level = ImageProcessingUtils.getScalingLevel(r.getWidth(), r.getHeight(), width, height);
-            levels = (r.getDWTLevels() < levels) ? r.getDWTLevels() : levels;
-            int reduce = levels - scale_level;
-            params.setLevelReductionFactor((reduce >= 0) ? reduce : 0);
+            final int scale_level = ImageProcessingUtils.getScalingLevel(r.getWidth(), r.getHeight(), width, height);
+            levels = r.getDWTLevels() < levels ? r.getDWTLevels() : levels;
+            final int reduce = levels - scale_level;
+            params.setLevelReductionFactor(reduce >= 0 ? reduce : 0);
         }
 
-        int reduce = 1 << params.getLevelReductionFactor();
-        ArrayList<Double> dims = new ArrayList<Double>();
+        final int reduce = 1 << params.getLevelReductionFactor();
+        final ArrayList<Double> dims = new ArrayList<Double>();
 
         if (params.getRegion() != null) {
-            StringTokenizer st = new StringTokenizer(params.getRegion(), "{},");
+            final StringTokenizer st = new StringTokenizer(params.getRegion(), "{},");
             String token;
 
             // top
             if ((token = st.nextToken()).contains(".")) {
                 dims.add(Double.parseDouble(token));
             } else {
-                int t = Integer.parseInt(token);
+                final int t = Integer.parseInt(token);
 
                 if (r.getHeight() < t) {
                     throw new DjatokaException("Region inset out of bounds: " + t + ">" + r.getHeight());
@@ -597,7 +603,7 @@ public class KduExtractExe implements IExtract {
             if ((token = st.nextToken()).contains(".")) {
                 dims.add(Double.parseDouble(token));
             } else {
-                int t = Integer.parseInt(token);
+                final int t = Integer.parseInt(token);
 
                 if (r.getWidth() < t) {
                     throw new DjatokaException("Region inset out of bounds: " + t + ">" + r.getWidth());
@@ -625,15 +631,15 @@ public class KduExtractExe implements IExtract {
     }
 
     private static BufferedImage getOutOfBoundsImage() {
-        BufferedImage bi = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        int rgb = bi.getRGB(0, 0);
-        int alpha = (rgb >> 24) & 0xff;
+        final BufferedImage bi = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        final int rgb = bi.getRGB(0, 0);
+        final int alpha = rgb >> 24 & 0xff;
         bi.setRGB(0, 0, alpha);
         return bi;
     }
 
-    private static String toKduExtractArgs(DjatokaDecodeParam params) {
-        StringBuffer sb = new StringBuffer();
+    private static String toKduExtractArgs(final DjatokaDecodeParam params) {
+        final StringBuffer sb = new StringBuffer();
 
         if (params.getLevelReductionFactor() > 0) {
             sb.append("-reduce ").append(params.getLevelReductionFactor()).append(" ");
@@ -650,46 +656,47 @@ public class KduExtractExe implements IExtract {
         return sb.toString();
     }
 
-    private static final String escape(String path) {
+    private static final String escape(final String path) {
         if (path.contains(" ")) {
-            path = "\"" + path + "\"";
+            return "\"" + path + "\"";
         }
+
         return path;
     }
 
     // Process Handler Utils
-    private int waitFor(Process process) {
+    private int waitFor(final Process process) {
         try {
             process.waitFor();
             return process.exitValue();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             process.destroy();
         }
 
         return 2;
     }
 
-    private static void closeStreams(Process process) {
+    private static void closeStreams(final Process process) {
         close(process.getInputStream());
         close(process.getOutputStream());
         close(process.getErrorStream());
         process.destroy();
     }
 
-    private static void close(InputStream device) {
+    private static void close(final InputStream device) {
         if (device != null) {
             try {
                 device.close();
-            } catch (IOException ioex) {
+            } catch (final IOException ioex) {
             }
         }
     }
 
-    private static void close(OutputStream device) {
+    private static void close(final OutputStream device) {
         if (device != null) {
             try {
                 device.close();
-            } catch (IOException ioex) {
+            } catch (final IOException ioex) {
             }
         }
     }

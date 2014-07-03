@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka;
@@ -42,24 +42,27 @@ import gov.lanl.adore.djatoka.util.SourceImageFileFilter;
 
 /**
  * Compression Application
- * 
+ *
  * @author Ryan Chute
  */
 public class DjatokaCompress {
 
     private static Logger LOGGER = LoggerFactory.getLogger(DjatokaCompress.class);
 
+    private DjatokaCompress() {
+    }
+
     /**
      * Uses apache commons cli to parse input args. Passes parsed parameters to ICompress implementation.
-     * 
+     *
      * @param args command line parameters to defined input,output,etc.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         // create the command line parser
-        CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new PosixParser();
 
         // create the Options
-        Options options = new Options();
+        final Options options = new Options();
         options.addOption("i", "input", true, "Filepath of the input file or dir.");
         options.addOption("o", "output", true, "Filepath of the output file or dir.");
         options.addOption("r", "rate", true, "Absolute Compression Ratio");
@@ -79,62 +82,62 @@ public class DjatokaCompress {
 
         try {
             if (args.length == 0) {
-                HelpFormatter formatter = new HelpFormatter();
+                final HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("gov.lanl.adore.djatoka.DjatokaCompress", options);
                 System.exit(0);
             }
 
             // parse the command line arguments
-            CommandLine line = parser.parse(options, args);
-            String input = line.getOptionValue("i");
+            final CommandLine line = parser.parse(options, args);
+            final String input = line.getOptionValue("i");
             String output = line.getOptionValue("o");
 
-            String propsFile = line.getOptionValue("p");
+            final String propsFile = line.getOptionValue("p");
             DjatokaEncodeParam p;
             if (propsFile != null) {
-                Properties props = IOUtils.loadConfigByPath(propsFile);
+                final Properties props = IOUtils.loadConfigByPath(propsFile);
                 p = new DjatokaEncodeParam(props);
             } else {
                 p = new DjatokaEncodeParam();
             }
-            String rate = line.getOptionValue("r");
+            final String rate = line.getOptionValue("r");
             if (rate != null) {
                 p.setRate(rate);
             }
-            String slope = line.getOptionValue("s");
+            final String slope = line.getOptionValue("s");
             if (slope != null) {
                 p.setSlope(slope);
             }
-            String Clayers = line.getOptionValue("y");
+            final String Clayers = line.getOptionValue("y");
             if (Clayers != null) {
                 p.setLayers(Integer.parseInt(Clayers));
             }
-            String Clevels = line.getOptionValue("l");
+            final String Clevels = line.getOptionValue("l");
             if (Clevels != null) {
                 p.setLevels(Integer.parseInt(Clevels));
             }
-            String Creversible = line.getOptionValue("v");
+            final String Creversible = line.getOptionValue("v");
             if (Creversible != null) {
                 p.setUseReversible(Boolean.parseBoolean(Creversible));
             }
-            String Cprecincts = line.getOptionValue("c");
+            final String Cprecincts = line.getOptionValue("c");
             if (Cprecincts != null) {
                 p.setPrecincts(Cprecincts);
             }
-            String Corder = line.getOptionValue("d");
+            final String Corder = line.getOptionValue("d");
             if (Corder != null) {
                 p.setProgressionOrder(Corder);
             }
-            String ORGgen_plt = line.getOptionValue("g");
+            final String ORGgen_plt = line.getOptionValue("g");
             if (ORGgen_plt != null) {
                 p.setInsertPLT(Boolean.parseBoolean(ORGgen_plt));
             }
-            String Cblk = line.getOptionValue("b");
+            final String Cblk = line.getOptionValue("b");
             if (Cblk != null) {
                 p.setCodeBlockSize(Cblk);
             }
-            String alt = line.getOptionValue("a");
-            String jp2ColorSpace = line.getOptionValue("j");
+            final String alt = line.getOptionValue("a");
+            final String jp2ColorSpace = line.getOptionValue("j");
             if (jp2ColorSpace != null) {
                 p.setJP2ColorSpace(jp2ColorSpace);
             }
@@ -144,16 +147,17 @@ public class DjatokaCompress {
                 jp2 = (ICompress) Class.forName(alt).newInstance();
             }
             if (new File(input).isDirectory() && new File(output).isDirectory()) {
-                ArrayList<File> files = IOUtils.getFileList(input, new SourceImageFileFilter(), false);
-                for (File f : files) {
-                    long x = System.currentTimeMillis();
-                    File outFile = new File(output, f.getName().substring(0, f.getName().indexOf(".")) + ".jp2");
+                final ArrayList<File> files = IOUtils.getFileList(input, new SourceImageFileFilter(), false);
+                for (final File f : files) {
+                    final long x = System.currentTimeMillis();
+                    final File outFile =
+                            new File(output, f.getName().substring(0, f.getName().indexOf(".")) + ".jp2");
                     compress(jp2, f.getAbsolutePath(), outFile.getAbsolutePath(), p);
                     report(f.getAbsolutePath(), x);
                 }
             } else {
-                long x = System.currentTimeMillis();
-                File f = new File(input);
+                final long x = System.currentTimeMillis();
+                final File f = new File(input);
                 if (output == null) {
                     output = f.getName().substring(0, f.getName().indexOf(".")) + ".jp2";
                 }
@@ -163,37 +167,37 @@ public class DjatokaCompress {
                 compress(jp2, input, output, p);
                 report(input, x);
             }
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             LOGGER.error("Parse exception:" + e.getMessage(), e);
-        } catch (DjatokaException e) {
+        } catch (final DjatokaException e) {
             LOGGER.error("djatoka Compression exception:" + e.getMessage(), e);
-        } catch (InstantiationException e) {
+        } catch (final InstantiationException e) {
             LOGGER.error("Unable to initialize alternate implemenation:" + e.getMessage(), e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error("An exception occured:" + e.getMessage(), e);
         }
     }
 
     /**
      * Print time, in seconds, to process resource
-     * 
+     *
      * @param id Identifier or File Path to indicate processing resource
      * @param x System time in milliseconds when resource processing started
      */
-    public static void report(String id, long x) {
-        LOGGER.info("Compression Time: " + ((double) (System.currentTimeMillis() - x) / 1000) + " seconds for " + id);
+    public static void report(final String id, final long x) {
+        LOGGER.info("Compression Time: " + (double) (System.currentTimeMillis() - x) / 1000 + " seconds for " + id);
     }
 
     /**
      * Simple compress wrapper to catch exceptions, useful when
-     * 
+     *
      * @param jp2
      * @param input
      * @param output
      * @param p
      */
-    public static void compress(ICompress jp2, String input, String output, DjatokaEncodeParam p)
-            throws DjatokaException {
+    public static void compress(final ICompress jp2, final String input, final String output,
+            final DjatokaEncodeParam p) throws DjatokaException {
         jp2.compressImage(input, output, p);
     }
 }

@@ -18,14 +18,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka;
-
-import org.slf4j.Logger;
-
-import org.slf4j.LoggerFactory;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -33,29 +29,34 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import gov.lanl.adore.djatoka.kdu.KduExtractExe;
 
 /**
  * Extraction Application
- * 
+ *
  * @author Ryan Chute
  */
 public class DjatokaExtract {
 
     static Logger LOGGER = LoggerFactory.getLogger(DjatokaExtract.class);
 
+    private DjatokaExtract() {
+    }
+
     /**
      * Uses apache commons cli to parse input args. Passes parsed parameters to IExtract implementation.
-     * 
+     *
      * @param args command line parameters to defined input,output,etc.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         // create the command line parser
-        CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new PosixParser();
 
         // create the Options
-        Options options = new Options();
+        final Options options = new Options();
         options.addOption("i", "input", true, "Filepath of the input file.");
         options.addOption("o", "output", true, "Filepath of the output file.");
         options.addOption("l", "level", true, "Resolution level to extract.");
@@ -73,52 +74,52 @@ public class DjatokaExtract {
 
         try {
             if (args.length == 0) {
-                HelpFormatter formatter = new HelpFormatter();
+                final HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("gov.lanl.adore.djatoka.DjatokaExtract", options);
                 System.exit(0);
             }
 
             // parse the command line arguments
-            CommandLine line = parser.parse(options, args);
-            String input = line.getOptionValue("i");
+            final CommandLine line = parser.parse(options, args);
+            final String input = line.getOptionValue("i");
             String output = line.getOptionValue("o");
 
-            DjatokaDecodeParam p = new DjatokaDecodeParam();
-            String level = line.getOptionValue("l");
+            final DjatokaDecodeParam p = new DjatokaDecodeParam();
+            final String level = line.getOptionValue("l");
             if (level != null) {
                 p.setLevel(Integer.parseInt(level));
             }
-            String reduce = line.getOptionValue("d");
+            final String reduce = line.getOptionValue("d");
             if (level == null && reduce != null) {
                 p.setLevelReductionFactor(Integer.parseInt(reduce));
             }
-            String region = line.getOptionValue("r");
+            final String region = line.getOptionValue("r");
             if (region != null) {
                 p.setRegion(region);
             }
-            String cl = line.getOptionValue("c");
+            final String cl = line.getOptionValue("c");
             if (cl != null) {
-                int clayer = Integer.parseInt(cl);
+                final int clayer = Integer.parseInt(cl);
                 if (clayer > 0) {
                     p.setCompositingLayer(clayer);
                 }
             }
-            String scale = line.getOptionValue("s");
+            final String scale = line.getOptionValue("s");
             if (scale != null) {
-                String[] v = scale.split(",");
+                final String[] v = scale.split(",");
                 if (v.length == 1) {
                     if (v[0].contains(".")) {
                         p.setScalingFactor(Double.parseDouble(v[0]));
                     } else {
-                        int[] dims = new int[] { -1, Integer.parseInt(v[0]) };
+                        final int[] dims = new int[] { -1, Integer.parseInt(v[0]) };
                         p.setScalingDimensions(dims);
                     }
                 } else if (v.length == 2) {
-                    int[] dims = new int[] { Integer.parseInt(v[0]), Integer.parseInt(v[1]) };
+                    final int[] dims = new int[] { Integer.parseInt(v[0]), Integer.parseInt(v[1]) };
                     p.setScalingDimensions(dims);
                 }
             }
-            String rotate = line.getOptionValue("t");
+            final String rotate = line.getOptionValue("t");
             if (rotate != null) {
                 p.setRotationDegree(Integer.parseInt(rotate));
             }
@@ -126,29 +127,29 @@ public class DjatokaExtract {
             if (format == null) {
                 format = "image/jpeg";
             }
-            String alt = line.getOptionValue("a");
+            final String alt = line.getOptionValue("a");
             if (output == null) {
                 output = input + ".jpg";
             }
 
-            long x = System.currentTimeMillis();
+            final long x = System.currentTimeMillis();
             IExtract ex = new KduExtractExe();
             if (alt != null) {
                 ex = (IExtract) Class.forName(alt).newInstance();
             }
-            DjatokaExtractProcessor e = new DjatokaExtractProcessor(ex);
+            final DjatokaExtractProcessor e = new DjatokaExtractProcessor(ex);
             e.extractImage(input, output, p, format);
 
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Extraction Time: " + ((double) (System.currentTimeMillis() - x) / 1000) + " seconds");
+                LOGGER.info("Extraction Time: " + (double) (System.currentTimeMillis() - x) / 1000 + " seconds");
             }
-        } catch (ParseException details) {
+        } catch (final ParseException details) {
             LOGGER.error("Parse exception: {}", details.getMessage(), details);
-        } catch (DjatokaException details) {
+        } catch (final DjatokaException details) {
             LOGGER.error("djatoka Extraction exception: {}", details.getMessage(), details);
-        } catch (InstantiationException details) {
+        } catch (final InstantiationException details) {
             LOGGER.error("Unable to initialize alternate implemenation: {}", details.getMessage(), details);
-        } catch (Exception details) {
+        } catch (final Exception details) {
             LOGGER.error("Unexpected exception: {}", details.getMessage(), details);
         }
     }

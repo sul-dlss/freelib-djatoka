@@ -5,7 +5,7 @@ import info.freelibrary.util.StringUtils;
 
 /**
  * A representation of the region aspect of an IIIF request.
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class Region {
@@ -24,11 +24,11 @@ public class Region {
 
     /**
      * Constructs a representation of an IIIF request's region.
-     * 
+     *
      * @param aRegion An IIIF string representation of a region
      * @throws IIIFException If there is something wrong with the string representation of a IIIF region
      */
-    public Region(String aRegion) throws IIIFException {
+    public Region(final String aRegion) throws IIIFException {
         if (aRegion.equalsIgnoreCase("full")) {
             myRegionIsFullSize = true;
         } else {
@@ -55,7 +55,7 @@ public class Region {
                 if (myX < 0) {
                     throw new IIIFException("Region's X parameter isn't a positive number: " + myX);
                 }
-            } catch (NumberFormatException details) {
+            } catch (final NumberFormatException details) {
                 throw new IIIFException(StringUtils.format("Region's X parameter ({}) isn't an integer", parts[0]));
             }
 
@@ -65,7 +65,7 @@ public class Region {
                 if (myY < 0) {
                     throw new IIIFException("Region's Y parameter isn't a positive number: " + myY);
                 }
-            } catch (NumberFormatException details) {
+            } catch (final NumberFormatException details) {
                 throw new IIIFException(StringUtils.format("Region's Y parameter ({}) isn't an integer", parts[1]));
             }
 
@@ -79,7 +79,7 @@ public class Region {
                 if (myRegionUsesPercents && myWidth > 100) {
                     throw new IIIFException("Region's width percent can't be more than 100%");
                 }
-            } catch (NumberFormatException details) {
+            } catch (final NumberFormatException details) {
                 throw new IIIFException(StringUtils
                         .format("Region's width parameter ({}) isn't an integer", parts[2]));
             }
@@ -94,7 +94,7 @@ public class Region {
                 if (myRegionUsesPercents && myHeight > 100) {
                     throw new IIIFException("Region's height percent can't be more than 100%");
                 }
-            } catch (NumberFormatException details) {
+            } catch (final NumberFormatException details) {
                 throw new IIIFException(StringUtils.format("Region's height parameter ({}) isn't an integer",
                         parts[3]));
             }
@@ -103,7 +103,7 @@ public class Region {
 
     /**
      * Returns true if region is full size; else, false
-     * 
+     *
      * @return True if region is full size; else, false
      */
     public boolean isFullSize() {
@@ -112,7 +112,7 @@ public class Region {
 
     /**
      * Returns true if region uses percents; else, false
-     * 
+     *
      * @return True if region uses percents; else, false
      */
     public boolean usesPercents() {
@@ -121,7 +121,7 @@ public class Region {
 
     /**
      * Returns the region's horizontal left.
-     * 
+     *
      * @return The region's horizontal left
      */
     public int getHorizontalLeft() {
@@ -130,7 +130,7 @@ public class Region {
 
     /**
      * Returns the region's horizontal right.
-     * 
+     *
      * @return The region's horizontal right
      */
     public int getX() {
@@ -139,7 +139,7 @@ public class Region {
 
     /**
      * Returns the region's vertical top.
-     * 
+     *
      * @return The region's vertical top
      */
     public int getVerticalTop() {
@@ -148,7 +148,7 @@ public class Region {
 
     /**
      * Returns the region's vertical bottom.
-     * 
+     *
      * @return The region's vertical bottom
      */
     public int getY() {
@@ -157,7 +157,7 @@ public class Region {
 
     /**
      * Returns the width of the region.
-     * 
+     *
      * @return The width of the region
      */
     public int getWidth() {
@@ -166,7 +166,7 @@ public class Region {
 
     /**
      * Returns the height of the region.
-     * 
+     *
      * @return The height of the region
      */
     public int getHeight() {
@@ -175,11 +175,12 @@ public class Region {
 
     /**
      * Returns a string representation of the IIIF region.
-     * 
+     *
      * @return A string representation of the IIIF region
      */
+    @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
 
         if (isFullSize()) {
             builder.append("full");

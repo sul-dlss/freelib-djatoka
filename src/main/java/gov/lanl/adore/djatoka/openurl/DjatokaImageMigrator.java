@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.openurl;
@@ -52,7 +52,7 @@ import info.freelibrary.util.PairtreeUtils;
 
 /**
  * Utility class used to harvest URIs and compress files into JP2.
- * 
+ *
  * @author Ryan Chute
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
@@ -90,7 +90,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
     /**
      * Sets the pairtree root for the migrator.
-     * 
+     *
      * @param aPtRootDir The Pairtree root directory
      */
     @Override
@@ -100,7 +100,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
     /**
      * Gets the pairtree root for the migrator.
-     * 
+     *
      * @return The Pairtree root directory
      */
     @Override
@@ -110,7 +110,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
     /**
      * Returns true if the migrator has a Pairtree root directory; else, false.
-     * 
+     *
      * @return True if the migrator has a Pairtree root directory; else, false
      */
     @Override
@@ -120,7 +120,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
     /**
      * Returns a delete on exit File object for a provide URI
-     * 
+     *
      * @param aReferent the identifier for the remote file
      * @param aURI the URI of an image to be downloaded and compressed as JP2
      * @return File object of JP2 compressed image
@@ -248,28 +248,33 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
     /**
      * Returns a delete on exit File object for a provide URI
-     * 
+     *
      * @param img File object on local image to be compressed
      * @param uri the URI of an image to be compressed as JP2
      * @return File object of JP2 compressed image
      * @throws DjatokaException
      */
     @Override
-    public File processImage(File img, final URI uri) throws DjatokaException {
+    public File processImage(final File img, final URI uri) throws DjatokaException {
         final String imgPath = img.getAbsolutePath();
         final String fmt = formatMap.get(imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase());
+
         try {
             if (fmt == null || !ImageProcessingUtils.isJp2Type(fmt)) {
                 final ICompress jp2 = new KduCompressExe();
                 final File jp2Local = File.createTempFile("cache" + uri.hashCode() + "-", ".jp2");
+
                 if (!jp2Local.delete() && LOGGER.isWarnEnabled()) {
                     LOGGER.warn("File not deleted: {}", jp2Local);
                 }
+
                 jp2.compressImage(img.getAbsolutePath(), jp2Local.getAbsolutePath(), new DjatokaEncodeParam());
+
                 if (!img.delete() && LOGGER.isWarnEnabled()) {
                     LOGGER.warn("File not deleted: {}", img);
                 }
-                img = jp2Local;
+
+                return jp2Local;
             } else {
                 try {
                     final IExtract ex = new KduExtractExe();
@@ -281,12 +286,13 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
         } catch (final Exception e) {
             throw new DjatokaException(e.getMessage(), e);
         }
+
         return img;
     }
 
     /**
      * Return a unmodifiable list of images currently being processed. Images are removed once complete.
-     * 
+     *
      * @return list of images being processed
      */
     @Override
@@ -296,7 +302,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
     /**
      * Returns map of format extension (e.g. jpg) to mime-type mappings (e.g. image/jpeg)
-     * 
+     *
      * @return format extension to mime-type mappings
      */
     @Override
@@ -306,7 +312,7 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
 
     /**
      * Sets map of format extension (e.g. jpg) to mime-type mappings (e.g. image/jpeg)
-     * 
+     *
      * @param formatMap extension to mime-type mappings
      */
     @Override

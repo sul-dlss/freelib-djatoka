@@ -60,10 +60,10 @@
   <logger name="info.freelibrary.util" level="DEBUG" additivity="false">
     <appender-ref ref="CONSOLE"/>
   </logger>
-  <logger name="info.freelibrary.djatoka.view.ImageServlet" level="DEBUG"/>
+  <logger name="info.freelibrary.djatoka.view.ImageServlet" level="DEBUG"/>-->
   <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="DEBUG"/>
   <logger name="gov.lanl.adore.djatoka.openurl.DjatokaImageMigrator" level="DEBUG" />
-  <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="DEBUG"/>
+  <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="DEBUG"/><!--
   <logger name="info.freelibrary.maven.DjatokaResampleMojo" level="DEBUG"/>
   <logger name="info.freelibrary.djatoka.util.DebugServletFilter" level="DEBUG"/>
   -->

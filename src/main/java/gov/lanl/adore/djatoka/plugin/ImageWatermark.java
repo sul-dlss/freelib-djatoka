@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.plugin;
@@ -38,7 +38,7 @@ import javax.imageio.ImageIO;
 /**
  * Extends TextWatermark to provide an overlaid image watermark in additional to the text watermark. Simply, set the
  * statement value to "" to prevent the textual watermark.
- * 
+ *
  * @author Ryan Chute
  */
 public class ImageWatermark extends TextWatermark {
@@ -58,16 +58,17 @@ public class ImageWatermark extends TextWatermark {
 
     /**
      * Performs the transformation based on the provided global and instance properties.
-     * 
+     *
      * @param bi the extracted region BufferedImage to be transformed
      * @return the resulting BufferedImage or the same bi if no changes are made
      * @throws TransformException
      */
-    public BufferedImage run(BufferedImage bi) throws TransformException {
+    @Override
+    public BufferedImage run(final BufferedImage bi) throws TransformException {
         if (!isTransformable()) {
             return bi;
         }
-        Graphics2D graphics = bi.createGraphics();
+        final Graphics2D graphics = bi.createGraphics();
         graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, imageOpacity));
         graphics.drawImage(overlayImage, bi.getWidth() - overlayImage.getWidth(), bi.getHeight() -
                 overlayImage.getHeight(), null);
@@ -85,10 +86,11 @@ public class ImageWatermark extends TextWatermark {
     /**
      * Initializes the implementation, overriding default values. Property keys are typically of the form
      * ClassName.PropName. These are global instance fields.
-     * 
+     *
      * @param props Properties object containing implementation properties
      */
-    public void setup(Properties props) {
+    @Override
+    public void setup(final Properties props) {
         super.setup(props);
         if (props.containsKey(PROP_WATERMARK_ALLOWED)) {
             allowedReferringEntity = (String) props.get(PROP_WATERMARK_ALLOWED);
@@ -103,7 +105,7 @@ public class ImageWatermark extends TextWatermark {
         if (imagePath != null) {
             try {
                 overlayImage = ImageIO.read(new File(imagePath));
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
@@ -112,9 +114,10 @@ public class ImageWatermark extends TextWatermark {
     /**
      * Returns boolean indicator whether or not an image is transformable based on the global and instance properties.
      * This is very helpful for cache logic.
-     * 
+     *
      * @return true if transformable
      */
+    @Override
     public boolean isTransformable() {
         if (!super.isTransformable()) {
             return false;
@@ -134,10 +137,11 @@ public class ImageWatermark extends TextWatermark {
 
     /**
      * Sets the instance properties, from which per dissemination changes can be based on.
-     * 
+     *
      * @param addProps HashMap object containing image transform instance properties
      */
-    public void setInstanceProps(HashMap<String, String> addProps) {
+    @Override
+    public void setInstanceProps(final HashMap<String, String> addProps) {
         super.addProps = addProps;
     }
 }

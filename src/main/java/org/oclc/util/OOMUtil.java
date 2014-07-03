@@ -18,42 +18,46 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 /**
  * General-purpose static utility methods.
- * 
+ *
  * @author Jeffrey A. Young
  * @deprecated Use info.openurl.oom.util.OOMUtil instead
  */
+@Deprecated
 public class OOMUtil {
+
+    private OOMUtil() {
+    }
 
     /**
      * Gets a parameter map.
-     * 
+     *
      * @param queryString
      * @return A sorted map with the parameters
      */
-    public static SortedMap getParameterMap(String queryString) {
+    public static SortedMap getParameterMap(final String queryString) {
         return getParameterMap(new String[] { queryString });
     }
 
     /**
      * Transforms a queryString into a Map of String/Object[]
-     * 
+     *
      * @param queryStrings
      * @return a Map of key/values from the queryString.
      */
-    public static SortedMap getParameterMap(String[] queryStrings) {
-        HashMap tempMap = new HashMap();
+    public static SortedMap getParameterMap(final String[] queryStrings) {
+        final HashMap tempMap = new HashMap();
 
         if (queryStrings != null) {
-            for (int i = 0; i < queryStrings.length; ++i) {
-                String[] parameters = queryStrings[i].split("&");
-                for (int j = 0; j < parameters.length; ++j) {
-                    String[] parameter = parameters[j].split("=", 2);
+            for (final String queryString : queryStrings) {
+                final String[] parameters = queryString.split("&");
+                for (final String parameter2 : parameters) {
+                    final String[] parameter = parameter2.split("=", 2);
                     ArrayList list = (ArrayList) tempMap.get(parameter[0]);
                     if (list == null) {
                         list = new ArrayList();
@@ -69,12 +73,12 @@ public class OOMUtil {
         }
 
         // Switch the values from ArrayList to String[]
-        SortedMap parameterMap = new TreeMap();
-        Iterator iter = tempMap.entrySet().iterator();
+        final SortedMap parameterMap = new TreeMap();
+        final Iterator iter = tempMap.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry entry = (Entry) iter.next();
-            String key = (String) entry.getKey();
-            ArrayList value = (ArrayList) entry.getValue();
+            final Map.Entry entry = (Entry) iter.next();
+            final String key = (String) entry.getKey();
+            final ArrayList value = (ArrayList) entry.getValue();
             parameterMap.put(key, value.toArray(new String[value.size()]));
         }
         return parameterMap;
@@ -82,14 +86,14 @@ public class OOMUtil {
 
     /**
      * Get the bytes out of an InputStream.
-     * 
+     *
      * @param is the stream to be read.
      * @return the bytes found in the stream.
      * @throws IOException
      */
-    public static byte[] getBytes(InputStream is) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] bytes = new byte[1024];
+    public static byte[] getBytes(final InputStream is) throws IOException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final byte[] bytes = new byte[1024];
         int len;
         while ((len = is.read(bytes)) != -1) {
             baos.write(bytes, 0, len);

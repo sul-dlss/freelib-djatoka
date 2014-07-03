@@ -3,7 +3,7 @@ package info.freelibrary.djatoka.iiif;
 
 /**
  * A representation of the size aspect of an IIIF request.
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class Size {
@@ -22,7 +22,7 @@ public class Size {
 
     /**
      * Constructs a new IIIF request size.
-     * 
+     *
      * @param aSize The string value of a request size
      * @throws IIIFException If there is trouble constructing the request size
      */
@@ -100,7 +100,7 @@ public class Size {
 
     /**
      * Returns true if the request is for a full-size image; else, false.
-     * 
+     *
      * @return True if the request is for a full-size image; else, false
      */
     public boolean isFullSize() {
@@ -109,7 +109,7 @@ public class Size {
 
     /**
      * Returns true if the request's size is expressed as a percent; else, false.
-     * 
+     *
      * @return True if the request's size is expressed as a percent; else, false
      */
     public boolean isPercent() {
@@ -118,7 +118,7 @@ public class Size {
 
     /**
      * Returns true if the aspect ratio is maintained; else, false.
-     * 
+     *
      * @return True if the aspect ratio is maintained; else, false
      */
     public boolean maintainsAspectRatio() {
@@ -127,7 +127,7 @@ public class Size {
 
     /**
      * Gets the percent value of the request's size.
-     * 
+     *
      * @return The percent value of the request's size
      */
     public int getPercent() {
@@ -136,7 +136,7 @@ public class Size {
 
     /**
      * Returns true if the request's size has a width; else, false.
-     * 
+     *
      * @return True if the request's size has a width
      */
     public boolean hasWidth() {
@@ -145,7 +145,7 @@ public class Size {
 
     /**
      * Returns the width of the request's size.
-     * 
+     *
      * @return The width of the request's size
      */
     public int getWidth() {
@@ -154,7 +154,7 @@ public class Size {
 
     /**
      * Returns true if the request's size has a height; else, false.
-     * 
+     *
      * @return True if the request's size has a height; else, false
      */
     public boolean hasHeight() {
@@ -163,7 +163,7 @@ public class Size {
 
     /**
      * Returns the height of the request's size.
-     * 
+     *
      * @return The height of the request's size
      */
     public int getHeight() {
@@ -172,7 +172,7 @@ public class Size {
 
     /**
      * Returns the string representation of the request's size.
-     * 
+     *
      * @return The string representation of the request's size
      */
     @Override

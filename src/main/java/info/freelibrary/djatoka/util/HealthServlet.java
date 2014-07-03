@@ -11,13 +11,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Serializer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HealthServlet extends HttpServlet {
 
@@ -26,20 +26,20 @@ public class HealthServlet extends HttpServlet {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthServlet.class);
 
     @Override
-    protected void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse) throws ServletException,
-            IOException {
-        boolean detailedOutput = aRequest.getParameter("detailed") != null;
-        ServletOutputStream out = aResponse.getOutputStream();
-        Element root = new Element("response");
-        Document response = new Document(root);
-        Element health = new Element("health");
-        Serializer serializer = new Serializer(out);
-        Runtime runtime = Runtime.getRuntime();
-        long freeMemory = runtime.freeMemory();
-        long totalMemory = runtime.totalMemory();
-        long usedMemory = totalMemory - freeMemory;
-        double percentage = (double) usedMemory / totalMemory;
-        String memUsage = String.format("%.2g", percentage);
+    protected void doGet(final HttpServletRequest aRequest, final HttpServletResponse aResponse)
+            throws ServletException, IOException {
+        final boolean detailedOutput = aRequest.getParameter("detailed") != null;
+        final ServletOutputStream out = aResponse.getOutputStream();
+        final Element root = new Element("response");
+        final Document response = new Document(root);
+        final Element health = new Element("health");
+        final Serializer serializer = new Serializer(out);
+        final Runtime runtime = Runtime.getRuntime();
+        final long freeMemory = runtime.freeMemory();
+        final long totalMemory = runtime.totalMemory();
+        final long usedMemory = totalMemory - freeMemory;
+        final double percentage = (double) usedMemory / totalMemory;
+        final String memUsage = String.format("%.2g", percentage);
         int memory;
 
         serializer.setIndent(2);
@@ -78,19 +78,19 @@ public class HealthServlet extends HttpServlet {
     }
 
     private Element getThreadStats() {
-        Element threads = new Element("threads");
-        ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
-        int threadCount = mxBean.getThreadCount();
-        long[] deadlocked = mxBean.findDeadlockedThreads();
-        long startedCount = mxBean.getTotalStartedThreadCount();
-        int deadCount = deadlocked != null ? deadlocked.length : 0;
-        int peakCount = mxBean.getPeakThreadCount();
-        long totalCount = mxBean.getTotalStartedThreadCount();
-        Element threadCountElem = new Element("threadCount");
-        Element deadlockedCountElem = new Element("deadlockedCount");
-        Element peakCountElem = new Element("peakCount");
-        Element totalCountElem = new Element("totalCount");
-        Element startedCountElem = new Element("totalStartedCount");
+        final Element threads = new Element("threads");
+        final ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
+        final int threadCount = mxBean.getThreadCount();
+        final long[] deadlocked = mxBean.findDeadlockedThreads();
+        final long startedCount = mxBean.getTotalStartedThreadCount();
+        final int deadCount = deadlocked != null ? deadlocked.length : 0;
+        final int peakCount = mxBean.getPeakThreadCount();
+        final long totalCount = mxBean.getTotalStartedThreadCount();
+        final Element threadCountElem = new Element("threadCount");
+        final Element deadlockedCountElem = new Element("deadlockedCount");
+        final Element peakCountElem = new Element("peakCount");
+        final Element totalCountElem = new Element("totalCount");
+        final Element startedCountElem = new Element("totalStartedCount");
         threadCountElem.appendChild(String.valueOf(threadCount));
         deadlockedCountElem.appendChild(String.valueOf(deadCount));
         peakCountElem.appendChild(String.valueOf(peakCount));
@@ -107,25 +107,25 @@ public class HealthServlet extends HttpServlet {
     }
 
     private Element getProcessorStats() {
-        Runtime runtime = Runtime.getRuntime();
-        String processors = Integer.toString(runtime.availableProcessors());
-        Element processorsElem = new Element("processors");
+        final Runtime runtime = Runtime.getRuntime();
+        final String processors = Integer.toString(runtime.availableProcessors());
+        final Element processorsElem = new Element("processors");
 
         processorsElem.appendChild(processors);
         return processorsElem;
     }
 
-    private Element getMemoryStats(int aMemPct, long aFreeMem, long aTotalMem) {
-        long maxMemory = Runtime.getRuntime().totalMemory();
-        Element freeMemElem = new Element("freeMem");
-        Element totalMemElem = new Element("totalMem");
-        Element maxMemElem = new Element("maxMem");
-        Element memoryElem = new Element("memory");
-        Attribute memPctAtt = new Attribute("pctUsed", String.valueOf(aMemPct));
-        int mb = 1024 * 1024;
-        String freeMB = Long.toString(aFreeMem / mb);
-        String totalMB = Long.toString(aTotalMem / mb);
-        String maxMB = Long.toString(maxMemory / mb);
+    private Element getMemoryStats(final int aMemPct, final long aFreeMem, final long aTotalMem) {
+        final long maxMemory = Runtime.getRuntime().totalMemory();
+        final Element freeMemElem = new Element("freeMem");
+        final Element totalMemElem = new Element("totalMem");
+        final Element maxMemElem = new Element("maxMem");
+        final Element memoryElem = new Element("memory");
+        final Attribute memPctAtt = new Attribute("pctUsed", String.valueOf(aMemPct));
+        final int mb = 1024 * 1024;
+        final String freeMB = Long.toString(aFreeMem / mb);
+        final String totalMB = Long.toString(aTotalMem / mb);
+        final String maxMB = Long.toString(maxMemory / mb);
 
         freeMemElem.appendChild(Long.toString(aFreeMem));
         freeMemElem.addAttribute(new Attribute("mb", freeMB));

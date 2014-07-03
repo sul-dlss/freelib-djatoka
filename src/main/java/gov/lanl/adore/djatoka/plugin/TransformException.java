@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.plugin;
@@ -34,29 +34,29 @@ public class TransformException extends DjatokaException {
 
     /**
      * Creates a transform exception using the supplied message.
-     * 
+     *
      * @param message The exception message
      */
-    public TransformException(String message) {
+    public TransformException(final String message) {
         super(message);
     }
 
     /**
      * Creates a transform exception from the supplied Throwable using the supplied message.
-     * 
+     *
      * @param message The exception message
      * @param cause The underlying exception
      */
-    public TransformException(String message, Throwable cause) {
+    public TransformException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
     /**
      * Creates a tranform exception from the supplied Throwable.
-     * 
+     *
      * @param cause The underlying cause of the exception
      */
-    public TransformException(Throwable cause) {
+    public TransformException(final Throwable cause) {
         super(cause);
     }
 

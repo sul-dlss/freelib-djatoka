@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
  * possible to create Transports capable of interpreting any web service request in existence.
  * <p />
  * Hallelujah! I don't have to worry about url_ver=Z39.88-2004 and rft_id's anymore!
- * 
+ *
  * @author Jeffrey A. Young
  */
 public interface Transport {
@@ -39,7 +39,7 @@ public interface Transport {
 
     /**
      * Transforms an HttpServletRequest into an equivalent OpenURLRequest representation.
-     * 
+     *
      * @param processor - this is required because we want to preserve the option of replacing one OOM implementation
      *        with another.
      * @param req the HTTP request as it was received from the client

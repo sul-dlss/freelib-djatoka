@@ -22,12 +22,11 @@ public class OSDCacheUtil {
      * Utility used to generate regions for derivatives images prior to the point where they are requested by a user.
      */
     public OSDCacheUtil() {
-
     }
 
     /**
      * Return a list of derivatives to be generated.
-     * 
+     *
      * @return
      */
     public String[] getPaths(final String aService, final String aID, final int aTileSize, final int aWidth,
@@ -50,8 +49,14 @@ public class OSDCacheUtil {
         for (int multiplier = 1; multiplier * aTileSize < longDim; multiplier *= 2) {
             final int tileSize = multiplier * aTileSize;
 
-            int x = 0, y = 0, xTileSize, yTileSize;
-            String region, path, size;
+            int x = 0;
+            int y = 0;
+            int xTileSize;
+            int yTileSize;
+
+            String region;
+            String path;
+            String size;
 
             for (x = 0; x < aWidth + tileSize; x += tileSize) {
                 xTileSize = x + tileSize < aWidth ? tileSize : aWidth - x;

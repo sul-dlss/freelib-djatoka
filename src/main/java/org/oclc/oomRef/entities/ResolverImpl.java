@@ -16,17 +16,17 @@ import info.openurl.oom.entities.Resolver;
 /**
  * The resource at which a service request pertaining to the <em>Referent</em> is targeted; an <em>Entity</em> of the
  * <em>ContextObject</em>.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public class ResolverImpl extends EntityImpl implements Resolver {
 
     /**
      * Construct a Resolver.
-     * 
+     *
      * @param descriptors Descriptor(s) for the Resolver
      */
-    public ResolverImpl(Object descriptors) {
+    public ResolverImpl(final Object descriptors) {
         super(descriptors);
     }
 }

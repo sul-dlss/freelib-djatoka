@@ -72,7 +72,7 @@ public class EntityImpl implements Entity {
 
     /**
      * Adds a descriptor to the entity.
-     * 
+     *
      * @param descriptor A descriptor
      */
     @Override

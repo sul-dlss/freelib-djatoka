@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2008 Los Alamos National Security, LLC.
- * 
+ *
  * Los Alamos National Laboratory Research Library Digital Library Research &
  * Prototyping Team
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -67,7 +67,7 @@ import info.openurl.oom.entities.ServiceType;
 
 /**
  * The OpenURLJP2KService OpenURL Service
- * 
+ *
  * @author Ryan Chute
  */
 public class OpenURLJP2KService implements Service, FormatConstants {
@@ -125,7 +125,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
     /**
      * Construct an info:lanl-repo/svc/getRegion web service class. Initializes Referent Resolver instance using
      * OpenURLJP2KService.referentResolverImpl property.
-     * 
+     *
      * @param openURLConfig OOM Properties forwarded from OpenURLServlet
      * @param classConfig Implementation Properties forwarded from OpenURLServlet
      * @throws ResolverException
@@ -200,7 +200,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
     /**
      * Removes a tile from the tile cache.
-     * 
+     *
      * @param aCacheID The ID of the tile in the cache
      * @return True if the tile was successfully removed; else, false
      */
@@ -266,7 +266,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
         if (params.getRegion() != null && params.getRegion().contains("-")) {
             try {
-                bytes = ("Negative Region Arguments are not supported.").getBytes("UTF-8");
+                bytes = "Negative Region Arguments are not supported.".getBytes("UTF-8");
             } catch (final UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -555,10 +555,9 @@ public class OpenURLJP2KService implements Service, FormatConstants {
         final HashMap<String, String> map = new HashMap<String, String>();
         final Object[] svcData = co.getServiceTypes()[0].getDescriptors();
         if (svcData != null && svcData.length > 0) {
-            for (int i = 0; i < svcData.length; i++) {
-                final Object tmp = svcData[i];
+            for (final Object tmp : svcData) {
                 if (tmp.getClass().getSimpleName().equals("ByValueMetadataImpl")) {
-                    final ByValueMetadataImpl kev = ((ByValueMetadataImpl) tmp);
+                    final ByValueMetadataImpl kev = (ByValueMetadataImpl) tmp;
                     if (kev.getFieldMap().size() > 0) {
                         if (kev.getFieldMap().containsKey("svc.region") &&
                                 ((String[]) kev.getFieldMap().get("svc.region"))[0] != "") {

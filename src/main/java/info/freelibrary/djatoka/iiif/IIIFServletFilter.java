@@ -1,8 +1,6 @@
 
 package info.freelibrary.djatoka.iiif;
 
-import info.freelibrary.util.StringUtils;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -20,9 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import info.freelibrary.util.StringUtils;
+
 /**
  * A {@link javax.servlet.ServletFilter} that parsing incoming IIIF requests for FreeLib-Djatoka.
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class IIIFServletFilter implements Filter, Constants {
@@ -36,19 +36,21 @@ public class IIIFServletFilter implements Filter, Constants {
     /**
      * Destroys the {@link javax.servlet.ServletFilter}.
      */
+    @Override
     public void destroy() {
         myFilterConfig = null;
     }
 
     /**
      * Performs the check for IIIF requests and parsing of the request's contents if it's found.
-     * 
+     *
      * @param aRequest The servlet request that might contain an IIIF request
      * @param aResponse The servlet response that might contain an IIIF response
      */
-    public void doFilter(ServletRequest aRequest, ServletResponse aResponse, FilterChain aFilterChain)
-            throws IOException, ServletException {
-        ServletContext context = myFilterConfig.getServletContext();
+    @Override
+    public void doFilter(final ServletRequest aRequest, final ServletResponse aResponse,
+            final FilterChain aFilterChain) throws IOException, ServletException {
+        final ServletContext context = myFilterConfig.getServletContext();
         String servicePrefix;
 
         // The service prefix can come from a context path or a filter config
@@ -63,8 +65,8 @@ public class IIIFServletFilter implements Filter, Constants {
                 LOGGER.debug("Checking for an IIIF request");
             }
 
-            HttpServletRequest request = (HttpServletRequest) aRequest;
-            URL url = new URL(request.getRequestURL().toString());
+            final HttpServletRequest request = (HttpServletRequest) aRequest;
+            final URL url = new URL(request.getRequestURL().toString());
             IIIFRequest iiif;
 
             try {
@@ -75,7 +77,7 @@ public class IIIFServletFilter implements Filter, Constants {
                 }
 
                 if (iiif.hasExtension()) {
-                    String extension = iiif.getExtension();
+                    final String extension = iiif.getExtension();
 
                     if (extension.equals("xml")) {
                         aResponse.setCharacterEncoding(DEFAULT_CHARSET);
@@ -106,9 +108,9 @@ public class IIIFServletFilter implements Filter, Constants {
                         throw new RuntimeException("Unexpected extension found: " + extension);
                     }
                 } else {
-                    String accept = request.getHeader("Accept");
-                    String[] values = accept.split(";")[0].split(",");
-                    String contentType = getPreferredContentType(values);
+                    final String accept = request.getHeader("Accept");
+                    final String[] values = accept.split(";")[0].split(",");
+                    final String contentType = getPreferredContentType(values);
 
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Evaluated content type: {}", contentType);
@@ -120,8 +122,8 @@ public class IIIFServletFilter implements Filter, Constants {
 
                 aRequest.setAttribute(IIIFRequest.KEY, iiif);
                 aFilterChain.doFilter(aRequest, aResponse);
-            } catch (IIIFException details) {
-                HttpServletResponse response = (HttpServletResponse) aResponse;
+            } catch (final IIIFException details) {
+                final HttpServletResponse response = (HttpServletResponse) aResponse;
 
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error(details.getMessage(), details);
@@ -136,26 +138,27 @@ public class IIIFServletFilter implements Filter, Constants {
 
     /**
      * Initializes the <code>IIIFServletFilter</code> with the supplied {@link javax.servlet.FilterConfig}.
-     * 
+     *
      * @param aFilterConfig A configuration for the servlet filter
      * @throws ServletException If there is trouble initializing the filter
      */
-    public void init(FilterConfig aFilterConfig) throws ServletException {
+    @Override
+    public void init(final FilterConfig aFilterConfig) throws ServletException {
         Arrays.sort(CONTENT_TYPES); // so we can binary search across them
         myFilterConfig = aFilterConfig;
     }
 
-    private boolean hasServicePrefix(String aContextName) {
+    private boolean hasServicePrefix(final String aContextName) {
         return aContextName != null && !aContextName.equals("/") && !aContextName.equals(""); // variations necessary?
     }
 
-    private String getPreferredContentType(String[] aTypeArray) {
+    private String getPreferredContentType(final String[] aTypeArray) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Requested content types: {}", StringUtils.toString(aTypeArray, ' '));
         }
 
-        for (int index = 0; index < aTypeArray.length; index++) {
-            int found = Arrays.binarySearch(CONTENT_TYPES, aTypeArray[index]);
+        for (final String element : aTypeArray) {
+            final int found = Arrays.binarySearch(CONTENT_TYPES, element);
 
             if (found >= 0) {
                 return CONTENT_TYPES[found];

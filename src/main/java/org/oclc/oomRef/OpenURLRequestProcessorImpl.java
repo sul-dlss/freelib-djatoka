@@ -11,23 +11,6 @@
 
 package org.oclc.oomRef;
 
-import info.openurl.oom.ContextObject;
-import info.openurl.oom.OpenURLException;
-import info.openurl.oom.OpenURLRequest;
-import info.openurl.oom.OpenURLRequestProcessor;
-import info.openurl.oom.OpenURLResponse;
-import info.openurl.oom.Service;
-import info.openurl.oom.descriptors.ByReferenceMetadata;
-import info.openurl.oom.descriptors.ByValueMetadata;
-import info.openurl.oom.descriptors.ByValueMetadataKev;
-import info.openurl.oom.descriptors.ByValueMetadataXml;
-import info.openurl.oom.entities.Referent;
-import info.openurl.oom.entities.Referrer;
-import info.openurl.oom.entities.ReferringEntity;
-import info.openurl.oom.entities.Requester;
-import info.openurl.oom.entities.Resolver;
-import info.openurl.oom.entities.ServiceType;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -45,11 +28,28 @@ import org.oclc.oomRef.entities.ResolverImpl;
 import org.oclc.oomRef.entities.ServiceTypeImpl;
 import org.w3c.dom.Document;
 
+import info.openurl.oom.ContextObject;
+import info.openurl.oom.OpenURLException;
+import info.openurl.oom.OpenURLRequest;
+import info.openurl.oom.OpenURLRequestProcessor;
+import info.openurl.oom.OpenURLResponse;
+import info.openurl.oom.Service;
+import info.openurl.oom.descriptors.ByReferenceMetadata;
+import info.openurl.oom.descriptors.ByValueMetadata;
+import info.openurl.oom.descriptors.ByValueMetadataKev;
+import info.openurl.oom.descriptors.ByValueMetadataXml;
+import info.openurl.oom.entities.Referent;
+import info.openurl.oom.entities.Referrer;
+import info.openurl.oom.entities.ReferringEntity;
+import info.openurl.oom.entities.Requester;
+import info.openurl.oom.entities.Resolver;
+import info.openurl.oom.entities.ServiceType;
+
 /**
  * For the sake of simplicity, this resolver assumes that multiple ServiceType Identifiers should be processed in
  * sequence until one of them returns a Response instead of null. For example, the ContextObject could specify two
  * services: 1) The desired service 2) A failover service
- * 
+ *
  * @author Jeffrey A. Young
  */
 public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
@@ -57,6 +57,7 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
     /**
      * Gets the processor ID.
      */
+    @Override
     public URI getProcessorID() throws URISyntaxException {
         return new URI("info:oom/oomProcessors/OOMRef-J");
     }
@@ -64,30 +65,31 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
     /**
      * Resolves the OpenURLResponse.
      */
-    public OpenURLResponse resolve(OpenURLRequest openURLRequest) throws OpenURLException {
+    @Override
+    public OpenURLResponse resolve(final OpenURLRequest openURLRequest) throws OpenURLException {
         OpenURLResponse response = null;
 
         // Try each ContentObject until someone responds
-        ContextObject[] contextObjects = openURLRequest.getContextObjects();
+        final ContextObject[] contextObjects = openURLRequest.getContextObjects();
         for (int i = 0; response == null && i < contextObjects.length; ++i) {
-            ContextObject contextObject = contextObjects[i];
-            ServiceType[] serviceTypes = contextObject.getServiceTypes();
+            final ContextObject contextObject = contextObjects[i];
+            final ServiceType[] serviceTypes = contextObject.getServiceTypes();
 
             // Try each ServiceType/Service until someone responds
             for (int j = 0; response == null && j < serviceTypes.length; ++j) {
-                ServiceType serviceType = serviceTypes[j];
-                Object[] descriptors = serviceType.getDescriptors();
+                final ServiceType serviceType = serviceTypes[j];
+                final Object[] descriptors = serviceType.getDescriptors();
 
                 // Try each Service until someone responds
                 for (int k = 0; response == null && k < descriptors.length; ++k) {
-                    Object descriptor = descriptors[k];
+                    final Object descriptor = descriptors[k];
                     if (descriptor instanceof Service) {
-                        Service service = (Service) descriptor;
+                        final Service service = (Service) descriptor;
                         try {
                             response = service.resolve(
                             // this,
                                     serviceType, contextObject, openURLRequest, this);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             throw new OpenURLException(e.getMessage(), e);
                         }
                     }
@@ -100,19 +102,20 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
     /**
      * Creates a context object.
      */
-    public ContextObject contextObjectFactory(Referent referent, ReferringEntity referringEntity,
-            Requester requester, ServiceType serviceType, Resolver resolver, Referrer referrer) {
+    @Override
+    public ContextObject contextObjectFactory(final Referent ref, final ReferringEntity refEntity,
+            final Requester req, final ServiceType serviceType, final Resolver resolver, final Referrer referrer) {
         ReferringEntity[] referringEntities = null;
         Requester[] requesters = null;
         ServiceType[] serviceTypes = null;
         Resolver[] resolvers = null;
         Referrer[] referrers = null;
 
-        if (referringEntity != null) {
-            referringEntities = new ReferringEntity[] { referringEntity };
+        if (refEntity != null) {
+            referringEntities = new ReferringEntity[] { refEntity };
         }
-        if (requester != null) {
-            requesters = new Requester[] { requester };
+        if (req != null) {
+            requesters = new Requester[] { req };
         }
         if (serviceType != null) {
             serviceTypes = new ServiceType[] { serviceType };
@@ -124,101 +127,116 @@ public class OpenURLRequestProcessorImpl implements OpenURLRequestProcessor {
             referrers = new Referrer[] { referrer };
         }
 
-        return contextObjectFactory(referent, referringEntities, requesters, serviceTypes, resolvers, referrers);
+        return contextObjectFactory(ref, referringEntities, requesters, serviceTypes, resolvers, referrers);
     }
 
     /**
      * Returns a context object using a factory.
-     * 
+     *
      * @param referent A referent
      * @param referringEntities Referring entities
      */
-    public ContextObject contextObjectFactory(Referent referent, ReferringEntity[] referringEntities,
-            Requester[] requesters, ServiceType[] serviceTypes, Resolver[] resolvers, Referrer[] referrers) {
+    @Override
+    public ContextObject contextObjectFactory(final Referent referent, final ReferringEntity[] referringEntities,
+            final Requester[] requesters, final ServiceType[] serviceTypes, final Resolver[] resolvers,
+            final Referrer[] referrers) {
         return new ContextObjectImpl(referent, referringEntities, requesters, serviceTypes, resolvers, referrers);
     }
 
     /**
      * Creates a referent.
      */
-    public Referent referentFactory(Object object) {
+    @Override
+    public Referent referentFactory(final Object object) {
         return new ReferentImpl(object);
     }
 
     /**
      * Creates a service type.
      */
-    public ServiceType serviceTypeFactory(Object object) {
+    @Override
+    public ServiceType serviceTypeFactory(final Object object) {
         return new ServiceTypeImpl(object);
     }
 
     /**
      * Creates a requester.
      */
-    public Requester requesterFactory(Object object) {
+    @Override
+    public Requester requesterFactory(final Object object) {
         return new RequesterImpl(object);
     }
 
     /**
      * Creates a referring entity.
      */
-    public ReferringEntity referringEntityFactory(Object object) {
+    @Override
+    public ReferringEntity referringEntityFactory(final Object object) {
         return new ReferringEntityImpl(object);
     }
 
     /**
      * Creates a referrer.
      */
-    public Referrer referrerFactory(Object object) {
+    @Override
+    public Referrer referrerFactory(final Object object) {
         return new ReferrerImpl(object);
     }
 
     /**
      * Creates a resolver.
      */
-    public Resolver resolverFactory(Object object) {
+    @Override
+    public Resolver resolverFactory(final Object object) {
         return new ResolverImpl(object);
     }
 
     /**
      * Creates a ByReferenceMetadata object.
      */
-    public ByReferenceMetadata byReferenceMetadataFactory(URI ref_fmt, URL ref) {
+    @Override
+    public ByReferenceMetadata byReferenceMetadataFactory(final URI ref_fmt, final URL ref) {
         return new ByReferenceMetadataImpl(ref_fmt, ref);
     }
 
     /**
      * Creates a ByValueMetadata object.
      */
-    public ByValueMetadata byValueMetadataFactory(URI val_fmt, String prefix, Set entrySet) {
+    @Override
+    public ByValueMetadata byValueMetadataFactory(final URI val_fmt, final String prefix, final Set entrySet) {
         return new ByValueMetadataImpl(val_fmt, prefix, entrySet);
     }
 
     /**
      * Creates a ByValueMetadataKev.
      */
-    public ByValueMetadataKev byValueMetadataKevFactory(URI val_fmt, String prefix, Set entrySet) {
+    @Override
+    public ByValueMetadataKev byValueMetadataKevFactory(final URI val_fmt, final String prefix, final Set entrySet) {
         return new ByValueMetadataKevImpl(val_fmt, prefix, entrySet);
     }
 
     /**
      * Creates a ByValueMetadataXml.
      */
-    public ByValueMetadataXml byValueMetadataXmlFactory(URI val_fmt, Document xmlDoc) {
+    @Override
+    public ByValueMetadataXml byValueMetadataXmlFactory(final URI val_fmt, final Document xmlDoc) {
         return new ByValueMetadataXmlImpl(val_fmt, xmlDoc);
     }
 
     /**
      * Creates an OpenURLRequest.
      */
-    public OpenURLRequest openURLRequestFactory(ContextObject contextObject) {
+    @Override
+    public OpenURLRequest openURLRequestFactory(final ContextObject contextObject) {
         return new OpenURLRequestImpl(contextObject);
     }
 
     /**
      * Creates an OpenURLResponse.
      */
-    public OpenURLResponse openURLResponseFactory(int status, String redirectURL, String contentType, byte[] bytes) {
+    @Override
+    public OpenURLResponse openURLResponseFactory(final int status, final String redirectURL,
+            final String contentType, final byte[] bytes) {
         return new OpenURLResponse(status, redirectURL, contentType, bytes);
     }
 }

@@ -1,37 +1,37 @@
 
 package org.oclc.oomRef;
 
+import java.util.Map;
+
 import info.openurl.oom.ContextObject;
 import info.openurl.oom.OpenURLRequest;
 
-import java.util.Map;
-
 /**
  * An OpenURLRequest implementation.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public class OpenURLRequestImpl implements OpenURLRequest {
 
-    private Map openURLKeys;
+    private final Map openURLKeys;
 
-    private Map foreignKeys;
+    private final Map foreignKeys;
 
-    private ContextObject[] contextObjects;
+    private final ContextObject[] contextObjects;
 
-    protected OpenURLRequestImpl(ContextObject contextObject) {
+    protected OpenURLRequestImpl(final ContextObject contextObject) {
         this(null, new ContextObject[] { contextObject }, null);
     }
 
-    OpenURLRequestImpl(ContextObject[] contextObjects) {
+    OpenURLRequestImpl(final ContextObject[] contextObjects) {
         this(null, contextObjects, null);
     }
 
-    OpenURLRequestImpl(Map openURLKeys, ContextObject contextObject, Map foreignKeys) {
+    OpenURLRequestImpl(final Map openURLKeys, final ContextObject contextObject, final Map foreignKeys) {
         this(openURLKeys, new ContextObject[] { contextObject }, foreignKeys);
     }
 
-    OpenURLRequestImpl(Map openURLKeys, ContextObject[] contextObjects, Map foreignKeys) {
+    OpenURLRequestImpl(final Map openURLKeys, final ContextObject[] contextObjects, final Map foreignKeys) {
         this.openURLKeys = openURLKeys;
         this.contextObjects = contextObjects;
         this.foreignKeys = foreignKeys;
@@ -40,6 +40,8 @@ public class OpenURLRequestImpl implements OpenURLRequest {
     /**
      * @deprecated Proper Transports should consume OpenURL keys rather than pass them on to the Service classes
      */
+    @Deprecated
+    @Override
     public Map getOpenURLKeys() {
         return openURLKeys;
     }
@@ -47,6 +49,8 @@ public class OpenURLRequestImpl implements OpenURLRequest {
     /**
      * @deprecated Proper Transports should consume foreign keys rather than pass them on to the Service classes
      */
+    @Deprecated
+    @Override
     public Map getForeignKeys() {
         return foreignKeys;
     }
@@ -54,6 +58,7 @@ public class OpenURLRequestImpl implements OpenURLRequest {
     /**
      * Gets the context objects.
      */
+    @Override
     public ContextObject[] getContextObjects() {
         return contextObjects;
     }

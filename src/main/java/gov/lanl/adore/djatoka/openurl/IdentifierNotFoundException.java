@@ -18,14 +18,14 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.openurl;
 
 /**
  * Identifier Not Found Exception Handler
- * 
+ *
  * @author Ryan Chute
  */
 public class IdentifierNotFoundException extends ResolverException {
@@ -34,29 +34,29 @@ public class IdentifierNotFoundException extends ResolverException {
 
     /**
      * Creates an identifier not found exception using the supplied message.
-     * 
+     *
      * @param message The exception message
      */
-    public IdentifierNotFoundException(String message) {
+    public IdentifierNotFoundException(final String message) {
         super(message);
     }
 
     /**
      * Creates an identifier not found exception from the supplied Throwable using the supplied message.
-     * 
+     *
      * @param message The exception message
      * @param cause The cause of the exception
      */
-    public IdentifierNotFoundException(String message, Throwable cause) {
+    public IdentifierNotFoundException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
     /**
      * Creates an identifier not found exception from the supplied cause.
-     * 
+     *
      * @param cause The underlying cause of the exception
      */
-    public IdentifierNotFoundException(Throwable cause) {
+    public IdentifierNotFoundException(final Throwable cause) {
         super(cause);
     }
 }

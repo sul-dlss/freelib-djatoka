@@ -18,27 +18,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.openurl;
-
-import info.freelibrary.djatoka.view.IdentifierResolver;
-
-import gov.lanl.adore.djatoka.IExtract;
-import gov.lanl.adore.djatoka.io.FormatConstants;
-import gov.lanl.adore.djatoka.kdu.KduExtractExe;
-import gov.lanl.adore.djatoka.util.IOUtils;
-import gov.lanl.adore.djatoka.util.ImageRecord;
-import gov.lanl.util.HttpDate;
-import info.openurl.oom.ContextObject;
-import info.openurl.oom.OpenURLRequest;
-import info.openurl.oom.OpenURLRequestProcessor;
-import info.openurl.oom.OpenURLResponse;
-import info.openurl.oom.Service;
-import info.openurl.oom.config.ClassConfig;
-import info.openurl.oom.config.OpenURLConfig;
-import info.openurl.oom.entities.ServiceType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,9 +35,27 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gov.lanl.adore.djatoka.IExtract;
+import gov.lanl.adore.djatoka.io.FormatConstants;
+import gov.lanl.adore.djatoka.kdu.KduExtractExe;
+import gov.lanl.adore.djatoka.util.IOUtils;
+import gov.lanl.adore.djatoka.util.ImageRecord;
+import gov.lanl.util.HttpDate;
+
+import info.freelibrary.djatoka.view.IdentifierResolver;
+
+import info.openurl.oom.ContextObject;
+import info.openurl.oom.OpenURLRequest;
+import info.openurl.oom.OpenURLRequestProcessor;
+import info.openurl.oom.OpenURLResponse;
+import info.openurl.oom.Service;
+import info.openurl.oom.config.ClassConfig;
+import info.openurl.oom.config.OpenURLConfig;
+import info.openurl.oom.entities.ServiceType;
+
 /**
  * The OpenURLJP2KMetadata OpenURL Service
- * 
+ *
  * @author Ryan Chute
  */
 public class OpenURLJP2XML implements Service, FormatConstants {
@@ -74,22 +75,22 @@ public class OpenURLJP2XML implements Service, FormatConstants {
     /**
      * Construct an info:lanl-repo/svc/getXML web service class. Initializes Referent Resolver instance using
      * OpenURLJP2KService.referentResolverImpl property.
-     * 
+     *
      * @param openURLConfig OOM Properties forwarded from OpenURLServlet
      * @param classConfig Implementation Properties forwarded from OpenURLServlet
      * @throws ResolverException
      */
-    public OpenURLJP2XML(OpenURLConfig openURLConfig, ClassConfig classConfig) throws ResolverException {
+    public OpenURLJP2XML(final OpenURLConfig openURLConfig, final ClassConfig classConfig) throws ResolverException {
         try {
             if (!ReferentManager.isInit()) {
                 props = IOUtils.loadConfigByCP(classConfig.getArg("props"));
                 implClass = props.getProperty(PROPS_KEY_IMPL_CLASS, DEFAULT_IMPL_CLASS);
                 ReferentManager.init((IReferentResolver) Class.forName(implClass).newInstance(), props);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new ResolverException("Error attempting to open props file from classpath, disabling " + SVC_ID +
                     " : " + e.getMessage());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ResolverException("Unable to inititalize implementation: " + props.getProperty(implClass) +
                     " - " + e.getMessage());
         }
@@ -98,6 +99,7 @@ public class OpenURLJP2XML implements Service, FormatConstants {
     /**
      * Returns the OpenURL service identifier for this implementation of info.openurl.oom.Service
      */
+    @Override
     public URI getServiceID() throws URISyntaxException {
         return new URI(SVC_ID);
     }
@@ -105,26 +107,27 @@ public class OpenURLJP2XML implements Service, FormatConstants {
     /**
      * Returns the OpenURLResponse of an XML object
      */
-    public OpenURLResponse resolve(ServiceType serviceType, ContextObject contextObject,
-            OpenURLRequest openURLRequest, OpenURLRequestProcessor processor) {
+    @Override
+    public OpenURLResponse resolve(final ServiceType serviceType, final ContextObject contextObject,
+            final OpenURLRequest openURLRequest, final OpenURLRequestProcessor processor) {
 
         String responseFormat = "application/xml";;
         int status = HttpServletResponse.SC_OK;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             baos = new ByteArrayOutputStream();
-            IExtract jp2 = new KduExtractExe();
-            ImageRecord r = ReferentManager.getImageRecord(contextObject.getReferent());
-            String[] xml = jp2.getXMLBox(r);
-            StringBuffer sb = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            final IExtract jp2 = new KduExtractExe();
+            final ImageRecord r = ReferentManager.getImageRecord(contextObject.getReferent());
+            final String[] xml = jp2.getXMLBox(r);
+            final StringBuffer sb = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             sb.append("<jp2:JP2XML ");
             sb.append("xmlns:jp2=\"http://library.lanl.gov/2008-11/aDORe/JP2XML/\" ");
             sb.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  ");
             sb.append("xsi:schemaLocation=\"http://library.lanl.gov/2008-11/aDORe/JP2XML/ ");
             sb.append("http://purl.lanl.gov/aDORe/schemas/2008-11/JP2XML.xsd\"");
-            sb.append(" boxCount=\"" + ((xml != null) ? xml.length : 0) + "\">");
+            sb.append(" boxCount=\"" + (xml != null ? xml.length : 0) + "\">");
             if (xml != null) {
-                for (String x : xml) {
+                for (final String x : xml) {
                     sb.append("<jp2:XMLBox>");
                     if (x.contains("<?xml")) {
                         sb.append(x.substring(x.indexOf(">") + 1));
@@ -136,12 +139,12 @@ public class OpenURLJP2XML implements Service, FormatConstants {
             }
             sb.append("</jp2:JP2XML>");
             baos.write(sb.toString().getBytes());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             responseFormat = "text/plain";
             status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         }
-        HashMap<String, String> header_map = new HashMap<String, String>();
+        final HashMap<String, String> header_map = new HashMap<String, String>();
         header_map.put("Content-Length", baos.size() + "");
         header_map.put("Date", HttpDate.getHttpDate());
         return new OpenURLResponse(status, responseFormat, baos.toByteArray(), header_map);

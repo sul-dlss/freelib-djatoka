@@ -11,11 +11,6 @@
 
 package org.oclc.oomRef.config;
 
-import info.openurl.oom.OpenURLRequestProcessor;
-import info.openurl.oom.Service;
-import info.openurl.oom.Transport;
-import info.openurl.oom.util.XMLHelper;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -32,19 +27,27 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.traversal.NodeIterator;
 
+import info.openurl.oom.OpenURLRequestProcessor;
+import info.openurl.oom.Service;
+import info.openurl.oom.Transport;
+import info.openurl.oom.util.XMLHelper;
+
 /**
  * @author Jeffrey A. Young TODO Describe type
  */
 public class OpenURLConfig implements info.openurl.oom.config.OpenURLConfig {
 
-    private ServletConfig servletConfig;
+    private static final Class[] CONFIG_CLASSES = new Class[] { info.openurl.oom.config.OpenURLConfig.class,
+        info.openurl.oom.config.ClassConfig.class };
+
+    private final ServletConfig servletConfig;
 
     private static Document oomConfig;
     static {
         try {
             oomConfig =
                     XMLHelper.parse(Thread.currentThread().getContextClassLoader().getResourceAsStream("oomRef.xml"));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
@@ -52,13 +55,14 @@ public class OpenURLConfig implements info.openurl.oom.config.OpenURLConfig {
     /**
      * @param config
      */
-    public OpenURLConfig(ServletConfig config) {
-        this.servletConfig = config;
+    public OpenURLConfig(final ServletConfig config) {
+        servletConfig = config;
     }
 
     /**
      * @return The servlet configuration
      */
+    @Override
     public ServletConfig getServletConfig() {
         return servletConfig;
     }
@@ -66,30 +70,28 @@ public class OpenURLConfig implements info.openurl.oom.config.OpenURLConfig {
     /**
      * Gets the configured transports.
      */
+    @Override
     public Transport[] getTransports() throws TransformerException, ClassNotFoundException, SecurityException,
             NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,
             InvocationTargetException {
-        ArrayList transports = new ArrayList();
-        Element xmlnsEl = XMLHelper.getXmlnsEl();
-        NodeIterator nodeIter =
+        final ArrayList transports = new ArrayList();
+        final Element xmlnsEl = XMLHelper.getXmlnsEl();
+        final NodeIterator nodeIter =
                 XPathAPI.selectNodeIterator(oomConfig, "/oomRef:config/oomRef:transportMap/oomRef:transport", xmlnsEl);
         Node node;
         while ((node = nodeIter.nextNode()) != null) {
-            ClassConfig classConfig = new ClassConfig(node);
-            String transportClassName = classConfig.getClassName();
-            Class transportClass = Class.forName(transportClassName);
+            final ClassConfig classConfig = new ClassConfig(node);
+            final String transportClassName = classConfig.getClassName();
+            final Class transportClass = Class.forName(transportClassName);
             Constructor transportConstructor = null;
             try {
-                transportConstructor =
-                        transportClass.getConstructor(new Class[] { info.openurl.oom.config.OpenURLConfig.class,
-                            info.openurl.oom.config.ClassConfig.class });
-            } catch (NoSuchMethodException e) {
+                transportConstructor = transportClass.getConstructor(CONFIG_CLASSES);
+            } catch (final NoSuchMethodException e) {
                 // Uh Oh. Somebody extended OOMRef-J's HowImpl directly.
-                transportConstructor =
-                        transportClass.getConstructor(new Class[] { org.oclc.oomRef.config.OpenURLConfig.class,
-                            org.oclc.oomRef.config.ClassConfig.class });
+                transportConstructor = transportClass.getConstructor(CONFIG_CLASSES);
             }
-            Transport transport = (Transport) transportConstructor.newInstance(new Object[] { this, classConfig });
+            final Transport transport =
+                    (Transport) transportConstructor.newInstance(new Object[] { this, classConfig });
             transports.add(transport);
         }
         return (Transport[]) transports.toArray(new Transport[transports.size()]);
@@ -98,27 +100,24 @@ public class OpenURLConfig implements info.openurl.oom.config.OpenURLConfig {
     /**
      * Gets the service associated with the supplied URI.
      */
-    public Service getService(URI uri) throws TransformerException, ClassNotFoundException, SecurityException,
+    @Override
+    public Service getService(final URI uri) throws TransformerException, ClassNotFoundException, SecurityException,
             NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,
             InvocationTargetException {
-        Element xmlnsEl = XMLHelper.getXmlnsEl();
-        Node node =
+        final Element xmlnsEl = XMLHelper.getXmlnsEl();
+        final Node node =
                 XPathAPI.selectSingleNode(oomConfig, "/oomRef:config/oomRef:serviceMap/oomRef:service[@ID='" +
                         uri.toString() + "']", xmlnsEl);
         if (node != null) {
-            ClassConfig classConfig = new ClassConfig(node);
-            String className = XPathAPI.eval(node, "oomRef:className", xmlnsEl).str();
-            Class serviceClass = Class.forName(className);
+            final ClassConfig classConfig = new ClassConfig(node);
+            final String className = XPathAPI.eval(node, "oomRef:className", xmlnsEl).str();
+            final Class serviceClass = Class.forName(className);
             Constructor serviceConstructor = null;
             try {
-                serviceConstructor =
-                        serviceClass.getConstructor(new Class[] { info.openurl.oom.config.OpenURLConfig.class,
-                            info.openurl.oom.config.ClassConfig.class });
-            } catch (NoSuchMethodException e) {
+                serviceConstructor = serviceClass.getConstructor(CONFIG_CLASSES);
+            } catch (final NoSuchMethodException e) {
                 // Uh Oh. Somebody implemented an OOMRef-J class directly.
-                serviceConstructor =
-                        serviceClass.getConstructor(new Class[] { org.oclc.oomRef.config.OpenURLConfig.class,
-                            org.oclc.oomRef.config.ClassConfig.class });
+                serviceConstructor = serviceClass.getConstructor(CONFIG_CLASSES);
             }
             return (Service) serviceConstructor.newInstance(new Object[] { this, classConfig });
         }
@@ -129,29 +128,26 @@ public class OpenURLConfig implements info.openurl.oom.config.OpenURLConfig {
     /**
      * Gets the service associated with the supplied class name.
      */
-    public Service getService(String className) throws TransformerException, SecurityException,
+    @Override
+    public Service getService(final String className) throws TransformerException, SecurityException,
             NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,
             InvocationTargetException {
         try {
-            Node node =
+            final Node node =
                     XPathAPI.selectSingleNode(oomConfig,
                             "/oomRef:config/oomRef:serviceMap/oomRef:service[oomRef:className='" + className + "']",
                             XMLHelper.getXmlnsEl());
-            ClassConfig classConfig = new ClassConfig(node);
-            Class serviceClass = Class.forName(className);
+            final ClassConfig classConfig = new ClassConfig(node);
+            final Class serviceClass = Class.forName(className);
             Constructor serviceConstructor = null;
             try {
-                serviceConstructor =
-                        serviceClass.getConstructor(new Class[] { info.openurl.oom.config.OpenURLConfig.class,
-                            info.openurl.oom.config.ClassConfig.class });
-            } catch (NoSuchMethodException e) {
+                serviceConstructor = serviceClass.getConstructor(CONFIG_CLASSES);
+            } catch (final NoSuchMethodException e) {
                 // Uh Oh. Somebody extended the ServiceImpl directly.
-                serviceConstructor =
-                        serviceClass.getConstructor(new Class[] { org.oclc.oomRef.config.OpenURLConfig.class,
-                            org.oclc.oomRef.config.ClassConfig.class });
+                serviceConstructor = serviceClass.getConstructor(CONFIG_CLASSES);
             }
             return (Service) serviceConstructor.newInstance(new Object[] { this, classConfig });
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             // do nothing
         }
 
@@ -161,35 +157,39 @@ public class OpenURLConfig implements info.openurl.oom.config.OpenURLConfig {
     /**
      * Gets the OpenURL request processor.
      */
+    @Override
     public OpenURLRequestProcessor getProcessor() throws TransformerException, ClassNotFoundException,
             InstantiationException, IllegalAccessException {
-        Node node = XPathAPI.selectSingleNode(oomConfig, "/oomRef:config/oomRef:processor", XMLHelper.getXmlnsEl());
-        ClassConfig classConfig = new ClassConfig(node);
-        String className = classConfig.getClassName();
-        Class c = Class.forName(className);
+        final Node node =
+                XPathAPI.selectSingleNode(oomConfig, "/oomRef:config/oomRef:processor", XMLHelper.getXmlnsEl());
+        final ClassConfig classConfig = new ClassConfig(node);
+        final String className = classConfig.getClassName();
+        final Class c = Class.forName(className);
         return (OpenURLRequestProcessor) c.newInstance();
     }
 
     /**
      * Gets the value for the supplied argument key.
-     * 
+     *
      * @param key An argument key
      */
-    public String getArg(String key) throws TransformerException {
-        String xpath = new StringBuffer("/oomRef:config/oomRef:args/oomRef:").append(key).toString();
+    @Override
+    public String getArg(final String key) throws TransformerException {
+        final String xpath = new StringBuffer("/oomRef:config/oomRef:args/oomRef:").append(key).toString();
         return XPathAPI.eval(oomConfig, xpath, XMLHelper.getXmlnsEl()).str();
     }
 
     /**
      * Gets the values associated with the supplied argument key.
-     * 
+     *
      * @param key An argument key
      */
-    public String[] getArgs(String key) throws TransformerException {
-        ArrayList args = new ArrayList();
+    @Override
+    public String[] getArgs(final String key) throws TransformerException {
+        final ArrayList args = new ArrayList();
 
-        String xpath = new StringBuffer("/oomRef:config/oomRef:args/oomRef:").append(key).toString();
-        NodeIterator iter = XPathAPI.selectNodeIterator(oomConfig, xpath, XMLHelper.getXmlnsEl());
+        final String xpath = new StringBuffer("/oomRef:config/oomRef:args/oomRef:").append(key).toString();
+        final NodeIterator iter = XPathAPI.selectNodeIterator(oomConfig, xpath, XMLHelper.getXmlnsEl());
         Node node;
         while ((node = iter.nextNode()) != null) {
             args.add(XPathAPI.eval(node, ".").str());
@@ -200,15 +200,16 @@ public class OpenURLConfig implements info.openurl.oom.config.OpenURLConfig {
     /**
      * Returns all the configurations.
      */
+    @Override
     public Map getArgs() throws TransformerException {
-        Map map = new HashMap();
+        final Map map = new HashMap();
 
         if (oomConfig != null) {
-            NodeIterator iter =
+            final NodeIterator iter =
                     XPathAPI.selectNodeIterator(oomConfig, "/oomRef:config/oomRef:args/*", XMLHelper.getXmlnsEl());
             Node node;
             while ((node = iter.nextNode()) != null) {
-                String key = XPathAPI.eval(node, "name()").str();
+                final String key = XPathAPI.eval(node, "name()").str();
                 map.put(key, XPathAPI.eval(node, ".").str());
             }
         }

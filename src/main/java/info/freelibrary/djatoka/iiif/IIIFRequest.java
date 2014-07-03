@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An interface for an IIIF request (information or image).
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public interface IIIFRequest {
@@ -20,42 +20,42 @@ public interface IIIFRequest {
 
     /**
      * Gets the identifier for the request.
-     * 
+     *
      * @return The identifier for the request
      */
     public String getIdentifier();
 
     /**
      * Gets the extension for the request.
-     * 
+     *
      * @return The extension for the request
      */
     public String getExtension();
 
     /**
      * Returns true if the request has an extension; else, false
-     * 
+     *
      * @return True if the request has an extension; else, false
      */
     public boolean hasExtension();
 
     /**
      * Returns the service prefix of the request.
-     * 
+     *
      * @return The service prefix of the request
      */
     public String getServicePrefix();
 
     /**
      * Returns true if the request has a service prefix; else, false
-     * 
+     *
      * @return True if the request has a service prefix; else, false
      */
     public boolean hasServicePrefix();
 
     /**
      * A request builder that builds either a {@link ImageRequest} or a {@link InfoRequest}.
-     * 
+     *
      * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
      */
     public static class Builder {
@@ -64,25 +64,25 @@ public interface IIIFRequest {
 
         /**
          * Returns a <code>IIIFRequest</code> for the supplied {@link URL}.
-         * 
+         *
          * @param aURL A {@link URL} representing the <code>IIIFRequest</code>
          * @return An implementation of the {@link IIIFRequest} interface
          * @throws IIIFException If there is a problem creating the request
          */
-        public static IIIFRequest getRequest(URL aURL) throws IIIFException {
+        public static IIIFRequest getRequest(final URL aURL) throws IIIFException {
             return getRequest(aURL, null);
         }
 
         /**
          * Returns a <code>IIIFRequest</code> for the supplied {@link URL}.
-         * 
+         *
          * @param aURL A {@link URL} representing the <code>IIIFRequest</code>
          * @param aServicePrefix A pre-configured prefix to use in parsing the request
          * @return An implementation of the {@link IIIFRequest} interface
          * @throws IIIFException If there is a problem creating the request
          */
-        public static IIIFRequest getRequest(URL aURL, String aServicePrefix) throws IIIFException {
-            String path = aURL.getPath();
+        public static IIIFRequest getRequest(final URL aURL, final String aServicePrefix) throws IIIFException {
+            final String path = aURL.getPath();
 
             if (path.endsWith(".xml") || path.endsWith(".json")) {
                 if (LOGGER.isDebugEnabled()) {
@@ -102,11 +102,11 @@ public interface IIIFRequest {
 
         /**
          * Checks for a service prefix.
-         * 
+         *
          * @param aServicePrefix A service prefix to check for in the request
          * @return The service prefix
          */
-        static String checkServicePrefix(String aServicePrefix) {
+        static String checkServicePrefix(final String aServicePrefix) {
             if (aServicePrefix != null) {
                 String servicePrefix;
 

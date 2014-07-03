@@ -11,33 +11,33 @@
 
 package org.oclc.oomRef.descriptors;
 
-import info.openurl.oom.descriptors.ByReferenceMetadata;
-
 import java.net.URI;
 import java.net.URL;
+
+import info.openurl.oom.descriptors.ByReferenceMetadata;
 
 /**
  * A <em>Descriptor</em> that details properties of an <em>Entity</em> by the combination of: (1) a URI reference to a
  * <em>Metadata
- * Format</em> and (2) the network location of a particular instance of metadata about the <em>Entity</em>, the metadata
- * being expressed according to the indicated <em>Metadata Format</em>.
- * 
+ * Format</em> and (2) the network location of a particular instance of metadata about the <em>Entity</em>, the
+ * metadata being expressed according to the indicated <em>Metadata Format</em>.
+ *
  * @author Jeffrey A. Young
  */
 public class ByReferenceMetadataImpl implements ByReferenceMetadata {
 
-    private URI ref_fmt;
+    private final URI ref_fmt;
 
-    private URL ref;
+    private final URL ref;
 
     /**
      * Constructs a By-Reference Metadata descriptor
-     * 
+     *
      * @param ref_fmt A URI reference to a <em>Metadata Format</em>.
      * @param ref The network location of a particular instance of metadata about the <em>Entity</em>, the metadata
      *        being expressed according to the indicated <em>Metadata Format</em>.
      */
-    public ByReferenceMetadataImpl(URI ref_fmt, URL ref) {
+    public ByReferenceMetadataImpl(final URI ref_fmt, final URL ref) {
         this.ref_fmt = ref_fmt;
         this.ref = ref;
     }
@@ -45,6 +45,7 @@ public class ByReferenceMetadataImpl implements ByReferenceMetadata {
     /**
      * Returns reference format.
      */
+    @Override
     public URI getRefFmt() {
         return ref_fmt;
     }
@@ -52,6 +53,7 @@ public class ByReferenceMetadataImpl implements ByReferenceMetadata {
     /**
      * Returns reference.
      */
+    @Override
     public URL getRef() {
         return ref;
     }

@@ -15,17 +15,17 @@ import info.openurl.oom.entities.Requester;
 
 /**
  * The resource that requests services pertaining to the Referent; an <em>Entity</em> of the <em>ContextObject</em>.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public class RequesterImpl extends EntityImpl implements Requester {
 
     /**
      * Construct a Requester.
-     * 
+     *
      * @param descriptors Descriptor(s) for the Requester.
      */
-    public RequesterImpl(Object descriptors) {
+    public RequesterImpl(final Object descriptors) {
         super(descriptors);
     }
 }

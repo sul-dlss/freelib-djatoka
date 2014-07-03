@@ -3,7 +3,7 @@ package info.freelibrary.djatoka.iiif;
 
 /**
  * A representation of the request's image quality.
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class Quality {
@@ -12,7 +12,7 @@ public class Quality {
 
     /**
      * Creates a representation of an IIIF request's image quality.
-     * 
+     *
      * @param aQuality
      * @throws IIIFException
      */
@@ -33,7 +33,7 @@ public class Quality {
 
     /**
      * Returns true if the image request's quality is native; else, false.
-     * 
+     *
      * @return True if the image request's quality is native; else, false
      */
     public boolean isNative() {
@@ -42,7 +42,7 @@ public class Quality {
 
     /**
      * Returns true if the image request's quality is color; else, false.
-     * 
+     *
      * @return True if the image request's quality is color; else, false
      */
     public boolean isColor() {
@@ -51,7 +51,7 @@ public class Quality {
 
     /**
      * Returns true if the image request's quality is grey; else, false.
-     * 
+     *
      * @return True if the image request's quality is grey; else, false
      */
     public boolean isGrey() {
@@ -60,7 +60,7 @@ public class Quality {
 
     /**
      * Returns true if the image request's quality is bitonal; else, false.
-     * 
+     *
      * @return True if the image request's quality is bitonal; else, false
      */
     public boolean isBitonal() {
@@ -69,7 +69,7 @@ public class Quality {
 
     /**
      * Returns a string representation of the image request's quality.
-     * 
+     *
      * @return A string representation of the image request's quality
      */
     @Override

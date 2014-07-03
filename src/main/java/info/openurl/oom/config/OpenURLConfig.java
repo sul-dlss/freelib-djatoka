@@ -11,10 +11,6 @@
 
 package info.openurl.oom.config;
 
-import info.openurl.oom.OpenURLRequestProcessor;
-import info.openurl.oom.Service;
-import info.openurl.oom.Transport;
-
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Map;
@@ -22,23 +18,27 @@ import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.xml.transform.TransformerException;
 
+import info.openurl.oom.OpenURLRequestProcessor;
+import info.openurl.oom.Service;
+import info.openurl.oom.Transport;
+
 /**
  * General configuration information for OOM.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public interface OpenURLConfig {
 
     /**
      * Get the ServletConfig (if available)
-     * 
+     *
      * @return the ServletConfig
      */
     public ServletConfig getServletConfig();
 
     /**
      * Get a list of Transport classes defined in this CommunityProfile.
-     * 
+     *
      * @return a list of Transports supported by the CommunityProfile
      * @throws TransformerException
      * @throws ClassNotFoundException
@@ -54,9 +54,9 @@ public interface OpenURLConfig {
             InvocationTargetException;
 
     /**
-     * Get an instance of an OpenURLRequestProcessor. Different processors may interpret OpenURLRequests differently, so
-     * OOM uses the configuration file to identify the one to be used by this application.
-     * 
+     * Get an instance of an OpenURLRequestProcessor. Different processors may interpret OpenURLRequests differently,
+     * so OOM uses the configuration file to identify the one to be used by this application.
+     *
      * @throws TransformerException
      * @throws ClassNotFoundException
      * @throws InstantiationException
@@ -68,7 +68,7 @@ public interface OpenURLConfig {
 
     /**
      * Get an instance of a URI-identified service from the configuration file.
-     * 
+     *
      * @param uri an identifier for a configured service
      * @return a Service.
      * @throws TransformerException
@@ -88,7 +88,7 @@ public interface OpenURLConfig {
      * Get an instance of a Service class identified by a class name from the configuration file. Use this method to
      * construct Service classes because it will automatically include any class-specific information it finds in the
      * configuration file.
-     * 
+     *
      * @param className the name of a Service class
      * @return a Service.
      * @throws TransformerException
@@ -105,9 +105,9 @@ public interface OpenURLConfig {
             IllegalAccessException, InvocationTargetException;
 
     /**
-     * Get a class configuration property from the OOM configuration file for the specified key. Only use this method if
-     * you know there is only one value for the key.
-     * 
+     * Get a class configuration property from the OOM configuration file for the specified key. Only use this method
+     * if you know there is only one value for the key.
+     *
      * @param key
      * @return the value for a key in the OOM configuration file
      * @throws TransformerException
@@ -116,7 +116,7 @@ public interface OpenURLConfig {
 
     /**
      * Get an array of class configuration properties from the OOM configuration file for the specified key.
-     * 
+     *
      * @param key
      * @return an array of values assigned to this key in the OOM configuration file.
      * @throws TransformerException
@@ -125,7 +125,7 @@ public interface OpenURLConfig {
 
     /**
      * Get a Map of the args in the OOM configuration file for this class
-     * 
+     *
      * @return a Map of args
      * @throws TransformerException
      */

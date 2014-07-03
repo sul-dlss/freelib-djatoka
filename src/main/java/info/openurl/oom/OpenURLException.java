@@ -13,7 +13,7 @@ package info.openurl.oom;
 
 /**
  * A fatal error occurred within the OpenURL infrastructure.
- * 
+ *
  * @see OpenURLResponse for non-fatal response conditions
  * @author Jeffrey A. Young
  */
@@ -26,20 +26,20 @@ public class OpenURLException extends Exception {
 
     /**
      * Indicates a fatal condition
-     * 
+     *
      * @param message provides a clue to the conditions of the problem
      * @param e the original exception
      */
-    public OpenURLException(String message, Exception e) {
+    public OpenURLException(final String message, final Exception e) {
         super(message, e);
     }
 
     /**
      * Indicates a fatal condition
-     * 
+     *
      * @param message provides a clue to the conditions of the problem
      */
-    public OpenURLException(String message) {
+    public OpenURLException(final String message) {
         super(message);
     }
 }

@@ -17,23 +17,23 @@ import javax.xml.transform.TransformerException;
 
 /**
  * Configuration information for OOM Classes.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public interface ClassConfig {
 
     /**
      * The Java classname that instantiates the implied OOM Class
-     * 
+     *
      * @return the fully-qualified Java class name
      * @throws TransformerException
      */
     public String getClassName() throws TransformerException;
 
     /**
-     * Get a class configuration property from the OOM configuration file for the specified key. Only use this method if
-     * you know there is only one value for the key.
-     * 
+     * Get a class configuration property from the OOM configuration file for the specified key. Only use this method
+     * if you know there is only one value for the key.
+     *
      * @param key
      * @return the value for a key in the OOM configuration file
      * @throws TransformerException
@@ -42,7 +42,7 @@ public interface ClassConfig {
 
     /**
      * Get an array of class configuration properties from the OOM configuration file for the specified key.
-     * 
+     *
      * @param key
      * @return an array of values assigned to this key in the OOM configuration file.
      * @throws TransformerException
@@ -51,7 +51,7 @@ public interface ClassConfig {
 
     /**
      * Get a Map of the args in the OOM configuration file for this class
-     * 
+     *
      * @return a Map of args
      * @throws TransformerException
      */

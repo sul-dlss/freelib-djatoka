@@ -15,17 +15,17 @@ import info.openurl.oom.entities.Referrer;
 
 /**
  * The resource that generates the ContextObject; an <em>Entity</em> of the <em>ContextObject</em>.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public class ReferrerImpl extends EntityImpl implements Referrer {
 
     /**
      * Constructs a Referrer.
-     * 
+     *
      * @param descriptors Descriptor(s) for the Referrer.
      */
-    public ReferrerImpl(Object descriptors) {
+    public ReferrerImpl(final Object descriptors) {
         super(descriptors);
     }
 }

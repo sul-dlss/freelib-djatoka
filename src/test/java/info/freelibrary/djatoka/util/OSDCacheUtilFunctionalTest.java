@@ -2,6 +2,11 @@
 package info.freelibrary.djatoka.util;
 
 import static org.junit.Assert.fail;
+import info.freelibrary.util.FileUtils;
+import info.freelibrary.util.PairtreeObject;
+import info.freelibrary.util.PairtreeRoot;
+import info.freelibrary.util.PairtreeUtils;
+import info.freelibrary.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,16 +16,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import nu.xom.Builder;
+import nu.xom.Document;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import info.freelibrary.util.FileUtils;
-import info.freelibrary.util.PairtreeObject;
-import info.freelibrary.util.PairtreeRoot;
-import info.freelibrary.util.PairtreeUtils;
-import info.freelibrary.util.StringUtils;
 
 public class OSDCacheUtilFunctionalTest {
 
@@ -42,7 +44,7 @@ public class OSDCacheUtilFunctionalTest {
 
     private static int PORT = Integer.parseInt(System.getProperty("jetty.port"));
 
-    private HttpURLConnection myHTTPConx;
+    private HttpURLConnection myConnection;
 
     /**
      * This project requires that the Jetty Web server be run in forked mode; this means we need to confirm that it's
@@ -57,10 +59,10 @@ public class OSDCacheUtilFunctionalTest {
                 LOGGER.debug("Checking to see if Jetty is ready for functional tests");
             }
 
-            myHTTPConx = (HttpURLConnection) new URL(LOCALHOST + PORT + "/health").openConnection();
+            myConnection = (HttpURLConnection) new URL(LOCALHOST + PORT + "/health").openConnection();
 
             // Check that the Jetty server is responsive
-            if (myHTTPConx.getResponseCode() != 200) {
+            if (myConnection.getResponseCode() != 200) {
                 fail("Jetty is not accepting requests");
             }
 
@@ -90,8 +92,8 @@ public class OSDCacheUtilFunctionalTest {
         } catch (final IOException details) {
             fail(details.getMessage());
         } finally {
-            if (myHTTPConx != null) {
-                myHTTPConx.disconnect();
+            if (myConnection != null) {
+                myConnection.disconnect();
             }
         }
     }
@@ -118,28 +120,39 @@ public class OSDCacheUtilFunctionalTest {
 
         try {
             for (final String path : filePaths) {
-                myHTTPConx = (HttpURLConnection) new URL(LOCALHOST + PORT + "/" + path).openConnection();
+                myConnection = (HttpURLConnection) new URL(LOCALHOST + PORT + "/" + path).openConnection();
 
                 // Output something so folks know it's not stalled
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Creating tile for: {}", myHTTPConx.getURL());
+                    LOGGER.debug("Creating tile for: {}", myConnection.getURL());
                 } else if (LOGGER.isInfoEnabled() && ++processed % 500 == 0) {
                     LOGGER.info("{} tiles cached", processed);
                 }
 
-                if (myHTTPConx.getResponseCode() != 200 ||
-                        Arrays.binarySearch(JPEG_CONTENT_TYPE, myHTTPConx.getContentType()) < 0) {
+                if (myConnection.getResponseCode() != 200 ||
+                        Arrays.binarySearch(JPEG_CONTENT_TYPE, myConnection.getContentType()) < 0) {
                     fail(StringUtils.format("Couldn't create a tile for: {} [response code: {} | content type: {}]",
-                            myHTTPConx.getURL(), myHTTPConx.getResponseCode(), myHTTPConx.getContentType()));
+                            myConnection.getURL(), myConnection.getResponseCode(), myConnection.getContentType()));
+
+                    // Let's see if we can figure out what's wrong with the server...
+                    try {
+                        final URL url = new URL(LOCALHOST + PORT + "/health?detailed");
+                        final Document health = new Builder().build(url.openStream());
+                        System.out.println(health);
+                    } catch (final Exception details) {
+                        if (LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("Failed to do a health check after connection failure", details);
+                        }
+                    }
                 }
             }
         } catch (final MalformedURLException details) {
-            fail("Bad URL syntax: " + (myHTTPConx != null ? myHTTPConx.getURL() : "[Unknown URL]"));
+            fail("Bad URL syntax: " + (myConnection != null ? myConnection.getURL() : "[Unknown URL]"));
         } catch (final IOException details) {
-            fail("Unable to access: " + (myHTTPConx != null ? myHTTPConx.getURL() : "[Unknown URL]"));
+            fail("Unable to access: " + (myConnection != null ? myConnection.getURL() : "[Unknown URL]"));
         } finally {
-            if (myHTTPConx != null) {
-                myHTTPConx.disconnect();
+            if (myConnection != null) {
+                myConnection.disconnect();
             }
         }
 

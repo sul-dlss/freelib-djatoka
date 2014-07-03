@@ -18,16 +18,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.io.writer;
-
-import gov.lanl.adore.djatoka.io.FormatIOException;
-import gov.lanl.adore.djatoka.io.IWriter;
-
-import ij.ImagePlus;
-import ij.io.TiffEncoder;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
@@ -39,9 +33,14 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gov.lanl.adore.djatoka.io.FormatIOException;
+import gov.lanl.adore.djatoka.io.IWriter;
+import ij.ImagePlus;
+import ij.io.TiffEncoder;
+
 /**
  * TIF File Writer.
- * 
+ *
  * @author Ryan Chute
  * @author Kevin S. Clarke <a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>
  */
@@ -51,20 +50,21 @@ public class TIFWriter implements IWriter {
 
     /**
      * Write a BufferedImage instance to the provided OutputStream.
-     * 
+     *
      * @param aImage A BufferedImage instance to be serialized
      * @param aOutStream OutputStream to output the image to
      * @throws FormatIOException
      */
-    public void write(BufferedImage aImage, OutputStream aOutStream) throws FormatIOException {
-        ImagePlus imagePlus = new ImagePlus("tempTif", aImage);
-        TiffEncoder encoder = new TiffEncoder(imagePlus.getFileInfo());
-        BufferedOutputStream bufStream = new BufferedOutputStream(aOutStream);
-        DataOutputStream out = new DataOutputStream(bufStream);
+    @Override
+    public void write(final BufferedImage aImage, final OutputStream aOutStream) throws FormatIOException {
+        final ImagePlus imagePlus = new ImagePlus("tempTif", aImage);
+        final TiffEncoder encoder = new TiffEncoder(imagePlus.getFileInfo());
+        final BufferedOutputStream bufStream = new BufferedOutputStream(aOutStream);
+        final DataOutputStream out = new DataOutputStream(bufStream);
 
         try {
             encoder.write(out);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new FormatIOException(e.getMessage(), e);
         }
@@ -73,6 +73,7 @@ public class TIFWriter implements IWriter {
     /**
      * NOT SUPPORTED. TODO: Add support for key TIFF properties
      */
-    public void setWriterProperties(Properties props) {
+    @Override
+    public void setWriterProperties(final Properties props) {
     }
 }

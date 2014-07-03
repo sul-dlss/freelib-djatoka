@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.io.reader;
@@ -34,7 +34,7 @@ import info.freelibrary.djatoka.io.PNMImage;
 
 /**
  * Returns BufferedImage give a PNM image InputStream or file path.
- * 
+ *
  * @author Ryan Chute
  * @author Kevin S. Clarke &lt;<a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>&gt;
  */
@@ -42,7 +42,7 @@ public class PNMReader implements IReader {
 
     /**
      * Returns a BufferedImage instance for provided image file path.
-     * 
+     *
      * @param aFileName absolute file path for image file
      * @return a <code>BufferedImage</code> instance for source image file
      * @throws FormatIOException
@@ -58,7 +58,7 @@ public class PNMReader implements IReader {
 
     /**
      * Returns a BufferedImage instance for provided InputStream
-     * 
+     *
      * @param aInputStream an InputStream consisting of an image bitstream
      * @return a <code>BufferedImage</code> instance for source image InputStream
      * @throws FormatIOException

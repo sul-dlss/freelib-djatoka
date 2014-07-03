@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.kdu.jni;
@@ -35,30 +35,32 @@ public class KduCompressedSource extends Kdu_compressed_source_nonnative {
 
     /**
      * Creates a compressed source from the supplied byte array.
-     * 
+     *
      * @param b A byte array
      */
-    public KduCompressedSource(byte[] b) {
+    public KduCompressedSource(final byte[] b) {
         this.b = b;
     }
 
     /**
      * Gets the capabilities of the compressed source.
      */
+    @Override
     public int Get_capabilities() {
         return Kdu_global.KDU_SOURCE_CAP_SEQUENTIAL;
     }
 
     /**
      * Reads bytes from the compressed source.
-     * 
+     *
      * @param num_bytes The number of bytes to read
      */
-    public int Post_read(int num_bytes) {
+    @Override
+    public int Post_read(final int num_bytes) {
         try {
             Push_data(b, offset, num_bytes);
             offset = offset + num_bytes;
-        } catch (KduException e) {
+        } catch (final KduException e) {
             e.printStackTrace();
         }
         return num_bytes;
@@ -66,10 +68,11 @@ public class KduCompressedSource extends Kdu_compressed_source_nonnative {
 
     /**
      * Seeks ahead in the compressed source.
-     * 
+     *
      * @param offset An offset to seek
      */
-    public boolean Seek(long offset) {
+    @Override
+    public boolean Seek(final long offset) {
         if (offset > -1 && offset <= b.length) {
             this.offset = (int) offset;
             return true;
@@ -80,6 +83,7 @@ public class KduCompressedSource extends Kdu_compressed_source_nonnative {
     /**
      * Gets the current offset position.
      */
+    @Override
     public long Get_pos() {
         return offset;
     }
@@ -88,7 +92,7 @@ public class KduCompressedSource extends Kdu_compressed_source_nonnative {
      * Closes the compressed source.
      */
     public void close() {
-        this.b = null;
+        b = null;
     }
 
 }

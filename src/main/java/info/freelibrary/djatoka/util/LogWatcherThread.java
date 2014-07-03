@@ -5,35 +5,25 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
-import org.eclipse.jetty.websocket.api.RemoteEndpoint;
-
-import java.nio.file.attribute.BasicFileAttributes;
-
-import java.nio.file.FileVisitResult;
-
-import java.nio.file.SimpleFileVisitor;
-
-import java.nio.file.LinkOption;
-
-import java.nio.file.Files;
-
-import java.nio.file.StandardWatchEventKinds;
-
-import java.nio.file.WatchEvent;
-
 import java.io.IOException;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.Map;
-
-import java.nio.file.Path;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
+import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import java.nio.file.ClosedWatchServiceException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,23 +31,24 @@ public class LogWatcherThread extends Thread {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LogWatcherThread.class);
 
-    private WatchService myWatchService;
+    private final WatchService myWatchService;
 
-    private Map<WatchKey, Path> myKeys;
+    private final Map<WatchKey, Path> myKeys;
 
-    private int mySessionHashCode;
+    private final int mySessionHashCode;
 
     /**
      * Creates a thread that watches the log files.
-     * 
+     *
      * @param aLogPath The path of the files to watch
      * @param aSessionHashCode A session hash code
      * @param aRemoteClient The remote endpoint
      * @throws IOException If there is a problem reading or writing
      */
-    public LogWatcherThread(String aLogPath, int aSessionHashCode, RemoteEndpoint aRemoteClient) throws IOException {
-        FileSystem fs = FileSystems.getDefault();
-        Path logPath = fs.getPath(aLogPath);
+    public LogWatcherThread(final String aLogPath, final int aSessionHashCode, final RemoteEndpoint aRemoteClient)
+            throws IOException {
+        final FileSystem fs = FileSystems.getDefault();
+        final Path logPath = fs.getPath(aLogPath);
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("[{}] Initializing new {} to monitor file system at {}", aSessionHashCode,
@@ -81,7 +72,7 @@ public class LogWatcherThread extends Thread {
         try {
             myKeys.clear();
             myWatchService.close();
-        } catch (IOException details) {
+        } catch (final IOException details) {
             LOGGER.error("[{}] Exception while closing log WatchService: {}", mySessionHashCode,
                     details.getMessage(), details);
         }
@@ -101,21 +92,21 @@ public class LogWatcherThread extends Thread {
 
             try {
                 key = myWatchService.poll(10, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException details) {
+            } catch (final InterruptedException details) {
                 break;
-            } catch (ClosedWatchServiceException details) {
+            } catch (final ClosedWatchServiceException details) {
                 break;
             }
 
             if (key != null) {
-                Path path = myKeys.get(key);
+                final Path path = myKeys.get(key);
 
-                for (WatchEvent<?> i : key.pollEvents()) {
+                for (final WatchEvent<?> i : key.pollEvents()) {
                     @SuppressWarnings("unchecked")
-                    WatchEvent<Path> event = (WatchEvent<Path>) i;
-                    WatchEvent.Kind<Path> kind = event.kind();
-                    Path name = event.context();
-                    Path child = path.resolve(name);
+                    final WatchEvent<Path> event = (WatchEvent<Path>) i;
+                    final WatchEvent.Kind<Path> kind = event.kind();
+                    final Path name = event.context();
+                    final Path child = path.resolve(name);
 
                     if (LOGGER.isInfoEnabled()) {
                         LOGGER.info("[{}] {}: {} {}", mySessionHashCode, kind.name(), path, child);
@@ -125,7 +116,7 @@ public class LogWatcherThread extends Thread {
                         if (Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS)) {
                             try {
                                 Files.walkFileTree(child, new LogFileVisitor());
-                            } catch (IOException details) {
+                            } catch (final IOException details) {
                                 details.printStackTrace();
                             }
                         }
@@ -159,7 +150,9 @@ public class LogWatcherThread extends Thread {
 
     private class LogFileVisitor extends SimpleFileVisitor<Path> {
 
-        public FileVisitResult preVisitDirectory(Path aLogPath, BasicFileAttributes aAttributes) throws IOException {
+        @Override
+        public FileVisitResult preVisitDirectory(final Path aLogPath, final BasicFileAttributes aAttributes)
+                throws IOException {
 
             myKeys.put(aLogPath.register(myWatchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY), aLogPath);
 

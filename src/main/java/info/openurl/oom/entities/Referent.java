@@ -16,12 +16,13 @@ package info.openurl.oom.entities;
  * <p />
  * IMPORTANT! Note that every ContextObject MUST contain one and only one Referent. This should be your starting point
  * when thinking about how the Transport should map HTTP requests into ContextObjects. The clearer you can articulate
- * the "what" entity, the easier it will be for programmers to code the service, and clients to understand its purpose.
+ * the "what" entity, the easier it will be for programmers to code the service, and clients to understand its
+ * purpose.
  * <p />
  * Consider, however, the fact that the descriptors in a ServiceType in one request could appear within a Referent in
- * another. For example, I could pass in a Service identifier as a Referent or as a ServiceType, depending on whether I
- * want information about the service, or to invoke the service respectively.
- * 
+ * another. For example, I could pass in a Service identifier as a Referent or as a ServiceType, depending on whether
+ * I want information about the service, or to invoke the service respectively.
+ *
  * @author Jeffrey A. Young
  */
 public interface Referent extends Entity {

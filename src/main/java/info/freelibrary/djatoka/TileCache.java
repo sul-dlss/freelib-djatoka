@@ -1,21 +1,13 @@
 
 package info.freelibrary.djatoka;
 
-import info.freelibrary.djatoka.util.CacheUtils;
-import info.freelibrary.djatoka.iiif.Constants;
-
-import info.freelibrary.util.XMLBundleControl;
-import info.freelibrary.util.XMLResourceBundle;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -30,6 +22,11 @@ import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+import info.freelibrary.djatoka.iiif.Constants;
+import info.freelibrary.djatoka.util.CacheUtils;
+import info.freelibrary.util.XMLBundleControl;
+import info.freelibrary.util.XMLResourceBundle;
+
 public class TileCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TileCache.class);
@@ -37,15 +34,18 @@ public class TileCache {
     private static final XMLResourceBundle BUNDLE = (XMLResourceBundle) ResourceBundle.getBundle(
             "FreeLib-Djatoka_Messages", new XMLBundleControl());
 
+    private TileCache() {
+    }
+
     /**
      * @param args
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException {
         String[] ids;
 
         if (args.length == 2 || args.length == 3) {
             String server = "http://localhost:8888/";
-            File csvFile = new File(args[0]);
+            final File csvFile = new File(args[0]);
             CSVReader csvReader;
             int index;
 
@@ -83,7 +83,7 @@ public class TileCache {
 
                     cacheImage(server, ids[index]);
                 }
-            } catch (NumberFormatException details) {
+            } catch (final NumberFormatException details) {
                 LOGGER.error(details.getMessage());
                 printUsageAndExit();
             }
@@ -94,31 +94,31 @@ public class TileCache {
 
     }
 
-    private static void cacheImage(String aServer, String aID) {
+    private static void cacheImage(final String aServer, final String aID) {
         String urlString;
 
         try {
-            String id = URLEncoder.encode(aID, "UTF-8");
-            String baseURL = aServer + "view/image/" + id;
-            URL url = new URL(baseURL + "/info.xml");
-            HttpURLConnection uc = (HttpURLConnection) url.openConnection();
-            int status = uc.getResponseCode();
+            final String id = URLEncoder.encode(aID, "UTF-8");
+            final String baseURL = aServer + "view/image/" + id;
+            final URL url = new URL(baseURL + "/info.xml");
+            final HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+            final int status = uc.getResponseCode();
 
             // Helps add a little more detail to logging statements
             urlString = url.toString();
 
             if (status == 200) {
-                String ns = Constants.IIIF_NS;
-                Document xml = new Builder().build(uc.getInputStream());
-                Element info = (Element) xml.getRootElement();
-                Element elem = info.getFirstChildElement("identifier", ns);
-                Element hElem = info.getFirstChildElement("height", ns);
-                Element wElem = info.getFirstChildElement("width", ns);
-                String idValue = elem.getValue();
+                final String ns = Constants.IIIF_NS;
+                final Document xml = new Builder().build(uc.getInputStream());
+                final Element info = xml.getRootElement();
+                final Element elem = info.getFirstChildElement("identifier", ns);
+                final Element hElem = info.getFirstChildElement("height", ns);
+                final Element wElem = info.getFirstChildElement("width", ns);
+                final String idValue = elem.getValue();
 
                 try {
-                    int height = Integer.parseInt(hElem.getValue());
-                    int width = Integer.parseInt(wElem.getValue());
+                    final int height = Integer.parseInt(hElem.getValue());
+                    final int width = Integer.parseInt(wElem.getValue());
                     Iterator<String> tileIterator;
                     List<String> tiles;
 
@@ -136,7 +136,7 @@ public class TileCache {
                     } else if (LOGGER.isErrorEnabled()) {
                         LOGGER.error(BUNDLE.get("TC_ID_404"), aID);
                     }
-                } catch (NumberFormatException nfe) {
+                } catch (final NumberFormatException nfe) {
                     LOGGER.error(BUNDLE.get("TC_INVALID_DIMS"), aID);
                 }
             } else {
@@ -147,14 +147,14 @@ public class TileCache {
         }
     }
 
-    private static void cacheTile(String aURL) {
+    private static void cacheTile(final String aURL) {
         try {
-            URL url = new URL(aURL);
-            HttpURLConnection uc = (HttpURLConnection) url.openConnection();
-            int status = uc.getResponseCode();
+            final URL url = new URL(aURL);
+            final HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+            final int status = uc.getResponseCode();
 
             if (status == 200) {
-                int contentLength = uc.getContentLength();
+                final int contentLength = uc.getContentLength();
 
                 if (contentLength == -1) {
                     // LOGGER.debug("Tile '{}' content length: -1", aURL);
@@ -162,25 +162,25 @@ public class TileCache {
             } else if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Problem caching '{}' tile (status: {})", aURL, status);
             }
-        } catch (Exception details) {
+        } catch (final Exception details) {
             LOGGER.error(details.getMessage(), details);
         }
     }
 
-    private static boolean isLive(String aServer) {
+    private static boolean isLive(final String aServer) {
         try {
-            URL url = new URL(aServer + "health");
-            HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+            final URL url = new URL(aServer + "health");
+            final HttpURLConnection uc = (HttpURLConnection) url.openConnection();
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(BUNDLE.get("TC_STATUS_CHECK"), url);
             }
 
             if (uc.getResponseCode() == 200) {
-                Document xml = new Builder().build(uc.getInputStream());
-                Element response = (Element) xml.getRootElement();
-                Element health = response.getFirstChildElement("health");
-                String status = health.getValue();
+                final Document xml = new Builder().build(uc.getInputStream());
+                final Element response = xml.getRootElement();
+                final Element health = response.getFirstChildElement("health");
+                final String status = health.getValue();
 
                 if (status.equals("dying") || status.equals("sick")) {
                     if (LOGGER.isWarnEnabled()) {
@@ -194,9 +194,9 @@ public class TileCache {
                     LOGGER.error(BUNDLE.get("TC_UNEXPECTED_STATUS"), status);
                 }
             }
-        } catch (UnknownHostException details) {
+        } catch (final UnknownHostException details) {
             LOGGER.error(BUNDLE.get("TC_UNKNOWN_HOST"), details.getMessage());
-        } catch (Exception details) {
+        } catch (final Exception details) {
             LOGGER.error(details.getMessage());
         }
 
@@ -204,8 +204,8 @@ public class TileCache {
     }
 
     private static void printUsageAndExit() {
-        String eol = System.getProperty("line.separator");
-        StringBuilder sb = new StringBuilder(eol);
+        final String eol = System.getProperty("line.separator");
+        final StringBuilder sb = new StringBuilder(eol);
 
         sb.append(BUNDLE.get("TC_USAGE_1")).append(BUNDLE.get("TC_USAGE_EXEC"));
         sb.append(BUNDLE.get("TC_ARGS_OPT_1")).append(eol);

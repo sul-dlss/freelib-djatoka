@@ -1,8 +1,6 @@
 
 package info.freelibrary.djatoka.iiif;
 
-import info.freelibrary.util.StringUtils;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -10,54 +8,56 @@ import java.net.URLDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import info.freelibrary.util.StringUtils;
+
 /**
  * An image request from FreeLib-Djatoka's IIIF interface.
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class ImageRequest implements IIIFRequest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageRequest.class);
 
-    private String myPrefix;
+    private final String myPrefix;
 
-    private String myIdentifier;
+    private final String myIdentifier;
 
     private String myExtension;
 
-    private Quality myQuality;
+    private final Quality myQuality;
 
     private float myRotation;
 
-    private Region myRegion;
+    private final Region myRegion;
 
-    private Size mySize;
+    private final Size mySize;
 
     /**
      * Returns a <code>ImageRequest</code> for the supplied {@link URL}.
-     * 
+     *
      * @param aURL A {@link URL} representing the <code>ImageRequest</code>
      * @throws IIIFException If there is a problem creating the request
      */
-    public ImageRequest(URL aURL) throws IIIFException {
+    public ImageRequest(final URL aURL) throws IIIFException {
         this(aURL, null);
     }
 
     /**
      * Returns a <code>ImageRequest</code> for the supplied {@link URL}.
-     * 
+     *
      * @param aURL A {@link URL} representing the <code>ImageRequest</code>
      * @param aPrefix A pre-configured prefix to use in parsing the request
      * @throws IIIFException If there is a problem creating the request
      */
-    public ImageRequest(URL aURL, String aPrefix) throws IIIFException {
+    public ImageRequest(final URL aURL, final String aPrefix) throws IIIFException {
         String path = aURL.getPath();
         String[] parts;
 
         myPrefix = Builder.checkServicePrefix(aPrefix);
 
         if (myPrefix != null) {
-            int start = path.indexOf(myPrefix) + myPrefix.length() + 1;
+            final int start = path.indexOf(myPrefix) + myPrefix.length() + 1;
             path = path.substring(start);
         } else {
             path = path.substring(1);
@@ -67,7 +67,7 @@ public class ImageRequest implements IIIFRequest {
         if ((path.endsWith(".jpg") || path.endsWith(".gif") || path.endsWith(".jp2") || path.endsWith(".pdf") ||
                 path.endsWith(".tif") || path.endsWith(".png")) &&
                 path.length() > 4) {
-            String extension = path.substring(path.length() - 3);
+            final String extension = path.substring(path.length() - 3);
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Setting extension to: {}", extension);
@@ -120,7 +120,7 @@ public class ImageRequest implements IIIFRequest {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Setting requested rotation: {}", myRotation);
             }
-        } catch (NumberFormatException details) {
+        } catch (final NumberFormatException details) {
             throw new IIIFException("Rotation value isn't a float: " + parts[3]);
         }
 
@@ -133,34 +133,37 @@ public class ImageRequest implements IIIFRequest {
 
     /**
      * Gets the extension for the request.
-     * 
+     *
      * @return The extension for the request
      */
+    @Override
     public String getExtension() {
         return myExtension;
     }
 
     /**
      * Returns true if the request has an extension; else, false.
-     * 
+     *
      * @return True if the request has an extension; else, false
      */
+    @Override
     public boolean hasExtension() {
         return myExtension != null;
     }
 
     /**
      * Gets the identifier for the request.
-     * 
+     *
      * @return The identifier for the request
      */
+    @Override
     public String getIdentifier() {
         return myIdentifier;
     }
 
     /**
      * Returns the region of the <code>ImageRequest</code>.
-     * 
+     *
      * @return The region of the <code>ImageRequest</code>
      */
     public Region getRegion() {
@@ -169,7 +172,7 @@ public class ImageRequest implements IIIFRequest {
 
     /**
      * Returns the size of the <code>ImageRequest</code>.
-     * 
+     *
      * @return The size of the <code>ImageRequest</code>
      */
     public Size getSize() {
@@ -178,7 +181,7 @@ public class ImageRequest implements IIIFRequest {
 
     /**
      * Returns the rotation of the <code>ImageRequest</code>.
-     * 
+     *
      * @return The rotation of the <code>ImageRequest</code>
      */
     public float getRotation() {
@@ -187,7 +190,7 @@ public class ImageRequest implements IIIFRequest {
 
     /**
      * Returns the quality of the <code>ImageRequest</code>.
-     * 
+     *
      * @return The quality of the <code>ImageRequest</code>
      */
     public Quality getQuality() {
@@ -196,29 +199,31 @@ public class ImageRequest implements IIIFRequest {
 
     /**
      * Returns the service prefix of the request.
-     * 
+     *
      * @return The service prefix of the request
      */
+    @Override
     public String getServicePrefix() {
         return myPrefix;
     }
 
     /**
      * Returns true if the request has a service prefix; else, false.
-     * 
+     *
      * @return True if the request has a service prefix; else, false
      */
+    @Override
     public boolean hasServicePrefix() {
         return myPrefix != null;
     }
 
-    private String decode(String aString) {
+    private String decode(final String aString) {
         String string;
 
         try {
             string = URLDecoder.decode(aString, "UTF-8");
             return URLDecoder.decode(string, "UTF-8");
-        } catch (UnsupportedEncodingException details) {
+        } catch (final UnsupportedEncodingException details) {
             throw new RuntimeException(details); // every JVM supports UTF-8
         }
     }

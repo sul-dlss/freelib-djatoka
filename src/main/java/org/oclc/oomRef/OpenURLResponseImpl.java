@@ -11,16 +11,17 @@
 
 package org.oclc.oomRef;
 
-import info.openurl.oom.OpenURLResponse;
-
 import java.io.InputStream;
+
+import info.openurl.oom.OpenURLResponse;
 
 /**
  * This class is a proxy for HttpServletResponse.
- * 
+ *
  * @author Jeffrey A. Young
  * @deprecated user info.openurl.oom.OpenURLResponse instead
  */
+@Deprecated
 public class OpenURLResponseImpl extends OpenURLResponse {
 
     /**
@@ -29,7 +30,8 @@ public class OpenURLResponseImpl extends OpenURLResponse {
      * @param contentType
      * @param is
      */
-    public OpenURLResponseImpl(int status, String redirectURL, String contentType, InputStream is) {
+    public OpenURLResponseImpl(final int status, final String redirectURL, final String contentType,
+            final InputStream is) {
         super(status, redirectURL, contentType, is);
     }
 
@@ -39,7 +41,8 @@ public class OpenURLResponseImpl extends OpenURLResponse {
      * @param contentType
      * @param bytes
      */
-    public OpenURLResponseImpl(int status, String redirectURL, String contentType, byte[] bytes) {
+    public OpenURLResponseImpl(final int status, final String redirectURL, final String contentType,
+            final byte[] bytes) {
         super(status, redirectURL, contentType, bytes);
     }
 }

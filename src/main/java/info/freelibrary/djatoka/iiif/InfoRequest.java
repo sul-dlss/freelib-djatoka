@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An IIIF request for information about an image.
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 public class InfoRequest implements IIIFRequest {
@@ -22,24 +22,24 @@ public class InfoRequest implements IIIFRequest {
 
     private String myExtension;
 
-    private String myServicePrefix;
+    private final String myServicePrefix;
 
     /**
      * Returns a <code>InfoRequest</code> for the supplied {@link URL}.
-     * 
+     *
      * @param aURL A {@link URL} representing the <code>InfoRequest</code>
      */
-    public InfoRequest(URL aURL) {
+    public InfoRequest(final URL aURL) {
         this(aURL, null);
     }
 
     /**
      * Returns a <code>InfoRequest</code> for the supplied {@link URL}.
-     * 
+     *
      * @param aURL A {@link URL} representing the <code>InfoRequest</code>
      * @param aServicePrefix A pre-configured prefix to use in parsing the request
      */
-    public InfoRequest(URL aURL, String aServicePrefix) {
+    public InfoRequest(final URL aURL, final String aServicePrefix) {
         myServicePrefix = Builder.checkServicePrefix(aServicePrefix);
         parseExtension(aURL.getPath());
         parseIdentifier(aURL.getPath());
@@ -47,50 +47,55 @@ public class InfoRequest implements IIIFRequest {
 
     /**
      * Gets the extension for the request.
-     * 
+     *
      * @return The extension for the request
      */
+    @Override
     public String getExtension() {
         return myExtension;
     }
 
     /**
      * Returns true if the request has an extension; else, false
-     * 
+     *
      * @return True if the request has an extension; else, false
      */
+    @Override
     public boolean hasExtension() {
         return myExtension != null;
     }
 
     /**
      * Returns the IIIF service prefix.
-     * 
+     *
      * @return The IIIF service prefix
      */
+    @Override
     public String getServicePrefix() {
         return myServicePrefix;
     }
 
     /**
      * Returns true if there is an IIIF service prefix; else, false.
-     * 
+     *
      * @return True if there is an IIIF service prefix; else, false
      */
+    @Override
     public boolean hasServicePrefix() {
         return myServicePrefix != null;
     }
 
     /**
      * Gets the identifier for the request.
-     * 
+     *
      * @return The identifier for the request
      */
+    @Override
     public String getIdentifier() {
         return myIdentifier;
     }
 
-    private void parseExtension(String aPath) {
+    private void parseExtension(final String aPath) {
         if (aPath.endsWith(".xml")) {
             myExtension = "xml";
         } else if (aPath.endsWith(".json")) {
@@ -104,8 +109,8 @@ public class InfoRequest implements IIIFRequest {
         }
     }
 
-    private void parseIdentifier(String aPath) {
-        int endIndex = aPath.lastIndexOf("/info."); // A literal from the spec
+    private void parseIdentifier(final String aPath) {
+        final int endIndex = aPath.lastIndexOf("/info."); // A literal from the spec
         String servicePrefixPath = "/"; // First slash for default contextPath
         int startIndex = 1; // To skip the first slash in default contextPaths
 
@@ -120,7 +125,7 @@ public class InfoRequest implements IIIFRequest {
 
         if (startIndex != -1) {
             if (myServicePrefix != null) {
-                startIndex += (servicePrefixPath.length() + 1);
+                startIndex += servicePrefixPath.length() + 1;
             }
 
             /* Identifier SHOULD already be URL encoded, but we play it safe */
@@ -128,7 +133,7 @@ public class InfoRequest implements IIIFRequest {
                 myIdentifier = aPath.substring(startIndex, endIndex);
                 myIdentifier = URLDecoder.decode(myIdentifier, "UTF-8");
                 myIdentifier = URLEncoder.encode(myIdentifier, "UTF-8");
-            } catch (UnsupportedEncodingException details) {
+            } catch (final UnsupportedEncodingException details) {
                 throw new RuntimeException(details); // should not be possible
             }
         }

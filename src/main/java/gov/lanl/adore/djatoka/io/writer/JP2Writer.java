@@ -18,10 +18,16 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.io.writer;
+
+import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +39,9 @@ import gov.lanl.adore.djatoka.io.IWriter;
 import gov.lanl.adore.djatoka.kdu.KduCompressExe;
 import gov.lanl.adore.djatoka.util.ImageProcessingUtils;
 
-import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Properties;
-
 /**
  * JP2 File Writer. Uses KduCompressExe to write BufferedImage as JP2
- * 
+ *
  * @author Ryan Chute
  */
 public class JP2Writer implements IWriter {
@@ -52,27 +52,28 @@ public class JP2Writer implements IWriter {
 
     /**
      * Write a BufferedImage instance using implementation to the provided OutputStream.
-     * 
+     *
      * @param bi a BufferedImage instance to be serialized
      * @param os OutputStream to output the image to
      * @throws FormatIOException
      */
-    public void write(BufferedImage bi, OutputStream os) throws FormatIOException {
+    @Override
+    public void write(final BufferedImage bi, final OutputStream os) throws FormatIOException {
         if (bi != null) {
             BufferedOutputStream bos = null;
             try {
                 params.setLevels(ImageProcessingUtils.getLevelCount(bi.getWidth(), bi.getHeight()));
-                KduCompressExe encoder = new KduCompressExe();
+                final KduCompressExe encoder = new KduCompressExe();
                 bos = new BufferedOutputStream(os);
                 encoder.compressImage(bi, bos, params);
                 bos.close();
-            } catch (IOException details) {
+            } catch (final IOException details) {
                 LOGGER.error(details.getMessage(), details);
                 throw new FormatIOException(details.getMessage(), details);
-            } catch (DjatokaException details) {
+            } catch (final DjatokaException details) {
                 LOGGER.error(details.getMessage(), details);
                 throw new FormatIOException(details.getMessage(), details);
-            } catch (Exception details) {
+            } catch (final Exception details) {
                 LOGGER.error(details.getMessage(), details);
                 throw new FormatIOException(details.getMessage(), details);
             }
@@ -81,10 +82,11 @@ public class JP2Writer implements IWriter {
 
     /**
      * Set the Writer Implementations Serialization properties.
-     * 
+     *
      * @param props writer serialization properties
      */
-    public void setWriterProperties(Properties props) {
+    @Override
+    public void setWriterProperties(final Properties props) {
         params = new DjatokaEncodeParam(props);
     }
 }

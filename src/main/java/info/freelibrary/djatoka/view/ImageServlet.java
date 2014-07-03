@@ -268,8 +268,10 @@ public class ImageServlet extends HttpServlet implements Constants {
         final String reqURI = aRequest.getRequestURI();
         final String servletPath = aRequest.getServletPath();
         final String path = reqURI.substring(servletPath.length());
-        int width = 0, height = 0, levels = 0;
         final String id = getID(path);
+        int width = 0;
+        int height = 0;
+        int levels = 0;
 
         if (myCache != null) {
             OutputStream outStream = null;

@@ -94,8 +94,8 @@ public class OpenURLServlet extends HttpServlet {
                 status = result.getStatus();
                 final Cookie[] cookies = result.getCookies();
                 if (cookies != null) {
-                    for (int i = 0; i < cookies.length; ++i) {
-                        resp.addCookie(cookies[i]);
+                    for (final Cookie cookie : cookies) {
+                        resp.addCookie(cookie);
                     }
                 }
 

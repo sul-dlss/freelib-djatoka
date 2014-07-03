@@ -18,27 +18,27 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka;
 
-import gov.lanl.adore.djatoka.util.ImageRecord;
-
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+
+import gov.lanl.adore.djatoka.util.ImageRecord;
 
 /**
  * Abstract extraction interface. Allows use of common input method (e.g. String path, InputStream). The underlying
  * implementations are responsible for handling a file path or InputStream and returning a BufferedImage.
- * 
+ *
  * @author Ryan Chute
  */
 public interface IExtract {
 
     /**
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     * 
+     *
      * @param input InputStream containing a JPEG 2000 image bitstream.
      * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
@@ -48,7 +48,7 @@ public interface IExtract {
 
     /**
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     * 
+     *
      * @param input absolute file path of JPEG 2000 image file.
      * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
@@ -58,7 +58,7 @@ public interface IExtract {
 
     /**
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     * 
+     *
      * @param input ImageRecord wrapper containing file reference, inputstream, etc.
      * @param params DjatokaDecodeParam instance containing region and transform settings.
      * @return extracted region as a BufferedImage
@@ -68,7 +68,7 @@ public interface IExtract {
 
     /**
      * Returns JPEG 2000 width, height, resolution levels in Integer[]
-     * 
+     *
      * @param input ImageRecord containing absolute file path of JPEG 2000 image file.
      * @return a populated ImageRecord object containing width,height,DWT levels of image
      * @throws DjatokaException
@@ -77,7 +77,7 @@ public interface IExtract {
 
     /**
      * Returns JPEG 2000 XML Box data in String[]
-     * 
+     *
      * @param input ImageRecord contains a file path or file reference, inputstream, etc.
      * @return an array of XML box values
      * @throws DjatokaException

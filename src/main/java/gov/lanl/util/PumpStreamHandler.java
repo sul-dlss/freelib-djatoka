@@ -26,7 +26,7 @@ import java.io.OutputStream;
 //    http://cvs.apache.org/viewcvs.cgi/ant/src/main/org/apache/tools/ant/taskdefs/
 /**
  * Copies standard output and error of subprocesses to standard output and error of the parent process.
- * 
+ *
  * @since Ant 1.2
  */
 public class PumpStreamHandler implements ExecuteStreamHandler {
@@ -37,20 +37,20 @@ public class PumpStreamHandler implements ExecuteStreamHandler {
 
     private StreamPumper inputPump;
 
-    private OutputStream out;
+    private final OutputStream out;
 
-    private OutputStream err;
+    private final OutputStream err;
 
-    private InputStream input;
+    private final InputStream input;
 
     /**
      * Construct a new <CODE>PumpStreamHandler</CODE>.
-     * 
+     *
      * @param out the output <CODE>OutputStream</CODE>.
      * @param err the error <CODE>OutputStream</CODE>.
      * @param input the input <CODE>InputStream</CODE>.
      */
-    public PumpStreamHandler(OutputStream out, OutputStream err, InputStream input) {
+    public PumpStreamHandler(final OutputStream out, final OutputStream err, final InputStream input) {
         this.out = out;
         this.err = err;
         this.input = input;
@@ -58,20 +58,20 @@ public class PumpStreamHandler implements ExecuteStreamHandler {
 
     /**
      * Construct a new <CODE>PumpStreamHandler</CODE>.
-     * 
+     *
      * @param out the output <CODE>OutputStream</CODE>.
      * @param err the error <CODE>OutputStream</CODE>.
      */
-    public PumpStreamHandler(OutputStream out, OutputStream err) {
+    public PumpStreamHandler(final OutputStream out, final OutputStream err) {
         this(out, err, null);
     }
 
     /**
      * Construct a new <CODE>PumpStreamHandler</CODE>.
-     * 
+     *
      * @param outAndErr the output/error <CODE>OutputStream</CODE>.
      */
-    public PumpStreamHandler(OutputStream outAndErr) {
+    public PumpStreamHandler(final OutputStream outAndErr) {
         this(outAndErr, outAndErr);
     }
 
@@ -84,19 +84,21 @@ public class PumpStreamHandler implements ExecuteStreamHandler {
 
     /**
      * Set the <CODE>InputStream</CODE> from which to read the standard output of the process.
-     * 
+     *
      * @param is the <CODE>InputStream</CODE>.
      */
-    public void setProcessOutputStream(InputStream is) {
+    @Override
+    public void setProcessOutputStream(final InputStream is) {
         createProcessOutputPump(is, out);
     }
 
     /**
      * Set the <CODE>InputStream</CODE> from which to read the standard error of the process.
-     * 
+     *
      * @param is the <CODE>InputStream</CODE>.
      */
-    public void setProcessErrorStream(InputStream is) {
+    @Override
+    public void setProcessErrorStream(final InputStream is) {
         if (err != null) {
             createProcessErrorPump(is, err);
         }
@@ -104,16 +106,17 @@ public class PumpStreamHandler implements ExecuteStreamHandler {
 
     /**
      * Set the <CODE>OutputStream</CODE> by means of which input can be sent to the process.
-     * 
+     *
      * @param os the <CODE>OutputStream</CODE>.
      */
-    public void setProcessInputStream(OutputStream os) {
+    @Override
+    public void setProcessInputStream(final OutputStream os) {
         if (input != null) {
             inputPump = createInputPump(input, os, true);
         } else {
             try {
                 os.close();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // ignore
             }
         }
@@ -122,11 +125,12 @@ public class PumpStreamHandler implements ExecuteStreamHandler {
     /**
      * Start the <CODE>Thread</CODE>s.
      */
+    @Override
     public void start() {
         outputThread.start();
         errorThread.start();
         if (inputPump != null) {
-            Thread inputThread = new Thread(inputPump);
+            final Thread inputThread = new Thread(inputPump);
             inputThread.setDaemon(true);
             inputThread.start();
         }
@@ -135,15 +139,16 @@ public class PumpStreamHandler implements ExecuteStreamHandler {
     /**
      * Stop pumping the streams.
      */
+    @Override
     public void stop() {
         try {
             outputThread.join();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             // ignore
         }
         try {
             errorThread.join();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             // ignore
         }
 
@@ -153,19 +158,19 @@ public class PumpStreamHandler implements ExecuteStreamHandler {
 
         try {
             err.flush();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // ignore
         }
         try {
             out.flush();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // ignore
         }
     }
 
     /**
      * Get the error stream.
-     * 
+     *
      * @return <CODE>OutputStream</CODE>.
      */
     protected OutputStream getErr() {
@@ -174,7 +179,7 @@ public class PumpStreamHandler implements ExecuteStreamHandler {
 
     /**
      * Get the output stream.
-     * 
+     *
      * @return <CODE>OutputStream</CODE>.
      */
     protected OutputStream getOut() {
@@ -183,44 +188,44 @@ public class PumpStreamHandler implements ExecuteStreamHandler {
 
     /**
      * Create the pump to handle process output.
-     * 
+     *
      * @param is the <code>InputStream</code>.
      * @param os the <code>OutputStream</code>.
      */
-    protected void createProcessOutputPump(InputStream is, OutputStream os) {
+    protected void createProcessOutputPump(final InputStream is, final OutputStream os) {
         outputThread = createPump(is, os);
     }
 
     /**
      * Create the pump to handle error output.
-     * 
+     *
      * @param is the input stream to copy from.
      * @param os the output stream to copy to.
      */
-    protected void createProcessErrorPump(InputStream is, OutputStream os) {
+    protected void createProcessErrorPump(final InputStream is, final OutputStream os) {
         errorThread = createPump(is, os);
     }
 
     /**
      * Creates a stream pumper to copy the given input stream to the given output stream.
-     * 
+     *
      * @param is the input stream to copy from.
      * @param os the output stream to copy to.
      * @return a thread object that does the pumping.
      */
-    protected Thread createPump(InputStream is, OutputStream os) {
+    protected Thread createPump(final InputStream is, final OutputStream os) {
         return createPump(is, os, false);
     }
 
     /**
      * Creates a stream pumper to copy the given input stream to the given output stream.
-     * 
+     *
      * @param is the input stream to copy from.
      * @param os the output stream to copy to.
      * @param closeWhenExhausted if true close the inputstream.
      * @return a thread object that does the pumping.
      */
-    protected Thread createPump(InputStream is, OutputStream os, boolean closeWhenExhausted) {
+    protected Thread createPump(final InputStream is, final OutputStream os, final boolean closeWhenExhausted) {
         final Thread result = new Thread(new StreamPumper(is, os, closeWhenExhausted));
         result.setDaemon(true);
         return result;
@@ -228,11 +233,12 @@ public class PumpStreamHandler implements ExecuteStreamHandler {
 
     /**
      * Creates a stream pumper to copy the given input stream to the given output stream. Used for standard input.
-     * 
+     *
      * @since Ant 1.6.3
      */
-    /* protected */StreamPumper createInputPump(InputStream is, OutputStream os, boolean closeWhenExhausted) {
-        StreamPumper pumper = new StreamPumper(is, os, closeWhenExhausted);
+    /* protected */StreamPumper createInputPump(final InputStream is, final OutputStream os,
+            final boolean closeWhenExhausted) {
+        final StreamPumper pumper = new StreamPumper(is, os, closeWhenExhausted);
         pumper.setAutoflush(true);
         return pumper;
     }

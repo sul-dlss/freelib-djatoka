@@ -14,7 +14,7 @@ package info.openurl.oom.entities;
 /**
  * ReferringEntity is a fancy word meaning "where". In other words, <em>where</em> did the client issue the request?
  * Most Transports will want to pull this out the HTTP "Referer" header.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public interface ReferringEntity extends Entity {

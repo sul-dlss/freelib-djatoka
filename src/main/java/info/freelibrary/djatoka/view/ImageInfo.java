@@ -29,7 +29,7 @@ public class ImageInfo {
     /**
      * Creates an image info object. This was written back when XML was a allowed response... should be rewritten now
      * that it's JSON-only.
-     * 
+     *
      * @param aID An image ID
      * @param aHeight The height of the image represented by the supplied ID
      * @param aWidth The width of the image represented by the supplied ID
@@ -54,7 +54,7 @@ public class ImageInfo {
 
     /**
      * Gets the image's identifier.
-     * 
+     *
      * @return The image's identifier
      */
     public String getIdentifier() {
@@ -63,7 +63,7 @@ public class ImageInfo {
 
     /**
      * Gets the image's height.
-     * 
+     *
      * @return The height of the image
      */
     public int getHeight() {
@@ -72,7 +72,7 @@ public class ImageInfo {
 
     /**
      * Gets the image's width.
-     * 
+     *
      * @return The width of the image
      */
     public int getWidth() {
@@ -81,7 +81,7 @@ public class ImageInfo {
 
     /**
      * Adds the supplied format to the list of handled formats.
-     * 
+     *
      * @param aFormat A format to add to the supported list
      */
     public void addFormat(final String aFormat) {
@@ -103,7 +103,7 @@ public class ImageInfo {
 
     /**
      * Gets the list of supported formats.
-     * 
+     *
      * @return The list of supported formats
      */
     public List<String> getFormats() {
@@ -112,7 +112,7 @@ public class ImageInfo {
 
     /**
      * Gets the XML representation of the image's metadata.
-     * 
+     *
      * @return The XML representation of the image's metadata
      */
     public String toXML() {
@@ -121,7 +121,7 @@ public class ImageInfo {
 
     /**
      * Gets the string representation of the image's metadata.
-     * 
+     *
      * @return The string representation of the image's metadata
      */
     @Override
@@ -131,7 +131,7 @@ public class ImageInfo {
 
     /**
      * Gets the JSON representation of the image's metadata.
-     * 
+     *
      * @param aService The IIIF service
      * @param aPrefix The IIIF prefix
      * @return The JSON representation of the image's metadata
@@ -139,7 +139,8 @@ public class ImageInfo {
     public String toJSON(final String aService, final String aPrefix) throws JsonProcessingException {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode rootNode = mapper.createObjectNode();
-        final ArrayNode formats, scaleFactors;
+        final ArrayNode scaleFactors;
+        final ArrayNode formats;
         final String id;
 
         try {
@@ -178,7 +179,7 @@ public class ImageInfo {
 
     /**
      * Serializes the image info the supplied output stream.
-     * 
+     *
      * @param aOutputStream The output stream to which the image info should be serialized
      * @throws IOException If there is a problem reading or writing the image info
      */

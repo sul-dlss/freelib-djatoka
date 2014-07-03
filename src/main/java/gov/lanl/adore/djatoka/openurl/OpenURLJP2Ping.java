@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.openurl;
@@ -54,7 +54,7 @@ import info.openurl.oom.entities.ServiceType;
 
 /**
  * The OpenURLJP2Ping OpenURL Service
- * 
+ *
  * @author Ryan Chute
  */
 public class OpenURLJP2Ping implements Service, FormatConstants {
@@ -80,7 +80,7 @@ public class OpenURLJP2Ping implements Service, FormatConstants {
     /**
      * Construct an info:lanl-repo/svc/ping web service class. Initializes Referent Resolver instance using
      * OpenURLJP2KService.referentResolverImpl property.
-     * 
+     *
      * @param openURLConfig OOM Properties forwarded from OpenURLServlet
      * @param classConfig Implementation Properties forwarded from OpenURLServlet
      * @throws ResolverException

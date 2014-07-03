@@ -40,12 +40,15 @@ import org.xml.sax.SAXException;
 
 /**
  * General purpose static methods for manipulating XML.
- * 
+ *
  * @author Jeffrey A. Young
  * @deprecated use info.openurl.oom.util.XMLHelper instead
  */
 @Deprecated
 public class XMLHelper {
+
+    private XMLHelper() {
+    }
 
     // private static HashMap builderMap = new HashMap();
     private static DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -90,9 +93,9 @@ public class XMLHelper {
     }
 
     /**
-     * Get a thread-safe Transformer without an assigned transform. This is useful for transforming a DOM Document into
-     * XML text.
-     * 
+     * Get a thread-safe Transformer without an assigned transform. This is useful for transforming a DOM Document
+     * into XML text.
+     *
      * @param omitXmlDeclaration
      * @return an "identity" Transformer assigned to the current thread
      * @throws TransformerConfigurationException
@@ -103,9 +106,9 @@ public class XMLHelper {
     }
 
     /**
-     * Get a thread-safe Transformer without an assigned transform. This is useful for transforming a DOM Document into
-     * XML text.
-     * 
+     * Get a thread-safe Transformer without an assigned transform. This is useful for transforming a DOM Document
+     * into XML text.
+     *
      * @param omitXmlDeclaration
      * @param standalone
      * @return an Identity Transformer
@@ -141,7 +144,7 @@ public class XMLHelper {
 
     /**
      * Get a thread-safe Transformer.
-     * 
+     *
      * @param omitXmlDeclaration
      * @param threadMap
      * @param xslURL
@@ -155,7 +158,7 @@ public class XMLHelper {
 
     /**
      * Get an Element with some handy xmlns attributes defined. This comes in handy for calling XPathAPI methods.
-     * 
+     *
      * @return an Element containing various xmlns attributes.
      */
     public static Element getXmlnsEl() {
@@ -164,7 +167,7 @@ public class XMLHelper {
 
     /**
      * Grab the Document found at the specified URL.
-     * 
+     *
      * @param ref the URL location of an XML document.
      * @return a Document loaded from the specified URL.
      * @throws SAXException
@@ -178,7 +181,7 @@ public class XMLHelper {
 
     /**
      * Grab the Document found at the specified URL.
-     * 
+     *
      * @param protocol
      * @param is
      * @return a Document loaded from the specified URL.
@@ -196,7 +199,7 @@ public class XMLHelper {
 
     /**
      * Grab the Document loaded from the specified InputSource.
-     * 
+     *
      * @param is
      * @return a Document loaded from the specified InputSource
      * @throws SAXException
@@ -209,7 +212,7 @@ public class XMLHelper {
 
     /**
      * Grab the Document loaded from the specified InputStream
-     * 
+     *
      * @param is
      * @return a Document loaded from the specified InputStream.
      * @throws SAXException
@@ -222,7 +225,7 @@ public class XMLHelper {
 
     /**
      * Get a thread-safe DocumentBuilder
-     * 
+     *
      * @return a namespaceAware DocumentBuilder assigned to the current thread
      * @throws ParserConfigurationException
      */
@@ -240,7 +243,7 @@ public class XMLHelper {
 
     /**
      * XML-encode a String
-     * 
+     *
      * @param value the String to be XML-encoded
      * @return the XML-encoded String
      */
@@ -273,7 +276,7 @@ public class XMLHelper {
 
     /**
      * Transform a DOM Node into an XML String.
-     * 
+     *
      * @param node
      * @return an XML String representation of the specified Node
      * @throws TransformerException
@@ -284,7 +287,7 @@ public class XMLHelper {
 
     /**
      * Transform a DOM Node into an XML String
-     * 
+     *
      * @param node
      * @param omitXMLDeclaration
      * @return an XML String representation of the specified Node
@@ -301,7 +304,7 @@ public class XMLHelper {
 
     /**
      * Remove named nodes of the specified nodeType from the specified node.
-     * 
+     *
      * @param node the node to be cleaned.
      * @param nodeType the type of nodes to be removed.
      * @param name the name of nodes to be removed.

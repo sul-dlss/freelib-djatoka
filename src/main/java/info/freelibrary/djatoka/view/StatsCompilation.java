@@ -30,7 +30,7 @@ public class StatsCompilation implements Constants {
 
     /**
      * A compilation of statistics about the ingest source and target directories.
-     * 
+     *
      * @param aTIFDir A source directory
      * @param aJP2Dir A target directory
      */
@@ -75,7 +75,7 @@ public class StatsCompilation implements Constants {
 
     /**
      * Saves a stats file to disk.
-     * 
+     *
      * @param aStatsFile A file of statistics
      */
     public void save(final File aStatsFile) {
@@ -103,7 +103,7 @@ public class StatsCompilation implements Constants {
 
     /**
      * Gets the total size of JP2 files.
-     * 
+     *
      * @return The total size of the JP2 files
      */
     public String getJP2sSize() {
@@ -112,7 +112,7 @@ public class StatsCompilation implements Constants {
 
     /**
      * Gets the total number of JP2 files.
-     * 
+     *
      * @return The total size of the JP2 files
      */
     public String getJP2sCount() {
@@ -121,7 +121,7 @@ public class StatsCompilation implements Constants {
 
     /**
      * Gets the total size of TIFF files.
-     * 
+     *
      * @return The total size of the TIFF files
      */
     public String getTIFsSize() {
@@ -130,7 +130,7 @@ public class StatsCompilation implements Constants {
 
     /**
      * Gets the total number of TIFF files.
-     * 
+     *
      * @return The total size of the TIFF files
      */
     public String getTIFsCount() {

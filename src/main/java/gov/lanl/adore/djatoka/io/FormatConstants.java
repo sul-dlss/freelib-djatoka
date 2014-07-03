@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.io;
@@ -26,7 +26,7 @@ package gov.lanl.adore.djatoka.io;
 /**
  * Format Writer/Reader Constants. Defines default image writer implementations and mimetypes / ext. associated with
  * image format.
- * 
+ *
  * @author Ryan Chute
  */
 public interface FormatConstants {

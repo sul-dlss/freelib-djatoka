@@ -41,7 +41,7 @@ import info.openurl.oom.entities.ReferringEntity;
 
 /**
  * OpenURL Servlet - Added referrer and requester to Context Object
- * 
+ *
  * @author Jeffrey A. Young
  * @author Ryan Chute
  */
@@ -64,7 +64,7 @@ public class OpenURLServlet extends HttpServlet {
 
     /**
      * Initializes the servlet.
-     * 
+     *
      * @param config The configuration of the servlet
      */
     @Override
@@ -94,8 +94,8 @@ public class OpenURLServlet extends HttpServlet {
     }
 
     /**
-     * Extends HttpServlet Request to build OpenURL Request and Context Objects. The req.getHeader("referer") is used to
-     * add an OpenURL ReferringEntities and req.getRemoteAddr() is used to add a Requester.
+     * Extends HttpServlet Request to build OpenURL Request and Context Objects. The req.getHeader("referer") is used
+     * to add an OpenURL ReferringEntities and req.getRemoteAddr() is used to add a Requester.
      */
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException {
@@ -171,8 +171,8 @@ public class OpenURLServlet extends HttpServlet {
                 }
 
                 if (cookies != null) {
-                    for (int i = 0; i < cookies.length; ++i) {
-                        resp.addCookie(cookies[i]);
+                    for (final Cookie cookie : cookies) {
+                        resp.addCookie(cookie);
                     }
                 }
 

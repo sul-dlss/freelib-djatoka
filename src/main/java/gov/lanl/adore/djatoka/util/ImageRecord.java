@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.util;
@@ -27,7 +27,7 @@ import java.util.Map;
 
 /**
  * Image Record Metadata. Used to transfer image properties.
- * 
+ *
  * @author Ryan Chute
  */
 public class ImageRecord {
@@ -64,27 +64,27 @@ public class ImageRecord {
 
     /**
      * Constructor used to prime imageFile value
-     * 
+     *
      * @param imageFile the absolute file path of the image
      */
-    public ImageRecord(String imageFile) {
+    public ImageRecord(final String imageFile) {
         this.imageFile = imageFile;
     }
 
     /**
      * Constructor used to prime identifier and imageFile value
-     * 
+     *
      * @param identifier unique identifier of image
      * @param imageFile the absolute file path of the image
      */
-    public ImageRecord(String identifier, String imageFile) {
+    public ImageRecord(final String identifier, final String imageFile) {
         this.identifier = identifier;
         this.imageFile = imageFile;
     }
 
     /**
      * Returns the unique identifier of image
-     * 
+     *
      * @return unique identifier of image
      */
     public String getIdentifier() {
@@ -93,16 +93,16 @@ public class ImageRecord {
 
     /**
      * Sets the unique identifier of image
-     * 
+     *
      * @param identifier unique identifier of image
      */
-    public void setIdentifier(String identifier) {
+    public void setIdentifier(final String identifier) {
         this.identifier = identifier;
     }
 
     /**
      * Returns the absolute file path of the image
-     * 
+     *
      * @return the absolute file path of the image
      */
     public String getImageFile() {
@@ -111,16 +111,16 @@ public class ImageRecord {
 
     /**
      * Returns the absolute file path of the image
-     * 
+     *
      * @param imageFile the absolute file path of the image
      */
-    public void setImageFile(String imageFile) {
+    public void setImageFile(final String imageFile) {
         this.imageFile = imageFile;
     }
 
     /**
      * Returns the pixel width of the image
-     * 
+     *
      * @return the pixel width of the image
      */
     public int getWidth() {
@@ -129,16 +129,16 @@ public class ImageRecord {
 
     /**
      * Sets the pixel width of the image
-     * 
+     *
      * @param width the pixel width of the image
      */
-    public void setWidth(int width) {
+    public void setWidth(final int width) {
         this.width = width;
     }
 
     /**
      * Returns the pixel height of the image
-     * 
+     *
      * @return the pixel height of the image
      */
     public int getHeight() {
@@ -147,16 +147,16 @@ public class ImageRecord {
 
     /**
      * Sets the pixel height of the image
-     * 
+     *
      * @param height the pixel height of the image
      */
-    public void setHeight(int height) {
+    public void setHeight(final int height) {
         this.height = height;
     }
 
     /**
      * Returns the number of dwt levels
-     * 
+     *
      * @return the number of dwt levels
      */
     public int getDWTLevels() {
@@ -165,16 +165,16 @@ public class ImageRecord {
 
     /**
      * Sets the number of dwt levels
-     * 
+     *
      * @param dwtLevels the number of dwt levels
      */
-    public void setDWTLevels(int dwtLevels) {
+    public void setDWTLevels(final int dwtLevels) {
         this.dwtLevels = dwtLevels;
     }
 
     /**
      * Returns the number of djatoka resolution levels
-     * 
+     *
      * @return the number of djatoka resolution levels
      */
     public int getLevels() {
@@ -183,17 +183,17 @@ public class ImageRecord {
 
     /**
      * Sets the number of djatoka resolution levels
-     * 
+     *
      * @param levels the number of djatoka resolution levels
      */
-    public void setLevels(int levels) {
+    public void setLevels(final int levels) {
         this.levels = levels;
     }
 
     /**
      * Returns a map of properties associated with the image. The properties may be used transformation processes down
      * the line.
-     * 
+     *
      * @return a map of properties associated with the image.
      */
     public Map<String, String> getInstProps() {
@@ -201,18 +201,18 @@ public class ImageRecord {
     }
 
     /**
-     * Sets a map of properties associated with the image. The properties may be used transformation processes down the
-     * line.
-     * 
+     * Sets a map of properties associated with the image. The properties may be used transformation processes down
+     * the line.
+     *
      * @param instProps a map of properties associated with the image.
      */
-    public void setInstProps(Map<String, String> instProps) {
+    public void setInstProps(final Map<String, String> instProps) {
         this.instProps = instProps;
     }
 
     /**
      * Gets the number of JPEG2000 quality layers
-     * 
+     *
      * @return the number of quality layers
      */
     public int getQualityLayers() {
@@ -221,16 +221,16 @@ public class ImageRecord {
 
     /**
      * Sets the number of JPEG2000 quality layers
-     * 
+     *
      * @param layers the number of quality layers
      */
-    public void setQualityLayers(int layers) {
-        this.qualityLayers = layers;
+    public void setQualityLayers(final int layers) {
+        qualityLayers = layers;
     }
 
     /**
      * Gets the number of JPEG2000 jpx compositing layers, also known as frames
-     * 
+     *
      * @return the number of frames
      */
     public int getCompositingLayerCount() {
@@ -239,16 +239,16 @@ public class ImageRecord {
 
     /**
      * Sets the number of JPEG2000 jpx compositing layers, also known as frames
-     * 
+     *
      * @param frames the number of frames
      */
-    public void setCompositingLayerCount(int frames) {
-        this.compositingLayers = frames;
+    public void setCompositingLayerCount(final int frames) {
+        compositingLayers = frames;
     }
 
     /**
      * Gets the bit depth (e.g. 8) for each color channel
-     * 
+     *
      * @return the bit depth for each channel
      */
     public int getBitDepth() {
@@ -257,16 +257,16 @@ public class ImageRecord {
 
     /**
      * Sets the bit depth (e.g. 8) for each color channel
-     * 
+     *
      * @param bitDepth the bit depth for each channel
      */
-    public void setBitDepth(int bitDepth) {
+    public void setBitDepth(final int bitDepth) {
         this.bitDepth = bitDepth;
     }
 
     /**
      * Gets the number of color channels (e.g. 3 for RGB)
-     * 
+     *
      * @return the number of color channels
      */
     public int getNumChannels() {
@@ -275,25 +275,25 @@ public class ImageRecord {
 
     /**
      * Sets the number of color channels (e.g. 3 for RGB)
-     * 
+     *
      * @param numChannels the number of color channels
      */
-    public void setNumChannels(int numChannels) {
+    public void setNumChannels(final int numChannels) {
         this.numChannels = numChannels;
     }
 
     /**
      * Sets InputStream, ByteArray, URL, etc.
-     * 
+     *
      * @param object object to be resolved by another process
      */
-    public void setObject(Object object) {
+    public void setObject(final Object object) {
         this.object = object;
     }
 
     /**
      * Returns InputStream, ByteArray, URL, whatever was set
-     * 
+     *
      * @return the object to be resolved by another process
      */
     public Object getObject() {
@@ -303,12 +303,13 @@ public class ImageRecord {
     /**
      * Returns the string representation of an image record.
      */
+    @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         sb.append("{");
         sb.append("\n\"identifier\": \"" + identifier + "\",");
         sb.append("\n\"imageFile\": \"" + imageFile + "\",");
-        sb.append("\n\"object\": \"" + ((object != null) ? "type= " + object.getClass().getCanonicalName() : null) +
+        sb.append("\n\"object\": \"" + (object != null ? "type= " + object.getClass().getCanonicalName() : null) +
                 "\",");
         sb.append("\n\"width\": \"" + width + "\",");
         sb.append("\n\"height\": \"" + height + "\",");
@@ -318,7 +319,7 @@ public class ImageRecord {
         sb.append("\n\"compositingLayers\": \"" + compositingLayers + "\",");
         sb.append("\n\"bitDepth\": \"" + bitDepth + "\",");
         sb.append("\n\"numChannels\": \"" + numChannels + "\",");
-        sb.append("\n\"instProps\": \"" + ((instProps != null) ? "size= " + instProps.size() : null) + "\"");
+        sb.append("\n\"instProps\": \"" + (instProps != null ? "size= " + instProps.size() : null) + "\"");
         sb.append("\n}");
         return sb.toString();
     }

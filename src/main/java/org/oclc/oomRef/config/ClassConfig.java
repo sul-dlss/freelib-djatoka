@@ -28,15 +28,16 @@ import org.w3c.dom.traversal.NodeIterator;
 @SuppressWarnings("deprecation")
 public class ClassConfig implements info.openurl.oom.config.ClassConfig {
 
-    private Node classNode;
+    private final Node classNode;
 
-    ClassConfig(Node classNode) {
+    ClassConfig(final Node classNode) {
         this.classNode = classNode;
     }
 
     /**
      * Gets the class name.
      */
+    @Override
     public String getClassName() throws TransformerException {
         return XPathAPI.eval(classNode, "oomRef:className", XMLHelper.getXmlnsEl()).str();
     }
@@ -44,21 +45,23 @@ public class ClassConfig implements info.openurl.oom.config.ClassConfig {
     /**
      * Gets the argument.
      */
-    public String getArg(String key) throws TransformerException {
-        String xpath = new StringBuffer("oomRef:args/oomRef:").append(key).toString();
+    @Override
+    public String getArg(final String key) throws TransformerException {
+        final String xpath = new StringBuffer("oomRef:args/oomRef:").append(key).toString();
         return XPathAPI.eval(classNode, xpath, XMLHelper.getXmlnsEl()).str();
     }
 
     /**
      * Gets an arguments array.
-     * 
+     *
      * @param key A key to pull from the configuration
      */
-    public String[] getArgs(String key) throws TransformerException {
-        ArrayList<String> args = new ArrayList<String>();
+    @Override
+    public String[] getArgs(final String key) throws TransformerException {
+        final ArrayList<String> args = new ArrayList<String>();
 
-        String xpath = new StringBuffer("oomRef:args/oomRef:").append(key).toString();
-        NodeIterator iter = XPathAPI.selectNodeIterator(classNode, xpath, XMLHelper.getXmlnsEl());
+        final String xpath = new StringBuffer("oomRef:args/oomRef:").append(key).toString();
+        final NodeIterator iter = XPathAPI.selectNodeIterator(classNode, xpath, XMLHelper.getXmlnsEl());
         Node node;
         while ((node = iter.nextNode()) != null) {
             args.add(XPathAPI.eval(node, ".").str());
@@ -69,14 +72,15 @@ public class ClassConfig implements info.openurl.oom.config.ClassConfig {
     /**
      * Returns all the arguments.
      */
+    @Override
     public Map getArgs() throws TransformerException {
-        Map map = new HashMap();
+        final Map map = new HashMap();
 
         if (classNode != null) {
-            NodeIterator iter = XPathAPI.selectNodeIterator(classNode, "oomRef:args/*", XMLHelper.getXmlnsEl());
+            final NodeIterator iter = XPathAPI.selectNodeIterator(classNode, "oomRef:args/*", XMLHelper.getXmlnsEl());
             Node node;
             while ((node = iter.nextNode()) != null) {
-                String key = XPathAPI.eval(node, "name()").str();
+                final String key = XPathAPI.eval(node, "name()").str();
                 map.put(key, XPathAPI.eval(node, ".").str());
             }
         }

@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.io;
@@ -28,14 +28,14 @@ import java.io.InputStream;
 
 /**
  * Image Reader Interface; implementing classes must return a BufferedImage given a file path or InputStream as input.
- * 
+ *
  * @author Ryan Chute
  */
 public interface IReader {
 
     /**
      * Returns a BufferedImage instance for provided image file path
-     * 
+     *
      * @param input absolute file path for image file
      * @return a BufferedImage instance for source image file
      * @throws FormatIOException
@@ -44,7 +44,7 @@ public interface IReader {
 
     /**
      * Returns a BufferedImage instance for provided InputStream
-     * 
+     *
      * @param input an InputStream consisting of an image bitstream
      * @return a BufferedImage instance for source image InputStream
      * @throws FormatIOException

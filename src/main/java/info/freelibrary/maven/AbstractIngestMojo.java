@@ -143,7 +143,7 @@ public abstract class AbstractIngestMojo extends AbstractPairtreeMojo {
                     continue;
                 }
 
-                if (myCsvIdCol >= csv.length || myCsvPathCol >= csv.length || (myCsvIdCol == myCsvPathCol)) {
+                if (myCsvIdCol >= csv.length || myCsvPathCol >= csv.length || myCsvIdCol == myCsvPathCol) {
                     throw new MojoExecutionException(BUNDLE.get("INGEST_INDEX", myCsvPathCol, myCsvIdCol, csv.length));
                 }
 

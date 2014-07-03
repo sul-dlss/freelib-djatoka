@@ -18,25 +18,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.openurl;
-
-import info.freelibrary.djatoka.view.IdentifierResolver;
-
-import gov.lanl.adore.djatoka.io.FormatConstants;
-import gov.lanl.adore.djatoka.util.IOUtils;
-import gov.lanl.adore.djatoka.util.ImageRecord;
-import gov.lanl.util.HttpDate;
-import info.openurl.oom.ContextObject;
-import info.openurl.oom.OpenURLRequest;
-import info.openurl.oom.OpenURLRequestProcessor;
-import info.openurl.oom.OpenURLResponse;
-import info.openurl.oom.Service;
-import info.openurl.oom.config.ClassConfig;
-import info.openurl.oom.config.OpenURLConfig;
-import info.openurl.oom.entities.ServiceType;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,9 +36,25 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gov.lanl.adore.djatoka.io.FormatConstants;
+import gov.lanl.adore.djatoka.util.IOUtils;
+import gov.lanl.adore.djatoka.util.ImageRecord;
+import gov.lanl.util.HttpDate;
+
+import info.freelibrary.djatoka.view.IdentifierResolver;
+
+import info.openurl.oom.ContextObject;
+import info.openurl.oom.OpenURLRequest;
+import info.openurl.oom.OpenURLRequestProcessor;
+import info.openurl.oom.OpenURLResponse;
+import info.openurl.oom.Service;
+import info.openurl.oom.config.ClassConfig;
+import info.openurl.oom.config.OpenURLConfig;
+import info.openurl.oom.entities.ServiceType;
+
 /**
  * The OpenURLJP2Datastream OpenURL Service
- * 
+ *
  * @author Ryan Chute
  */
 public class OpenURLJP2Datastream implements Service, FormatConstants {
@@ -73,22 +74,23 @@ public class OpenURLJP2Datastream implements Service, FormatConstants {
     /**
      * Construct an info:lanl-repo/svc/getXML web service class. Initializes Referent Resolver instance using
      * OpenURLJP2KService.referentResolverImpl property.
-     * 
+     *
      * @param openURLConfig OOM Properties forwarded from OpenURLServlet
      * @param classConfig Implementation Properties forwarded from OpenURLServlet
      * @throws ResolverException
      */
-    public OpenURLJP2Datastream(OpenURLConfig openURLConfig, ClassConfig classConfig) throws ResolverException {
+    public OpenURLJP2Datastream(final OpenURLConfig openURLConfig, final ClassConfig classConfig)
+            throws ResolverException {
         try {
             if (!ReferentManager.isInit()) {
                 props = IOUtils.loadConfigByCP(classConfig.getArg("props"));
                 implClass = props.getProperty(PROPS_KEY_IMPL_CLASS, DEFAULT_IMPL_CLASS);
                 ReferentManager.init((IReferentResolver) Class.forName(implClass).newInstance(), props);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new ResolverException("Error attempting to open props file from classpath, disabling " + SVC_ID +
                     " : " + e.getMessage());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ResolverException("Unable to inititalize implementation: " + props.getProperty(implClass) +
                     " - " + e.getMessage());
         }
@@ -97,6 +99,7 @@ public class OpenURLJP2Datastream implements Service, FormatConstants {
     /**
      * Returns the OpenURL service identifier for this implementation of info.openurl.oom.Service
      */
+    @Override
     public URI getServiceID() throws URISyntaxException {
         return new URI(SVC_ID);
     }
@@ -104,14 +107,15 @@ public class OpenURLJP2Datastream implements Service, FormatConstants {
     /**
      * Returns the OpenURLResponse of an XML object
      */
-    public OpenURLResponse resolve(ServiceType serviceType, ContextObject contextObject,
-            OpenURLRequest openURLRequest, OpenURLRequestProcessor processor) {
+    @Override
+    public OpenURLResponse resolve(final ServiceType serviceType, final ContextObject contextObject,
+            final OpenURLRequest openURLRequest, final OpenURLRequestProcessor processor) {
 
         String responseFormat = "application/jp2";;
         int status = HttpServletResponse.SC_OK;
         byte[] b = null;
         try {
-            ImageRecord r = ReferentManager.getImageRecord(contextObject.getReferent());
+            final ImageRecord r = ReferentManager.getImageRecord(contextObject.getReferent());
             if (r != null && r.getImageFile() != null) {
                 b = IOUtils.getBytesFromFile(new File(r.getImageFile()));
             } else if (r != null && r.getObject() != null) {
@@ -124,12 +128,12 @@ public class OpenURLJP2Datastream implements Service, FormatConstants {
             if (b == null) {
                 throw new Exception("Unable to resolve resource");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             responseFormat = "text/plain";
             status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         }
-        HashMap<String, String> header_map = new HashMap<String, String>();
+        final HashMap<String, String> header_map = new HashMap<String, String>();
         header_map.put("Content-Length", Integer.toString(b.length));
         header_map.put("Date", HttpDate.getHttpDate());
         return new OpenURLResponse(status, responseFormat, b, header_map);

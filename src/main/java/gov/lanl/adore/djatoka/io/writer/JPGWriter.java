@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.io.writer;
@@ -39,7 +39,7 @@ import gov.lanl.adore.djatoka.io.IWriter;
 
 /**
  * JPG File Writer. Uses ImageIO to write BufferedImage as JPG
- * 
+ *
  * @author Ryan Chute
  * @author Kevin S. Clarke &lt;<a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>&gt;
  */
@@ -51,7 +51,7 @@ public class JPGWriter implements IWriter {
 
     /**
      * Write a BufferedImage instance using implementation to the provided OutputStream.
-     * 
+     *
      * @param aImage BufferedImage instance to be serialized
      * @param aOutStream OutputStream to output the image to
      * @throws FormatIOException
@@ -78,7 +78,7 @@ public class JPGWriter implements IWriter {
     /**
      * Set the Writer Implementations Serialization properties. Only JPGWriter.quality_level is supported in this
      * implementation.
-     * 
+     *
      * @param aProps writer serialization properties
      */
     @Override

@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.io;
@@ -28,7 +28,7 @@ import java.util.Properties;
 /**
  * Format Writer Profile Object. Used to initialize writers with implementation specific properties (e.g. compression
  * level).
- * 
+ *
  * @author Ryan Chute
  */
 public class FormatWriterParams {
@@ -41,27 +41,27 @@ public class FormatWriterParams {
 
     /**
      * Constructor using format identifier from FormatConstants
-     * 
+     *
      * @param fmtId format identifier from FormatConstants
      */
-    public FormatWriterParams(String fmtId) {
-        this.formatId = fmtId;
+    public FormatWriterParams(final String fmtId) {
+        formatId = fmtId;
     }
 
     /**
      * Constructor used to override default writer serialization properties
-     * 
+     *
      * @param fmtId format identifier from FormatConstants
      * @param formatProps Writer implementation serialization properties
      */
-    public FormatWriterParams(String fmtId, Properties formatProps) {
-        this.formatId = fmtId;
+    public FormatWriterParams(final String fmtId, final Properties formatProps) {
+        formatId = fmtId;
         this.formatProps = formatProps;
     }
 
     /**
      * Return format identifier for writer
-     * 
+     *
      * @return format identifier
      */
     public String getFormatId() {
@@ -70,16 +70,16 @@ public class FormatWriterParams {
 
     /**
      * Set format identifier.
-     * 
+     *
      * @param fmtId format identifier
      */
-    public void setFormatId(String fmtId) {
-        this.formatId = fmtId;
+    public void setFormatId(final String fmtId) {
+        formatId = fmtId;
     }
 
     /**
      * Return mimetype of writer implementation
-     * 
+     *
      * @return mimetype of writer implementation
      */
     public String getFormatMimetype() {
@@ -88,16 +88,16 @@ public class FormatWriterParams {
 
     /**
      * Set mimetype of writer implementation
-     * 
+     *
      * @param mimetype of writer implementation
      */
-    public void setFormatMimetype(String mimetype) {
+    public void setFormatMimetype(final String mimetype) {
         this.mimetype = mimetype;
     }
 
     /**
      * Return writer serialization properties
-     * 
+     *
      * @return writer serialization properties
      */
     public Properties getFormatProps() {
@@ -106,10 +106,10 @@ public class FormatWriterParams {
 
     /**
      * Set writer serialization properties
-     * 
+     *
      * @param formatProps writer serialization properties
      */
-    public void setFormatProps(Properties formatProps) {
+    public void setFormatProps(final Properties formatProps) {
         this.formatProps = formatProps;
     }
 }

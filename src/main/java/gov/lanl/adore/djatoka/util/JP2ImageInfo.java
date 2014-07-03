@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.util;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * JPEG 2000 Metadata Parser
- * 
+ *
  * @author Ryan Chute
  */
 public class JP2ImageInfo implements JP2Markers {
@@ -49,28 +49,28 @@ public class JP2ImageInfo implements JP2Markers {
 
     private int currentMarker;
 
-    private ImageRecord ir;
+    private final ImageRecord ir;
 
     private List<String> xmlDocs;
 
     /**
      * Creates an image info object.
-     * 
+     *
      * @param f A file to initialize the image info object
      * @throws IOException If there is trouble reading from the file
      */
-    public JP2ImageInfo(File f) throws IOException {
+    public JP2ImageInfo(final File f) throws IOException {
         this(new BufferedInputStream(new FileInputStream(f)));
         ir.setImageFile(f.getAbsolutePath());
     }
 
     /**
      * Creates an image info object.
-     * 
+     *
      * @param is An input stream from which to initialize the image info object
      * @throws IOException If there is trouble reading from the input stream
      */
-    public JP2ImageInfo(InputStream is) throws IOException {
+    public JP2ImageInfo(final InputStream is) throws IOException {
         this.is = is;
         ir = new ImageRecord();
         setImageInfo();
@@ -78,7 +78,7 @@ public class JP2ImageInfo implements JP2Markers {
 
     /**
      * Gets a populated ImageRecords for the initialized image
-     * 
+     *
      * @return a populated ImageRecord
      */
     public ImageRecord getImageRecord() {
@@ -139,7 +139,7 @@ public class JP2ImageInfo implements JP2Markers {
                         nextHeader();
                     }
                 } while (!done);
-                int compLayers = countCompLayers(readBytes(is.available()));
+                final int compLayers = countCompLayers(readBytes(is.available()));
                 ir.setCompositingLayerCount(compLayers);
             } else {
                 throw new IOException("Invalid Jpeg2000 file");
@@ -148,7 +148,7 @@ public class JP2ImageInfo implements JP2Markers {
             if (is != null) {
                 try {
                     is.close();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                 }
                 is = null;
             }
@@ -157,14 +157,14 @@ public class JP2ImageInfo implements JP2Markers {
 
     /**
      * Add a doc to the list of xml docs contained in the JPEG 2000 header
-     * 
+     *
      * @param docs
      */
-    private void addXmlDoc(String doc) {
+    private void addXmlDoc(final String doc) {
         if (xmlDocs == null) {
             xmlDocs = new LinkedList<String>();
         }
-        this.xmlDocs.add(doc);
+        xmlDocs.add(doc);
     }
 
     private void nextHeader() throws IOException {
@@ -184,28 +184,32 @@ public class JP2ImageInfo implements JP2Markers {
         }
     }
 
-    private int read(int n) throws IOException {
+    private int read(final int n) throws IOException {
         int c = 0;
         for (int i = n - 1; i >= 0; i--) {
-            c |= (0xff & is.read()) << (8 * i);
+            c |= (0xff & is.read()) << 8 * i;
         }
         return c;
     }
 
-    private void skip(int n) throws IOException {
+    private void skip(final int toSkip) throws IOException {
+        int n = toSkip;
         long i;
+
         while (n > 0) {
             i = is.skip(n);
+
             if (i <= 0) {
                 break;
             }
+
             n -= i;
         }
     }
 
-    private byte[] readBytes(int n) throws IOException {
-        byte[] b = new byte[n];
-        int bytesRead = is.read(b);
+    private byte[] readBytes(final int n) throws IOException {
+        final byte[] b = new byte[n];
+        final int bytesRead = is.read(b);
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Bytes read: {}", bytesRead);
@@ -214,16 +218,16 @@ public class JP2ImageInfo implements JP2Markers {
         return b;
     }
 
-    private static int countCompLayers(byte[] data) {
-        byte[] pattern = MARKER_JPLH_BIN;
+    private static int countCompLayers(final byte[] data) {
+        final byte[] pattern = MARKER_JPLH_BIN;
         int cnt = 1;
         int j = 1;
         if (data.length == 0) {
             return 0;
         }
 
-        for (int i = 0; i < data.length; i++) {
-            if (pattern[j] == data[i]) {
+        for (final byte element : data) {
+            if (pattern[j] == element) {
                 j++;
             } else {
                 j = 1;
@@ -237,43 +241,42 @@ public class JP2ImageInfo implements JP2Markers {
     }
 
     private void setIHDR() throws IOException {
-        int scaledHeight = read(4);
+        final int scaledHeight = read(4);
         ir.setHeight(scaledHeight);
-        int scaledWidth = read(4);
+        final int scaledWidth = read(4);
         ir.setWidth(scaledWidth);
-        int components = read(2);
+        final int components = read(2);
         ir.setNumChannels(components);
-        int bitDepth = read(1);
-        ir.setBitDepth((bitDepth == 7) ? bitDepth + 1 : bitDepth);
-        int compression = read(1);
-        int unknownColor = read(1);
-        int intelProp = read(1);
+        final int bitDepth = read(1);
+        ir.setBitDepth(bitDepth == 7 ? bitDepth + 1 : bitDepth);
+        read(1);
+        read(1);
+        read(1);
     }
 
     private void setCOLR() throws IOException {
-        int method = read(1);
-        int precedence = read(1);
-        int approximation = read(1);
+        final int method = read(1);
+        read(1);
+        read(1);
         if (method == 2) {
-            int proData = read(currentDataLength - 3);
-            // ICC Profile Needs to be set
+            read(currentDataLength - 3);
         } else {
-            int c = read(4);
+            read(4);
         }
     }
 
     private void setResBox() throws IOException {
-        int vn = read(3);
-        int vd = read(3);
-        int hn = read(3);
-        int hd = read(3);
-        int ve = read(3);
-        int he = read(3);
+        read(3);
+        read(3);
+        read(3);
+        read(3);
+        read(3);
+        read(3);
     }
 
     private String getXML() throws IOException {
         // Subtract XML Marker, Length Value, XML Flag
-        byte[] xml = readBytes(currentDataLength - 16);
+        final byte[] xml = readBytes(currentDataLength - 16);
         if (xml.length > 0) {
             return new String(xml);
         } else {
@@ -282,43 +285,43 @@ public class JP2ImageInfo implements JP2Markers {
     }
 
     private void setJP2C() throws IOException {
-        int soc = read(2); // SOC
+        read(2);
         boolean hend = false;
         while (!hend) {
-            int h = read(2);
+            final int h = read(2);
             if (h == MARKER_SIZ) { // SIZ
-                int lsiz = read(2); // Length of SIZ
-                int rsiz = read(2);
-                int xsiz = read(4);
-                int ysiz = read(4);
-                int xosiz = read(4);
-                int yosiz = read(4);
-                int xtsiz = read(4);
-                int ytsiz = read(4);
-                int xtosize = read(4);
-                int ytosize = read(4);
-                int csiz = read(2);
-                int ssiz = read(1);
-                int xrsiz = read(1);
-                int yrsiz = read(1);
-                int a0 = read(2);
-                int a1 = read(2);
-                int a2 = read(2);
+                read(2);
+                read(2);
+                read(4);
+                read(4);
+                read(4);
+                read(4);
+                read(4);
+                read(4);
+                read(4);
+                read(4);
+                read(2);
+                read(1);
+                read(1);
+                read(1);
+                read(2);
+                read(2);
+                read(2);
             } else if (h == MARKER_COD) { // COD
-                int lcod = read(2); // Length of COD
-                int scod = read(1);
-                int sgcod_porder = read(1); // Progression Order
-                int sgcod_layers = read(2); // Number of layers
+                read(2);
+                read(1);
+                read(1);
+                final int sgcod_layers = read(2); // Number of layers
                 ir.setQualityLayers(sgcod_layers);
-                int sgcod_ctrans = read(1); // Component Transformation Type
-                int sgcod_levels = read(1); // Number of levels
+                read(1);
+                final int sgcod_levels = read(1); // Number of levels
                 ir.setDWTLevels(sgcod_levels);
-                int djatokaLevels = ImageProcessingUtils.getLevelCount(ir.getWidth(), ir.getHeight());
-                ir.setLevels((djatokaLevels > sgcod_levels) ? sgcod_levels : djatokaLevels);
-                int sgcod_cb_width = read(1); // code-block width
-                int sgcod_cb_height = read(1); // code-block height
-                int sgcod_cb_style = read(1); // code-block style
-                int sgcod_wavelet = read(1); // wavelet type (9:7 && 5:3)
+                final int djatokaLevels = ImageProcessingUtils.getLevelCount(ir.getWidth(), ir.getHeight());
+                ir.setLevels(djatokaLevels > sgcod_levels ? sgcod_levels : djatokaLevels);
+                read(1);
+                read(1);
+                read(1);
+                read(1);
                 hend = true;
             } else {
                 throw new IOException("Expecting MARKER_COD or MARKER_SIZ in header");

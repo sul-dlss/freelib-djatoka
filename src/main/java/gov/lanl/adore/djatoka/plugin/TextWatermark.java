@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.plugin;
@@ -34,7 +34,7 @@ import java.util.Properties;
 
 /**
  * Applies a Textual Visual Watermark on the image
- * 
+ *
  * @author Ryan Chute
  */
 public class TextWatermark implements ITransformPlugIn {
@@ -88,16 +88,17 @@ public class TextWatermark implements ITransformPlugIn {
 
     /**
      * Performs the transformation based on the provided global and instance properties.
-     * 
+     *
      * @param bi the extracted region BufferedImage to be transformed
      * @return the resulting BufferedImage or the same bi if no changes are made
      * @throws TransformException
      */
-    public BufferedImage run(BufferedImage bi) throws TransformException {
+    @Override
+    public BufferedImage run(final BufferedImage bi) throws TransformException {
         if (!isTransformable()) {
             return bi;
         }
-        Graphics2D graphics = bi.createGraphics();
+        final Graphics2D graphics = bi.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fontOpacity));
         graphics.setColor(color);
@@ -109,10 +110,11 @@ public class TextWatermark implements ITransformPlugIn {
     /**
      * Initializes the implementation, overriding default values. Property keys are typically of the form
      * ClassName.PropName.
-     * 
+     *
      * @param props Properties object containing implementation properties
      */
-    public void setup(Properties props) {
+    @Override
+    public void setup(final Properties props) {
         if (props.containsKey(PROP_WATERMARK_COPYRIGHT)) {
             msg = (String) props.get(PROP_WATERMARK_COPYRIGHT);
         }
@@ -126,7 +128,7 @@ public class TextWatermark implements ITransformPlugIn {
             fontSize = Integer.parseInt((String) props.get(PROP_WATERMARK_FONTSIZE));
         }
         if (props.containsKey(PROP_WATERMARK_FONTCOLOR)) {
-            String[] c = ((String) props.get(PROP_WATERMARK_FONTCOLOR)).split(",");
+            final String[] c = ((String) props.get(PROP_WATERMARK_FONTCOLOR)).split(",");
             if (c.length > 3) {
                 color =
                         new Color(Integer.parseInt(c[0]), Integer.parseInt(c[1]), Integer.parseInt(c[2]), Integer
@@ -140,19 +142,21 @@ public class TextWatermark implements ITransformPlugIn {
 
     /**
      * Sets the instance properties, from which per dissemination changes can be based on.
-     * 
+     *
      * @param addProps HashMap object containing image transform instance properties
      */
-    public void setInstanceProps(HashMap<String, String> addProps) {
+    @Override
+    public void setInstanceProps(final HashMap<String, String> addProps) {
         this.addProps = addProps;
     }
 
     /**
      * Returns boolean indicator whether or not an image is transformable based on the global and instance properties.
      * This is very helpful for cache logic.
-     * 
+     *
      * @return true if transformable
      */
+    @Override
     public boolean isTransformable() {
         if (addProps == null) {
             return false;

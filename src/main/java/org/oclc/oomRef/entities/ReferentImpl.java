@@ -16,17 +16,17 @@ import info.openurl.oom.entities.Referent;
 /**
  * Referent is a resource that is referenced on a network, and about which the ContextObject is created; an
  * <em>Entity</em> of the <em>ContextObject</em>.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public class ReferentImpl extends EntityImpl implements Referent {
 
     /**
      * Constructs a Referent.
-     * 
+     *
      * @param descriptors Descriptor(s) for the Referent.
      */
-    public ReferentImpl(Object descriptors) {
+    public ReferentImpl(final Object descriptors) {
         super(descriptors);
     }
 }

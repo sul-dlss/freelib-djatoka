@@ -34,7 +34,7 @@ import info.freelibrary.djatoka.Constants;
 /**
  * Resamples images for ingest in an attempt to reduce Moiré effects.
  * <p/>
- * 
+ *
  * @author <a href="mailto:ksclarke@gmail.com">Kevin S. Clarke</a>
  */
 @Mojo(name = "resampled-ingest")

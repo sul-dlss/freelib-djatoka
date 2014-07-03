@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.util;
@@ -43,24 +43,27 @@ public class HttpDate {
 
     public final static SimpleDateFormat rfc1123Format = new SimpleDateFormat(RFC1123_PATTERN, LOCALE_US);
 
+    private HttpDate() {
+    }
+
     /**
      * Returns an HTTP date.
-     * 
+     *
      * @return The date in string form
      */
     public static String getHttpDate() {
-        Calendar calendar = new GregorianCalendar(GMT_ZONE, LOCALE_US);
+        final Calendar calendar = new GregorianCalendar(GMT_ZONE, LOCALE_US);
         return getHttpDate(calendar, new Date(System.currentTimeMillis()));
     }
 
     /**
      * Returns an HTTP date.
-     * 
+     *
      * @param calendar A supplied calendar
      * @param time A supplied time
      * @return The date in string form
      */
-    public static String getHttpDate(Calendar calendar, Date time) {
+    public static String getHttpDate(final Calendar calendar, final Date time) {
         calendar.setTime(time);
         return rfc1123Format.format(calendar.getTime());
     }

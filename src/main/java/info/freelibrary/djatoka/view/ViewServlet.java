@@ -76,7 +76,10 @@ public class ViewServlet extends HttpServlet implements Constants {
             final File mdFile = new File(jp2Dir, "djatoka.xml");
 
             if (mdFile.exists() && mdFile.length() > 0) {
-                String jp2Size, tifSize, jp2Count, tifCount;
+                String jp2Size;
+                String tifSize;
+                String jp2Count;
+                String tifCount;
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Reading directory stats from: {}", mdFile.getAbsolutePath());

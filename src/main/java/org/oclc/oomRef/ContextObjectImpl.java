@@ -21,20 +21,21 @@ import info.openurl.oom.entities.ServiceType;
 
 class ContextObjectImpl implements ContextObject {
 
-    private Referent referent;
+    private final Referent referent;
 
-    private ReferringEntity[] referringEntities;
+    private final ReferringEntity[] referringEntities;
 
-    private Requester[] requesters;
+    private final Requester[] requesters;
 
-    private ServiceType[] serviceTypes;
+    private final ServiceType[] serviceTypes;
 
-    private Resolver[] resolvers;
+    private final Resolver[] resolvers;
 
-    private Referrer[] referrers;
+    private final Referrer[] referrers;
 
-    ContextObjectImpl(Referent referent, ReferringEntity[] referringEntities, Requester[] requesters,
-            ServiceType[] serviceTypes, Resolver[] resolvers, Referrer[] referrers) {
+    ContextObjectImpl(final Referent referent, final ReferringEntity[] referringEntities,
+            final Requester[] requesters, final ServiceType[] serviceTypes, final Resolver[] resolvers,
+            final Referrer[] referrers) {
         this.referent = referent;
         this.referringEntities = referringEntities;
         this.requesters = requesters;
@@ -43,30 +44,37 @@ class ContextObjectImpl implements ContextObject {
         this.referrers = referrers;
     }
 
+    @Override
     public Referent getReferent() {
         return referent;
     }
 
+    @Override
     public ServiceType[] getServiceTypes() {
         return serviceTypes;
     }
 
+    @Override
     public ReferringEntity[] getReferringEntities() {
         return referringEntities;
     }
 
+    @Override
     public Requester[] getRequesters() {
         return requesters;
     }
 
+    @Override
     public Resolver[] getResolvers() {
         return resolvers;
     }
 
+    @Override
     public Referrer[] getReferrers() {
         return referrers;
     }
 
+    @Override
     public String toString() {
         return new StringBuffer(referent.toString()).append("\n").append(referringEntities).append("\n").append(
                 requesters).append("\n").append(serviceTypes).append("\n").append(resolvers).append("\n").append(

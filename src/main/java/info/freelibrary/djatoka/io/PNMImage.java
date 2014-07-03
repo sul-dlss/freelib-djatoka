@@ -26,8 +26,6 @@
 
 package info.freelibrary.djatoka.io;
 
-import gov.lanl.adore.djatoka.io.FormatIOException;
-
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -35,6 +33,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import gov.lanl.adore.djatoka.io.FormatIOException;
 
 /*
  * Holds an image read from a Netpbm PPM and PGM format image files.
@@ -45,27 +45,27 @@ public class PNMImage {
 
     /**
      * Read Netpbm PNM image from file.
-     * 
+     *
      * @param filename name of file.
      */
-    public PNMImage(String filename) throws FormatIOException, IOException {
+    public PNMImage(final String filename) throws FormatIOException, IOException {
         this(new FileInputStream(filename));
     }
 
     /**
      * Read Netpbm PNM image from open stream.
-     * 
+     *
      * @param aInputStream A Netpbm PNM image's input stream
      */
-    public PNMImage(InputStream aInputStream) throws FormatIOException, IOException {
-        DataInputStream stream = new DataInputStream(new BufferedInputStream(aInputStream));
+    public PNMImage(final InputStream aInputStream) throws FormatIOException, IOException {
+        final DataInputStream stream = new DataInputStream(new BufferedInputStream(aInputStream));
 
         try {
             /*
              * Check for 'P5' or 'P6' magic number in file.
              */
-            int magic1 = stream.read();
-            int magic2 = stream.read();
+            final int magic1 = stream.read();
+            final int magic2 = stream.read();
             boolean isGreyscale;
             boolean isBitmap;
 
@@ -84,14 +84,14 @@ public class PNMImage {
             /*
              * Read image header.
              */
-            int width = readNumber(stream);
-            int height = readNumber(stream);
+            final int width = readNumber(stream);
+            final int height = readNumber(stream);
             int maxValue = 1;
             if (!isBitmap) {
                 maxValue = readNumber(stream);
             }
 
-            int nBytes = (maxValue < 256) ? 1 : 2;
+            final int nBytes = maxValue < 256 ? 1 : 2;
 
             /*
              * Read pixel values into image.
@@ -102,7 +102,11 @@ public class PNMImage {
             for (int y = 0; y < height; y++) {
                 int bitMask = 0;
                 for (int x = 0; x < width; x++) {
-                    int r, g, b, pixel;
+                    int r;
+                    int g;
+                    int b;
+                    int pixel;
+
                     if (nBytes == 1) {
                         if (isBitmap) {
                             /*
@@ -112,7 +116,7 @@ public class PNMImage {
                                 nextByte = stream.read();
                                 bitMask = 128;
                             }
-                            r = g = b = (((nextByte & bitMask) != 0) ? 0 : 255);
+                            r = g = b = (nextByte & bitMask) != 0 ? 0 : 255;
                             bitMask >>= 1;
                         } else if (isGreyscale) {
                             r = g = b = stream.read();
@@ -130,28 +134,28 @@ public class PNMImage {
                             b = stream.readShort();
                         }
                     }
-                    pixel = (r << 16) | (g << 8) | b;
+                    pixel = r << 16 | g << 8 | b;
                     m_image.setRGB(x, y, pixel);
                 }
             }
         } finally {
             try {
                 stream.close();
-            } catch (IOException e) {
+            } catch (final IOException e) {
             }
         }
     }
 
     /**
      * Read decimal number from stream.
-     * 
+     *
      * @param stream stream to read from.
      * @return number read from stream.
      */
-    private int readNumber(InputStream stream) throws IOException {
+    private int readNumber(final InputStream stream) throws IOException {
         int retval = 0;
         int c = stream.read();
-        boolean inComment = (c == '#');
+        boolean inComment = c == '#';
         while (c != -1 && (inComment || Character.isWhitespace((char) c))) {
             c = stream.read();
             if (c == '#') {
@@ -162,33 +166,33 @@ public class PNMImage {
         }
 
         while (c >= '0' && c <= '9') {
-            retval = retval * 10 + (c - '0');
+            retval = retval * 10 + c - '0';
             c = stream.read();
         }
-        return (retval);
+        return retval;
     }
 
     /**
      * Get Netpbm PNM image as buffered image.
-     * 
+     *
      * @return image.
      */
     public BufferedImage getBufferedImage() {
-        return (m_image);
+        return m_image;
     }
 
     /**
      * Write an image to a Netpbm PPM format file.
-     * 
+     *
      * @param image image to write
      * @param stream output stream to write image to.
      */
-    public static void write(BufferedImage image, OutputStream stream) throws IOException {
+    public static void write(final BufferedImage image, final OutputStream stream) throws IOException {
         /*
          * Write file header.
          */
-        int imageWidth = image.getWidth();
-        int imageHeight = image.getHeight();
+        final int imageWidth = image.getWidth();
+        final int imageHeight = image.getHeight();
         stream.write('P');
         stream.write('6');
         stream.write('\n');
@@ -204,10 +208,10 @@ public class PNMImage {
          */
         for (int y = 0; y < imageHeight; y++) {
             for (int x = 0; x < imageWidth; x++) {
-                int pixel = image.getRGB(x, y);
-                int b = (pixel & 0xff);
-                int g = ((pixel >> 8) & 0xff);
-                int r = ((pixel >> 16) & 0xff);
+                final int pixel = image.getRGB(x, y);
+                final int b = pixel & 0xff;
+                final int g = pixel >> 8 & 0xff;
+                final int r = pixel >> 16 & 0xff;
                 stream.write(r);
                 stream.write(g);
                 stream.write(b);

@@ -1,19 +1,9 @@
 
 package info.freelibrary.djatoka.view;
 
-import java.net.URLEncoder;
-
-import info.freelibrary.util.PairtreeUtils;
-
-import gov.lanl.adore.djatoka.util.IOUtils;
-
-import info.freelibrary.djatoka.Constants;
-import info.freelibrary.util.FileUtils;
-import info.freelibrary.util.RegexFileFilter;
-
 import java.io.File;
 import java.io.IOException;
-
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +19,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gov.lanl.adore.djatoka.util.IOUtils;
+
+import info.freelibrary.djatoka.Constants;
+import info.freelibrary.util.FileUtils;
+import info.freelibrary.util.PairtreeUtils;
+import info.freelibrary.util.RegexFileFilter;
+
 public class RandomImageServlet extends HttpServlet implements Constants {
 
     private static final long serialVersionUID = -7221546341356013641L;
@@ -39,18 +36,18 @@ public class RandomImageServlet extends HttpServlet implements Constants {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse) throws ServletException,
-            IOException {
-        String pt = myProps.getProperty(JP2_DATA_DIR) + "/pairtree_root/--";
-        RegexFileFilter filter = new RegexFileFilter(".*");
-        ServletContext context = getServletContext();
-        Object object = context.getAttribute("djin");
-        Random random = new Random();
+    protected void doGet(final HttpServletRequest aRequest, final HttpServletResponse aResponse)
+            throws ServletException, IOException {
+        final String pt = myProps.getProperty(JP2_DATA_DIR) + "/pairtree_root/--";
+        final RegexFileFilter filter = new RegexFileFilter(".*");
+        final ServletContext context = getServletContext();
+        final Object object = context.getAttribute("djin");
+        final Random random = new Random();
         List<String> files;
         String image;
 
         if (object == null) {
-            File[] jp2Files = FileUtils.listFiles(new File(pt), filter, true);
+            final File[] jp2Files = FileUtils.listFiles(new File(pt), filter, true);
 
             files = new ArrayList<String>();
 
@@ -58,8 +55,8 @@ public class RandomImageServlet extends HttpServlet implements Constants {
                 LOGGER.debug("Building list of files for {} from {}", getClass().getSimpleName(), pt);
             }
 
-            for (int index = 0; index < jp2Files.length; index++) {
-                files.add(FileUtils.stripExt(jp2Files[index].getName()));
+            for (final File jp2File : jp2Files) {
+                files.add(FileUtils.stripExt(jp2File.getName()));
             }
 
             files = Collections.synchronizedList(files);
@@ -68,7 +65,7 @@ public class RandomImageServlet extends HttpServlet implements Constants {
             files = (List<String>) object;
         }
 
-        image = files.get(random.nextInt((files.size() - 2) + 1));
+        image = files.get(random.nextInt(files.size() - 2 + 1));
         image = URLEncoder.encode(PairtreeUtils.decodeID(image), "UTF-8");
 
         if (LOGGER.isDebugEnabled()) {
@@ -81,8 +78,8 @@ public class RandomImageServlet extends HttpServlet implements Constants {
 
     @Override
     public void init() throws ServletException {
-        String dir = getServletContext().getRealPath("/WEB-INF/classes") + "/";
-        String propertiesFile = dir + PROPERTIES_FILE;
+        final String dir = getServletContext().getRealPath("/WEB-INF/classes") + "/";
+        final String propertiesFile = dir + PROPERTIES_FILE;
 
         try {
             myProps = IOUtils.loadConfigByPath(propertiesFile);
@@ -90,7 +87,7 @@ public class RandomImageServlet extends HttpServlet implements Constants {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Loaded properties file: {}", propertiesFile);
             }
-        } catch (Exception details) {
+        } catch (final Exception details) {
             throw new ServletException(details);
         }
     }

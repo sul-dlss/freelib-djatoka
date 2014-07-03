@@ -18,13 +18,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.io.writer;
-
-import gov.lanl.adore.djatoka.io.FormatIOException;
-import gov.lanl.adore.djatoka.io.IWriter;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
@@ -37,9 +34,12 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gov.lanl.adore.djatoka.io.FormatIOException;
+import gov.lanl.adore.djatoka.io.IWriter;
+
 /**
  * PNG File Writer. Uses Image I/O to write BufferedImage as PNG
- * 
+ *
  * @author Ryan Chute
  * @author Kevin S. Clarke &lt;<a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>&gt;
  */
@@ -49,18 +49,19 @@ public class PNGWriter implements IWriter {
 
     /**
      * Write a BufferedImage instance using implementation to the provided OutputStream.
-     * 
+     *
      * @param bi a BufferedImage instance to be serialized
      * @param os OutputStream to output the image to
      * @throws FormatIOException
      */
-    public void write(BufferedImage bi, OutputStream os) throws FormatIOException {
+    @Override
+    public void write(final BufferedImage bi, final OutputStream os) throws FormatIOException {
         if (bi != null) {
             BufferedOutputStream bos = null;
             try {
                 bos = new BufferedOutputStream(os);
                 ImageIO.write(bi, "png", bos);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
@@ -69,6 +70,7 @@ public class PNGWriter implements IWriter {
     /**
      * NOT SUPPORTED.
      */
-    public void setWriterProperties(Properties props) {
+    @Override
+    public void setWriterProperties(final Properties props) {
     }
 }

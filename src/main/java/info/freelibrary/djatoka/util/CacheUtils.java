@@ -11,9 +11,12 @@ public class CacheUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheUtils.class);
 
+    private CacheUtils() {
+    }
+
     /**
      * Return a file name for the cached file based on its characteristics.
-     * 
+     *
      * @param aLevel A level to be cached
      * @param aScale A scale to be cached
      * @param aRegion A region to be cached
@@ -26,8 +29,8 @@ public class CacheUtils {
         final String region = isEmpty(aRegion) ? "full" : aRegion.replace(',', '-');
 
         /*
-         * TODO: Right now this assumes if it gets passed a level that it's not doing a region... what possibilities do
-         * we exclude by doing this?
+         * TODO: Right now this assumes if it gets passed a level that it's not doing a region... what possibilities
+         * do we exclude by doing this?
          */
         if (aLevel != null && !aLevel.equals("") && !aLevel.equals("-1")) {
             if (LOGGER.isDebugEnabled()) {
@@ -53,7 +56,7 @@ public class CacheUtils {
 
     /**
      * Gets the max level for the supplied height and width.
-     * 
+     *
      * @param aHeight A height of the image
      * @param aWidth A width of the image
      * @return The maximum level using the supplied height and width
@@ -64,7 +67,7 @@ public class CacheUtils {
 
     /**
      * Returns the scale for the supplied level.
-     * 
+     *
      * @param aLevel A supplied image level
      * @return The scale for the supplied level
      */
@@ -74,7 +77,7 @@ public class CacheUtils {
 
     /**
      * Get a list of tile queries based on the supplied height and width.
-     * 
+     *
      * @param aHeight A supplied image height
      * @param aWidth A supplied image width
      * @return The list of tile queries based on the supplied height and width
@@ -96,14 +99,14 @@ public class CacheUtils {
 
             /* x is left point and y is top point */
             for (int xSize = 0, y = 0; xSize <= aWidth; xSize += tileSize) {
-                if (x * tileSize > (aWidth + tileSize)) {
+                if (x * tileSize > aWidth + tileSize) {
                     break;
                 }
 
                 for (int ySize = 0; ySize <= aHeight; ySize += tileSize) {
                     final String region = getRegion(level, aWidth, aHeight, x, y++);
 
-                    if (y * tileSize > (aHeight + tileSize)) {
+                    if (y * tileSize > aHeight + tileSize) {
                         break;
                     }
 
@@ -119,7 +122,7 @@ public class CacheUtils {
 
     /**
      * Gets a string representation of the region for the supplied characteristics.
-     * 
+     *
      * @param aLevel A image level
      * @param aWidth An image width
      * @param aHeight An image height
@@ -133,7 +136,10 @@ public class CacheUtils {
         // consistency
 
         final int tileSize = getTileSize(aLevel, getMaxLevel(aHeight, aWidth));
-        int startX, startY, tileSizeX, tileSizeY;
+        int startX;
+        int startY;
+        int tileSizeX;
+        int tileSizeY;
 
         /* startX is left point and startY is top point */
         if (aLevel > 8) {

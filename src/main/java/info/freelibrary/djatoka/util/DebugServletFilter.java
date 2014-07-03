@@ -55,8 +55,8 @@ public class DebugServletFilter implements Filter {
      * @param aResponse The servlet response
      */
     @Override
-    public void doFilter(final ServletRequest aRequest, final ServletResponse aResponse, final FilterChain aFilterChain)
-            throws IOException, ServletException {
+    public void doFilter(final ServletRequest aRequest, final ServletResponse aResponse,
+            final FilterChain aFilterChain) throws IOException, ServletException {
         if (LOGGER.isDebugEnabled() && aRequest instanceof HttpServletRequest) {
             final HttpServletRequest httpRequest = (HttpServletRequest) aRequest;
             final String peek = aRequest.getParameter("peek");
@@ -76,7 +76,7 @@ public class DebugServletFilter implements Filter {
             } else {
                 final FileWriter durations = new FileWriter("jetty-memory.log", true);
 
-                durations.write((Runtime.getRuntime().totalMemory() / 1048576) + EOL);
+                durations.write(Runtime.getRuntime().totalMemory() / 1048576 + EOL);
                 IOUtils.closeQuietly(durations);
 
                 if (myRequests.add(uri)) {

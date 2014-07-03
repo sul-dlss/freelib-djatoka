@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2008 Los Alamos National Security, LLC.
- * 
+ *
  * Los Alamos National Laboratory Research Library Digital Library Research &
  * Prototyping Team
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -21,52 +21,53 @@
 
 package gov.lanl.adore.djatoka.util;
 
-import gov.lanl.adore.djatoka.io.FormatConstants;
-
-import ij.io.FileInfo;
-import ij.io.Opener;
-import ij.io.TiffDecoder;
-
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.Hashtable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gov.lanl.adore.djatoka.io.FormatConstants;
+import ij.io.FileInfo;
+import ij.io.Opener;
+import ij.io.TiffDecoder;
+
 /**
  * Image Processing Utilities
- * 
+ *
  * @author Ryan Chute
  */
 public class ImageProcessingUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageProcessingUtils.class);
 
+    private ImageProcessingUtils() {
+    }
+
     /**
      * Perform a rotation of the provided BufferedImage using degrees of 90, 180, or 270.
-     * 
+     *
      * @param bi BufferedImage to be rotated
      * @param degree
      * @return rotated BufferedImage instance
      */
-    public static BufferedImage rotate(BufferedImage bi, int degree) {
-        int width = bi.getWidth();
-        int height = bi.getHeight();
+    public static BufferedImage rotate(final BufferedImage bi, final int degree) {
+        final int width = bi.getWidth();
+        final int height = bi.getHeight();
 
         BufferedImage biFlip;
+
         if (degree == 90 || degree == 270) {
             biFlip = new BufferedImage(height, width, bi.getType());
         } else if (degree == 180) {
@@ -99,22 +100,22 @@ public class ImageProcessingUtils {
             }
         }
 
-        bi.flush();
-        bi = null;
+        bi.flush(); // only clears from VRAM
+        // bi = null;
 
         return biFlip;
     }
 
     /**
      * Return the number of resolution levels the djatoka API will generate based on the provided pixel dimensions.
-     * 
+     *
      * @param w max pixel width
      * @param h max pixel height
      * @return number of resolution levels
      */
-    public static int getLevelCount(int w, int h) {
+    public static int getLevelCount(final int w, final int h) {
         int l = Math.max(w, h);
-        int m = 96;
+        final int m = 96;
         int r = 0;
         int i;
         if (l > 0) {
@@ -128,16 +129,16 @@ public class ImageProcessingUtils {
 
     /**
      * Return the resolution level the djatoka API will use to extract an image for scaling.
-     * 
+     *
      * @param w max pixel width
      * @param h max pixel height
      * @param out_w max pixel width
      * @param out_h max pixel height
      */
-    public static int getScalingLevel(int w, int h, int out_w, int out_h) {
-        int levels = getLevelCount(w, h);
-        int max_source = Math.max(w, h);
-        int max_out = Math.max(out_w, out_h);
+    public static int getScalingLevel(final int w, final int h, final int out_w, final int out_h) {
+        final int levels = getLevelCount(w, h);
+        final int max_source = Math.max(w, h);
+        final int max_out = Math.max(out_w, out_h);
         int r = levels + 2;
         int i = max_source;
         while (i >= max_out) {
@@ -150,13 +151,13 @@ public class ImageProcessingUtils {
     /**
      * Scale provided BufferedImage by the provided factor. A scaling factor value should be greater than 0 and less
      * than 2. Note that scaling will impact performance and image quality.
-     * 
+     *
      * @param bi BufferedImage to be scaled.
      * @param scale positive scaling factor
      * @return scaled instance of provided BufferedImage
      */
-    public static BufferedImage scale(BufferedImage bi, double scale) {
-        AffineTransformOp op = new AffineTransformOp(AffineTransform.getScaleInstance(scale, scale), null);
+    public static BufferedImage scale(final BufferedImage bi, final double scale) {
+        final AffineTransformOp op = new AffineTransformOp(AffineTransform.getScaleInstance(scale, scale), null);
         return op.filter(bi, null);
     }
 
@@ -164,40 +165,52 @@ public class ImageProcessingUtils {
      * Scale provided BufferedImage to the specified width and height dimensions. If a provided dimension is 0, the
      * aspect ratio is used to calculate a value. Also, if either contains -1, the positive value will be used as for
      * the long side.
-     * 
+     *
      * @param bi BufferedImage to be scaled.
-     * @param w width the image is to be scaled to.
-     * @param h height the image is to be scaled to.
+     * @param aWidth width the image is to be scaled to.
+     * @param aHeight height the image is to be scaled to.
      * @return scaled instance of provided BufferedImage
      */
-    public static BufferedImage scale(BufferedImage bi, int w, int h) {
+    public static BufferedImage scale(final BufferedImage bi, final int aWidth, final int aHeight) {
+        int width;
+        int height;
+
         // If either w,h are -1, then calculate based on long side.
-        if (w == -1 || h == -1) {
-            int tl = Math.max(w, h);
+        if (aWidth == -1 || aHeight == -1) {
+            final int tl = Math.max(aWidth, aHeight);
+
             if (bi.getWidth() > bi.getHeight()) {
-                w = tl;
-                h = 0;
+                width = tl;
+                height = 0;
             } else {
-                h = tl;
-                w = 0;
+                height = tl;
+                width = 0;
             }
+        } else {
+            width = aWidth;
+            height = aHeight;
         }
+
         // Calculate dim. based on aspect ratio
-        if (w == 0 || h == 0) {
-            if (w == 0 && h == 0) {
+        if (width == 0 || height == 0) {
+            if (width == 0 && height == 0) {
                 return bi;
             }
-            if (w == 0) {
-                double n = new Double(h) / new Double(bi.getHeight());
-                w = (int) Math.ceil(bi.getWidth() * n);
+
+            if (width == 0) {
+                final double n = new Double(height) / new Double(bi.getHeight());
+                width = (int) Math.ceil(bi.getWidth() * n);
             }
-            if (h == 0) {
-                double n = new Double(w) / new Double(bi.getWidth());
-                h = (int) Math.ceil(bi.getHeight() * n);
+
+            if (height == 0) {
+                final double n = new Double(width) / new Double(bi.getWidth());
+                height = (int) Math.ceil(bi.getHeight() * n);
             }
         }
-        double scaleH = new Double(h) / new Double(bi.getHeight());
-        double scaleW = new Double(w) / new Double(bi.getWidth());
+
+        final double scaleH = new Double(height) / new Double(bi.getHeight());
+        final double scaleW = new Double(width) / new Double(bi.getWidth());
+
         return scale(bi, Math.min(scaleH, scaleW));
     }
 
@@ -205,20 +218,20 @@ public class ImageProcessingUtils {
 
     /**
      * Read first 12 bytes from File to determine if JP2 file.
-     * 
+     *
      * @param aFilename Path to JPEG 2000 image file
      * @return true is JP2 compatible format
      */
-    public final static boolean checkIfJp2(String aFilename) {
+    public final static boolean checkIfJp2(final String aFilename) {
         boolean isJP2 = false;
 
         try {
-            BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(new File(aFilename)));
+            final BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(new File(aFilename)));
             isJP2 = checkIfJp2(inStream);
             inStream.close();
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             LOGGER.error("File not found: {}", aFilename);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.error("Could not read: {}", aFilename);
         }
 
@@ -228,70 +241,70 @@ public class ImageProcessingUtils {
     /**
      * Read first 12 bytes from InputStream to determine if JP2 file. Note: Be sure to reset your stream after calling
      * this method.
-     * 
+     *
      * @param in InputStream of possible JP2 codestream
      * @return true is JP2 compatible format
      */
-    public final static boolean checkIfJp2(InputStream in) {
-        byte[] buf = new byte[12];
+    public final static boolean checkIfJp2(final InputStream in) {
+        final byte[] buf = new byte[12];
         try {
             in.read(buf, 0, 12);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             return false;
         }
-        StringBuffer sb = new StringBuffer(buf.length * 2);
-        for (int x = 0; x < buf.length; x++) {
-            sb.append((Integer.toHexString(0xff & buf[x])));
+        final StringBuffer sb = new StringBuffer(buf.length * 2);
+        for (final byte element : buf) {
+            sb.append(Integer.toHexString(0xff & element));
         }
-        String hexString = sb.toString();
+        final String hexString = sb.toString();
         return hexString.equals(magic);
     }
 
     /**
      * Given a mimetype, indicates if mimetype is JP2 compatible.
-     * 
+     *
      * @param mimetype mimetype to check if JP2 compatible
      * @return true is JP2 compatible
      */
-    public final static boolean isJp2Type(String mimetype) {
+    public final static boolean isJp2Type(final String mimetype) {
         if (mimetype == null) {
             return false;
         }
-        mimetype = mimetype.toLowerCase();
-        if (mimetype.equals(FormatConstants.FORMAT_MIMEYPE_JP2) ||
-                mimetype.equals(FormatConstants.FORMAT_MIMEYPE_JPX) ||
-                mimetype.equals(FormatConstants.FORMAT_MIMEYPE_JPM)) {
-            return true;
-        } else {
-            return false;
-        }
 
+        switch (mimetype.toLowerCase()) {
+            case FormatConstants.FORMAT_MIMEYPE_JP2:
+            case FormatConstants.FORMAT_MIMEYPE_JPX:
+            case FormatConstants.FORMAT_MIMEYPE_JPM:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
      * Attempt to determine if file is a TIFF using the file header.
-     * 
+     *
      * @param file
      * @return true if the file is a TIFF
      */
-    public final static boolean checkIfTiff(String file) {
+    public final static boolean checkIfTiff(final String file) {
         return new Opener().getFileType(file) == Opener.TIFF;
     }
 
     /**
      * Attempt to determine is file is an uncompressed TIFF
-     * 
+     *
      * @param file File path for image to check
      * @return true if file is an uncompressed TIFF
      */
-    public static boolean isUncompressedTiff(String file) {
-        File f = new File(file);
+    public static boolean isUncompressedTiff(final String file) {
+        final File f = new File(file);
         FileInfo[] fi = null;
-        TiffDecoder ti = new TiffDecoder(f.getParent() + "/", f.getName());
+        final TiffDecoder ti = new TiffDecoder(f.getParent() + "/", f.getName());
         try {
             fi = ti.getTiffInfo();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return false;
         }
         if (fi[0].compression == 1) {
@@ -303,27 +316,27 @@ public class ImageProcessingUtils {
 
     /**
      * Populates a BufferedImage from a RenderedImage Source: http://www.jguru.com/faq/view.jsp?EID=114602
-     * 
+     *
      * @param img RenderedImage to be converted to BufferedImage
      * @return BufferedImage with complete raster data
      */
-    public static BufferedImage convertRenderedImage(RenderedImage img) {
+    public static BufferedImage convertRenderedImage(final RenderedImage img) {
         if (img instanceof BufferedImage) {
             return (BufferedImage) img;
         }
-        ColorModel cm = img.getColorModel();
-        int width = img.getWidth();
-        int height = img.getHeight();
-        WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
-        boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-        Hashtable properties = new Hashtable();
-        String[] keys = img.getPropertyNames();
+        final ColorModel cm = img.getColorModel();
+        final int width = img.getWidth();
+        final int height = img.getHeight();
+        final WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
+        final boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+        final Hashtable properties = new Hashtable();
+        final String[] keys = img.getPropertyNames();
         if (keys != null) {
-            for (int i = 0; i < keys.length; i++) {
-                properties.put(keys[i], img.getProperty(keys[i]));
+            for (final String key : keys) {
+                properties.put(key, img.getProperty(key));
             }
         }
-        BufferedImage result = new BufferedImage(cm, raster, isAlphaPremultiplied, properties);
+        final BufferedImage result = new BufferedImage(cm, raster, isAlphaPremultiplied, properties);
         img.copyData(raster);
         return result;
     }

@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2008 Los Alamos National Security, LLC.
- * 
+ *
  * Los Alamos National Laboratory Research Library Digital Library Research &
  * Prototyping Team
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -26,7 +26,7 @@ import java.util.Properties;
 /**
  * Encode Parameters for djatoka compression. Defines compression parameters (i.e. levels, slope, layers, etc.) to be
  * performed during extraction of JP2.
- * 
+ *
  * @author Ryan Chute
  * @author Kevin S. Clarke
  */
@@ -63,10 +63,10 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Constructor using provided properties to initialize encode parameters
-     * 
+     *
      * @param props Properties to initialize encode parameters
      */
-    public DjatokaEncodeParam(Properties props) {
+    public DjatokaEncodeParam(final Properties props) {
         if (props != null) {
             if (props.containsKey("rate")) {
                 rate = props.getProperty("rate");
@@ -96,16 +96,16 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Sets the JP2 supported color space
-     * 
+     *
      * @param aJP2ColorSpace
      */
-    public void setJP2ColorSpace(String aJP2ColorSpace) {
+    public void setJP2ColorSpace(final String aJP2ColorSpace) {
         jp2ColorSpace = aJP2ColorSpace;
     }
 
     /**
      * Returns the JP2 supported color space, if set.
-     * 
+     *
      * @return The JP2 supported color space
      */
     public String getJP2ColorSpace() {
@@ -114,7 +114,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Returns the absolute compression rate, if enabled.
-     * 
+     *
      * @return the absolute compression rate
      */
     public String getRate() {
@@ -123,10 +123,10 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Sets the absolute compression rate, setting slope to null.
-     * 
+     *
      * @param rate the absolute compression rate
      */
-    public void setRate(String rate) {
+    public void setRate(final String rate) {
         if (rate != null && slope != null) {
             slope = null;
         }
@@ -135,7 +135,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Returns the slope distortion slope, that applies a compression rate based on the content of the image.
-     * 
+     *
      * @return the slope distortion slope
      */
     public String getSlope() {
@@ -144,10 +144,10 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Sets the slope distortion slope, that applies a compression rate based on the content of the image.
-     * 
+     *
      * @param slope the slope distortion slope
      */
-    public void setSlope(String slope) {
+    public void setSlope(final String slope) {
         if (rate != null && slope != null) {
             rate = null;
         }
@@ -156,7 +156,7 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Returns the number of quality layers, must correspond with number of slope values.
-     * 
+     *
      * @return the number of quality layers
      */
     public int getLayers() {
@@ -165,16 +165,16 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Sets the number of quality layers, must correspond with number of slope values.
-     * 
+     *
      * @param layers the number of quality layers
      */
-    public void setLayers(int layers) {
+    public void setLayers(final int layers) {
         this.layers = layers;
     }
 
     /**
      * Returns the number of DWT Levels (i.e. resolution levels)
-     * 
+     *
      * @return the number of DWT Levels
      */
     public int getLevels() {
@@ -183,16 +183,16 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Sets the number of DWT Levels (i.e. resolution levels)
-     * 
+     *
      * @param levels the number of DWT Levels
      */
-    public void setLevels(int levels) {
+    public void setLevels(final int levels) {
         this.levels = levels;
     }
 
     /**
      * Returns indicator of whether or not a reversible compression wavelet should be used.
-     * 
+     *
      * @return use reversible wavelet
      */
     public boolean getUseReversible() {
@@ -201,16 +201,16 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Sets indicator of whether or not a reversible compression wavelet should be used.
-     * 
+     *
      * @param useReversible use reversible wavelet
      */
-    public void setUseReversible(boolean useReversible) {
+    public void setUseReversible(final boolean useReversible) {
         this.useReversible = useReversible;
     }
 
     /**
      * Returns the size of the layer packets.
-     * 
+     *
      * @return the size of the layer packets
      */
     public String getPrecincts() {
@@ -220,16 +220,16 @@ public class DjatokaEncodeParam implements DjatokaConstants {
     /**
      * Sets the size of the layer packets. Default values improved random access performance. Format:
      * "{256,256},{256,256},{128,128}"
-     * 
+     *
      * @param precincts the size of the layer packets.
      */
-    public void setPrecincts(String precincts) {
+    public void setPrecincts(final String precincts) {
         this.precincts = precincts;
     }
 
     /**
      * Returns the preferred progression order for layers.
-     * 
+     *
      * @return progression order
      */
     public String getProgressionOrder() {
@@ -238,16 +238,16 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Sets the preferred progression order for layers.
-     * 
+     *
      * @param pOrder progression order
      */
-    public void setProgressionOrder(String pOrder) {
-        this.progressionOrder = pOrder;
+    public void setProgressionOrder(final String pOrder) {
+        progressionOrder = pOrder;
     }
 
     /**
      * Returns indicator of whether or not packet organization header info should be included.
-     * 
+     *
      * @return include packet info
      */
     public boolean getInsertPLT() {
@@ -256,16 +256,16 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Sets indicator of whether or not packet organization header info should be included.
-     * 
+     *
      * @param insertPLT include packet info
      */
-    public void setInsertPLT(boolean insertPLT) {
+    public void setInsertPLT(final boolean insertPLT) {
         this.insertPLT = insertPLT;
     }
 
     /**
      * Returns order of header information. Default values improve resolution access performance.
-     * 
+     *
      * @return packet division order
      */
     public String getPacketDivision() {
@@ -274,16 +274,16 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Sets order of header information. Default values improve resolution access performance.
-     * 
+     *
      * @param packetDivision packet division order
      */
-    public void setPacketDivision(String packetDivision) {
+    public void setPacketDivision(final String packetDivision) {
         this.packetDivision = packetDivision;
     }
 
     /**
      * Returns the codeblock size.
-     * 
+     *
      * @return the codeblock size
      */
     public String getCodeBlockSize() {
@@ -292,10 +292,10 @@ public class DjatokaEncodeParam implements DjatokaConstants {
 
     /**
      * Sets the codeblock size.
-     * 
+     *
      * @param codeBlockSize the codeblock size
      */
-    public void setCodeBlockSize(String codeBlockSize) {
+    public void setCodeBlockSize(final String codeBlockSize) {
         this.codeBlockSize = codeBlockSize;
     }
 

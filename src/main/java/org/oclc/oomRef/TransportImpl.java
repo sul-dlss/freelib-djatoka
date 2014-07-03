@@ -1,6 +1,10 @@
 
 package org.oclc.oomRef;
 
+import java.net.URI;
+
+import javax.servlet.http.HttpServletRequest;
+
 import info.openurl.oom.OpenURLException;
 import info.openurl.oom.OpenURLRequest;
 import info.openurl.oom.OpenURLRequestProcessor;
@@ -9,17 +13,14 @@ import info.openurl.oom.Transport;
 import info.openurl.oom.config.ClassConfig;
 import info.openurl.oom.config.OpenURLConfig;
 
-import java.net.URI;
-
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * This class is obsolete and will be removed in a future version.
- * 
+ *
  * @author Jeffrey A. Young
  * @deprecated Don't extend this class. It's not necessary, and doing so tightly couples your Transports with the
  *             OOMRef-J implementation.
  */
+@Deprecated
 public abstract class TransportImpl implements Transport {
 
     protected OpenURLConfig openURLConfig;
@@ -35,7 +36,8 @@ public abstract class TransportImpl implements Transport {
      * @deprecated Don't extend this class. It's not necessary, and doing so tightly couples your Transports with the
      *             OOMRef-J implementation.
      */
-    public TransportImpl(OpenURLConfig openURLConfig, ClassConfig classConfig, URI transportID) {
+    @Deprecated
+    public TransportImpl(final OpenURLConfig openURLConfig, final ClassConfig classConfig, final URI transportID) {
         this.openURLConfig = openURLConfig;
         this.classConfig = classConfig;
         this.transportID = transportID;
@@ -45,6 +47,7 @@ public abstract class TransportImpl implements Transport {
      * @deprecated Don't extend this class. It's not necessary, and doing so tightly couples your Transports with the
      *             OOMRef-J implementation.
      */
+    @Deprecated
     public TransportImpl() {
     }
 
@@ -53,6 +56,8 @@ public abstract class TransportImpl implements Transport {
      *             OOMRef-J implementation. You should remove the extends clause and implement
      *             info.openurl.oom.Transport directly.
      */
+    @Deprecated
+    @Override
     public URI getTransportID() {
         return transportID;
     }
@@ -65,10 +70,11 @@ public abstract class TransportImpl implements Transport {
      *             OOMRef-J implementation. You should remove the extends clause and implement
      *             info.openurl.oom.Transport directly.
      */
-    public Service getService(String className) throws OpenURLException {
+    @Deprecated
+    public Service getService(final String className) throws OpenURLException {
         try {
             return openURLConfig.getService(className);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new OpenURLException(e.getMessage(), e);
         }
@@ -84,6 +90,8 @@ public abstract class TransportImpl implements Transport {
      *             OOMRef-J implementation. You should remove the extends clause and implement
      *             info.openurl.oom.Transport directly.
      */
+    @Deprecated
+    @Override
     public abstract OpenURLRequest toOpenURLRequest(OpenURLRequestProcessor processor, HttpServletRequest req)
             throws OpenURLException;
 }

@@ -26,11 +26,11 @@ import info.freelibrary.util.StringUtils;
  * mode. If it runs attended, the ingestion process doesn't finish until the user reloads the page and sees
  * "Finished # ingested." When run in unattended mode, the job finishes when it's done, BUT there is still the final
  * notice available through the web interface; so, when you come after a job that has been run in "unattended" mode,
- * you'll see the notice about "Finished # ingested." You can ignore it and start a new job of your own with a new page
- * reload. Your job has been started when you see, "Ingesting... reload to see progress." A side-effect of this is that
- * when you want to run in unattended mode, you need to make sure the response you get starts with "Ingesting" rather
- * than "Finished" (which doesn't start a new job but notifies you the old one has completed).
- * 
+ * you'll see the notice about "Finished # ingested." You can ignore it and start a new job of your own with a new
+ * page reload. Your job has been started when you see, "Ingesting... reload to see progress." A side-effect of this
+ * is that when you want to run in unattended mode, you need to make sure the response you get starts with "Ingesting"
+ * rather than "Finished" (which doesn't start a new job but notifies you the old one has completed).
+ *
  * @author <a href="mailto:ksclarke@gmail.com>Kevin S. Clarke</a>
  */
 public class IngestServlet extends HttpServlet {

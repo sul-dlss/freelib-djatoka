@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Handler to filter remote content by Apache .htaccess format
- * 
+ *
  * @author Ryan Chute Parts of code from HTAccessHandler in Jetty 6:
  *         http://www.mortbay.org/jetty/jetty-6/xref/org/mortbay/jetty/security/ HTAccessHandler.html
  */
@@ -31,47 +31,47 @@ public class AccessManager {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AccessManager.class);
 
-    private ArrayList<String> _allowList = new ArrayList<String>();
+    private final ArrayList<String> _allowList = new ArrayList<String>();
 
-    private ArrayList<String> _denyList = new ArrayList<String>();
+    private final ArrayList<String> _denyList = new ArrayList<String>();
 
     int _order;
 
     /**
      * Creates an access manager from the supplied resource.
-     * 
+     *
      * @param resource A supplied resource
      */
-    public AccessManager(String resource) {
+    public AccessManager(final String resource) {
         this(new File(resource));
     }
 
     /**
      * Creates an access manager from the supplied resource file.
-     * 
+     *
      * @param resource A supplied resource file
      */
-    public AccessManager(File resource) {
+    public AccessManager(final File resource) {
         BufferedReader htin = null;
 
         try {
             htin = new BufferedReader(new InputStreamReader(new FileInputStream(resource)));
             parse(htin);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.warn(e.getMessage(), e);
         }
     }
 
     /**
      * Check access for the supplied host.
-     * 
+     *
      * @param host The host
      * @return True if access is allowed; else, false
      */
-    public boolean checkAccess(String host) {
+    public boolean checkAccess(final String host) {
         // Figure out if it's a host or ip
         boolean isIP = false;
-        char a = host.charAt(0);
+        final char a = host.charAt(0);
         if (a >= '0' && a <= '9') {
             isIP = true;
         }
@@ -82,7 +82,7 @@ public class AccessManager {
 
         // if no allows and no deny defined, then return true
         if (_allowList.size() == 0 && _denyList.size() == 0) {
-            return (true);
+            return true;
         }
 
         // looping for allows
@@ -92,7 +92,7 @@ public class AccessManager {
                 alp = true;
                 break;
             } else {
-                char c = elm.charAt(0);
+                final char c = elm.charAt(0);
                 if (c >= '0' && c <= '9') {
                     // ip
                     if (isIP && host.startsWith(elm)) {
@@ -116,7 +116,7 @@ public class AccessManager {
                 dep = true;
                 break;
             } else {
-                char c = elm.charAt(0);
+                final char c = elm.charAt(0);
                 if (c >= '0' && c <= '9') { // ip
                     if (isIP && host.startsWith(elm)) {
                         dep = true;
@@ -140,7 +140,7 @@ public class AccessManager {
 
     /**
      * Return true if access is limited; else, false.
-     * 
+     *
      * @return True if the access is limited; else, false
      */
     public boolean isAccessLimited() {
@@ -151,7 +151,7 @@ public class AccessManager {
         }
     }
 
-    private void parse(BufferedReader htin) throws IOException {
+    private void parse(final BufferedReader htin) throws IOException {
         String line;
         int limit = 0;
         while ((line = htin.readLine()) != null) {
@@ -173,27 +173,27 @@ public class AccessManager {
             } else if (line.startsWith("allow from")) {
                 int pos1 = 10;
                 limit = line.length();
-                while ((pos1 < limit) && (line.charAt(pos1) <= ' ')) {
+                while (pos1 < limit && line.charAt(pos1) <= ' ') {
                     pos1++;
                 }
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("allow from:" + line.substring(pos1));
                 }
-                StringTokenizer tkns = new StringTokenizer(line.substring(pos1));
+                final StringTokenizer tkns = new StringTokenizer(line.substring(pos1));
                 while (tkns.hasMoreTokens()) {
                     _allowList.add(tkns.nextToken());
                 }
             } else if (line.startsWith("deny from")) {
                 int pos1 = 9;
                 limit = line.length();
-                while ((pos1 < limit) && (line.charAt(pos1) <= ' ')) {
+                while (pos1 < limit && line.charAt(pos1) <= ' ') {
                     pos1++;
                 }
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("deny from:" + line.substring(pos1));
                 }
 
-                StringTokenizer tkns = new StringTokenizer(line.substring(pos1));
+                final StringTokenizer tkns = new StringTokenizer(line.substring(pos1));
                 while (tkns.hasMoreTokens()) {
                     _denyList.add(tkns.nextToken());
                 }

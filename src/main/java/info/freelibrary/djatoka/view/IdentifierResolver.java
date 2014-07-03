@@ -50,7 +50,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
     /**
      * Gets the image record for the requested image.
-     * 
+     *
      * @param aRequest An image request
      * @return An image record
      */
@@ -105,7 +105,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
     /**
      * Gets an image record for the supplied referent.
-     * 
+     *
      * @param aReferent A referent for the desired image
      * @return An image record
      */
@@ -130,7 +130,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
     /**
      * Gets the HTTP status of the referent ID request.
-     * 
+     *
      * @param aReferentID The ID of a requested referent
      * @return An HTTP status code
      */
@@ -151,7 +151,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
 
     /**
      * Sets the properties for this identifier resolver.
-     * 
+     *
      * @param aProps A supplied properties configuration
      */
     @Override
@@ -222,7 +222,7 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                 Thread.sleep(1000);
                 int index = 0;
 
-                while (myMigrator.getProcessingList().contains(aReferent) && index < (5 * 60)) {
+                while (myMigrator.getProcessingList().contains(aReferent) && index < 5 * 60) {
                     Thread.sleep(1000);
                     index++;
                 }

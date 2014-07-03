@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka;
@@ -28,7 +28,7 @@ import gov.lanl.adore.djatoka.plugin.ITransformPlugIn;
 /**
  * Decode Parameters for djatoka extraction. Defines extraction parameters (i.e. region, rotate, level, transform
  * plug-in) to be performed during extraction of JP2.
- * 
+ *
  * @author Ryan Chute
  */
 public class DjatokaDecodeParam implements DjatokaConstants {
@@ -61,7 +61,7 @@ public class DjatokaDecodeParam implements DjatokaConstants {
 
     /**
      * Returns the number of levels to reduce from the highest resolution level
-     * 
+     *
      * @return the number of levels to reduce
      */
     public int getLevelReductionFactor() {
@@ -70,16 +70,16 @@ public class DjatokaDecodeParam implements DjatokaConstants {
 
     /**
      * Sets the number of levels to reduce from the highest resolution level.
-     * 
+     *
      * @param levelReductionFactor the number of levels to reduce
      */
-    public void setLevelReductionFactor(int levelReductionFactor) {
-        this.reduce = levelReductionFactor;
+    public void setLevelReductionFactor(final int levelReductionFactor) {
+        reduce = levelReductionFactor;
     }
 
     /**
      * Returns the resolution level to extract
-     * 
+     *
      * @return resolution level to extract from JPEG 2000 image
      */
     public int getLevel() {
@@ -88,16 +88,16 @@ public class DjatokaDecodeParam implements DjatokaConstants {
 
     /**
      * Sets the resolution level to extract
-     * 
+     *
      * @param level resolution level to extract from JPEG 2000 image
      */
-    public void setLevel(int level) {
+    public void setLevel(final int level) {
         this.level = level;
     }
 
     /**
      * Returns the discrete positive degrees the extracted image is to be rotated (e.g. 90, 180, 270)
-     * 
+     *
      * @return degrees to rotate image
      */
     public int getRotationDegree() {
@@ -106,19 +106,20 @@ public class DjatokaDecodeParam implements DjatokaConstants {
 
     /**
      * Sets the discrete positive degrees the extracted image is to be rotated (e.g. 90, 180, 270)
-     * 
+     *
      * @param rotate degrees to rotate image
      */
-    public void setRotationDegree(int rotate) {
-        if ((rotate % 90) != 0) {
-            rotate = 0;
+    public void setRotationDegree(final int rotate) {
+        if (rotate % 90 != 0) {
+            this.rotate = 0;
         }
+
         this.rotate = rotate;
     }
 
     /**
      * Returns the parameter for the region to be extracted. The region parameter format is: Y,X,H,W
-     * 
+     *
      * @return the region parameter
      */
     public String getRegion() {
@@ -127,16 +128,16 @@ public class DjatokaDecodeParam implements DjatokaConstants {
 
     /**
      * Sets the parameter for the region to be extracted. The region parameter format is: Y,X,H,W
-     * 
+     *
      * @param region the region parameter
      */
-    public void setRegion(String region) {
+    public void setRegion(final String region) {
         this.region = region;
     }
 
     /**
      * Returns the transformation plug-in to be applied post extraction.
-     * 
+     *
      * @return transformation plug-in to be applied
      */
     public ITransformPlugIn getTransform() {
@@ -145,25 +146,25 @@ public class DjatokaDecodeParam implements DjatokaConstants {
 
     /**
      * Sets the transformation plug-in to be applied post extraction.
-     * 
+     *
      * @param transform transformation plug-in to be applied
      */
-    public void setTransform(ITransformPlugIn transform) {
+    public void setTransform(final ITransformPlugIn transform) {
         this.transform = transform;
     }
 
     /**
      * Set the compositing layer.
-     * 
+     *
      * @param compLayer The requested compositing layer
      */
-    public void setCompositingLayer(int compLayer) {
+    public void setCompositingLayer(final int compLayer) {
         this.compLayer = compLayer;
     }
 
     /**
      * Gets the compositing layer.
-     * 
+     *
      * @return The compositing layer
      */
     public int getCompositingLayer() {
@@ -173,7 +174,7 @@ public class DjatokaDecodeParam implements DjatokaConstants {
     /**
      * Gets a positive scaling factor (e.g. 0.85643), where 1.0 is the current size. Value must be greater than 0 and
      * less than 2.
-     * 
+     *
      * @return a positive scaling factor
      */
     public double getScalingFactor() {
@@ -183,16 +184,16 @@ public class DjatokaDecodeParam implements DjatokaConstants {
     /**
      * Sets a positive scaling factor (e.g. 0.85643), where 1.0 is the current size. Value must be greater than 0 and
      * less than 2.
-     * 
+     *
      * @param scalingFactor a positive scaling factor to be applied
      */
-    public void setScalingFactor(double scalingFactor) {
+    public void setScalingFactor(final double scalingFactor) {
         this.scalingFactor = scalingFactor;
     }
 
     /**
      * Gets the ScalingDimensions to be applied; w,h.
-     * 
+     *
      * @return null if no scaling is to be performed or an int[] with length of 2 containing w,h values
      */
     public int[] getScalingDimensions() {
@@ -201,19 +202,20 @@ public class DjatokaDecodeParam implements DjatokaConstants {
 
     /**
      * Sets the ScalingDimensions to be applied; w,h.
-     * 
+     *
      * @param scalingDims int[] with length of 2 containing w,h values. Use value of 0 to maintain aspect ratio and
      *        calculate second value.
      */
-    public void setScalingDimensions(int[] scalingDims) {
+    public void setScalingDimensions(final int[] scalingDims) {
         this.scalingDims = scalingDims;
     }
 
     /**
      * Returns the string representation of the configuration.
      */
+    @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         sb.append("{");
         sb.append("\"reduce\": \"" + reduce + "\", ");
         sb.append("\"level\": \"" + level + "\", ");

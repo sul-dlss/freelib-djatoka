@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.openurl;
@@ -30,7 +30,7 @@ import info.openurl.oom.entities.Referent;
 
 /**
  * Interface for OpenURL Referent Resolution.
- * 
+ *
  * @author Ryan Chute
  */
 public interface IReferentResolver {
@@ -38,7 +38,7 @@ public interface IReferentResolver {
     /**
      * Referent Identifier to be resolved from Identifier Resolver. The returned ImageRecord need only contain the
      * imageId and image file path.
-     * 
+     *
      * @param rftId identifier of the image to be resolved
      * @return ImageRecord instance containing resolvable metadata
      * @throws ResolverException
@@ -48,7 +48,7 @@ public interface IReferentResolver {
     /**
      * Referent to be resolved from Identifier Resolver. The returned ImageRecord need only contain the imageId and
      * image file path.
-     * 
+     *
      * @param rft an OpenURL OOM Referent instance to be used to resolved image.
      * @return ImageRecord instance containing resolvable metadata
      * @throws ResolverException
@@ -57,7 +57,7 @@ public interface IReferentResolver {
 
     /**
      * Sets a Properties object that may be used by underlying implementation
-     * 
+     *
      * @param props Properties object for use by implementation
      * @throws ResolverException
      */

@@ -11,43 +11,43 @@
 
 package org.oclc.oomRef.descriptors;
 
-import info.openurl.oom.descriptors.ByValueMetadataKev;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import info.openurl.oom.descriptors.ByValueMetadataKev;
 
 /**
- * A <em>Descriptor</em> that specifies properties of an <em>Entity</em> by the combination of: (1) a URI reference to a
- * <em>Metadata
- * Format</em> and (2) a particular instance of metadata about the <em>Entity</em>, expressed according to the indicated
- * <em>Metadata
+ * A <em>Descriptor</em> that specifies properties of an <em>Entity</em> by the combination of: (1) a URI reference to
+ * a <em>Metadata
+ * Format</em> and (2) a particular instance of metadata about the <em>Entity</em>, expressed according to the
+ * indicated <em>Metadata
  * Format</em>.
- * 
+ *
  * @author Jeffrey A. Young
  */
 public class ByValueMetadataKevImpl implements ByValueMetadataKev {
 
-    private URI val_fmt;
+    private final URI val_fmt;
 
-    private Map fieldMap = new HashMap();
+    private final Map fieldMap = new HashMap();
 
     /**
      * Constructs a By-Value Metadata descriptor
-     * 
+     *
      * @param val_fmt A URI reference to a <em>Metadata Format</em>.
      * @param prefix The KEV key prefix to be extracted from the entrySet
      * @param entrySet A set of all KEV keys from which a subset will be extracted according to the specified prefix.
      */
-    public ByValueMetadataKevImpl(URI val_fmt, String prefix, Set entrySet) {
+    public ByValueMetadataKevImpl(final URI val_fmt, final String prefix, final Set entrySet) {
         this.val_fmt = val_fmt;
-        Iterator iter = entrySet.iterator();
+        final Iterator iter = entrySet.iterator();
         while (iter.hasNext()) {
-            Map.Entry entry = (Entry) iter.next();
-            String key = (String) entry.getKey();
+            final Map.Entry entry = (Entry) iter.next();
+            final String key = (String) entry.getKey();
             if (entry.getKey().toString().startsWith(prefix)) {
                 fieldMap.put(key, entry.getValue());
             }
@@ -57,6 +57,7 @@ public class ByValueMetadataKevImpl implements ByValueMetadataKev {
     /**
      * Gets value format.
      */
+    @Override
     public URI getValFmt() {
         return val_fmt;
     }
@@ -64,6 +65,7 @@ public class ByValueMetadataKevImpl implements ByValueMetadataKev {
     /**
      * Gets field map.
      */
+    @Override
     public Map getFieldMap() {
         return fieldMap;
     }

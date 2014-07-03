@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  */
 
 package gov.lanl.adore.djatoka.openurl;
@@ -27,7 +27,7 @@ import gov.lanl.adore.djatoka.DjatokaException;
 
 /**
  * General Resolver Exception Handler
- * 
+ *
  * @author Ryan Chute
  */
 public class ResolverException extends DjatokaException {
@@ -36,29 +36,29 @@ public class ResolverException extends DjatokaException {
 
     /**
      * Creates a resolver exception using the supplied message.
-     * 
+     *
      * @param message The message of the exception
      */
-    public ResolverException(String message) {
+    public ResolverException(final String message) {
         super(message);
     }
 
     /**
      * Creates a resolver exception from the supplied Throwable using the supplied message.
-     * 
+     *
      * @param message The message of the exception
      * @param cause The underlying cause of the exception
      */
-    public ResolverException(String message, Throwable cause) {
+    public ResolverException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
     /**
      * Creates a resolver exception from the supplied Throwable.
-     * 
+     *
      * @param cause The underlying cause
      */
-    public ResolverException(Throwable cause) {
+    public ResolverException(final Throwable cause) {
         super(cause);
     }
 }
