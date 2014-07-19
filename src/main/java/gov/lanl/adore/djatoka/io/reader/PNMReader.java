@@ -36,7 +36,7 @@ import info.freelibrary.djatoka.io.PNMImage;
  * Returns BufferedImage give a PNM image InputStream or file path.
  *
  * @author Ryan Chute
- * @author Kevin S. Clarke &lt;<a href="mailto:ksclarke@gmail.com">ksclarke@gmail.com</a>&gt;
+ * @author Kevin S. Clarke
  */
 public class PNMReader implements IReader {
 

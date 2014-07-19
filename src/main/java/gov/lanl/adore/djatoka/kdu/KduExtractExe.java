@@ -27,21 +27,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
-import kdu_jni.Jp2_family_src;
-import kdu_jni.Jpx_source;
-import kdu_jni.KduException;
-import kdu_jni.Kdu_codestream;
-import kdu_jni.Kdu_coords;
-import kdu_jni.Kdu_dims;
-import kdu_jni.Kdu_global;
-import kdu_jni.Kdu_params;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +43,13 @@ import com.martiansoftware.jsap.CommandLineTokenizer;
 import gov.lanl.adore.djatoka.DjatokaDecodeParam;
 import gov.lanl.adore.djatoka.DjatokaException;
 import gov.lanl.adore.djatoka.IExtract;
+import gov.lanl.adore.djatoka.io.FormatFactory;
 import gov.lanl.adore.djatoka.io.reader.PNMReader;
+import gov.lanl.adore.djatoka.io.writer.JPGWriter;
 import gov.lanl.adore.djatoka.util.IOUtils;
 import gov.lanl.adore.djatoka.util.ImageProcessingUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
 import gov.lanl.adore.djatoka.util.JP2ImageInfo;
-import gov.lanl.util.ExecuteStreamHandler;
-import gov.lanl.util.PumpStreamHandler;
 
 /**
  * Java bridge for kdu_expand application
@@ -79,12 +71,10 @@ public class KduExtractExe implements IExtract {
 
     private final static BufferedImage OOB = getOutOfBoundsImage();
 
+    private static final FormatFactory FORMAT_FACTORY = new FormatFactory();
+
     /** Name of extraction executable */
     public static final String KDU_EXPAND_EXE = "kdu_expand";
-
-    public final static String STDOUT = "/dev/stdout";
-
-    public final static String STDIN = "/dev/stdin";
 
     static {
         env = System.getProperty("kakadu.home") + System.getProperty("file.separator");
@@ -103,243 +93,50 @@ public class KduExtractExe implements IExtract {
         LOGGER.debug("envParams: " + (envParams != null ? envParams[0] + " | " : "") + exe);
     }
 
-    /**
-     * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     *
-     * @param input InputStream containing a JPEG 2000 image bitstream.
-     * @param params DjatokaDecodeParam instance containing region and transform settings.
-     * @return extracted region as a BufferedImage
-     * @throws DjatokaException
-     */
-    public BufferedImage processUsingTemp(final InputStream input, final DjatokaDecodeParam params)
-            throws DjatokaException {
-        File in;
-
-        // Copy to tmp file
-        try {
-            in = File.createTempFile("tmp", ".jp2");
-            final FileOutputStream fos = new FileOutputStream(in);
-            in.deleteOnExit();
-            IOUtils.copyStream(input, fos);
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new DjatokaException(e.getMessage(), e);
-        }
-
-        final BufferedImage bi = process(in.getAbsolutePath(), params);
-
-        if (in != null) {
-            if (!in.delete() && LOGGER.isWarnEnabled()) {
-                LOGGER.warn("File not deleted: {}", in);
-            }
-        }
-
-        return bi;
-    }
-
-    /**
-     * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     *
-     * @param is InputStream containing a JPEG 2000 image bitstream.
-     * @param params DjatokaDecodeParam instance containing region and transform settings.
-     * @return extracted region as a BufferedImage
-     * @throws DjatokaException
-     */
     @Override
-    public BufferedImage process(final InputStream is, final DjatokaDecodeParam params) throws DjatokaException {
-        if (isWindows) {
-            return processUsingTemp(is, params);
-        }
-
+    public void extract(final String i, final String o, final DjatokaDecodeParam p, final String f)
+            throws DjatokaException {
         ArrayList<Double> dims = null;
 
-        if (params.getRegion() != null) {
+        if (p.getRegion() != null) {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            IOUtils.copyStream(is, baos);
-            final byte[] bytes = baos.toByteArray();
-            dims = getRegionMetadata(new ByteArrayInputStream(bytes), params);
-
-            return process(new ByteArrayInputStream(baos.toByteArray()), dims, params);
-        } else {
-            return process(is, dims, params);
-        }
-    }
-
-    /**
-     * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     *
-     * @param is InputStream containing a JPEG 2000 image bitstream.
-     * @param dims region extraction dimensions
-     * @param params DjatokaDecodeParam instance containing region and transform settings.
-     * @return extracted region as a BufferedImage
-     * @throws DjatokaException
-     */
-    public BufferedImage process(final InputStream is, final ArrayList<Double> dims, final DjatokaDecodeParam params)
-            throws DjatokaException {
-        final String input = STDIN;
-        final String output = STDOUT;
-        BufferedImage bi = null;
-
-        try {
-            final String command = getKduExtractCommand(input, output, dims, params);
-            final String[] cmdParts = CommandLineTokenizer.tokenize(command);
-            final Process process = Runtime.getRuntime().exec(cmdParts, envParams, new File(env));
-            final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-            final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-            final ExecuteStreamHandler streamHandler = new PumpStreamHandler(stdout, stderr, is);
+            InputStream ins = null;
 
             try {
-                streamHandler.setProcessInputStream(process.getOutputStream());
-                streamHandler.setProcessOutputStream(process.getInputStream());
-                streamHandler.setProcessErrorStream(process.getErrorStream());
-            } catch (final IOException e) {
-                LOGGER.error(e.getMessage(), e);
-
-                if (process != null) {
-                    closeStreams(process);
-                }
-
-                throw e;
-            }
-
-            streamHandler.start();
-
-            try {
-                waitFor(process);
-                final ByteArrayInputStream bais = new ByteArrayInputStream(stdout.toByteArray());
-                bi = new PNMReader().open(bais);
-                streamHandler.stop();
-            } catch (final ThreadDeath t) {
-                LOGGER.error(t.getMessage(), t);
-                process.destroy();
-                throw t;
+                ins = new FileInputStream(i);
+                IOUtils.copyStream(ins, baos);
+                dims = getRegionMetadata(new ByteArrayInputStream(baos.toByteArray()), p);
+            } catch (final FileNotFoundException details) {
+                throw new DjatokaException(details);
             } finally {
-                if (process != null) {
-                    closeStreams(process);
-                }
+                info.freelibrary.util.IOUtils.closeQuietly(ins);
+                info.freelibrary.util.IOUtils.closeQuietly(baos);
             }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new DjatokaException(e.getMessage(), e);
         }
 
-        return bi;
-    }
-
-    /**
-     * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     *
-     * @param input absolute file path of JPEG 2000 image file.
-     * @param params DjatokaDecodeParam instance containing region and transform settings.
-     * @return extracted region as a BufferedImage
-     * @throws DjatokaException
-     */
-    @Override
-    public BufferedImage process(final String input, final DjatokaDecodeParam params) throws DjatokaException {
-        String output = STDOUT;
-        File winOut = null;
-        BufferedImage bi = null;
-
-        if (isWindows) {
-            try {
-                winOut = File.createTempFile("pipe_", ".ppm");
-                winOut.deleteOnExit();
-            } catch (final IOException e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new DjatokaException(e.getMessage(), e);
-            }
-
-            output = winOut.getAbsolutePath();
-        }
-
-        final Runtime rt = Runtime.getRuntime();
+        final String command = getKduExtractCommand(i, o, dims, p);
+        final String[] cmdParts = CommandLineTokenizer.tokenize(command);
 
         try {
-            final ArrayList<Double> dims = getRegionMetadata(input, params);
-            final String command = getKduExtractCommand(input, output, dims, params);
-            final String[] cmdParts = CommandLineTokenizer.tokenize(command);
-            final Process process = rt.exec(cmdParts, envParams, new File(env));
+            final Process process = Runtime.getRuntime().exec(cmdParts, envParams, new File(env));
+            final int result = waitFor(process);
 
-            if (output != null) {
-                try {
-                    if (output.equals(STDOUT)) {
-                        bi = new PNMReader().open(new BufferedInputStream(process.getInputStream()));
-                    } else if (isWindows) {
-                        process.waitFor();
+            if (result != 0 && LOGGER.isErrorEnabled()) {
+                LOGGER.error("Extraction returned non-zero result");
+            } else {
+                final BufferedImage image = new PNMReader().open(o + ".ppm");
 
-                        try {
-                            bi = new PNMReader().open(new BufferedInputStream(new FileInputStream(new File(output))));
-                        } catch (final Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-
-                            if (winOut != null) {
-                                if (!winOut.delete() && LOGGER.isWarnEnabled()) {
-                                    LOGGER.warn("File not deleted: {}", winOut);
-                                }
-                            }
-
-                            throw e;
-                        }
-
-                        if (winOut != null) {
-                            winOut.delete();
-                        }
-                    }
-                } catch (final RuntimeException details) {
-                    LOGGER.debug("Request out of bounds: {}", details.getMessage());
-
-                    bi = OOB;
-                } catch (final Exception e) {
-                    String error = null;
-
-                    try {
-                        error = new String(IOUtils.getByteArray(process.getErrorStream()));
-                    } catch (final Exception e1) {
-                        e1.printStackTrace();
-                    }
-
-                    LOGGER.error(error, e);
-
-                    if (error != null) {
-                        throw new DjatokaException(error);
-                    } else {
-                        throw new DjatokaException(e.getMessage(), e);
-                    }
-                } finally {
-                    if (process != null) {
-                        closeStreams(process);
-                    }
-                }
+                // TODO make this support other than JPEGs (using format)
+                new JPGWriter().write(image, new FileOutputStream(o));
             }
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-
-        return bi;
-    }
-
-    /**
-     * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     *
-     * @param input ImageRecord wrapper containing file reference, inputstream, etc.
-     * @param params DjatokaDecodeParam instance containing region and transform settings.
-     * @return extracted region as a BufferedImage
-     * @throws DjatokaException
-     */
-    @Override
-    public BufferedImage process(final ImageRecord input, final DjatokaDecodeParam params) throws DjatokaException {
-        if (input.getImageFile() != null) {
-            return process(input, params);
-        } else if (input.getObject() != null) {
-            return process(getStreamFromObject(input.getObject()), params);
-        } else {
-            throw new DjatokaException("File not defined and Input Object Type " +
-                    input.getObject().getClass().getName() + " is not supported");
+        } catch (final Exception details) {
+            LOGGER.error(details.getMessage(), details);
+            throw new DjatokaException(details.getMessage(), details);
         }
     }
 
     /**
-     * Gets Kdu Extract Command-line based on dims and params
+     * Gets KDU Extract Command-line based on dims and parameters.
      *
      * @param input absolute file path of JPEG 2000 image file.
      * @param output absolute file path of PGM output image
@@ -351,14 +148,10 @@ public class KduExtractExe implements IExtract {
             final DjatokaDecodeParam params) {
         final StringBuffer command = new StringBuffer(exe);
 
-        if (input.equals(STDIN)) {
-            command.append(" -no_seek");
-        }
-
         command.append(" -quiet -i ");
         command.append(escape(new File(input).getAbsolutePath()));
         command.append(" -o ");
-        command.append(escape(new File(output).getAbsolutePath()));
+        command.append(escape(new File(output).getAbsolutePath()) + ".ppm");
         command.append(" ").append(toKduExtractArgs(params));
 
         if (dims != null && dims.size() == 4) {
@@ -387,100 +180,39 @@ public class KduExtractExe implements IExtract {
      * @throws DjatokaException
      */
     @Override
-    public final ImageRecord getMetadata(final ImageRecord r) throws DjatokaException {
+    public final ImageRecord getMetadata(final ImageRecord r) throws DjatokaException, FileNotFoundException {
+        final BufferedInputStream imageStream = null;
+
         if (r == null) {
             throw new DjatokaException("ImageRecord is null");
         }
 
         if (r.getImageFile() == null && r.getObject() != null) {
-            final ImageRecord ir = getMetadata(getStreamFromObject(r.getObject()));
-            ir.setObject(r.getObject());
+            final Object irObj = r.getObject();
+            final ImageRecord ir = getMetadata(getStreamFromObject(irObj));
+
+            ir.setObject(irObj);
+
             return ir;
         }
 
         final File f = new File(r.getImageFile());
 
         if (!f.exists()) {
-            throw new DjatokaException("Image Does Not Exist");
+            throw new FileNotFoundException("Image doesn't exist: " + f.getAbsolutePath());
         }
 
         if (!ImageProcessingUtils.checkIfJp2(r.getImageFile())) {
-            throw new DjatokaException("Not a JP2 image.");
+            throw new DjatokaException("Image is not a JP2: " + f.getAbsolutePath());
         }
-
-        if (f.length() <= 4096) {
-            FileInputStream fis = null;
-
-            // If < 4K bytes, image may be corrupt;
-            // use safer pure Java Metadata gatherer.
-            try {
-                fis = new FileInputStream(f);
-                return getMetadata(fis);
-            } catch (final Exception e) {
-                throw new DjatokaException("Invalid file.");
-            } finally {
-                info.freelibrary.util.IOUtils.closeQuietly(fis);
-            }
-        }
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Checking: java.library.path = {}", System.getProperty("java.library.path"));
-        }
-
-        final Jpx_source inputSource = new Jpx_source();
-        final Jp2_family_src jp2_family_in = new Jp2_family_src();
-
-        final int ref_component = 0;
 
         try {
-            jp2_family_in.Open(r.getImageFile(), true);
-            inputSource.Open(jp2_family_in, true);
-            final Kdu_codestream codestream = new Kdu_codestream();
-            codestream.Create(inputSource.Access_codestream(ref_component).Open_stream());
-
-            final int minLevels = codestream.Get_min_dwt_levels();
-            final int depth = codestream.Get_bit_depth(ref_component);
-            final int colors = codestream.Get_num_components();
-            final int[] frames = new int[1];
-            inputSource.Count_compositing_layers(frames);
-            final Kdu_dims image_dims = new Kdu_dims();
-            codestream.Get_dims(ref_component, image_dims);
-            final Kdu_coords imageSize = image_dims.Access_size();
-
-            r.setWidth(imageSize.Get_x());
-            r.setHeight(imageSize.Get_y());
-            r.setDWTLevels(minLevels);
-
-            final int djatokaLevels = ImageProcessingUtils.getLevelCount(r.getWidth(), r.getHeight());
-
-            r.setLevels(djatokaLevels > minLevels ? minLevels : djatokaLevels);
-            r.setBitDepth(depth);
-            r.setNumChannels(colors);
-            r.setCompositingLayerCount(frames[0]);
-
-            final int[] v = new int[1];
-            final Kdu_params p = codestream.Access_siz().Access_cluster("COD");
-
-            if (p != null) {
-                p.Get(Kdu_global.Clayers, 0, 0, v, true, true, true);
-
-                if (v[0] > 0) {
-                    r.setQualityLayers(v[0]);
-                }
-            }
-
-            if (codestream.Exists()) {
-                codestream.Destroy();
-            }
-
-            inputSource.Native_destroy();
-            jp2_family_in.Native_destroy();
-        } catch (final KduException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new DjatokaException(e.getMessage(), e);
+            return getMetadata(new BufferedInputStream(new FileInputStream(f)));
+        } catch (final Exception details) {
+            throw new DjatokaException("Image isn't a valid JP2 file: " + details.getMessage(), details);
+        } finally {
+            info.freelibrary.util.IOUtils.closeQuietly(imageStream);
         }
-
-        return r;
     }
 
     /**
@@ -557,9 +289,8 @@ public class KduExtractExe implements IExtract {
     }
 
     private final ArrayList<Double> getRegionMetadata(final String input, final DjatokaDecodeParam params)
-            throws DjatokaException {
-        final ImageRecord r = getMetadata(new ImageRecord(input));
-        return getRegionMetadata(r, params);
+            throws DjatokaException, FileNotFoundException {
+        return getRegionMetadata(getMetadata(new ImageRecord(input)), params);
     }
 
     private final ArrayList<Double> getRegionMetadata(final ImageRecord r, final DjatokaDecodeParam params)

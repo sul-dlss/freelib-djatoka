@@ -58,16 +58,14 @@ public class DjatokaCompress {
      * @param args command line parameters to defined input,output,etc.
      */
     public static void main(final String[] args) {
-        // create the command line parser
         final CommandLineParser parser = new PosixParser();
-
-        // create the Options
         final Options options = new Options();
+
         options.addOption("i", "input", true, "Filepath of the input file or dir.");
         options.addOption("o", "output", true, "Filepath of the output file or dir.");
         options.addOption("r", "rate", true, "Absolute Compression Ratio");
-        options.addOption("s", "slope", true,
-                "Used to generate relative compression ratio based on content characteristics.");
+        // options.addOption("s", "slope", true,
+        // "Used to generate relative compression ratio based on content characteristics.");
         options.addOption("y", "Clayers", true, "Number of quality levels.");
         options.addOption("l", "Clevels", true, "Number of DWT levels (reolution levels).");
         options.addOption("v", "Creversible", true, "Use Reversible Wavelet");
@@ -90,80 +88,100 @@ public class DjatokaCompress {
             // parse the command line arguments
             final CommandLine line = parser.parse(options, args);
             final String input = line.getOptionValue("i");
-            String output = line.getOptionValue("o");
-
             final String propsFile = line.getOptionValue("p");
+            final String rate = line.getOptionValue("r");
+            final String slope = line.getOptionValue("s");
+            final String Clayers = line.getOptionValue("y");
+            final String Clevels = line.getOptionValue("l");
+            final String Creversible = line.getOptionValue("v");
+            final String Cprecincts = line.getOptionValue("c");
+            final String Corder = line.getOptionValue("d");
+            final String ORGgen_plt = line.getOptionValue("g");
+            final String Cblk = line.getOptionValue("b");
+            final String alt = line.getOptionValue("a");
+            final String jp2ColorSpace = line.getOptionValue("j");
+
+            String output = line.getOptionValue("o");
             DjatokaEncodeParam p;
+
             if (propsFile != null) {
                 final Properties props = IOUtils.loadConfigByPath(propsFile);
+
                 p = new DjatokaEncodeParam(props);
             } else {
                 p = new DjatokaEncodeParam();
             }
-            final String rate = line.getOptionValue("r");
+
             if (rate != null) {
                 p.setRate(rate);
             }
-            final String slope = line.getOptionValue("s");
+
             if (slope != null) {
                 p.setSlope(slope);
             }
-            final String Clayers = line.getOptionValue("y");
+
             if (Clayers != null) {
                 p.setLayers(Integer.parseInt(Clayers));
             }
-            final String Clevels = line.getOptionValue("l");
+
             if (Clevels != null) {
                 p.setLevels(Integer.parseInt(Clevels));
             }
-            final String Creversible = line.getOptionValue("v");
+
             if (Creversible != null) {
                 p.setUseReversible(Boolean.parseBoolean(Creversible));
             }
-            final String Cprecincts = line.getOptionValue("c");
+
             if (Cprecincts != null) {
                 p.setPrecincts(Cprecincts);
             }
-            final String Corder = line.getOptionValue("d");
+
             if (Corder != null) {
                 p.setProgressionOrder(Corder);
             }
-            final String ORGgen_plt = line.getOptionValue("g");
+
             if (ORGgen_plt != null) {
                 p.setInsertPLT(Boolean.parseBoolean(ORGgen_plt));
             }
-            final String Cblk = line.getOptionValue("b");
+
             if (Cblk != null) {
                 p.setCodeBlockSize(Cblk);
             }
-            final String alt = line.getOptionValue("a");
-            final String jp2ColorSpace = line.getOptionValue("j");
+
             if (jp2ColorSpace != null) {
                 p.setJP2ColorSpace(jp2ColorSpace);
             }
 
             ICompress jp2 = new KduCompressExe();
+
             if (alt != null) {
                 jp2 = (ICompress) Class.forName(alt).newInstance();
             }
+
             if (new File(input).isDirectory() && new File(output).isDirectory()) {
                 final ArrayList<File> files = IOUtils.getFileList(input, new SourceImageFileFilter(), false);
+
                 for (final File f : files) {
                     final long x = System.currentTimeMillis();
-                    final File outFile =
-                            new File(output, f.getName().substring(0, f.getName().indexOf(".")) + ".jp2");
+                    final String name = f.getName().substring(0, f.getName().indexOf("."));
+                    final File outFile = new File(output, name + ".jp2");
+
                     compress(jp2, f.getAbsolutePath(), outFile.getAbsolutePath(), p);
                     report(f.getAbsolutePath(), x);
                 }
             } else {
                 final long x = System.currentTimeMillis();
                 final File f = new File(input);
+                final String name = f.getName().substring(0, f.getName().indexOf("."));
+
                 if (output == null) {
-                    output = f.getName().substring(0, f.getName().indexOf(".")) + ".jp2";
+                    output = name + ".jp2";
                 }
+
                 if (new File(output).isDirectory()) {
-                    output = output + f.getName().substring(0, f.getName().indexOf(".")) + ".jp2";
+                    output = name + ".jp2";
                 }
+
                 compress(jp2, input, output, p);
                 report(input, x);
             }

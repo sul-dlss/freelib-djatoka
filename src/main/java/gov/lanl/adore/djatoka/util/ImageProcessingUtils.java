@@ -300,13 +300,16 @@ public class ImageProcessingUtils {
      */
     public static boolean isUncompressedTiff(final String file) {
         final File f = new File(file);
-        FileInfo[] fi = null;
         final TiffDecoder ti = new TiffDecoder(f.getParent() + "/", f.getName());
+
+        FileInfo[] fi = null;
+
         try {
             fi = ti.getTiffInfo();
         } catch (final IOException e) {
             return false;
         }
+
         if (fi[0].compression == 1) {
             return true;
         } else {

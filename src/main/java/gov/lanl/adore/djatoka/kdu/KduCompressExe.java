@@ -42,6 +42,8 @@ import gov.lanl.adore.djatoka.util.ImageProcessingUtils;
 import gov.lanl.adore.djatoka.util.ImageRecord;
 import gov.lanl.adore.djatoka.util.ImageRecordUtils;
 
+import info.freelibrary.util.StringUtils;
+
 /**
  * Java bridge for kdu_compress application
  *
@@ -122,7 +124,9 @@ public class KduCompressExe implements ICompress {
         if (params.getLevels() == 0) {
             params.setLevels(ImageProcessingUtils.getLevelCount(bi.getWidth(), bi.getHeight()));
         }
+
         File in = null;
+
         try {
             in = IOUtils.createTempTiff(bi);
             compressImage(in.getAbsolutePath(), output, params);
@@ -163,11 +167,14 @@ public class KduCompressExe implements ICompress {
         if (params.getLevels() == 0) {
             params.setLevels(ImageProcessingUtils.getLevelCount(bi.getWidth(), bi.getHeight()));
         }
+
         File in = null;
         File out = null;
+
         try {
             in = IOUtils.createTempTiff(bi);
             out = File.createTempFile("tmp", ".jp2");
+
             compressImage(in.getAbsolutePath(), out.getAbsolutePath(), params);
             IOUtils.copyStream(new FileInputStream(out), output);
         } catch (final IOException e) {
@@ -183,6 +190,7 @@ public class KduCompressExe implements ICompress {
                 LOGGER.warn("File not deleted: {}", in);
             }
         }
+
         if (out != null) {
             if (!out.delete() && LOGGER.isWarnEnabled()) {
                 LOGGER.warn("File not deleted: {}", out);
@@ -210,12 +218,16 @@ public class KduCompressExe implements ICompress {
         }
 
         File inputFile;
+
         try {
             inputFile = File.createTempFile("tmp", ".tif");
             inputFile.deleteOnExit();
+
             IOUtils.copyStream(input, new FileOutputStream(inputFile));
+
             if (params.getLevels() == 0) {
                 ImageRecord dim = ImageRecordUtils.getImageDimensions(inputFile.getAbsolutePath());
+
                 params.setLevels(ImageProcessingUtils.getLevelCount(dim.getWidth(), dim.getHeight()));
                 dim = null;
             }
@@ -251,9 +263,11 @@ public class KduCompressExe implements ICompress {
         }
 
         File inputFile = null;
+
         try {
             inputFile = File.createTempFile("tmp", ".tif");
             IOUtils.copyStream(input, new FileOutputStream(inputFile));
+
             if (params.getLevels() == 0) {
                 ImageRecord dim = ImageRecordUtils.getImageDimensions(inputFile.getAbsolutePath());
                 params.setLevels(ImageProcessingUtils.getLevelCount(dim.getWidth(), dim.getHeight()));
@@ -266,6 +280,7 @@ public class KduCompressExe implements ICompress {
 
         String out = STDOUT;
         File winOut = null;
+
         if (isWindows) {
             try {
                 winOut = File.createTempFile("pipe_", ".jp2");
@@ -273,33 +288,46 @@ public class KduCompressExe implements ICompress {
                 LOGGER.error(e.getMessage(), e);
                 throw new DjatokaException(e.getMessage(), e);
             }
+
             out = winOut.getAbsolutePath();
         }
 
         final String command = getKduCompressCommand(inputFile.getAbsolutePath(), out, params);
         final String[] cmdParts = CommandLineTokenizer.tokenize(command);
         final Runtime rt = Runtime.getRuntime();
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Compress command with environment: {} [{}]", StringUtils.toString(cmdParts, '|'), envParams);
+        }
+
         try {
             final Process process = rt.exec(cmdParts, envParams, new File(env));
+
             if (out.equals(STDOUT)) {
                 IOUtils.copyStream(process.getInputStream(), output);
             } else if (isWindows) {
                 final FileInputStream fis = new FileInputStream(out);
+
                 IOUtils.copyStream(fis, output);
                 fis.close();
             }
+
             process.waitFor();
+
             if (process != null) {
                 String errorCheck = null;
+
                 try {
                     errorCheck = new String(IOUtils.getByteArray(process.getErrorStream()));
                 } catch (final Exception e1) {
                     LOGGER.error(e1.getMessage(), e1);
                 }
+
                 process.getInputStream().close();
                 process.getOutputStream().close();
                 process.getErrorStream().close();
                 process.destroy();
+
                 if (errorCheck != null) {
                     throw new DjatokaException(errorCheck);
                 }
@@ -317,6 +345,7 @@ public class KduCompressExe implements ICompress {
                 LOGGER.warn("File not deleted: {}", inputFile);
             }
         }
+
         if (winOut != null) {
             if (!winOut.delete() && LOGGER.isWarnEnabled()) {
                 LOGGER.warn("File not deleted: {}", winOut);
@@ -369,6 +398,7 @@ public class KduCompressExe implements ICompress {
 
         if (params.getLevels() == 0) {
             ImageRecord dim = ImageRecordUtils.getImageDimensions(inputFile.getAbsolutePath());
+
             params.setLevels(ImageProcessingUtils.getLevelCount(dim.getWidth(), dim.getHeight()));
             dim = null;
         }
@@ -378,34 +408,64 @@ public class KduCompressExe implements ICompress {
         final String[] cmdParts = CommandLineTokenizer.tokenize(command);
         final Runtime rt = Runtime.getRuntime();
 
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Executed command and environment: {} [{}]", StringUtils.toString(cmdParts, ' '),
+                    StringUtils.toString(envParams, '|'));
+            LOGGER.debug("Input file '{}' " + (inputFile.exists() ? "exists" : "doesn't exist"), inputFile);
+        }
+
         try {
             final Process process = rt.exec(cmdParts, envParams, new File(env));
-            process.waitFor();
+            final int result = process.waitFor();
+            // if (result != 0) {
+            LOGGER.debug("Result: {}", result);
+            // }
 
-            if (process != null) {
-                String errorCheck = null;
+            String errorCheck = null;
+            String outputCheck = null;
 
-                try {
-                    final InputStream inStream = process.getErrorStream();
-                    errorCheck = new String(IOUtils.getByteArray(inStream));
-                } catch (final Exception e1) {
-                }
-
-                process.getInputStream().close();
-                process.getOutputStream().close();
-                process.getErrorStream().close();
-                process.destroy();
-
-                if (errorCheck != null && !errorCheck.equals("")) {
-                    throw new DjatokaException(errorCheck);
+            try {
+                final InputStream inStream = process.getErrorStream();
+                errorCheck = new String(IOUtils.getByteArray(inStream));
+            } catch (final Exception details) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Getting error stream failed: {}", details.getMessage());
                 }
             }
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new DjatokaException(e.getMessage(), e);
-        } catch (final InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new DjatokaException(e.getMessage(), e);
+
+            try {
+                final InputStream outStream = process.getInputStream();
+                outputCheck = new String(IOUtils.getByteArray(outStream));
+            } catch (final Exception details) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Getting output stream failed: {}", details.getMessage());
+                }
+            }
+
+            process.getInputStream().close();
+            process.getOutputStream().close();
+            process.getErrorStream().close();
+            process.destroy();
+
+            if (errorCheck != null && !errorCheck.equals("")) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Error check message: {}", errorCheck);
+                }
+
+                throw new DjatokaException(errorCheck);
+            }
+
+            if (outputCheck != null && !outputCheck.equals("")) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Output check message: {}", outputCheck);
+                }
+            }
+        } catch (final IOException details) {
+            LOGGER.error(details.getMessage(), details);
+            throw new DjatokaException(details.getMessage(), details);
+        } catch (final InterruptedException details) {
+            LOGGER.error(details.getMessage(), details);
+            throw new DjatokaException(details.getMessage(), details);
         } finally {
             if (tmp) {
                 if (!inputFile.delete() && LOGGER.isWarnEnabled()) {
@@ -430,6 +490,7 @@ public class KduCompressExe implements ICompress {
     public static final String getKduCompressCommand(final String input, final String output,
             final DjatokaEncodeParam params) {
         final StringBuffer command = new StringBuffer(exe);
+
         command.append(" -quiet -i ").append(escape(new File(input).getAbsolutePath()));
         command.append(" -o ").append(escape(new File(output).getAbsolutePath()));
         command.append(" ").append(toKduCompressArgs(params));
@@ -451,32 +512,44 @@ public class KduCompressExe implements ICompress {
 
     private static String toKduCompressArgs(final DjatokaEncodeParam params) {
         final StringBuffer sb = new StringBuffer();
+
         if (params.getRate() != null) {
             sb.append("-rate ").append(params.getRate()).append(" ");
         } else {
-            sb.append("-slope ").append(params.getSlope()).append(" ");
+            sb.append("-rate ").append("0.8 ");
         }
+        // } else {
+        // sb.append("-slope ").append(params.getSlope()).append(" ");
+        // }
+
         if (params.getLevels() > 0) {
             sb.append("Clevels=").append(params.getLevels()).append(" ");
         }
+
         if (params.getPrecincts() != null) {
             sb.append("Cprecincts=").append(escape(params.getPrecincts()));
             sb.append(" ");
         }
+
         if (params.getLayers() > 0) {
             sb.append("Clayers=").append(params.getLayers()).append(" ");
         }
+
         if (params.getProgressionOrder() != null) {
             sb.append("Corder=").append(params.getProgressionOrder()).append(" ");
         }
+
         if (params.getPacketDivision() != null) {
             sb.append("ORGtparts=").append(params.getPacketDivision()).append(" ");
         }
+
         if (params.getCodeBlockSize() != null) {
             sb.append("Cblk=").append(escape(params.getCodeBlockSize())).append(" ");
         }
+
         sb.append("ORGgen_plt=").append(params.getInsertPLT() ? "yes" : "no").append(" ");
         sb.append("Creversible=").append(params.getUseReversible() ? "yes" : "no").append(" ");
+
         if (params.getJP2ColorSpace() != null && !params.getJP2ColorSpace().isEmpty()) {
             sb.append("-jp2_space ").append(params.getJP2ColorSpace());
             sb.append(' ');

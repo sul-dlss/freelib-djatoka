@@ -24,6 +24,7 @@
 package gov.lanl.adore.djatoka.openurl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -39,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.lanl.adore.djatoka.DjatokaException;
 import gov.lanl.adore.djatoka.IExtract;
 import gov.lanl.adore.djatoka.io.FormatConstants;
 import gov.lanl.adore.djatoka.kdu.KduExtractExe;
@@ -142,17 +142,17 @@ public class OpenURLJP2KMetadata implements Service, FormatConstants {
             rootNode.put("compositingLayerCount", r.getCompositingLayerCount());
 
             mapper.writeValue(baos, rootNode);
-        } catch (final DjatokaException e) {
+        } catch (final FileNotFoundException details) {
             responseFormat = "text/plain";
             status = HttpServletResponse.SC_NOT_FOUND;
-        } catch (final Exception e) {
+        } catch (final Exception details) {
             baos = new ByteArrayOutputStream();
 
             try {
-                if (e.getMessage() != null) {
-                    baos.write(e.getMessage().getBytes("UTF-8"));
+                if (details.getMessage() != null) {
+                    baos.write(details.getMessage().getBytes("UTF-8"));
                 } else {
-                    LOGGER.error(e.getMessage(), e);
+                    LOGGER.error(details.getMessage(), details);
                     baos.write("Internal Server Error: ".getBytes());
                 }
             } catch (final UnsupportedEncodingException e1) {

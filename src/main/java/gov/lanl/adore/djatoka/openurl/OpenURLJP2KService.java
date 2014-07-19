@@ -21,13 +21,13 @@
 
 package gov.lanl.adore.djatoka.openurl;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import gov.lanl.adore.djatoka.DjatokaDecodeParam;
 import gov.lanl.adore.djatoka.DjatokaException;
-import gov.lanl.adore.djatoka.DjatokaExtractProcessor;
+import gov.lanl.adore.djatoka.IExtract;
 import gov.lanl.adore.djatoka.io.FormatConstants;
 import gov.lanl.adore.djatoka.kdu.KduExtractExe;
 import gov.lanl.adore.djatoka.plugin.ITransformPlugIn;
@@ -116,7 +116,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
     private static TileCacheManager<String, String> tileCache;
 
-    private static DjatokaExtractProcessor extractor;
+    private static IExtract extractor;
 
     private static int maxPixels = DEFAULT_CACHE_MAXPIXELS;
 
@@ -176,7 +176,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                 } else {
                     scaleCacheExceptions = new HashSet<Double>();
                 }
-                extractor = new DjatokaExtractProcessor(new KduExtractExe());
+                extractor = new KduExtractExe();
                 init = true;
             }
         } catch (final IOException e) {
@@ -291,39 +291,46 @@ public class OpenURLJP2KService implements Service, FormatConstants {
 
                     if (transformCheck && transform != null) {
                         final HashMap<String, String> instProps = new HashMap<String, String>();
+
                         if (r.getInstProps() != null) {
                             instProps.putAll(r.getInstProps());
                         }
-                        int l = contextObject.getRequesters().length;
+
                         final Requester[] req = contextObject.getRequesters();
-                        if (l > 0 && req[0].getDescriptors().length > 0) {
+
+                        if (req.length > 0 && req[0].getDescriptors().length > 0) {
                             final String rs = req[0].getDescriptors()[0].toString();
                             instProps.put(PROPS_REQUESTER, rs);
                         }
-                        l = contextObject.getReferringEntities().length;
-                        ReferringEntity[] rea;
-                        rea = contextObject.getReferringEntities();
-                        if (l > 0 && rea[0].getDescriptors().length > 0) {
+
+                        final ReferringEntity[] rea = contextObject.getReferringEntities();
+
+                        if (rea.length > 0 && rea[0].getDescriptors().length > 0) {
                             instProps.put(PROPS_REFERRING_ENTITY, contextObject.getReferringEntities()[0]
                                     .getDescriptors()[0].toString());
                         }
+
                         if (instProps.size() > 0) {
                             transform.setInstanceProps(instProps);
                         }
+
                         params.setTransform(transform);
                     }
+
                     if (!cacheTiles || !isCacheable(params)) {
                         if (LOGGER.isWarnEnabled()) {
                             LOGGER.warn("Not using the OpenURL layer cache");
                         }
 
-                        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        extractor.extractImage(r.getImageFile(), baos, params, format);
-                        bytes = baos.toByteArray();
-                        baos.close();
+                        final File f = File.createTempFile(Long.toString(new Date().getTime()), getExtension(format));
+                        extractor.extract(r.getImageFile(), f.getAbsolutePath(), params, format);
+
+                        bytes = IOUtils.getBytesFromFile(f);
+                        f.delete();
                     } else {
                         final String ext = getExtension(format);
                         final String hash = getTileHash(r, params);
+
                         String file = tileCache.get(hash + ext);
                         File f;
 
@@ -353,7 +360,17 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                             file = f.getAbsolutePath();
                             djatokaCacheFile = file;
 
-                            extractor.extractImage(r.getImageFile(), file, params, format);
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Extracting derivative from: '{}' into: '{}'", r.getImageFile(), file);
+                            }
+
+                            try {
+                                extractor.extract(r.getImageFile(), file, params, format);
+                            } catch (final Exception details) {
+                                LOGGER.debug("WARNING EXCEPTION: {}", details.getMessage());
+                            } catch (final Error details) {
+                                LOGGER.debug("WARNING ERROR: {}", details.getMessage());
+                            }
 
                             if (tileCache.get(hash + ext) == null) {
                                 tileCache.put(hash + ext, file);
@@ -363,8 +380,7 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                                     LOGGER.debug("makingTile: " + file + " " + bytes.length + " params: " + params);
                                 }
                             } else {
-                                // Handles simultaneous request on separate
-                                // thread, ignores cache.
+                                // Handles simultaneous request on separate thread, ignores cache
                                 bytes = IOUtils.getBytesFromFile(f);
 
                                 if (!f.delete() && LOGGER.isWarnEnabled()) {

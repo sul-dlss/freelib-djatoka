@@ -56,17 +56,13 @@
   </appender>
 
   <!-- Individual class level logging; then each off or on as needed -->
-  <!--
-  <logger name="info.freelibrary.util" level="DEBUG" additivity="false">
-    <appender-ref ref="CONSOLE"/>
-  </logger>
-  <logger name="info.freelibrary.djatoka.view.ImageServlet" level="DEBUG"/>-->
-  <logger name="info.freelibrary.djatoka.view.IdentifierResolver" level="DEBUG"/>
-  <logger name="gov.lanl.adore.djatoka.openurl.DjatokaImageMigrator" level="DEBUG" />
-  <logger name="gov.lanl.adore.djatoka.openurl.OpenURLJP2KService" level="DEBUG"/><!--
+  <logger name="info.freelibrary.djatoka" level="DEBUG"/>
+  <logger name="gov.lanl.adore.djatoka.openurl" level="DEBUG" />
+  <logger name="gov.lanl.adore.djatoka.kdu" level="DEBUG" />
+<!--
   <logger name="info.freelibrary.maven.DjatokaResampleMojo" level="DEBUG"/>
   <logger name="info.freelibrary.djatoka.util.DebugServletFilter" level="DEBUG"/>
-  -->
+-->
 
   <logger name="org.apache.maven" level="ERROR"/>
 

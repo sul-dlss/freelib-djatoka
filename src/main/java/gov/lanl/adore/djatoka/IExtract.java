@@ -23,48 +23,27 @@
 
 package gov.lanl.adore.djatoka;
 
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
+import java.io.FileNotFoundException;
 
 import gov.lanl.adore.djatoka.util.ImageRecord;
 
 /**
- * Abstract extraction interface. Allows use of common input method (e.g. String path, InputStream). The underlying
- * implementations are responsible for handling a file path or InputStream and returning a BufferedImage.
+ * Abstract extraction interface.
  *
- * @author Ryan Chute
+ * @author Kevin S. Clarke
  */
 public interface IExtract {
 
     /**
      * Extracts region defined in DjatokaDecodeParam as BufferedImage
      *
-     * @param input InputStream containing a JPEG 2000 image bitstream.
-     * @param params DjatokaDecodeParam instance containing region and transform settings.
-     * @return extracted region as a BufferedImage
-     * @throws DjatokaException
-     */
-    public BufferedImage process(InputStream input, DjatokaDecodeParam params) throws DjatokaException;
-
-    /**
-     * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     *
      * @param input absolute file path of JPEG 2000 image file.
+     * @param output absolute file path of extracted image file.
      * @param params DjatokaDecodeParam instance containing region and transform settings.
-     * @return extracted region as a BufferedImage
      * @throws DjatokaException
      */
-    public BufferedImage process(String input, DjatokaDecodeParam params) throws DjatokaException;
-
-    /**
-     * Extracts region defined in DjatokaDecodeParam as BufferedImage
-     *
-     * @param input ImageRecord wrapper containing file reference, inputstream, etc.
-     * @param params DjatokaDecodeParam instance containing region and transform settings.
-     * @return extracted region as a BufferedImage
-     * @throws DjatokaException
-     */
-    public BufferedImage process(ImageRecord input, DjatokaDecodeParam params) throws DjatokaException;
+    public void extract(String input, String output, DjatokaDecodeParam params, String format)
+            throws DjatokaException;
 
     /**
      * Returns JPEG 2000 width, height, resolution levels in Integer[]
@@ -73,7 +52,7 @@ public interface IExtract {
      * @return a populated ImageRecord object containing width,height,DWT levels of image
      * @throws DjatokaException
      */
-    public ImageRecord getMetadata(ImageRecord input) throws DjatokaException;
+    public ImageRecord getMetadata(ImageRecord input) throws DjatokaException, FileNotFoundException;
 
     /**
      * Returns JPEG 2000 XML Box data in String[]

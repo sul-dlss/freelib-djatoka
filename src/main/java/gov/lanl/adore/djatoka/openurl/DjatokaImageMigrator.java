@@ -146,9 +146,12 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
             final URL url = aURI.toURL();
             InputStream source = IOUtils.getInputStream(url);
 
-            // If we know it's JP2 at this point, it's because it's been passed
-            // in as one of our parsable URLs.
+            // If we know it's a JP2 already at this point
             if (isJp2 && myPtRootDir != null) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Recognized by magic as a JPEG 2000");
+                }
+
                 final PairtreeRoot pairtree = new PairtreeRoot(myPtRootDir);
                 final PairtreeObject dir = pairtree.getObject(aReferent);
                 final String filename = PairtreeUtils.encodeID(aReferent);
@@ -192,11 +195,19 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                 final int hash = aURI.hashCode();
 
                 if (ext.equals(FORMAT_ID_TIF) || ext.equals(FORMAT_ID_TIFF)) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Recognized by its extension as a TIFF");
+                    }
+
                     ext = "." + FORMAT_ID_TIF;
                     file = File.createTempFile("convert" + hash, ext);
                 } else if (formatMap.containsKey(ext) &&
                         (formatMap.get(ext).equals(FORMAT_MIMEYPE_JP2) || formatMap.get(ext).equals(
                                 FORMAT_MIMEYPE_JPX))) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Recognized by its extension as a JPEG 2000 image");
+                    }
+
                     file = File.createTempFile("cache" + hash, "." + ext);
                     isJp2 = true;
                 } else {
@@ -205,6 +216,10 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                     }
 
                     if (ImageProcessingUtils.checkIfJp2(source)) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Checked whether it was a JP2 and it was one");
+                        }
+
                         ext = "." + FORMAT_ID_JP2;
                         file = File.createTempFile("cache" + hash, ext);
                     }
@@ -259,6 +274,10 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
         final String imgPath = img.getAbsolutePath();
         final String fmt = formatMap.get(imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase());
 
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Processing a newly ingested image: ({} | {})", img, uri);
+        }
+
         try {
             if (fmt == null || !ImageProcessingUtils.isJp2Type(fmt)) {
                 final ICompress jp2 = new KduCompressExe();
@@ -284,6 +303,10 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
                 }
             }
         } catch (final Exception e) {
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Exception!! ", e.getMessage());
+            }
+
             throw new DjatokaException(e.getMessage(), e);
         }
 

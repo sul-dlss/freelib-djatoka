@@ -38,6 +38,7 @@ import gov.lanl.adore.djatoka.kdu.KduExtractExe;
  * Extraction Application
  *
  * @author Ryan Chute
+ * @author Kevin S. Clarke
  */
 public class DjatokaExtract {
 
@@ -52,7 +53,6 @@ public class DjatokaExtract {
      * @param args command line parameters to defined input,output,etc.
      */
     public static void main(final String[] args) {
-        // create the command line parser
         final CommandLineParser parser = new PosixParser();
 
         // create the Options
@@ -70,7 +70,6 @@ public class DjatokaExtract {
         options.addOption("t", "rotate", true, "Number of degrees to rotate image (i.e. 90, 180, 270).");
         options.addOption("f", "format", true,
                 "Mimetype of the image format to be provided as response. Default: image/jpeg");
-        options.addOption("a", "AltImpl", true, "Alternate IExtract Implemenation");
 
         try {
             if (args.length == 0) {
@@ -82,31 +81,43 @@ public class DjatokaExtract {
             // parse the command line arguments
             final CommandLine line = parser.parse(options, args);
             final String input = line.getOptionValue("i");
+
             String output = line.getOptionValue("o");
 
             final DjatokaDecodeParam p = new DjatokaDecodeParam();
             final String level = line.getOptionValue("l");
+
             if (level != null) {
                 p.setLevel(Integer.parseInt(level));
             }
+
             final String reduce = line.getOptionValue("d");
+
             if (level == null && reduce != null) {
                 p.setLevelReductionFactor(Integer.parseInt(reduce));
             }
+
             final String region = line.getOptionValue("r");
+
             if (region != null) {
                 p.setRegion(region);
             }
+
             final String cl = line.getOptionValue("c");
+
             if (cl != null) {
                 final int clayer = Integer.parseInt(cl);
+
                 if (clayer > 0) {
                     p.setCompositingLayer(clayer);
                 }
             }
+
             final String scale = line.getOptionValue("s");
+
             if (scale != null) {
                 final String[] v = scale.split(",");
+
                 if (v.length == 1) {
                     if (v[0].contains(".")) {
                         p.setScalingFactor(Double.parseDouble(v[0]));
@@ -119,26 +130,27 @@ public class DjatokaExtract {
                     p.setScalingDimensions(dims);
                 }
             }
+
             final String rotate = line.getOptionValue("t");
+
             if (rotate != null) {
                 p.setRotationDegree(Integer.parseInt(rotate));
             }
+
             String format = line.getOptionValue("f");
+
             if (format == null) {
                 format = "image/jpeg";
             }
-            final String alt = line.getOptionValue("a");
+
             if (output == null) {
                 output = input + ".jpg";
             }
 
             final long x = System.currentTimeMillis();
-            IExtract ex = new KduExtractExe();
-            if (alt != null) {
-                ex = (IExtract) Class.forName(alt).newInstance();
-            }
-            final DjatokaExtractProcessor e = new DjatokaExtractProcessor(ex);
-            e.extractImage(input, output, p, format);
+            final IExtract kdu = new KduExtractExe();
+
+            kdu.extract(input, output, p, format);
 
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Extraction Time: " + (double) (System.currentTimeMillis() - x) / 1000 + " seconds");
@@ -147,8 +159,6 @@ public class DjatokaExtract {
             LOGGER.error("Parse exception: {}", details.getMessage(), details);
         } catch (final DjatokaException details) {
             LOGGER.error("djatoka Extraction exception: {}", details.getMessage(), details);
-        } catch (final InstantiationException details) {
-            LOGGER.error("Unable to initialize alternate implemenation: {}", details.getMessage(), details);
         } catch (final Exception details) {
             LOGGER.error("Unexpected exception: {}", details.getMessage(), details);
         }
