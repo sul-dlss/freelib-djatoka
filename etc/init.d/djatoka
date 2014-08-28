@@ -153,6 +153,7 @@ status)
 		echo "Djatoka running"
 	else
 		echo "Djatoka stopped"
+		exit 3
 	fi
 	;;
 *)
