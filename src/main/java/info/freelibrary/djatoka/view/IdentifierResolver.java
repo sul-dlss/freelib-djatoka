@@ -245,8 +245,8 @@ public class IdentifierResolver implements IReferentResolver, Constants {
                 throw new ResolverException("An error occurred processing file: " + uri.toURL());
             }
         } catch (final Exception details) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Unable to access {} ({})", aReferent, details.getMessage());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Unable to access {} ({})", aReferent, details.getMessage());
             }
 
             return null;

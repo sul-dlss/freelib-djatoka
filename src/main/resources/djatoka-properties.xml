@@ -25,4 +25,7 @@
   <entry key="tiff_writer">gov.lanl.adore.djatoka.io.writer.TIFWriter</entry>
   <entry key="tif_writer">gov.lanl.adore.djatoka.io.writer.TIFWriter</entry>
   <entry key="gif_writer">gov.lanl.adore.djatoka.io.writer.GIFWriter</entry>
+  <entry key="OpenURLJP2KService.transformPlugin">gov.lanl.adore.djatoka.plugin.ImageWatermark</entry>
+  <entry key="ImageWatermark.imagePath">/home/kevin/logo.png</entry>
+  <entry key="ImageWatermark.imageOpacity">1.0f</entry>
 </properties>

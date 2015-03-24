@@ -55,7 +55,8 @@
     </encoder>
   </appender>
 
-  <!-- Individual class level logging; then each off or on as needed -->
+<!-- Individual class level logging; then each off or on as needed -->
+
   <logger name="info.freelibrary.djatoka" level="DEBUG"/>
   <logger name="gov.lanl.adore.djatoka.openurl" level="DEBUG" />
   <logger name="gov.lanl.adore.djatoka.kdu" level="DEBUG" />
@@ -93,8 +94,7 @@
   </logger>
 
   <!-- Log file for the pre-generating tile cache utility -->
-  <logger name="info.freelibrary.djatoka.TileCache" level="DEBUG"
-    additivity="false">
+  <logger name="info.freelibrary.djatoka.TileCache" level="DEBUG" additivity="false">
     <appender-ref ref="CACHER"/>
     <appender-ref ref="CONSOLE"/>
   </logger>

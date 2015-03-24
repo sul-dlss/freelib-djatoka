@@ -28,10 +28,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.martiansoftware.jsap.CommandLineTokenizer;
 
 import gov.lanl.adore.djatoka.DjatokaEncodeParam;
@@ -54,7 +56,7 @@ public class KduCompressExe implements ICompress {
 
     private static Logger LOGGER = LoggerFactory.getLogger(KduCompressExe.class);
 
-    private static boolean isWindows = false;
+    private static boolean isWindows;
 
     private static String env;
 
@@ -72,16 +74,16 @@ public class KduCompressExe implements ICompress {
         exe = env + (System.getProperty("os.name").startsWith("Win") ? KDU_COMPRESS_EXE + ".exe" : KDU_COMPRESS_EXE);
 
         if (System.getProperty("os.name").startsWith("Mac")) {
-            envParams = new String[] { "DYLD_LIBRARY_PATH=" + System.getProperty("DYLD_LIBRARY_PATH") };
+            envParams = new String[] { "DYLD_LIBRARY_PATH", System.getProperty("DYLD_LIBRARY_PATH") };
         } else if (System.getProperty("os.name").startsWith("Win")) {
             isWindows = true;
         } else if (System.getProperty("os.name").startsWith("Linux")) {
-            envParams = new String[] { "LD_LIBRARY_PATH=" + System.getProperty("LD_LIBRARY_PATH") };
+            envParams = new String[] { "LD_LIBRARY_PATH", System.getProperty("LD_LIBRARY_PATH") };
         } else if (System.getProperty("os.name").startsWith("Solaris")) {
-            envParams = new String[] { "LD_LIBRARY_PATH=" + System.getProperty("LD_LIBRARY_PATH") };
+            envParams = new String[] { "LD_LIBRARY_PATH", System.getProperty("LD_LIBRARY_PATH") };
         }
 
-        LOGGER.debug("envParams: " + (envParams != null ? envParams[0] + " | " : "") + exe);
+        LOGGER.debug("envParams: " + (envParams != null ? StringUtils.toString(envParams, '=') + " | " : "") + exe);
     }
 
     /**
@@ -246,116 +248,6 @@ public class KduCompressExe implements ICompress {
     /**
      * Compress input using provided DjatokaEncodeParam parameters.
      *
-     * @param input InputStream containing TIFF image bitstream
-     * @param output OutputStream to serialize compressed image.
-     * @param aParams DjatokaEncodeParam containing compression parameters.
-     * @throws DjatokaException
-     */
-    @Override
-    public void compressImage(final InputStream input, final OutputStream output, final DjatokaEncodeParam aParams)
-            throws DjatokaException {
-        DjatokaEncodeParam params;
-
-        if (aParams == null) {
-            params = new DjatokaEncodeParam();
-        } else {
-            params = aParams;
-        }
-
-        File inputFile = null;
-
-        try {
-            inputFile = File.createTempFile("tmp", ".tif");
-            IOUtils.copyStream(input, new FileOutputStream(inputFile));
-
-            if (params.getLevels() == 0) {
-                ImageRecord dim = ImageRecordUtils.getImageDimensions(inputFile.getAbsolutePath());
-                params.setLevels(ImageProcessingUtils.getLevelCount(dim.getWidth(), dim.getHeight()));
-                dim = null;
-            }
-        } catch (final IOException e1) {
-            LOGGER.error("Unexpected file format; expecting uncompressed TIFF", e1);
-            throw new DjatokaException("Unexpected file format; expecting uncompressed TIFF");
-        }
-
-        String out = STDOUT;
-        File winOut = null;
-
-        if (isWindows) {
-            try {
-                winOut = File.createTempFile("pipe_", ".jp2");
-            } catch (final IOException e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new DjatokaException(e.getMessage(), e);
-            }
-
-            out = winOut.getAbsolutePath();
-        }
-
-        final String command = getKduCompressCommand(inputFile.getAbsolutePath(), out, params);
-        final String[] cmdParts = CommandLineTokenizer.tokenize(command);
-        final Runtime rt = Runtime.getRuntime();
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Compress command with environment: {} [{}]", StringUtils.toString(cmdParts, '|'), envParams);
-        }
-
-        try {
-            final Process process = rt.exec(cmdParts, envParams, new File(env));
-
-            if (out.equals(STDOUT)) {
-                IOUtils.copyStream(process.getInputStream(), output);
-            } else if (isWindows) {
-                final FileInputStream fis = new FileInputStream(out);
-
-                IOUtils.copyStream(fis, output);
-                fis.close();
-            }
-
-            process.waitFor();
-
-            if (process != null) {
-                String errorCheck = null;
-
-                try {
-                    errorCheck = new String(IOUtils.getByteArray(process.getErrorStream()));
-                } catch (final Exception e1) {
-                    LOGGER.error(e1.getMessage(), e1);
-                }
-
-                process.getInputStream().close();
-                process.getOutputStream().close();
-                process.getErrorStream().close();
-                process.destroy();
-
-                if (errorCheck != null) {
-                    throw new DjatokaException(errorCheck);
-                }
-            }
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new DjatokaException(e.getMessage(), e);
-        } catch (final InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new DjatokaException(e.getMessage(), e);
-        }
-
-        if (inputFile != null) {
-            if (!inputFile.delete() && LOGGER.isWarnEnabled()) {
-                LOGGER.warn("File not deleted: {}", inputFile);
-            }
-        }
-
-        if (winOut != null) {
-            if (!winOut.delete() && LOGGER.isWarnEnabled()) {
-                LOGGER.warn("File not deleted: {}", winOut);
-            }
-        }
-    }
-
-    /**
-     * Compress input using provided DjatokaEncodeParam parameters.
-     *
      * @param input absolute file path for input file.
      * @param output absolute file path for output file.
      * @param aParams DjatokaEncodeParam containing compression parameters.
@@ -381,18 +273,11 @@ public class KduCompressExe implements ICompress {
             LOGGER.debug("Processing TIFF: " + input);
             inputFile = new File(input);
         } else {
-            if (LOGGER.isDebugEnabled() &&
-                    (input.toLowerCase().endsWith(".tif") || input.toLowerCase().endsWith(".tiff"))) {
-                LOGGER.debug(input + " : Is tiff? {} | Is uncompressed? {}", ImageProcessingUtils.checkIfTiff(input),
-                        ImageProcessingUtils.isUncompressedTiff(input));
-            }
-
             try {
                 inputFile = IOUtils.createTempTiff(input);
                 tmp = true;
-                // input = inputFile.getAbsolutePath();
-            } catch (final Exception e) {
-                throw new DjatokaException("Unrecognized file format: " + e.getMessage());
+            } catch (final Exception details) {
+                throw new DjatokaException("Unrecognized file format: " + details.getMessage());
             }
         }
 
@@ -405,65 +290,60 @@ public class KduCompressExe implements ICompress {
 
         final File outFile = new File(output);
         final String command = getKduCompressCommand(inputFile.getAbsolutePath(), outFile.getAbsolutePath(), params);
-        final String[] cmdParts = CommandLineTokenizer.tokenize(command);
-        final Runtime rt = Runtime.getRuntime();
+        final List<String> cmdParts = Lists.newArrayList(CommandLineTokenizer.tokenize(command));
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Executed command and environment: {} [{}]", StringUtils.toString(cmdParts, ' '),
-                    StringUtils.toString(envParams, '|'));
+            LOGGER.debug("Compression command and environment: {} [{}]", StringUtils
+                    .toString(cmdParts.toArray(), ' '), StringUtils.toString(envParams, '='));
             LOGGER.debug("Input file '{}' " + (inputFile.exists() ? "exists" : "doesn't exist"), inputFile);
+
+            // For debug mode, let's tell kakadu to give us more information
+            cmdParts.add("-v");
         }
 
         try {
-            final Process process = rt.exec(cmdParts, envParams, new File(env));
+            final ProcessBuilder processBuilder = new ProcessBuilder(cmdParts);
+
+            processBuilder.directory(new File(env));
+            processBuilder.redirectErrorStream(true);
+
+            if (envParams.length == 2) {
+                processBuilder.environment().put(envParams[0], envParams[1]);
+            }
+
+            final Process process = processBuilder.start();
+
+            if (LOGGER.isInfoEnabled()) {
+                final String message =
+                        StringUtils.trimToNull(new String(IOUtils.getByteArray(process.getInputStream())));
+
+                if (message != null) {
+                    LOGGER.info(message);
+                }
+            }
+
             final int result = process.waitFor();
-            // if (result != 0) {
-            LOGGER.debug("Result: {}", result);
-            // }
 
-            String errorCheck = null;
-            String outputCheck = null;
-
-            try {
-                final InputStream inStream = process.getErrorStream();
-                errorCheck = new String(IOUtils.getByteArray(inStream));
-            } catch (final Exception details) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Getting error stream failed: {}", details.getMessage());
-                }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Compression command exit code for {}: {}", output, result);
             }
 
-            try {
-                final InputStream outStream = process.getInputStream();
-                outputCheck = new String(IOUtils.getByteArray(outStream));
-            } catch (final Exception details) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Getting output stream failed: {}", details.getMessage());
-                }
-            }
+            info.freelibrary.util.IOUtils.closeQuietly(process.getInputStream());
+            info.freelibrary.util.IOUtils.closeQuietly(process.getOutputStream());
+            info.freelibrary.util.IOUtils.closeQuietly(process.getErrorStream());
 
-            process.getInputStream().close();
-            process.getOutputStream().close();
-            process.getErrorStream().close();
             process.destroy();
 
-            if (errorCheck != null && !errorCheck.equals("")) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Error check message: {}", errorCheck);
-                }
-
-                throw new DjatokaException(errorCheck);
-            }
-
-            if (outputCheck != null && !outputCheck.equals("")) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Output check message: {}", outputCheck);
-                }
+            if (result != 0) {
+                throw new DjatokaException("Failed to compress image [exit code: " + output + "]");
             }
         } catch (final IOException details) {
             LOGGER.error(details.getMessage(), details);
             throw new DjatokaException(details.getMessage(), details);
         } catch (final InterruptedException details) {
+            LOGGER.error(details.getMessage(), details);
+            throw new DjatokaException(details.getMessage(), details);
+        } catch (final Exception details) {
             LOGGER.error(details.getMessage(), details);
             throw new DjatokaException(details.getMessage(), details);
         } finally {
@@ -516,11 +396,8 @@ public class KduCompressExe implements ICompress {
         if (params.getRate() != null) {
             sb.append("-rate ").append(params.getRate()).append(" ");
         } else {
-            sb.append("-rate ").append("0.8 ");
+            sb.append("-slope ").append(params.getSlope()).append(" ");
         }
-        // } else {
-        // sb.append("-slope ").append(params.getSlope()).append(" ");
-        // }
 
         if (params.getLevels() > 0) {
             sb.append("Clevels=").append(params.getLevels()).append(" ");

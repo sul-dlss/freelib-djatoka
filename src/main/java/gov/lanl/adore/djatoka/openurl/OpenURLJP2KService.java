@@ -153,6 +153,10 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                     final String transClass = props.getProperty(PROPS_KEY_TRANSFORM);
                     transform = (ITransformPlugIn) Class.forName(transClass).newInstance();
                     transform.setup(props);
+
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Using adore-djatoka transformer: {}", transform.getClass().getName());
+                    }
                 }
                 if (props.getProperty(PROP_KEY_CACHE_MAX_PIXELS) != null) {
                     maxPixels = Integer.parseInt(props.getProperty(PROP_KEY_CACHE_MAX_PIXELS));
@@ -290,6 +294,10 @@ public class OpenURLJP2KService implements Service, FormatConstants {
                     }
 
                     if (transformCheck && transform != null) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Using an adore-djatoka transformation plugin");
+                        }
+
                         final HashMap<String, String> instProps = new HashMap<String, String>();
 
                         if (r.getInstProps() != null) {

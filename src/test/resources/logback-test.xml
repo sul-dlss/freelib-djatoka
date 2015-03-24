@@ -9,10 +9,9 @@
 
   <!--
   <logger name="info.freelibrary.djatoka.IdentifierIntegrationTest" level="DEBUG"/>
-  <logger name="info.freelibrary.util.FileUtils" level="DEBUG"/>
   -->
 
-  <root level="INFO">
+  <root level="DEBUG">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>

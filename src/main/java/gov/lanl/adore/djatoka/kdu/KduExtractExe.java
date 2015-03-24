@@ -31,7 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -61,7 +60,7 @@ public class KduExtractExe implements IExtract {
 
     private static Logger LOGGER = LoggerFactory.getLogger(KduExtractExe.class);
 
-    private static boolean isWindows = false;
+    private static boolean isWindows;
 
     private static String env;
 
@@ -117,9 +116,12 @@ public class KduExtractExe implements IExtract {
         final String command = getKduExtractCommand(i, o, dims, p);
         final String[] cmdParts = CommandLineTokenizer.tokenize(command);
 
+        Process process = null;
+
         try {
-            final Process process = Runtime.getRuntime().exec(cmdParts, envParams, new File(env));
-            final int result = waitFor(process);
+            process = Runtime.getRuntime().exec(cmdParts, envParams, new File(env));
+
+            final int result = process.waitFor();
 
             if (result != 0 && LOGGER.isErrorEnabled()) {
                 LOGGER.error("Extraction returned non-zero result");
@@ -132,6 +134,14 @@ public class KduExtractExe implements IExtract {
         } catch (final Exception details) {
             LOGGER.error(details.getMessage(), details);
             throw new DjatokaException(details.getMessage(), details);
+        } finally {
+            if (process != null) {
+                info.freelibrary.util.IOUtils.closeQuietly(process.getErrorStream());
+                info.freelibrary.util.IOUtils.closeQuietly(process.getInputStream());
+                info.freelibrary.util.IOUtils.closeQuietly(process.getOutputStream());
+
+                process.destroy();
+            }
         }
     }
 
@@ -288,10 +298,11 @@ public class KduExtractExe implements IExtract {
         return getRegionMetadata(r, params);
     }
 
-    private final ArrayList<Double> getRegionMetadata(final String input, final DjatokaDecodeParam params)
-            throws DjatokaException, FileNotFoundException {
-        return getRegionMetadata(getMetadata(new ImageRecord(input)), params);
-    }
+    /*
+     * private final ArrayList<Double> getRegionMetadata(final String input, final DjatokaDecodeParam params) throws
+     * DjatokaException, FileNotFoundException { return getRegionMetadata(getMetadata(new ImageRecord(input)),
+     * params); }
+     */
 
     private final ArrayList<Double> getRegionMetadata(final ImageRecord r, final DjatokaDecodeParam params)
             throws DjatokaException {
@@ -393,42 +404,5 @@ public class KduExtractExe implements IExtract {
         }
 
         return path;
-    }
-
-    // Process Handler Utils
-    private int waitFor(final Process process) {
-        try {
-            process.waitFor();
-            return process.exitValue();
-        } catch (final InterruptedException e) {
-            process.destroy();
-        }
-
-        return 2;
-    }
-
-    private static void closeStreams(final Process process) {
-        close(process.getInputStream());
-        close(process.getOutputStream());
-        close(process.getErrorStream());
-        process.destroy();
-    }
-
-    private static void close(final InputStream device) {
-        if (device != null) {
-            try {
-                device.close();
-            } catch (final IOException ioex) {
-            }
-        }
-    }
-
-    private static void close(final OutputStream device) {
-        if (device != null) {
-            try {
-                device.close();
-            } catch (final IOException ioex) {
-            }
-        }
     }
 }

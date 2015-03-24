@@ -138,8 +138,8 @@ public class DjatokaImageMigrator implements FormatConstants, IReferentMigrator 
             // out from the URL; if we did that, we assume it's already a JP2
             boolean isJp2 = aReferent.equals(aURI.toString()) ? false : true;
 
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Processing remote {}: {}", isJp2 ? "JP2 file" : "URI", aURI);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Processing remote {}: {}", isJp2 ? "JP2 file" : "URI", aURI);
             }
 
             // Obtain remote resource

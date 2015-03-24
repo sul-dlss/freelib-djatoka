@@ -13,7 +13,6 @@ package gov.lanl.adore.djatoka.openurl;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.SocketException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
@@ -245,12 +244,9 @@ public class OpenURLServlet extends HttpServlet {
                     out.close();
                     break;
             }
-        } catch (final SocketException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (final Throwable e) {
-            LOGGER.debug(e.getMessage(), e);
-
-            // throw new ServletException(e.getMessage(), e);
+        } catch (final Throwable details) {
+            // ksclarke : FIXME HERE
+            LOGGER.error(details.getMessage(), details);
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }

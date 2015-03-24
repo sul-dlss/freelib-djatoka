@@ -56,17 +56,6 @@ public interface ICompress {
     public void compressImage(InputStream input, String output, DjatokaEncodeParam params) throws DjatokaException;
 
     /**
-     * Compress input using provided DjatokaEncodeParam parameters.
-     *
-     * @param input InputStream containing image bitstream
-     * @param output OutputStream to serialize compressed image.
-     * @param params DjatokaEncodeParam containing compression parameters.
-     * @throws DjatokaException
-     */
-    public void compressImage(InputStream input, OutputStream output, DjatokaEncodeParam params)
-            throws DjatokaException;
-
-    /**
      * Compress input BufferedImage using provided DjatokaEncodeParam parameters.
      *
      * @param bi in-memory image to be compressed
