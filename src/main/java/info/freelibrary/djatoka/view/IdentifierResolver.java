@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLDecoder;
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +170,12 @@ public class IdentifierResolver implements IReferentResolver, Constants {
     }
 
     private boolean isResolvableURI(final String aReferentID) {
-        return aReferentID.startsWith("http://") || aReferentID.startsWith("file://");
+        try {
+            final URL urlTest = new URL(aReferentID);
+            return true;
+        } catch (MalformedURLException details) {
+            return false;
+        }
     }
 
     private ImageRecord getCachedImage(final String aReferentID) {

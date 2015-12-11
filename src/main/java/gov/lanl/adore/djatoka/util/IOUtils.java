@@ -125,9 +125,9 @@ public class IOUtils {
     }
 
     /**
-     * Gets an InputStream object for provide URL location
+     * Gets an InputStream object for provided URL location
      * 
-     * @param location File, http, or ftp URL to open connection and obtain InputStream
+     * @param location File, http(s), or ftp URL to open connection and obtain InputStream
      * @return InputStream containing the requested resource
      * @throws Exception
      */

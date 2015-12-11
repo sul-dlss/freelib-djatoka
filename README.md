@@ -44,13 +44,6 @@ The properties to change are:
 
 After configuring Islandora's OpenSeadragon module, and making the changes to the properties above, you should be in business.  There are, of course, other configuration options documented on Djatoka's project page if you want to delve deeper. Feel free to ask me any questions that arise.
 
-### Processing requests from HTTPS-Islandora Sites
-When attempting to retrieve tiles from a JPEG2000 file retrieved from an HTTPS source (e.g. the location of the JPEG2000 file uses the 'https://' protocol), the freelib-djatoka server will return a 404-not-found error.  (See #64.)  A work-around is to proxy access through Apache and use mod_rewrite to change the query string.  For example:
-
-    RewriteCond %{QUERY_STRING} ^(.*)rft_id=https%3A%2F%2Fexample.org%2F(.*)$
-    RewriteRule /adore-djatoka/resolver http://localhost:8888/resolver?%1rft_id=http\%3A\%2F%\2Flocalhost\%2F%2 [P]
-    ProxyPassReverse /adore-djatoka/ http://localhost:8888/ nocanon
-
 ### License
 
 This package, freelib-djatoka, like its upstream project, aDORe-djatoka, is available under the LGPL license.
