@@ -93,6 +93,7 @@
     <imgscalr.lib.version>4.2</imgscalr.lib.version>
     <opencsv.version>2.3</opencsv.version>
     <jackson.databind.version>2.4.4</jackson.databind.version>
+    <failsafe.version>2.19.1</failsafe.version>
     <ij.version>1.49p</ij.version>
 
     <!-- You shouldn't need to set anything below here; these are generic -->
