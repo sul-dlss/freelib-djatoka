@@ -8,10 +8,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.junit.Test;
-
-import info.freelibrary.util.StringUtils;
 
 public class OSDCacheUtilTest {
 
@@ -19,7 +18,7 @@ public class OSDCacheUtilTest {
 
     private static final String SERVICE = "iiif";
 
-    private static final String LABEL = "/0/native.jpg";
+    private static final String LABEL = "/0/default.jpg";
 
     /**
      * Test the region path generation of the OpenSeadragon tiler.
@@ -32,6 +31,7 @@ public class OSDCacheUtilTest {
         final HashSet<String> expectedSet = new HashSet<String>(Arrays.asList(expected));
         final ArrayList<String> missing = new ArrayList<String>();
         final ArrayList<String> unexpected = new ArrayList<String>();
+        final String eol = System.getProperty("line.separator");
 
         for (final String path : expected) {
             if (!pathSet.contains(path)) {
@@ -40,7 +40,14 @@ public class OSDCacheUtilTest {
         }
 
         if (missing.size() > 0) {
-            fail("Missing path(s): " + StringUtils.toString(' ', missing.toArray()));
+            final StringBuilder sb = new StringBuilder(eol);
+            final Iterator<String> iterator = missing.iterator();
+
+            while (iterator.hasNext()) {
+                sb.append(iterator.next()).append(eol);
+            }
+
+            fail("Missing path(s): " + sb.toString());
         }
 
         for (final String path : paths) {
@@ -50,7 +57,14 @@ public class OSDCacheUtilTest {
         }
 
         if (unexpected.size() > 0) {
-            fail("Unexpected path(s): " + StringUtils.toString(' ', unexpected.toArray()));
+            final StringBuilder sb = new StringBuilder(eol);
+            final Iterator<String> iterator = unexpected.iterator();
+
+            while (iterator.hasNext()) {
+                sb.append(iterator.next()).append(eol);
+            }
+
+            fail("Unexpected path(s): " + sb.toString());
         }
     }
 

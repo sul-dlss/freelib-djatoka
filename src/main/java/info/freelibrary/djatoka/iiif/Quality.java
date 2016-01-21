@@ -25,8 +25,9 @@ public class Quality {
             myQuality = aQuality;
         }
 
-        if (!myQuality.equalsIgnoreCase("native") && !aQuality.equalsIgnoreCase("color") &&
-                !aQuality.equalsIgnoreCase("grey") && !aQuality.equalsIgnoreCase("bitonal")) {
+        if (!myQuality.equalsIgnoreCase("native") && !myQuality.equalsIgnoreCase("default") && !aQuality
+                .equalsIgnoreCase("color") && !aQuality.equalsIgnoreCase("grey") && !aQuality.equalsIgnoreCase(
+                        "bitonal")) {
             throw new IIIFException("Unsupported request quality value: " + aQuality);
         }
     }

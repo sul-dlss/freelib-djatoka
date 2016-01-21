@@ -16,7 +16,7 @@ public class OSDCacheUtil {
 
     private static final String REGION = "{},{},{},{}";
 
-    private static final String LABEL = "0/native.jpg";
+    private static final String LABEL = "0/default.jpg";
 
     /**
      * Utility used to generate regions for derivatives images prior to the point where they are requested by a user.
