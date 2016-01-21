@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public abstract class AbstractPairtreeMojo extends AbstractMojo {
     /**
      * The Maven project directory.
      */
-    @Component
+    @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject myProject;
 
     protected void deletePairtreeJP2Cache(final String aID) throws MojoExecutionException {
