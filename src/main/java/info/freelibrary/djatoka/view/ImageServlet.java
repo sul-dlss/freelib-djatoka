@@ -23,21 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import nu.xom.Attribute;
-import nu.xom.Builder;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.ParsingException;
-import nu.xom.Serializer;
-import nu.xom.ValidityException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import gov.lanl.adore.djatoka.openurl.OpenURLJP2KService;
 
 import info.freelibrary.djatoka.Constants;
 import info.freelibrary.djatoka.iiif.IIIFRequest;
@@ -49,6 +39,15 @@ import info.freelibrary.util.PairtreeObject;
 import info.freelibrary.util.PairtreeRoot;
 import info.freelibrary.util.PairtreeUtils;
 import info.freelibrary.util.StringUtils;
+
+import gov.lanl.adore.djatoka.openurl.OpenURLJP2KService;
+import nu.xom.Attribute;
+import nu.xom.Builder;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.ParsingException;
+import nu.xom.Serializer;
+import nu.xom.ValidityException;
 
 public class ImageServlet extends HttpServlet implements Constants {
 
@@ -338,7 +337,8 @@ public class ImageServlet extends HttpServlet implements Constants {
                     final String encodedID = URLEncoder.encode(id, "UTF-8");
 
                     try {
-                        final String host = aRequest.getLocalName();
+                        final String localName = aRequest.getLocalName();
+                        final String host = localName.contains(":") ? "[" + localName + "]" : localName;
                         final String port = Integer.toString(aRequest.getLocalPort());
                         final URL url = new URL(StringUtils.format(METADATA_URL, host, port, encodedID));
 
