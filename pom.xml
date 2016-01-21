@@ -96,8 +96,8 @@
     <ij.version>1.49p</ij.version>
 
     <!-- You shouldn't need to set anything below here; these are generic -->
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <dependencies>
