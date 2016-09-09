@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>info.freelibrary</groupId>
   <artifactId>freelib-djatoka</artifactId>
-  <packaging>maven-plugin</packaging>
+  <packaging>war</packaging>
   <version>1.1.3-SNAPSHOT</version>
   <name>FreeLibrary Djatoka</name>
   <description>A fork of the aDORe-Djatoka JPEG2000 image server</description>
