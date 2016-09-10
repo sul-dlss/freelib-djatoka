@@ -92,6 +92,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <console.log>false</console.log>
 
+    <http.agent>Maven</http.agent>
+
     <freelib.build.tools.version>0.0.6</freelib.build.tools.version>
     <maven.checkstyle.version>2.11</maven.checkstyle.version>
     <freelib.utils.version>0.4.6</freelib.utils.version>
