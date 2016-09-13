@@ -871,6 +871,38 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>bundle-nonfree-system-jars</id>
+      <activation>
+        <property>
+          <name>bundleNonfree</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <!-- extracts project site's css and js from freelib-build-tools jar -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.8</version>
+            <executions>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>copy-dependencies</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+                  <includeScope>system</includeScope>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
   <!-- added support for building with snapshot dependencies -->
   <repositories>
